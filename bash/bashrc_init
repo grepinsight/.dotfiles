@@ -1,4 +1,4 @@
-INIT_DIR=$(pwd) # the directory of the dirname 
+INIT_DIR="${HOME}/.dotfiles/bash" # where init is
 
 [[ "$-" != *i* ]] && return
 

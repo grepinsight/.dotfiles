@@ -63,17 +63,16 @@ alias fgrep='fgrep --color=auto'              # show differences in colour
 alias uniqc="uniq -c | sort -k2,2 | awk '{print $1\"\t\"$2}'"
 
 #bash file editing
-alias bashpathslocal="vim $HOME/.bash_prefs/bash_prefs_share/local/bash_paths_local"
-alias bpl="vim $HOME/.bash_prefs/bash_prefs_share/local/bash_paths_local"
-alias bashsettingslocal="vim $HOME/.bash_prefs/bash_prefs_share/local/bash_settings_local"
-alias bsl="vim $HOME/.bash_prefs/bash_prefs_share/local/bash_settings_local"
-alias sbr="source $HOME/.bashrc"
-alias bas="vim $HOME/.bash_prefs/bash_prefs_share/share/bash_aliases_share"
-alias bsa="vim $HOME/.bash_prefs/bash_prefs_share/share/bash_aliases_share"
-alias bal="vim $HOME/.bash_prefs/bash_prefs_share/local/bash_aliases_local"
-alias bla="vim $HOME/.bash_prefs/bash_prefs_share/local/bash_aliases_local"
-alias bil="vim $HOME/.bash_prefs/bash_prefs_share/local/bash_inirun_local"
+bash_dotfile_dir="${HOME}/.dotfiles/bash"
+alias bpl="vim ${bash_dotfile_dir}/local/bash_paths_local"
+alias bsl="vim ${bash_dotfile_dir}/bash_settings_local"
+alias bas="vim ${bash_dotfile_dir}/bash_aliases_share"
+alias bsa="vim ${bash_dotfile_dir}/bash_aliases_share"
+alias bal="vim ${bash_dotfile_dir}/bash_aliases_local"
+alias bla="vim ${bash_dotfile_dir}/bash_aliases_local"
+alias bil="vim ${bash_dotfile_dir}/bash_inirun_local"
 
+alias sbr="source $HOME/.bashrc"
 
 #git related
 alias gs="git status"
