@@ -1,0 +1,237 @@
+"Preamble
+"Pathongen Infection -------------------- {{{
+execute pathogen#infect()
+let g:snippets_dir="$HOME/bin/util_setup/vim_setup/snippets"
+" }}}
+
+"Taglist Toggle
+nnoremap <silent> <F7> :TlistToggle<CR>
+"Paste Toggle
+set pastetoggle=<F8>
+
+"Set Methods ---------------------{{{
+  set background=dark "Make the color suitable to dark background
+  set hidden "Allow modified/unsaved buffers in the background.
+  set history=1000
+  set nu
+  set smartcase
+  set ignorecase
+
+  set shiftwidth=4
+  set softtabstop=4 "Indentation levels very four columns"
+  " set textwidth=78  "Wrap at this column"
+
+  set incsearch
+  runtime macros/matchit.vim
+  syntax on
+  filetype plugin indent on
+  hi Comment  guifg=#80a0ff ctermfg=darkred
+" }}}
+
+"Movements--------------------------------------------------{{{
+    nnoremap j gj
+    nnoremap k gk
+    xnoremap j gj
+    xnoremap k gk
+"Fasta up and down
+  " nmap J 5j
+    nmap K 5k
+    xmap J 5j
+    xmap K 5k
+"Split navigation
+    nmap gh <C-w>h
+    nmap gj <C-w>j
+    nmap gk <C-w>k
+    nmap gl <C-w>l
+"Tab navigation
+    nmap <C-l> gt
+    nmap <C-h> gT
+    nnoremap <silent> [t :tabp<CR> 
+    nnoremap <silent> ]t :tabn<CR>
+    nnoremap <silent> [T :tabfirst<CR>
+    nnoremap <silent> ]T :tablast<CR>
+"Buffer navigation
+    nmap <C-n> :bnext<CR>
+    nnoremap <silent> [b :bprevious<CR> 
+    nnoremap <silent> ]b :bnext<CR>
+    nnoremap <silent> [B :bfirst<CR>
+    nnoremap <silent> ]B :blast<CR>
+"reselect after indenting
+    vnoremap < <gv
+    vnoremap > >gv
+"never use Ex mode -- I never *mean* to press it
+    nnoremap Q <ESC>
+"Escape Mode
+    imap jj <Esc>
+"never use F1 -- I'm reaching for escape
+    noremap  <F1> <ESC>
+    noremap! <F1> <ESC>
+    lnoremap <F1> <ESC>
+    nnoremap aa pkj
+
+"Ctags Tricks
+    map <Leader>] :tab split<CR>:exec("tag ".expand("<cword>"))<CR>
+    map <Leader>v :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
+"}}}
+
+""Keyboard shortcuts -------------------{{{
+  nmap \l :setlocal number!<CR>
+  nmap \q :nohlsearch<CR>
+  set hlsearch "Highlight searches by default
+  nmap \e :NERDTreeToggle<CR>
+
+"insert file name : \fn in insert mode
+inoremap \fn <C-R>=expand("%:t")<CR>
+"Editting source files
+nnoremap <Leader>ev :vsplit $MYVIMRC<CR>
+nnoremap <Leader>sv :source $MYVIMRC<CR>
+nnoremap <Leader>es :vsplit ~/.vim/bundle/mysnippets/snippets<CR>
+"Keep search matches in the middle of the window and pulse the line when moving to them
+nnoremap n nzzzv
+nnoremap N Nzzzv
+nnoremap vv ^vg_
+
+"Select all
+nnoremap <C-a> ggvG
+inoremap <C-a> <Esc>ggvG
+
+" Use sane regexes.
+nnoremap / /\v
+vnoremap / /\v
+
+" Clean trailing whitespace
+" nnoremap <leader>w mz:%s/\s\+$//<cr>:let @/=''<cr>`z
+" " Trailing whitespace {{{
+" " Only shown when not in insert mode so I don't go insane.
+
+" augroup trailing
+"     au!
+"     au InsertEnter * :set listchars-=trail:⌴
+" augroup END
+
+" " }}}
+
+"}}}
+
+"set smartindent
+
+"nnoremap <silent> <C-l> :nohl<CR><C-l>
+" inoremap <F9> <C-O>za
+" nnoremap <F9> za
+" onoremap <F9> <C-C>za
+" vnoremap <F9> zf
+
+" Java Build
+map <F9> :set makeprg=javac\ %<CR>:make<CR>
+map <F10> :!echo %\|awk -F. '{print $1}'\|xargs java<CR>
+map <F11> :set makeprg=javac\ #<CR>:make<CR>
+map <F12> :!echo #\|awk -F. '{print $1}'\|xargs java<CR>
+
+map! <F9> <Esc>:set makeprg=javac\ %<CR>:make<CR>
+map! <F10> <Esc>:!echo %\|awk -F. '{print $1}'\|xargs java<CR>
+map! <F11> <Esc>set makeprg=javac\ #<CR>:make<CR>
+map! <F12> <Esc>!echo #\|awk -F. '{print $1}'\|xargs java<CR>
+
+" Tip: load a file into the default buffer, and its driver
+" into the alternate buffer, then use F9/F12 to build/run.
+" Note: # (alternate filename) isn't set until you :next to it!
+" Tip2: You can make then run without hitting ENTER to continue. F9-F12
+
+" With these you can cl/cn/cp (quickfix commands) to browse the errors
+" after you compile it with :make
+
+set makeprg=javac\ %
+set errorformat=%A:%f:%l:\ %m,%-Z%p^,%-C%.%#
+
+" If two files are loaded, switch to the alternate file, then back.
+" That sets # (the alternate file).
+if argc() == 2
+  n
+  e #
+endif
+
+
+"focus current fold
+nnoremap <leader>z zMzvzz
+
+"Remapping marking pos
+" nnoremap ' `
+" nnoremap ` '
+"save when losing focus
+au FocusLost * :silent! wall
+
+
+" Make sure Vim returns to the same line when you reopen a file.
+" Thanks, Amit
+augroup line_return
+    au!
+    au BufReadPost *
+        \ if line("'\"") > 0 && line("'\"") <= line("$") |
+        \     execute 'normal! g`"zvzz' |
+        \ endif
+augroup END
+
+" }}}
+
+"Shell command --------------------------------------------------{{{
+command! -complete=shellcmd -nargs=+ Shell call s:RunShellCommand(<q-args>)
+function! s:RunShellCommand(cmdline)
+  echo a:cmdline
+  let expanded_cmdline = a:cmdline
+  for part in split(a:cmdline, ' ')
+     if part[0] =~ '\v[%#<]'
+        let expanded_part = fnameescape(expand(part))
+        let expanded_cmdline = substitute(expanded_cmdline, part, expanded_part, '')
+     endif
+  endfor
+  botright new
+  setlocal buftype=nofile bufhidden=wipe nobuflisted noswapfile nowrap
+  call setline(1, 'You entered:    ' . a:cmdline)
+  call setline(2, 'Expanded Form:  ' .expanded_cmdline)
+  call setline(3,substitute(getline(2),'.','=','g'))
+  execute '$read !'. expanded_cmdline
+  setlocal nomodifiable
+  1
+endfunction
+"}}}
+
+function! RenameFile() "{{{
+    let old_name = expand('%')
+    let new_name = input('New file name: ', expand('%'), 'file')
+    if new_name != '' && new_name != old_name
+        exec ':saveas ' . new_name
+        exec ':silent !rm ' . old_name
+        redraw!
+    endif
+endfunction
+nnoremap <Leader>n :call RenameFile()<cr>
+
+"}}}
+
+function! MarkWindowSwap() "{{{
+  let g:markedWinNum = winnr()
+  endfunction
+
+function! DoWindowSwap()
+  "Mark destination
+  let curNum = winnr()
+  let curBuf = bufnr( "%" )
+  exe g:markedWinNum . "wincmd w"
+  "Switch to source and shuffle dest->source
+  let markedBuf = bufnr( "%" )
+  "Hide and open so that we aren't prompted and keep history
+  exe 'hide buf' curBuf
+  "Switch to dest and shuffle source->dest
+  exe curNum . "wincmd w"
+  "Hide and open so that we aren't prompted and keep history
+  exe 'hide buf' markedBuf 			   
+endfunction
+
+nmap <silent> <leader>mw :call MarkWindowSwap()<CR>
+nmap <silent> <leader>pw :call DoWindowSwap()<CR>
+
+" Use CTRL-S for saving, also in Insert mode
+noremap <C-S> :update<CR>
+vnoremap <C-S> <C-C>:update<CR>
+inoremap <C-S> <C-O>:update<CR>
+
