@@ -1,4 +1,4 @@
-INIT_DIR="${HOME}/.bash_prefs/bash_prefs_share/" # the directory of the dirname 
+INIT_DIR=$(pwd) # the directory of the dirname 
 
 [[ "$-" != *i* ]] && return
 
