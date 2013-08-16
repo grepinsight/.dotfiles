@@ -65,12 +65,12 @@ alias uniqc="uniq -c | sort -k2,2 | awk '{print $1\"\t\"$2}'"
 #bash file editing
 bash_dotfile_dir="${HOME}/.dotfiles/bash"
 alias bpl="vim ${bash_dotfile_dir}/local/bash_paths_local"
-alias bsl="vim ${bash_dotfile_dir}/bash_settings_local"
-alias bas="vim ${bash_dotfile_dir}/bash_aliases_share"
-alias bsa="vim ${bash_dotfile_dir}/bash_aliases_share"
-alias bal="vim ${bash_dotfile_dir}/bash_aliases_local"
-alias bla="vim ${bash_dotfile_dir}/bash_aliases_local"
-alias bil="vim ${bash_dotfile_dir}/bash_inirun_local"
+alias bsl="vim ${bash_dotfile_dir}/local/bash_settings_local"
+alias bas="vim ${bash_dotfile_dir}/share/bash_aliases_share"
+alias bsa="vim ${bash_dotfile_dir}/share/bash_aliases_share"
+alias bal="vim ${bash_dotfile_dir}/local/bash_aliases_local"
+alias bla="vim ${bash_dotfile_dir}/local/bash_aliases_local"
+alias bil="vim ${bash_dotfile_dir}/local/bash_inirun_local"
 
 alias sbr="source $HOME/.bashrc"
 
