@@ -4,6 +4,13 @@ execute pathogen#infect()
 let g:snippets_dir="$HOME/bin/util_setup/vim_setup/snippets"
 " }}}
 
+" Productivity Aliases
+"Run perlcode
+ nnoremap <Leader>pl :!perl %<CR>
+ " Make executate able
+ nnoremap <Leader>x :!chmod 750 %<CR>
+
+
 "Taglist Toggle
 nnoremap <silent> <F7> :TlistToggle<CR>
 "Paste Toggle
@@ -86,6 +93,7 @@ inoremap \fn <C-R>=expand("%:t")<CR>
 nnoremap <Leader>ev :vsplit $MYVIMRC<CR>
 nnoremap <Leader>sv :source $MYVIMRC<CR>
 nnoremap <Leader>es :vsplit ~/.vim/bundle/mysnippets/snippets<CR>
+
 "Keep search matches in the middle of the window and pulse the line when moving to them
 nnoremap n nzzzv
 nnoremap N Nzzzv
