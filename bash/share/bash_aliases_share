@@ -41,10 +41,10 @@ alias df='df -h'
 alias du='du -h'
 
 #movement
-alias ..="cd .."
-alias ...="cd ../.."
-alias ....="cd ../../.."
-alias .....="cd ../../../.."
+alias ..="cd ..;ls -lh"
+alias ...="cd ../..;ls -lh"
+alias ....="cd ../../..;ls -lh"
+alias .....="cd ../../../..;ls -lh"
 alias avg="awk 'BEGIN{sum=0;line=0};{sum+=\$1;line+=1};END{print sum/line}'"
 alias viz='rowcount|colcount|colorizer'
 alias lo="logout"
