@@ -93,3 +93,8 @@ alias v="vim"
 ### http://unix.stackexchange.com/questions/29023/how-to-display-tsv-csv-in-console-when-empty-cells-are-missed-by-column-t
 alias ctt="(sed ':x s/\(^\|\t\)\t/\1 \t/; t x' | column -ts$'\t')"
 
+# Utilities
+alias nosym='cd $(readlink -m $(pwd))'
+
+#common typo
+alias Head='head'
