@@ -95,6 +95,17 @@ alias ctt="(sed ':x s/\(^\|\t\)\t/\1 \t/; t x' | column -ts$'\t')"
 
 # Utilities
 alias nosym='cd $(readlink -m $(pwd))'
+alias dirls1='find . -maxdepth 1 -type d -name "$@"'
+alias dirls2='find . -maxdepth 2 -type d -name "$@"'
+alias dirls3='find . -maxdepth 3 -type d -name "$@"'
+alias lsdir1='find . -maxdepth 1 -type d -name "$@"'
+alias lsdir2='find . -maxdepth 2 -type d -name "$@"'
+alias lsdir3='find . -maxdepth 3 -type d -name "$@"'
+
+alias lsf='find . -type f -name "$@"'
+alias lsf1='find . -maxdepth 1 -type f -name "$@"'
+alias lsf2='find . -maxdepth 2 -type f -name "$@"'
+alias lsf3='find . -maxdepth 3 -type f -name "$@"'
 
 #common typo
 alias Head='head'
