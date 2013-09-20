@@ -42,10 +42,10 @@ alias df='df -h'
 alias du='du -h'
 
 #movement
-alias ..="cd .."
-alias ...="cd ../.."
-alias ....="cd ../../.."
-alias .....="cd ../../../.."
+alias ..="cd ..;ls -lh"
+alias ...="cd ../..;ls -lh"
+alias ....="cd ../../..;ls -lh"
+alias .....="cd ../../../..;ls -lh"
 alias avg="awk 'BEGIN{sum=0;line=0};{sum+=\$1;line+=1};END{print sum/line}'"
 alias viz='rowcount|colcount|colorizer'
 alias lo="logout"
@@ -94,3 +94,19 @@ alias v="vim"
 ### http://unix.stackexchange.com/questions/29023/how-to-display-tsv-csv-in-console-when-empty-cells-are-missed-by-column-t
 alias ctt="(sed ':x s/\(^\|\t\)\t/\1 \t/; t x' | column -ts$'\t')"
 
+# Utilities
+alias nosym='cd $(readlink -m $(pwd))'
+alias dirls1='find . -maxdepth 1 -type d -name "$@"'
+alias dirls2='find . -maxdepth 2 -type d -name "$@"'
+alias dirls3='find . -maxdepth 3 -type d -name "$@"'
+alias lsdir1='find . -maxdepth 1 -type d -name "$@"'
+alias lsdir2='find . -maxdepth 2 -type d -name "$@"'
+alias lsdir3='find . -maxdepth 3 -type d -name "$@"'
+
+alias lsf='find . -type f -name "$@"'
+alias lsf1='find . -maxdepth 1 -type f -name "$@"'
+alias lsf2='find . -maxdepth 2 -type f -name "$@"'
+alias lsf3='find . -maxdepth 3 -type f -name "$@"'
+
+#common typo
+alias Head='head'

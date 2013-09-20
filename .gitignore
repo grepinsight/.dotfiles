@@ -1,3 +1,4 @@
 bash/local/*
 vim_testfile.txt
 *.un~
+*.swp
