@@ -15,7 +15,7 @@ if [[ $platform == 'Darwin' ]]; then
 else
     alias ls='ls --color=auto'
 	alias ll='ls -lh'
-	/* alias lll='ls -lh' */
+	#alias lll='ls -lh'
 	alias lll='find . -maxdepth 1 -type l | xargs -i ls -lh {} --color'
 	alias rip_color_code='sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g"'
 	alias rdlk="readlink -m"
