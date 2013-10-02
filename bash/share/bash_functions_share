@@ -177,6 +177,7 @@ vim()
 export MARKPATH=$HOME/.marks
 function jump { 
     cd $MARKPATH/$1 2>/dev/null || echo "No such mark: $1"
+    cd $(readlink -m $(pwd))
 }
 function mark { 
     mkdir -p $MARKPATH; ln -s $(pwd) $MARKPATH/$1
