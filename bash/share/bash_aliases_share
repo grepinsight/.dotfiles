@@ -110,6 +110,7 @@ alias lsf2='find . -maxdepth 2 -type f -name "$@"'
 alias lsf3='find . -maxdepth 3 -type f -name "$@"'
 
 alias lsprefix='find . -maxdepth 1 -name "*${1}"'
+alias lview="sed ':x s/\(^\|\t\)\t/\1 \t/; t x' | column -ts$'\t' | less"
 
 #common typo
 alias Head='head'
