@@ -35,7 +35,6 @@ alias diskspace="du -S | sort -n -r |more"
 alias folders="find . -maxdepth 1 -type d -print | xargs du -sk | sort -rn"
 
 alias rr='rm -r'
-alias viz='rowcount|colcount|colorizer'
 alias wai='readlink -m .'
 alias whereami='readlink -m .'
 alias df='df -h'
@@ -47,7 +46,6 @@ alias ...="cd ../..;ls -lh"
 alias ....="cd ../../..;ls -lh"
 alias .....="cd ../../../..;ls -lh"
 alias avg="awk 'BEGIN{sum=0;line=0};{sum+=\$1;line+=1};END{print sum/line}'"
-alias viz='rowcount|colcount|colorizer'
 alias lo="logout"
 
 #goto

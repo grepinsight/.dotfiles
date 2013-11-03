@@ -47,3 +47,6 @@ unset TZ
 
 #Add current path to the path
 PATH=$PATH:.
+
+#For sqlite
+stty erase ^H
