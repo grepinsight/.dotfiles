@@ -112,3 +112,5 @@ alias lview="sed ':x s/\(^\|\t\)\t/\1 \t/; t x' | column -ts$'\t' | less"
 
 #common typo
 alias Head='head'
+alias cu='vim commands.used'
+alias ccu='cat commands.used'
