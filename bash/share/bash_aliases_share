@@ -23,10 +23,14 @@ else
 fi
 
 
-alias l='ls -lh'
+alias l='ls -lh '
 alias la='ls -Al'                              # all but . and ..
-alias lat='ls -Altr'
+alias lat='ls -Altr '
 alias llt='ls -lhtr'
+alias llx='ls -lhtrX'
+alias lx='ls -lhtrX'
+alias ld='ls -lhtrX --group-directories-first'
+alias lld='ls -lhtrX --group-directories-first'
 alias lm="ls -lh | awk '\$3==\"akl2140\"'"
 alias lst='ls -lh | sort -k1,1'
 alias lstr='ls -lthr'
