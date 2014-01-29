@@ -74,6 +74,7 @@ alias bsa="vim ${bash_dotfile_dir}/share/bash_aliases_share"
 alias bal="vim ${bash_dotfile_dir}/local/bash_aliases_local"
 alias bla="vim ${bash_dotfile_dir}/local/bash_aliases_local"
 alias bil="vim ${bash_dotfile_dir}/local/bash_inirun_local"
+alias bfs="vim ${bash_dotfile_dir}/share/bash_functions_share"
 
 alias sbr="source $HOME/.bashrc"
 
@@ -113,7 +114,7 @@ alias lsf2='find . -maxdepth 2 -type f -name "$@"'
 alias lsf3='find . -maxdepth 3 -type f -name "$@"'
 
 alias lsprefix='find . -maxdepth 1 -name "*${1}"'
-alias lview="sed ':x s/\(^\|\t\)\t/\1 \t/; t x' | column -ts$'\t' | less"
+alias lview="sed ':x s/\(^\|\t\)\t/\1 \t/; t x' | column -ts$'\t' | less -S"
 
 #common typo
 alias Head='head'
