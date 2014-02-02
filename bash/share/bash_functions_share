@@ -72,6 +72,11 @@ cd_func ()
 
 alias cd=cd_func
 
+
+cdf () {
+    cd $(dirname "$1")
+}
+
 #--------------------------------------------------
 extract () {
    if [ -f $1 ] ; then
@@ -176,12 +181,22 @@ vim()
 
 export MARKPATH=$HOME/.marks
 function jump { 
+    unjump_dir=$(pwd)
     cd $MARKPATH/$1 2>/dev/null || echo "No such mark: $1"
     cd $(readlink -m $(pwd))
     ls -lh
 }
+
+function unjump {
+    if [[ -z $unjump_dir ]]; then
+	echo "There is nowhere to un'jump to!"
+    else
+	cd $unjump_dir
+	ls -lh
+    fi
+}
 function mark { 
-    mkdir -p $MARKPATH; ln -s $(pwd) $MARKPATH/$1
+    mkdir -p $MARKPATH; ln -sf $(pwd) $MARKPATH/$1
 }
 function unmark { 
     rm -i $MARKPATH/$1 

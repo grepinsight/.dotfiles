@@ -15,6 +15,8 @@ if [[ $platform == 'Darwin' ]]; then
 else
     alias ls='ls --color=auto'
 	alias ll='ls -lh'
+	alias ldesc='ls -lh | desc'
+	alias ld='ls -lh | desc'
 	#alias lll='ls -lh'
 	alias lll='find . -maxdepth 1 -type l | xargs -i ls -lh {} --color'
 	alias rip_color_code='sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g"'
@@ -27,9 +29,10 @@ alias l='ls -lh '
 alias la='ls -Al'                              # all but . and ..
 alias lat='ls -Altr '
 alias llt='ls -lhtr'
+alias ltd='ls -lhtr | desc'
 alias llx='ls -lhtrX'
 alias lx='ls -lhtrX'
-alias ld='ls -lhtrX --group-directories-first'
+# alias ld='ls -lhtrX --group-directories-first'
 alias lld='ls -lhtrX --group-directories-first'
 alias lm="ls -lh | awk '\$3==\"akl2140\"'"
 alias lst='ls -lh | sort -k1,1'
@@ -120,3 +123,12 @@ alias lview="sed ':x s/\(^\|\t\)\t/\1 \t/; t x' | column -ts$'\t' | less -S"
 alias Head='head'
 alias cu='vim commands.used'
 alias ccu='cat commands.used'
+
+
+# Hany shortcut
+alias cutt='cut -d"	"'
+alias cuts='cut -d" "'
+alias awkt='awk -F"\t"'
+alias colct="colc --delim '\t'"
+alias hgrep='history | grep'
+alias suw='sort | uniq | wc'
