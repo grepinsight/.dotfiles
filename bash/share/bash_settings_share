@@ -49,4 +49,4 @@ unset TZ
 PATH=$PATH:.
 
 #For sqlite
-stty erase ^H
+#stty erase ^H
