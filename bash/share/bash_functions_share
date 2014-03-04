@@ -171,13 +171,13 @@ function bsm {
     jid=$( echo $message | cut -f3 -d" " )
 }
 
-vim()
-{
-    local STTYOPTS="$(stty --save)"
-    stty stop '' -ixoff
-    command vim "$@"
-    stty "$STTYOPTS"
-}
+# vim()
+# {
+#     local STTYOPTS="$(stty --save)"
+#     stty stop '' -ixoff
+#     command vim "$@"
+#     stty "$STTYOPTS"
+# }
 
 export MARKPATH=$HOME/.marks
 function jump { 
