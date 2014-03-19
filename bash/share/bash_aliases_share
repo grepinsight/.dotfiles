@@ -53,7 +53,8 @@ alias ...="cd ../..;ls -lh"
 alias ....="cd ../../..;ls -lh"
 alias .....="cd ../../../..;ls -lh"
 alias avg="awk 'BEGIN{sum=0;line=0};{sum+=\$1;line+=1};END{print sum/line}'"
-alias lo="logout"
+#alias lo="logout"
+alias lo="exit"
 
 #goto
 alias bdot="cd ~/.bash_prefs/bash_prefs_share"
