@@ -7,6 +7,7 @@ let g:snippets_dir="$HOME/bin/util_setup/vim_setup/snippets"
 " Productivity Aliases
 "Run perlcode
  nnoremap <Leader>pl :w<CR> :!perl %<CR>
+ nnoremap <Leader>cc :w<CR> :!g++ %;./a.exe<CR>
  nnoremap <Leader>py :w<CR> :!python %<CR>
  " Make executate able
  nnoremap <Leader>x :!chmod 750 %<CR>
