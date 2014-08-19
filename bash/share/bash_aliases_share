@@ -16,7 +16,7 @@ else
     alias ls='ls --color=auto'
 	alias ll='ls -lh'
 	alias ldesc='ls -lh | desc'
-	alias ld='ls -lh | desc'
+	#alias ld='ls -lh | desc'
 	#alias lll='ls -lh'
 	alias lll='find . -maxdepth 1 -type l | xargs -i ls -lh {} --color'
 	alias rip_color_code='sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g"'
@@ -32,7 +32,8 @@ alias llt='ls -lhtr'
 alias ltd='ls -lhtr | desc'
 alias llx='ls -lhtrX'
 alias lx='ls -lhtrX'
-# alias ld='ls -lhtrX --group-directories-first'
+alias ld='ls -dl */'  # Directories only
+alias ld1='ls -d1 */' # Directories only -1
 alias lld='ls -lhtrX --group-directories-first'
 alias lm="ls -lh | awk '\$3==\"akl2140\"'"
 alias lst='ls -lh | sort -k1,1'
@@ -79,6 +80,7 @@ alias bal="vim ${bash_dotfile_dir}/local/bash_aliases_local"
 alias bla="vim ${bash_dotfile_dir}/local/bash_aliases_local"
 alias bil="vim ${bash_dotfile_dir}/local/bash_inirun_local"
 alias bfs="vim ${bash_dotfile_dir}/share/bash_functions_share"
+alias bfl="vim ${bash_dotfile_dir}/local/bash_functions_local"
 
 alias sbr="source $HOME/.bashrc"
 
@@ -133,3 +135,27 @@ alias awkt='awk -F"\t"'
 alias colct="colc --delim '\t'"
 alias hgrep='history | grep'
 alias suw='sort | uniq | wc'
+alias gp='grep'
+alias xcat='xargs cat'
+alias xrm='xargs rm'
+alias lgrep='ls |grep'
+alias llgrep='ls -lhtr |grep'
+alias awkp1="awk '{print \$1}'"
+alias awkp2="awk '{print \$2}'"
+alias awk1p="awk '{print \$1}'"
+alias awk2p="awk '{print \$2}'"
+alias awk3p="awk '{print \$3}'"
+alias awk4p="awk '{print \$4}'"
+alias awk5p="awk '{print \$5}'"
+alias awk6p="awk '{print \$6}'"
+alias awk7p="awk '{print \$7}'"
+alias awk8p="awk '{print \$8}'"
+alias grepi="grep -i"
+function mkcd(){
+  mkdir $1
+  cd $1
+}
+alias mkcd='mkdir $1; cd $1;'
+function findf(){ 
+    find $1 -type f 
+}

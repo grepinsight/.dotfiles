@@ -25,6 +25,12 @@ if [ -f "${INIT_DIR}/local/bash_paths_local" ]; then
    echo "bash_paths_local loaded"
 fi
 
+#functions
+if [ -f "${INIT_DIR}/local/bash_functions_local" ]; then
+   source "${INIT_DIR}/local/bash_functions_local"
+   echo "bash_functions_local loaded"
+fi
+
 #---------------SHARE-----------------------------
 # settings share
 if [ -e "${INIT_DIR}/share/bash_settings_share" ]; then
