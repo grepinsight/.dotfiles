@@ -98,7 +98,7 @@ alias js="jobs"
 alias j="jobs"
 alias f="fg"
 alias vimrc="vim ~/bin/utils_setup/vim_setup/vimrc"
-alias v="vim"
+#alias v="vim"
 
 #tablemanipulate
 ### http://unix.stackexchange.com/questions/29023/how-to-display-tsv-csv-in-console-when-empty-cells-are-missed-by-column-t
