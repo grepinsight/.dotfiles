@@ -30,3 +30,5 @@ git clone https://github.com/tpope/vim-abolish.git                #Abolish:https
 git clone https://github.com/tpope/vim-repeat.git                 #Repeat:https://github.com/tpope/vim-repeat
 git clone https://github.com/tommcdo/vim-exchange.git             #Exchange
 git clone https://github.com/vim-scripts/ZoomWin.git
+git clone https://github.com/flazz/vim-colorschemes.git           #Coloescheme
+

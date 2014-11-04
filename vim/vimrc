@@ -4,6 +4,12 @@ execute pathogen#infect()
 let g:snippets_dir="$HOME/bin/util_setup/vim_setup/snippets"
 " }}}
 
+" let g:solarized_termcolors=256
+set background=dark "Make the color suitable to dark background
+"colorscheme solarized
+colorscheme BlackSea
+colorscheme Monokai
+colorscheme monokain
 
 " Productivity Aliases
 "Run perlcode
@@ -37,7 +43,6 @@ nnoremap <silent> <F7> :TlistToggle<CR>
 set pastetoggle=<F8>
 
 "Set Methods ---------------------{{{
-  set background=dark "Make the color suitable to dark background
   set hidden "Allow modified/unsaved buffers in the background.
   set history=1000
   set nu
