@@ -13,7 +13,7 @@ if [[ $platform == 'Darwin' ]]; then
    alias ll='ls -G -lh'
    alias lll='ls -G -lh'
 else
-    alias ls='ls --color=auto'
+        # alias ls='ls --color=auto'
 	alias ll='ls -lh'
 	alias ldesc='ls -lh | desc'
 	#alias ld='ls -lh | desc'
@@ -22,6 +22,11 @@ else
 	alias rip_color_code='sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g"'
 	alias rdlk="readlink -m"
 	alias vdir='ls --color=auto --format=long'
+fi
+
+# If Ack exists
+if which ack > /dev/null 2>&1; then
+    alias lpy="ack -f -n --python | xargs -i ls -lh --color {}"  # list python file
 fi
 
 
@@ -38,7 +43,7 @@ alias lld='ls -lhtrX --group-directories-first'
 alias lm="ls -lh | awk '\$3==\"akl2140\"'"
 alias lst='ls -lh | sort -k1,1'
 alias lstr='ls -lthr'
-alias dir='ls --color=auto --format=vertical'
+alias dir='ls --format=vertical'
 alias diskspace="du -S | sort -n -r |more"
 alias folders="find . -maxdepth 1 -type d -print | xargs du -sk | sort -rn"
 
@@ -94,6 +99,7 @@ alias gupdate='cd ~/.dotfiles && git pull && cd -'
 
 #etc
 alias vr="vim README*"
+alias vimu="vim -u NONE"
 alias js="jobs"
 alias j="jobs"
 alias f="fg"
@@ -118,6 +124,7 @@ alias lsf='find . -type f -name "$@"'
 alias lsf1='find . -maxdepth 1 -type f -name "$@"'
 alias lsf2='find . -maxdepth 2 -type f -name "$@"'
 alias lsf3='find . -maxdepth 3 -type f -name "$@"'
+alias find1='find . -maxdepth 1'
 
 alias lsprefix='find . -maxdepth 1 -name "*${1}"'
 alias lview="sed ':x s/\(^\|\t\)\t/\1 \t/; t x' | column -ts$'\t' | less -S"

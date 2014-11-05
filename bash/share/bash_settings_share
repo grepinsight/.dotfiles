@@ -24,7 +24,7 @@ export HISTCONTROL=$HISTCONTROL${HISTCONTROL+,}ignoredups                # Don't
 PROMPT_COMMAND="$PROMPT_COMMAND;history -a; history -n"
 #PROMT & LS
 # PS1='\e[0;32m[\#] \u@\[\033]0;\h:\W\007\]\h:\W] \e[m'
-LS_COLORS="$LS_COLORS:di=00;33"
+#LS_COLORS="*notes=01;35:$LS_COLORS:di=00;33"
 
 
 #man page colorizer

@@ -50,6 +50,14 @@ if [ -f "${INIT_DIR}/share/bash_functions_share" ]; then
    echo "bash_functions_share loaded"
 fi
 
+#colors
+#
+if [ -f "${INIT_DIR}/share/bash_colors_share" ]; then
+   source "${INIT_DIR}/share/bash_colors_share"
+   echo "bash_colors_share loaded"
+fi
+
+
 #---------------Initial Run-----------------------------
 if [ -f "${INIT_DIR}/local/bash_inirun_local" ]; then
    echo "-----------------------"
