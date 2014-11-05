@@ -99,7 +99,9 @@ alias gupdate='cd ~/.dotfiles && git pull && cd -'
 
 #etc
 alias vr="vim README*"
-alias vimu="vim -u NONE"
+alias v="vim --noplugin"
+alias vimu="vim --noplugin"
+alias vimm="vim --noplugin"
 alias js="jobs"
 alias j="jobs"
 alias f="fg"
