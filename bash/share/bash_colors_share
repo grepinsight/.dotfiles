@@ -45,7 +45,6 @@ BGWH='47' # white
 RS="rs=0"         # reset
 DI="di=$BY"       # directory
 LN="ln=$BC"       # link
-MH="mh=00"        # multihardlink (file with more than one link)
 PI="pi=$BY;$BGBL" # pipe (FIFO)
 SO="so=$BM"       # socket
 DO="do=$BM"       # door
@@ -98,7 +97,7 @@ NOTES="*notes=$M"  # magenta for notes
 
 TYPES="$JOB_FILES:$NOTES:$ARCHIVE:$IMAGE:$MOVIE:$AUDIO:$SOURCE:$HEADER:$DIM:$TEXT:$PDF:$HTML:$PHP:$CSS"
 
-LS_COLORS="$RS:$DI:$LN:$MH:$PI:$SO:$DO:$BD:$CD:$OR:$SU:$SG:$CA:$TW:$OW:$ST:$EX:"$TYPES
+LS_COLORS="$RS:$DI:$LN:$PI:$SO:$DO:$BD:$CD:$OR:$SU:$SG:$CA:$TW:$OW:$ST:$EX:"$TYPES
 
 
 export LS_COLORS
