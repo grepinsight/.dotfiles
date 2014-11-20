@@ -161,11 +161,13 @@ alias awk6p="awk '{print \$6}'"
 alias awk7p="awk '{print \$7}'"
 alias awk8p="awk '{print \$8}'"
 alias grepi="grep -i"
-function mkcd(){
-  mkdir $1
-  cd $1
+
+function mkcd
+{
+  dir="$*";
+mkdir -p "$dir" && cd "$dir";
 }
-alias mkcd='mkdir $1; cd $1;'
+
 function findf(){ 
     find $1 -type f 
 }

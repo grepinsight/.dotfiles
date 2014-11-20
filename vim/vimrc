@@ -1,3 +1,5 @@
+set nocp
+"
 "Preamble
 "Pathongen Infection -------------------- {{{
 execute pathogen#infect()
@@ -22,8 +24,8 @@ colorscheme Monokai
  nnoremap <Leader>j kJ
 
  " command mode
- cnoremap ^ <home>
- cnoremap $ <end>
+ " cnoremap ^ <home>
+ " cnoremap $ <end>
 
 "Align Text
  nnoremap <leader>Al :left<cr>
