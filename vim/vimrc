@@ -194,6 +194,8 @@ nnoremap <leader>z zMzvzz
 " nnoremap ` '
 "save when losing focus
 au FocusLost * :silent! wall
+au FocusLost * :wa
+
 
 
 " Make sure Vim returns to the same line when you reopen a file.
