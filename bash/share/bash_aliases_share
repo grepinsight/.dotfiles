@@ -30,7 +30,7 @@ if which ack > /dev/null 2>&1; then
 fi
 
 
-alias l='ls -lh '
+#alias l='ls -lh '
 alias la='ls -Al'                              # all but . and ..
 alias lat='ls -Altr '
 alias llt='ls -lhtr'
