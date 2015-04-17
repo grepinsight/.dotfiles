@@ -48,8 +48,8 @@ set pastetoggle=<F8>
 "Set Methods ---------------------{{{
   set hidden "Allow modified/unsaved buffers in the background.
   set history=1000
-  set nu
-  set smartcase
+  set nu "set number"
+  set smartcase "if captial letter is used, then do not ignore case!"
   set ignorecase
 
   set shiftwidth=4
