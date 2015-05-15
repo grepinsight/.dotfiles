@@ -15,6 +15,8 @@ colorscheme Monokai
 "colorscheme monokain
 
 " Productivity Aliases
+" HTML Tidy
+ vmap ,x :!tidy -q -i --show-errors 0<CR>
 "Run perlcode
  nnoremap <Leader>pl :w<CR> :!perl %<CR>
  nnoremap <Leader>cc :w<CR> :!g++ %;./a.exe<CR>
