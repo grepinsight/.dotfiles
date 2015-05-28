@@ -96,6 +96,7 @@ alias gpull="git pull"
 alias gpom="git push origin master"
 alias gc="git commit"
 alias gupdate='cd ~/.dotfiles && git pull && cd -'
+alias gds="git diff --staged" 
 
 #etc
 alias vr="vim README*"
