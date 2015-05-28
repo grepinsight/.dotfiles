@@ -91,10 +91,12 @@ alias sbr="source $HOME/.bashrc"
 
 #git related
 alias gs="git status"
+alias gss="git status -s"
 alias gpush="git push"
 alias gpull="git pull"
 alias gpom="git push origin master"
 alias gc="git commit"
+alias gg="git log --oneline --decorate --graph --all"
 alias gupdate='cd ~/.dotfiles && git pull && cd -'
 alias gds="git diff --staged" 
 
