@@ -1,3 +1,4 @@
+syntax on
 set nocp
 
 function! NumberToggle()
@@ -19,7 +20,6 @@ au FocusGained * :set relativenumber
 execute pathogen#infect()
 let vimrplugin_assign = 0 " Stop annoying vimRplugin reassignment
 let g:snippets_dir="$HOME/bin/util_setup/vim_setup/snippets"
-syntax on
 " }}}
 
 "let g:solarized_termcolors=256
