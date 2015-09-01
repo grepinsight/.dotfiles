@@ -163,6 +163,7 @@ alias awk6p="awk '{print \$6}'"
 alias awk7p="awk '{print \$7}'"
 alias awk8p="awk '{print \$8}'"
 alias grepi="grep -i"
+alias acki="ack -i"
 alias cut1d='cut -f1 -d:'
 
 function mkcd
