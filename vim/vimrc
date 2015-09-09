@@ -1,4 +1,19 @@
+syntax on
 set nocp
+
+function! NumberToggle()
+  if(&relativenumber == 1)
+    set number
+  else
+    set relativenumber
+  endif
+endfunc
+
+nnoremap <C-n> :call NumberToggle()<cr>
+
+au FocusLost * :set number
+au FocusGained * :set relativenumber
+
 "
 "Preamble
 "Pathongen Infection -------------------- {{{
@@ -60,7 +75,6 @@ set pastetoggle=<F8>
 
   set incsearch
   runtime macros/matchit.vim
-  syntax on
   filetype plugin indent on
   hi Comment  guifg=#80a0ff ctermfg=darkred
 " }}}
@@ -88,7 +102,6 @@ set pastetoggle=<F8>
     nnoremap <silent> [T :tabfirst<CR>
     nnoremap <silent> ]T :tablast<CR>
 "Buffer navigation
-    nmap <C-n> :bnext<CR>
     nnoremap <silent> [b :bprevious<CR> 
     nnoremap <silent> ]b :bnext<CR>
     nnoremap <silent> [B :bfirst<CR>
