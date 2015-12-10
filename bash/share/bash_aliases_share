@@ -98,6 +98,7 @@ alias gpom="git push origin master"
 alias gc="git commit"
 alias gg="git log --oneline --decorate --graph --all"
 alias gupdate='cd ~/.dotfiles && git pull && cd -'
+alias gds="git diff --staged" 
 
 #etc
 alias vr="vim README*"
