@@ -12,6 +12,7 @@ bind Space:magic-space
 
 #History
 shopt -s histappend                                                       # Make bash append rather than overwrite the history on disk
+HISTFILE="${HOME}/.history/$(date +%Y/%m/%d.%H.%M.%S)_${HOSTNAME_SHORT}_$$"
 export HISTFILESIZE=20000
 export HISTSIZE=10000
 #export HISTTIMEFORMAT='%F %T '
@@ -45,7 +46,7 @@ shopt -s cdspell # When changing directory small typos can be ignored by bash. f
 
 
 #timesone unset
-unset TZ
+#unset TZ
 
 #Add current path to the path
 PATH=$PATH:.

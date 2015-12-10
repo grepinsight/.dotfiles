@@ -33,7 +33,7 @@ fi
 #alias l='ls -lh '
 alias la='ls -Al'                              # all but . and ..
 alias lat='ls -Altr '
-alias llt='ls -lhtr'
+alias llt='ls -lhtr --group-directories-first'
 alias ltd='ls -lhtr | desc'
 alias llx='ls -lhtrX'
 alias lx='ls -lhtrX'

@@ -1,12 +1,27 @@
 syntax on
 set nocp
+set cursorline          " highlight current line
+set lazyredraw          " redraw only when we need to.
+set showmatch           " highlight matching [{()}]
+set foldenable          " enable folding
+set foldlevelstart=10   " open most folds by default
+" space open/closes folds
+nnoremap <space> za     
+set foldmethod=indent   " fold based on indent level
+
+" highlight last inserted text
+nnoremap gV `[v`]
+
+" toggle gundo
+nnoremap <leader>u :GundoToggle<CR>
+
 
 function! NumberToggle()
-  if(&relativenumber == 1)
-    set number
-  else
-    set relativenumber
-  endif
+    if(&relativenumber == 1)
+        set number
+    else
+        set relativenumber
+    endif
 endfunc
 
 nnoremap <C-n> :call NumberToggle()<cr>
@@ -69,11 +84,17 @@ set pastetoggle=<F8>
   set smartcase "if captial letter is used, then do not ignore case!"
   set ignorecase
 
-  set shiftwidth=4
-  set softtabstop=4 "Indentation levels very four columns"
+  "set shiftwidth=4
+  "set softtabstop=4 "Indentation levels very four columns"
+  "set tabstop=4       " number of visual spaces per TAB
+  "set expandtab     " tabs are spaces
   " set textwidth=78  "Wrap at this column"
 
-  set incsearch
+
+  " Search
+  set incsearch           " search as characters are entered
+  set hlsearch            " highlight matches
+  
   runtime macros/matchit.vim
   filetype plugin indent on
   hi Comment  guifg=#80a0ff ctermfg=darkred
@@ -127,7 +148,6 @@ set pastetoggle=<F8>
 ""Keyboard shortcuts -------------------{{{
   nmap \l :setlocal number!<CR>
   nmap \q :nohlsearch<CR>
-  set hlsearch "Highlight searches by default
   nmap \e :NERDTreeToggle<CR>
 
 "insert file name : \fn in insert mode

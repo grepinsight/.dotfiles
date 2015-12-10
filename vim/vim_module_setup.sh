@@ -32,3 +32,4 @@ git clone https://github.com/MarcWeber/vim-addon-mw-utils.git
 # git clone https://github.com/terryma/vim-multiple-cursors         #multiple cursor
 git clone https://github.com/flazz/vim-colorschemes.git           #Coloescheme
 git clone https://github.com/gorodinskiy/vim-coloresque.git      #Css colorizer
+git clone https://github.com/sjl/gundo.vim.git                   # gundo

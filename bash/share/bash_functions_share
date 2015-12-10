@@ -250,3 +250,13 @@ function up() {
 	cd $(_up "$@")
     fi
 }
+
+function history_original() {
+    export HISTFILE=$HOME/.bash_history
+}
+
+function histgrep ()
+{
+  grep -r "$@" ~/.history
+    history | grep "$@"
+}
