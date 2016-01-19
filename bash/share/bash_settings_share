@@ -12,7 +12,14 @@ bind Space:magic-space
 
 #History
 shopt -s histappend                                                       # Make bash append rather than overwrite the history on disk
-HISTFILE="${HOME}/.history/$(date +%Y/%m/%d.%H.%M.%S)_${HOSTNAME_SHORT}_$$"
+HISTORY_DIRPATH=${HOME}/.history/$(date +%Y/%m)
+if [[ ! -e $HISTORY_DIRPATH ]]; then
+    echo "--> HISTORY_DIRPATH doesn't exist. Creating $HISTORY_DIRPATH..."
+
+    mkdir -p $HISTORY_DIRPATH 
+fi
+
+HISTFILE=$HISTORY_DIRPATH"$(date +%d.%H.%M.%S)_${HOSTNAME_SHORT}_$$"
 export HISTFILESIZE=20000
 export HISTSIZE=10000
 #export HISTTIMEFORMAT='%F %T '
