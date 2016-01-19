@@ -19,6 +19,8 @@ if [[ ! -e $HISTORY_DIRPATH ]]; then
     mkdir -p $HISTORY_DIRPATH 
 fi
 
+HOSTNAME="$(hostname)"
+HOSTNAME_SHORT="${HOSTNAME%%.*}"
 HISTFILE=$HISTORY_DIRPATH"$(date +%d.%H.%M.%S)_${HOSTNAME_SHORT}_$$"
 export HISTFILESIZE=20000
 export HISTSIZE=10000
