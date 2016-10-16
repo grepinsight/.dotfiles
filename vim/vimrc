@@ -18,6 +18,7 @@ nnoremap <leader>u :GundoToggle<CR>
 
 function! NumberToggle()
     if(&relativenumber == 1)
+        set norelativenumber
         set number
     else
         set relativenumber
@@ -158,7 +159,7 @@ set pastetoggle=<F8>
 "insert file name : \fn in insert mode
 inoremap \fn <C-R>=expand("%:t")<CR>
 "Editting source files
-nnoremap <Leader>ev :vsplit $MYVIMRC<CR>
+nnoremap <Leader>ev :tabnew $MYVIMRC<CR>
 nnoremap <Leader>sv :source $MYVIMRC<CR>
 nnoremap <Leader>es :vsplit ~/.vim/bundle/mysnippets/snippets<CR>
 
