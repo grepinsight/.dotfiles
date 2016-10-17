@@ -2,8 +2,7 @@
 # set up essential vim modules
 #
 
-mkdir -p ~/.vim/autoload ~/.vim/bundle && \
-    curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
+mkdir -p ~/.vim/autoload ~/.vim/bundle && curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
 cd ~/.vim/bundle
 git clone git://github.com/tpope/vim-sensible.git
 git clone https://github.com/scrooloose/nerdtree.git
@@ -33,4 +32,5 @@ git clone https://github.com/MarcWeber/vim-addon-mw-utils.git
 git clone https://github.com/flazz/vim-colorschemes.git           #Coloescheme
 git clone https://github.com/gorodinskiy/vim-coloresque.git      #Css colorizer
 git clone https://github.com/sjl/gundo.vim.git                   # gundo
-git clone https://github.com/maverickg/stan.vim.git
+#git clone https://github.com/maverickg/stan.vim.git
+git clone https://github.com/plasticboy/vim-markdown.git
