@@ -2,3 +2,8 @@ bash/local/*
 vim_testfile.txt
 *.un~
 *.swp
+
+
+# will be different from machine to machine, so just ignore them
+*.local    
+*.combined
