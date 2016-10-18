@@ -2,8 +2,7 @@ bash/local/*
 vim_testfile.txt
 *.un~
 *.swp
-
+*.local
+*.combined
 
 # will be different from machine to machine, so just ignore them
-*.local    
-*.combined
