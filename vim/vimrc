@@ -158,6 +158,7 @@ set pastetoggle=<F8>
 
 "insert file name : \fn in insert mode
 inoremap \fn <C-R>=expand("%:t")<CR>
+
 "Editting source files
 nnoremap <Leader>ev :tabnew $MYVIMRC<CR>
 nnoremap <Leader>sv :source $MYVIMRC<CR>
@@ -418,3 +419,11 @@ let g:UltiSnipsJumpBackwardTrigger="<c-k>"
 
 " If you want :UltiSnipsEdit to split your window.
 let g:UltiSnipsEditSplit="vertical"
+
+" Useful hotkeys
+
+nnoremap <Leader>gi :e ./.gitignore<CR>
+nnoremap <Leader>btt :bufdo tab split<CR>
+nnoremap <Leader>tc :tabclose<CR>
+nnoremap <Leader>ls :ls<CR>
+
