@@ -11,3 +11,7 @@
 	merc = merge --no-ff
     addf = add --force
     diffs = diff --staged
+[merge]
+        tool = vimdiff
+[core]
+        editor = vim
