@@ -113,9 +113,9 @@ set pastetoggle=<F8>
     xnoremap k gk
 "Fasta up and down
   " nmap J 5j
-    nmap K 5k
-    xmap J 5j
-    xmap K 5k
+    " nmap K 5k
+    " xmap J 5j
+    " xmap K 5k
 "Split navigation
     nmap gh <C-w>h
     nmap gj <C-w>j
@@ -427,3 +427,29 @@ nnoremap <Leader>btt :bufdo tab split<CR>
 nnoremap <Leader>tc :tabclose<CR>
 nnoremap <Leader>ls :ls<CR>
 
+" Open markdown
+nnoremap <Leader>md :w<CR> :!cygstart %<CR>
+
+" Bash alias shortcut
+nnoremap <Leader>bas :tabnew $HOME/.dotfiles/bash/share/bash_aliases_share<CR>
+nnoremap <Leader>bcs :tabnew $HOME/.dotfiles/bash/share/bash_colors_share<CR>
+nnoremap <Leader>bfs :tabnew $HOME/.dotfiles/bash/share/bash_functions_share<CR>
+nnoremap <Leader>bss :tabnew $HOME/.dotfiles/bash/share/bash_settings_share<CR>
+nnoremap <Leader>bal :tabnew $HOME/.dotfiles/bash/local/bash_aliases_local<CR>
+nnoremap <Leader>bpl :tabnew $HOME/.dotfiles/bash/local/bash_paths_local<CR>
+nnoremap <Leader>bsl :tabnew $HOME/.dotfiles/bash/local/bash_settings_local<CR>
+
+" <Leader>f{char} to move to {char}
+map  <Leader>f <Plug>(easymotion-bd-f)
+nmap <Leader>f <Plug>(easymotion-overwin-f)
+
+" s{char}{char} to move to {char}{char}
+nmap s <Plug>(easymotion-overwin-f2)
+
+" Move to line
+map <Leader>L <Plug>(easymotion-bd-jk)
+nmap <Leader>L <Plug>(easymotion-overwin-line)
+
+" Move to word
+map  <Leader>w <Plug>(easymotion-bd-w)
+nmap <Leader>w <Plug>(easymotion-overwin-w)
