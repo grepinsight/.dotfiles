@@ -1,3 +1,5 @@
+alias reload_alias_share="source $HOME/.dotfiles/bash/share/bash_aliases_share"
+alias reload_alias_local="source $HOME/.dotfiles/bash/share/bash_aliases_local"
 platform='unknown'
 unamestr=`uname`
 if [[ "$unamestr" == 'Linux' ]]; then
@@ -183,3 +185,12 @@ mkdir -p "$dir" && cd "$dir";
 function findf(){ 
     find $1 -type f 
 }
+
+alias tree_ppt='tree -l -P "*.pptx|*.ppt" --prune -t -D'
+alias tree_time='tree -D -t'
+alias trees="tree --filelimit 30" # tree short
+
+alias find_vimcrap='find . -name "*.swp" -o -name "*.swo"'
+alias find_recent='find . \( -path ./.git -o -path ./.Rproj.user \) -prune -o -type f -printf "%T+\t%p\n" | sort'
+alias find_scripts='ls'
+alias find_xxx='find . -name "*.md" -o -name "*.R" -o -name "*.r" -o -name "*.rmd" -o -name "*.Rmd" | xargs -i ack -C 4 -H "XXX" {}'
