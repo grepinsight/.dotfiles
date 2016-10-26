@@ -11,6 +11,7 @@
 	merc = merge --no-ff
     addf = add --force
     diffs = diff --staged
+    ls = ls-tree --full-tree -r HEAD
 [merge]
         tool = vimdiff
 [core]
