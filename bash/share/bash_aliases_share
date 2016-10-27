@@ -1,5 +1,54 @@
+##################################################
+# Administrative 
+
 alias reload_alias_share="source $HOME/.dotfiles/bash/share/bash_aliases_share"
 alias reload_alias_local="source $HOME/.dotfiles/bash/share/bash_aliases_local"
+alias reload_bashrc="source $HOME/.bashrc"
+alias lo="exit"
+
+## Fly - will fly to the directory 
+_fly() {
+  if [[ -z $1 ]]; then
+    echo "No argument provided!"
+  else
+    cd $(dirname $1)
+     
+  fi
+}
+
+alias fly=_fly
+
+function mkcd
+{
+  dir="$*";
+  mkdir -p "$dir" && cd "$dir";
+}
+
+alias nosym='cd $(readlink -m $(pwd))'
+##################################################
+# Dotfiles related
+
+bash_dotfile_dir="${HOME}/.dotfiles/bash"
+alias bpl="vim ${bash_dotfile_dir}/local/bash_paths_local"
+alias bsl="vim ${bash_dotfile_dir}/local/bash_settings_local"
+alias bas="vim ${bash_dotfile_dir}/share/bash_aliases_share"
+alias bss="vim ${bash_dotfile_dir}/share/bash_settings_share"
+alias bsa="vim ${bash_dotfile_dir}/share/bash_aliases_share"
+alias bal="vim ${bash_dotfile_dir}/local/bash_aliases_local"
+alias bla="vim ${bash_dotfile_dir}/local/bash_aliases_local"
+alias bil="vim ${bash_dotfile_dir}/local/bash_inirun_local"
+alias bfs="vim ${bash_dotfile_dir}/share/bash_functions_share"
+alias bfl="vim ${bash_dotfile_dir}/local/bash_functions_local"
+
+##################################################
+# Utilities
+
+# Average
+alias avg="awk 'BEGIN{sum=0;line=0};{sum+=\$1;line+=1};END{print sum/line}'"
+
+
+##################################################
+# Ls related
 platform='unknown'
 unamestr=`uname`
 if [[ "$unamestr" == 'Linux' ]]; then
@@ -7,15 +56,14 @@ if [[ "$unamestr" == 'Linux' ]]; then
 elif [[ "$unamestr" == 'Darwin' ]]; then
    platform='Darwin'
 fi
-#Test
-#Display
+
 
 if [[ $platform == 'Darwin' ]]; then
    alias ls='ls -G'
    alias ll='ls -G -lh'
    alias lll='ls -G -lh'
 else
-        alias ls='ls --color=auto'
+    alias ls='ls --color=auto'
 	alias ll='ls -lh'
 	alias ldesc='ls -lh | desc'
 	#alias ld='ls -lh | desc'
@@ -46,70 +94,85 @@ alias lm="ls -lh | awk '\$3==\"akl2140\"'"
 alias lst='ls -lh | sort -k1,1'
 alias lstr='ls -lthr'
 alias dir='ls --format=vertical'
-alias diskspace="du -S | sort -n -r |more"
-alias folders="find . -maxdepth 1 -type d -print | xargs du -sk | sort -rn"
 
-alias rr='rm -r'
-alias wai='readlink -m .'
-alias whereami='readlink -m .'
+##################################################
+
 alias df='df -h'
 alias du='du -h'
+alias diskspace="du -S | sort -n -r |more"
+alias folders="find . -maxdepth 1 -type d -print | xargs du -sk | sort -rn"
+alias whereami='readlink -m .'
 
-#movement
+##################################################
+## Navigating File system
+
 alias ..="cd ..;ls -lh"
 alias ...="cd ../..;ls -lh"
 alias ....="cd ../../..;ls -lh"
 alias .....="cd ../../../..;ls -lh"
-alias avg="awk 'BEGIN{sum=0;line=0};{sum+=\$1;line+=1};END{print sum/line}'"
-#alias lo="logout"
-alias lo="exit"
 
-#goto
-alias bdot="cd ~/.bash_prefs/bash_prefs_share"
-#space check
-alias diskspace="du -S | sort -n -r |more"
+##################################################
+# Grep/Ack related
 
-#find
-alias fn="find . -name"
+alias acki="ack -i"
 
-alias grep='grep --color'                     # show differences in colour
-alias egrep='egrep --color=auto'              # show differences in colour
-alias fgrep='fgrep --color=auto'              # show differences in colour
+## Add color by default
+alias grep='grep --color'       
+alias egrep='egrep --color=auto'
+alias fgrep='fgrep --color=auto'
+
+## Grep shortcut
+alias gp='grep'
+
+
+alias lgrep='ls |grep'
+alias llgrep='ls -lhtr |grep'
+
+## Grep ignorecase
+alias grepi="grep -i"
+
+alias hgrep='history | grep'
+alias fcat='xargs grep ""'
+
+
 alias uniqc="uniq -c | sort -k2,2 | awk '{print $1\"\t\"$2}'"
 
-#bash file editing
-bash_dotfile_dir="${HOME}/.dotfiles/bash"
-alias bpl="vim ${bash_dotfile_dir}/local/bash_paths_local"
-alias bsl="vim ${bash_dotfile_dir}/local/bash_settings_local"
-alias bas="vim ${bash_dotfile_dir}/share/bash_aliases_share"
-alias bss="vim ${bash_dotfile_dir}/share/bash_settings_share"
-alias bsa="vim ${bash_dotfile_dir}/share/bash_aliases_share"
-alias bal="vim ${bash_dotfile_dir}/local/bash_aliases_local"
-alias bla="vim ${bash_dotfile_dir}/local/bash_aliases_local"
-alias bil="vim ${bash_dotfile_dir}/local/bash_inirun_local"
-alias bfs="vim ${bash_dotfile_dir}/share/bash_functions_share"
-alias bfl="vim ${bash_dotfile_dir}/local/bash_functions_local"
+##################################################
+# Git related
 
-alias sbr="source $HOME/.bashrc"
-
-#git related
+## Git Status
 alias gs="git status"
 alias gss="git status -s"
+
+## Git Add
+alias gau="git add -u"
+
+## Git Log
 alias gl="git log"
 alias glo="git log --oneline"
+alias gg="git log --oneline --decorate --graph --all"
+
+## Git Push/Pull
 alias gpush="git push"
 alias gpull="git pull"
 alias gpom="git push origin master"
+
+## Git Commit
 alias gc="git commit"
-alias gg="git log --oneline --decorate --graph --all"
+alias gd="git diff"
+
+## Git Update
 alias gupdate='cd ~/.dotfiles && git pull && cd -'
 alias gds="git diff --staged" 
+
+## Git Branch/Checkout
+alias gb="git branch"
 alias gcm="git checkout master"
 alias gco="git checkout"
-alias gd="git diff"
-alias gb="git branch"
 
-#etc
+##################################################
+# Vim related
+
 alias vr="vim README*"
 alias v="vim --noplugin"
 alias vimu="vim --noplugin"
@@ -118,50 +181,40 @@ alias js="jobs"
 alias j="jobs"
 alias f="fg"
 alias vimrc="vim ~/bin/utils_setup/vim_setup/vimrc"
-#alias v="vim"
+
+##################################################
+# etc
 
 #tablemanipulate
 ### http://unix.stackexchange.com/questions/29023/how-to-display-tsv-csv-in-console-when-empty-cells-are-missed-by-column-t
 alias ctt="(sed ':x s/\(^\|\t\)\t/\1 \t/; t x' | column -ts$'\t')"
 
-# Utilities
-alias nosym='cd $(readlink -m $(pwd))'
-alias dirls1='find . -maxdepth 1 -type d -name "$@"'
-alias dirls2='find . -maxdepth 2 -type d -name "$@"'
-alias dirls3='find . -maxdepth 3 -type d -name "$@"'
-alias lsdir='find . -type d'
-alias lsdir1='find . -maxdepth 1 -type d -name "$@"'
-alias lsdir2='find . -maxdepth 2 -type d -name "$@"'
-alias lsdir3='find . -maxdepth 3 -type d -name "$@"'
-
-alias lsf='find . -type f -name "$@"'
-alias lsf1='find . -maxdepth 1 -type f -name "$@"'
-alias lsf2='find . -maxdepth 2 -type f -name "$@"'
-alias lsf3='find . -maxdepth 3 -type f -name "$@"'
-alias find1='find . -maxdepth 1'
 
 alias lsprefix='find . -maxdepth 1 -name "*${1}"'
 alias lview="sed ':x s/\(^\|\t\)\t/\1 \t/; t x' | column -ts$'\t' | less -S"
 
-#common typo
+##################################################
+# Typo related
+
+## common typo
 alias Head='head'
-alias cu='vim commands.used'
-alias ccu='cat commands.used'
+alias grpe='grep'
 
+##################################################
+# Handy shortcuts
 
-# Hany shortcut
+alias xcat='xargs cat'
+alias xrm='xargs rm'
 alias cutt='cut -d"	"'
 alias cuts='cut -d" "'
-alias awkt='awk -F"\t"'
+alias cut1d='cut -f1 -d:'
 alias colct="colc --delim '\t'"
-alias hgrep='history | grep'
 alias suw='sort | uniq | wc'
-alias gp='grep'
-alias xcat='xargs cat'
-alias fcat='xargs grep ""'
-alias xrm='xargs rm'
-alias lgrep='ls |grep'
-alias llgrep='ls -lhtr |grep'
+
+##################################################
+# Awk related
+
+alias awkt='awk -F"\t"'
 alias awkp1="awk '{print \$1}'"
 alias awkp2="awk '{print \$2}'"
 alias awk1p="awk '{print \$1}'"
@@ -172,37 +225,46 @@ alias awk5p="awk '{print \$5}'"
 alias awk6p="awk '{print \$6}'"
 alias awk7p="awk '{print \$7}'"
 alias awk8p="awk '{print \$8}'"
-alias grepi="grep -i"
-alias acki="ack -i"
-alias cut1d='cut -f1 -d:'
+alias awk9p="awk '{print \$9}'"
+alias awk10p="awk '{print \$10}'"
 
-function mkcd
-{
-  dir="$*";
-mkdir -p "$dir" && cd "$dir";
-}
+##################################################
+# Tree related
+alias tree_ppt='tree -l -P "*.pptx|*.ppt" --prune -t -D'
+alias tree_time='tree -D -t'
+alias tree_limit30="tree --filelimit 30" # tree short
 
+##################################################
+# Find related
+
+## Find files
 function findf(){ 
     find $1 -type f 
 }
 
-alias tree_ppt='tree -l -P "*.pptx|*.ppt" --prune -t -D'
-alias tree_time='tree -D -t'
-alias trees="tree --filelimit 30" # tree short
-
+## Find crap vim produces
 alias find_vimcrap='find . -name "*.swp" -o -name "*.swo"'
+
+## List files by recency
 alias find_recent='find . \( -path ./.git -o -path ./.Rproj.user \) -prune -o -type f -printf "%T+\t%p\n" | sort'
-alias find_scripts='ls'
+
+## List files that changed last 30 minutes ago only
+alias find_justnow='find . \( -path ./.git -o -path ./.Rproj.user \) -prune -o -type f -cmin -30 -printf "%T+\t%p\n" | sort'
+alias fj='find . \( -path ./.git -o -path ./.Rproj.user \) -prune -o -type f -cmin -30 -printf "%T+\t%p\n" | sort'
+
+##  Find files that have XXX init
 alias find_xxx='find . -name "*.md" -o -name "*.R" -o -name "*.r" -o -name "*.rmd" -o -name "*.Rmd" | xargs -i ack -C 4 -H "XXX" {}'
 
+alias find_dir1='find . -maxdepth 1 -type d -name "$@"'
+alias find_dir2='find . -maxdepth 2 -type d -name "$@"'
+alias find_dir3='find . -maxdepth 3 -type d -name "$@"'
+alias lsdir='find . -type d'
+alias lsdir1='find . -maxdepth 1 -type d -name "$@"'
+alias lsdir2='find . -maxdepth 2 -type d -name "$@"'
+alias lsdir3='find . -maxdepth 3 -type d -name "$@"'
 
-#  will fly to the directory 
-_fly() {
-  if [[ -z $1 ]]; then
-    echo "No argument provided!"
-  else
-    cd $(dirname $1)
-     
-  fi
-}
-alias fly=_fly
+alias lsf='find . -type f -name "$@"'
+alias lsf1='find . -maxdepth 1 -type f -name "$@"'
+alias lsf2='find . -maxdepth 2 -type f -name "$@"'
+alias lsf3='find . -maxdepth 3 -type f -name "$@"'
+alias find1='find . -maxdepth 1'
