@@ -93,9 +93,10 @@ set-option -g renumber-windows on
 # set -a  appends to a current value (for strings)
  
  
-# quick reload of this config into the current tmux (useful while fiddling with it)
-bind r source-file ~/.tmux.conf
+# Quick reload of this config into the current tmux (useful while fiddling with it)
+bind r source-file ~/.tmux.conf \; display "Reloaded!"
 
+# Splitting panes
 bind-key | splitw -h
 bind-key _ splitw -v
 bind-key - splitw -v
