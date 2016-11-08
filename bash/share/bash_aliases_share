@@ -2,7 +2,7 @@
 # Administrative 
 
 alias reload_alias_share="source $HOME/.dotfiles/bash/share/bash_aliases_share"
-alias reload_alias_local="source $HOME/.dotfiles/bash/share/bash_aliases_local"
+alias reload_alias_local="source $HOME/.dotfiles/bash/local/bash_aliases_local"
 alias reload_bashrc="source $HOME/.bashrc"
 alias lo="exit"
 
@@ -233,6 +233,9 @@ alias awk10p="awk '{print \$10}'"
 alias tree_ppt='tree -l -P "*.pptx|*.ppt" --prune -t -D'
 alias tree_time='tree -D -t'
 alias tree_limit30="tree --filelimit 30" # tree short
+alias tree_lim30="tree --filelimit 30" # tree short
+alias tree_lim10="tree --filelimit 10" # tree short
+alias tree_limit10="tree --filelimit 10" # tree short
 
 ##################################################
 # Find related
@@ -268,3 +271,35 @@ alias lsf1='find . -maxdepth 1 -type f -name "$@"'
 alias lsf2='find . -maxdepth 2 -type f -name "$@"'
 alias lsf3='find . -maxdepth 3 -type f -name "$@"'
 alias find1='find . -maxdepth 1'
+
+## Find fasta files
+alias find_fasta='find -L -type f -name "*fa" -o -name "*fna" -o -name "*fasta" -o -name "*fa.gz" -o -name "*fasta.gz" -o -name "*fna.gz"'
+alias find_fastq='find -L -type f -name "*fq" -o -name "*fastq" -o -name "*fastq.gz" -o -name "*fq.gz"'
+alias find_R='find . -iname "*.R" -o -iname "*.Rmd"'
+alias find_ppt='find . -type f -name "*.pptx" -o -name "*.ppt"'
+
+_makefile_init() {
+  if [[ ! -e Makefile ]]; then
+  echo "Initiating Makefile"
+cat<<EOF > Makefile
+SHELL := /bin/bash
+
+help: ## Prints help for targets with comments
+	@grep -E '^[.0-9a-zA-Z_-]+:.*?## .*\$\$' \$(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", \$\$1, \$\$2}'
+
+EOF
+  else
+    echo "Makefile already exists!"
+
+  fi
+}
+## Makefile Related
+alias mm_init=_makefile_init
+alias mm="vim Makefile"
+alias mmh="Makefile help"
+
+datediff() {
+    d1=$(date -d "$1" +%s)
+    d2=$(date -d "$2" +%s)
+    echo $(( (d1 - d2) / 86400 )) days
+}
