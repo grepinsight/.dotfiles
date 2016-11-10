@@ -295,7 +295,11 @@ EOF
 }
 ## Makefile Related
 alias mm_init=_makefile_init
-alias mm="vim Makefile"
+
+_makefile_up() {
+    if [[ $(jobs | grep Make | wc -l) == 1 ]]; then fg; else vim Makefile; fi
+}
+alias mm=_makefile_up
 alias mmh="Makefile help"
 
 datediff() {
