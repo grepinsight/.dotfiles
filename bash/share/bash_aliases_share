@@ -246,7 +246,7 @@ function findf(){
 }
 
 ## Find crap vim produces
-alias find_vimcrap='find . -name "*.swp" -o -name "*.swo"'
+alias find_vimcrap='find . -name "*.swp" -o -name "*.swo" -o -name "*.un~"'
 
 ## List files by recency
 alias find_recent='find . \( -path ./.git -o -path ./.Rproj.user \) -prune -o -type f -printf "%T+\t%p\n" | sort'
