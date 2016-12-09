@@ -16,7 +16,12 @@ echo "--- Setting up vimrc ---"
 if [[ -f $HOME/.vimrc ]]; then
     echo "$HOME/.vimrc already exists!"
 else
+    echo " * Creating a symbolic link"
+    echo " ->  ln -sf .dotfiles/vim/vimrc ../.vimrc"
     ln -s .dotfiles/vim/vimrc ../.vimrc
+
+    echo " * Installing vim plugins"
+    bash vim/vim_module_setup.sh
 fi
 
 #touch tmux/tmux.conf.local
