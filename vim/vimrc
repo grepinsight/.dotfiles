@@ -1,3 +1,5 @@
+
+
 syntax on
 set nocp
 set cursorline          " highlight current line
@@ -413,12 +415,15 @@ endfunction
 " check file change every 4 seconds ('CursorHold') and reload the buffer upon detecting change
 au CursorHold * checktime  
 
+"Ultistnip
 let g:UltiSnipsExpandTrigger="<S-tab>"
 " let g:UltiSnipsJumpForwardTrigger="<c-j>"
 " let g:UltiSnipsJumpBackwardTrigger="<c-k>"
 " 
 " " If you want :UltiSnipsEdit to split your window.
 let g:UltiSnipsEditSplit="vertical"
+let g:UltiSnipsNoPythonWarning = 1
+let g:UltiSnipsSnippetsDir="~/.vim/bundle/mysnippets/snippets/"
 
 " Useful hotkeys
 
