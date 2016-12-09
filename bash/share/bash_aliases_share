@@ -84,6 +84,7 @@ fi
 alias la='ls -Al'                              # all but . and ..
 alias lat='ls -Altr '
 alias llt='ls -lhtr --group-directories-first'
+alias llta='ls -lhtr --group-directories-first -a'
 alias ltd='ls -lhtr | desc'
 alias llx='ls -lhtrX'
 alias lx='ls -lhtrX'
@@ -169,6 +170,9 @@ alias gds="git diff --staged"
 alias gb="git branch"
 alias gcm="git checkout master"
 alias gco="git checkout"
+
+## Git Rebaise
+alias grm="git rebase master"
 
 ##################################################
 # Vim related
