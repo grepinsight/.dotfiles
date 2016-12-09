@@ -1,10 +1,9 @@
 #!/bin/bash
 # set up essential vim modules
-#
 
 mkdir -p ~/.vim/autoload ~/.vim/bundle && curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
-if cd $HOME/.vim/bundle; then
 
+if cd $HOME/.vim/bundle; then
     # Essentials
     git clone git://github.com/tpope/vim-sensible.git
     git clone git://github.com/tpope/vim-fugitive.git                  
