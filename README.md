@@ -2,5 +2,5 @@ Installation
 -------------
 
 ```shell
-cd $HOME & git clone https://github.com/grepinsight/.dotfiles.git
+cd $HOME && git clone https://github.com/grepinsight/.dotfiles.git
 ```
