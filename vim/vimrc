@@ -79,6 +79,7 @@ colorscheme Monokai
 nnoremap <silent> <F7> :TlistToggle<CR>
 "Paste Toggle
 set pastetoggle=<F8>
+set pastetoggle=<leader>p
 
 "Set Methods ---------------------{{{
   set hidden "Allow modified/unsaved buffers in the background.
