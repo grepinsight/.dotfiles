@@ -1,3 +1,8 @@
+What is it?
+-------------
+A bunch of configuration files for many programs I use daily
+
+
 Installation
 -------------
 
