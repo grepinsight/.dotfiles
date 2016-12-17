@@ -100,6 +100,7 @@ alias dir='ls --format=vertical'
 
 alias df='df -h'
 alias du='du -h'
+alias du_dir='ls -d */ | xargs -i echo "du -sh {}" | bash | sort -hr'
 alias diskspace="du -S | sort -n -r |more"
 alias folders="find . -maxdepth 1 -type d -print | xargs du -sk | sort -rn"
 alias whereami='readlink -m .'
