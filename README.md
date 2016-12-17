@@ -1,6 +1,6 @@
 What is it?
 -------------
-A bunch of configuration files for many programs I use daily.
+A bunch of configuration files(aka dotfiles) for many programs I use daily.
 It's for personal use, so it's frequently updated & done so with minimal documentation.
 If you want to use it as a baseline of your dotfiles, please consider forking it.
 
