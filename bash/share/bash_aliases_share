@@ -79,18 +79,43 @@ if which ack > /dev/null 2>&1; then
     alias lpy="ack -f -n --python | xargs -i ls -lh --color {}"  # list python file
 fi
 
+## long list format - llt?([dfx])
+###  t - sort by time
+###  d - directory
+###  f - file
+###  x - separated
 
-#alias l='ls -lh '
+
+### llf - ll, files only
+alias llf='ls -lh -F | grep -v /' 
+
+### lld - ll, directories only
+alias lld='ls -l -d */'
+
+### llsep - ll, separate group and files
+alias llsep='ls -l --group-directories-first'
+
+### llt  - ll, sort by time
+alias llt='ls -lh -tr'
+
+### lltd - ll, sort by time, directories only
+alias lltd='ls -lh -tr -d */'
+
+### lltf - ll, sort by time, files only
+alias lltf='ls -lh -tr -F | grep -v /'
+
+### llx - ll, sort by filetype
+alias llx='ls -lh -X'
+
+alias llta='ls -lhtr --group-directories-first -a'
+
+
 alias la='ls -Al'                              # all but . and ..
 alias lat='ls -Altr '
-alias llt='ls -lhtr --group-directories-first'
-alias llta='ls -lhtr --group-directories-first -a'
 alias ltd='ls -lhtr | desc'
-alias llx='ls -lhtrX'
 alias lx='ls -lhtrX'
 alias ld='ls -dl */'  # Directories only
 alias ld1='ls -d1 */' # Directories only -1
-alias lld='ls -lhtrX --group-directories-first'
 alias lm="ls -lh | awk '\$3==\"akl2140\"'"
 alias lst='ls -lh | sort -k1,1'
 alias lstr='ls -lthr'
