@@ -234,6 +234,7 @@ alias awk10p="awk '{print \$10}'"
 
 ##################################################
 # Tree related
+alias tree_d='tree -d' # tree directory
 alias tree_ppt='tree -l -P "*.pptx|*.ppt" --prune -t -D'
 alias tree_time='tree -D -t'
 alias tree_limit30="tree --filelimit 30" # tree short
