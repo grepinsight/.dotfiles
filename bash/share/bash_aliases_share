@@ -307,6 +307,7 @@ alias find1='find . -maxdepth 1'
 alias find_fasta='find -L -type f -name "*fa" -o -name "*fna" -o -name "*fasta" -o -name "*fa.gz" -o -name "*fasta.gz" -o -name "*fna.gz"'
 alias find_fastq='find -L -type f -name "*fq" -o -name "*fastq" -o -name "*fastq.gz" -o -name "*fq.gz"'
 alias find_R='find . -iname "*.R" -o -iname "*.Rmd"'
+alias find_Rmd='find . -iname "*.Rmd"'
 alias find_ppt='find . -type f -name "*.pptx" -o -name "*.ppt"'
 
 _makefile_init() {
