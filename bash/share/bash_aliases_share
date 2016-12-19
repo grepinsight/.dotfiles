@@ -292,6 +292,8 @@ alias find_xxx='find . -name "*.md" -o -name "*.R" -o -name "*.r" -o -name "*.rm
 alias find_dir1='find . -maxdepth 1 -type d -name "$@"'
 alias find_dir2='find . -maxdepth 2 -type d -name "$@"'
 alias find_dir3='find . -maxdepth 3 -type d -name "$@"'
+
+
 alias lsdir='find . -type d'
 alias lsdir1='find . -maxdepth 1 -type d -name "$@"'
 alias lsdir2='find . -maxdepth 2 -type d -name "$@"'
@@ -308,7 +310,12 @@ alias find_fasta='find -L -type f -name "*fa" -o -name "*fna" -o -name "*fasta" 
 alias find_fastq='find -L -type f -name "*fq" -o -name "*fastq" -o -name "*fastq.gz" -o -name "*fq.gz"'
 alias find_R='find . -iname "*.R" -o -iname "*.Rmd"'
 alias find_Rmd='find . -iname "*.Rmd"'
+alias find_csv='find . -iname "*.csv" | grep -v .Rproj.user'
 alias find_ppt='find . -type f -name "*.pptx" -o -name "*.ppt"'
+alias find_xl='find . -type f -name "*.xlsx" -o -name "*.xls"'
+alias find_xlsx='find . -type f -name "*.xlsx"'
+alias find_png='find . -type f -name "*.png"'
+alias find_empty='find . -not \( -path ./.git -prune \) -empty | grep -v .Rproj.user | grep -v _cache'
 
 _makefile_init() {
   if [[ ! -e Makefile ]]; then
