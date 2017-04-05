@@ -88,6 +88,7 @@ fi
 
 ### llf - ll, files only
 alias llf='ls -lh -F | grep -v /' 
+alias ls2="ls -Xlhp --group-directories-first"
 
 ### lld - ll, directories only
 alias lld='ls -l -d */'
@@ -316,6 +317,10 @@ alias find_xl='find . -type f -name "*.xlsx" -o -name "*.xls"'
 alias find_xlsx='find . -type f -name "*.xlsx"'
 alias find_png='find . -type f -name "*.png"'
 alias find_empty='find . -not \( -path ./.git -prune \) -empty | grep -v .Rproj.user | grep -v _cache'
+
+## Tmux Related
+alias tmrw="tmux rename-window"
+alias tmrs="tmux rename-session"
 
 _makefile_init() {
   if [[ ! -e Makefile ]]; then
