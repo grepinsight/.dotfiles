@@ -8,6 +8,12 @@
 # marks
 
 
+# This function is to be used in PS1
+# example:  PS1="\e[1;31m[\!][\d,\@] \u@\[\033]0;\h:\W\007\]\h: \w]  \$(parse_git_branch)\e[m\n  \[\e]0;ibm\a\] ===> "
+function parse_git_branch {
+   git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
+}
+
 
 # calculator
 calc(){ awk "BEGIN{ print $* }" ;}
