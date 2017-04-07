@@ -16,7 +16,7 @@ function parse_git_branch {
 
 
 # calculator
-calc(){ awk "BEGIN{ print $* }" ;}
+calc(){ echo $@| tr -d ',' | perl -ne 'print eval . "\n"'}
 
 # b) function cd_func
 # This function defines a 'cd' replacement function capable of keeping, 
