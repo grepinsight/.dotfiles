@@ -261,6 +261,7 @@ alias awk10p="awk '{print \$10}'"
 
 ##################################################
 # Tree related
+alias treef='tree -f'  # Show path for each node
 alias tree_d='tree -d' # tree directory
 alias tree_ppt='tree -l -P "*.pptx|*.ppt" --prune -t -D'
 alias tree_time='tree -D -t'
