@@ -29,6 +29,7 @@ alias nosym='cd $(readlink -m $(pwd))'
 # Dotfiles related
 
 bash_dotfile_dir="${HOME}/.dotfiles/bash"
+alias dotpull="cd ${HOME}/.dotfiles/ && git pull && cd -"
 alias bpl="vim ${bash_dotfile_dir}/local/bash_paths_local"
 alias bsl="vim ${bash_dotfile_dir}/local/bash_settings_local"
 alias bas="vim ${bash_dotfile_dir}/share/bash_aliases_share"
