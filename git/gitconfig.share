@@ -16,3 +16,5 @@
         tool = vimdiff
 [core]
         editor = vim
+[color]
+        ui = auto
