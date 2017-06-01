@@ -41,6 +41,17 @@ alias bil="vim ${bash_dotfile_dir}/local/bash_inirun_local"
 alias bfs="vim ${bash_dotfile_dir}/share/bash_functions_share"
 alias bfl="vim ${bash_dotfile_dir}/local/bash_functions_local"
 
+# source aliases
+alias s_bpl="source $HOME/.dotfiles/bash/local/bash_paths_local"
+alias s_bsl="source $HOME/.dotfiles/bash/local/bash_settings_local"
+alias s_bal="source $HOME/.dotfiles/bash/local/bash_aliases_local"
+alias s_bps="source $HOME/.dotfiles/bash/share/bash_paths_share"
+alias s_bss="source $HOME/.dotfiles/bash/share/bash_settings_share"
+alias s_bsl="source $HOME/.dotfiles/bash/share/bash_aliases_share"
+
+
+
+
 ##################################################
 # Utilities
 
