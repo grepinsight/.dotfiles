@@ -183,6 +183,8 @@ alias uniqc="uniq -c | sort -k2,2 | awk '{print $1\"\t\"$2}'"
 ## Git Status
 alias gs="git status"
 alias gss="git status -s"
+alias gst="git status --untracked-files=no"
+alias gsu="git ls-files --others --exclude-standard"
 
 ## Git Add
 alias gau="git add -u"
