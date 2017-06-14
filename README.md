@@ -5,6 +5,10 @@ It's for personal use, so it's frequently updated & done so with minimal documen
 If you want to use it as a baseline of your dotfiles, please consider forking it.
 
 
+Prerequisites
+-------------
+* make
+
 Installation
 -------------
 
