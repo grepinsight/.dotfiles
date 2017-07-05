@@ -28,3 +28,21 @@ Show the entire history of the file [^1]
     s: split the current hunk into smaller hunks
     e: manually edit the current hunk
     ?: print hunk help
+
+
+# Git Reset
+
+```
+git reset HEAD~
+```
+## Break a previous commit into multiple commits
+
+https://stackoverflow.com/questions/6217156/break-a-previous-commit-into-multiple-commits
+
+
+# Git Grep Search
+
+<https://stackoverflow.com/questions/2928584/how-to-grep-search-committed-code-in-the-git-history>
+
+    git grep <PATTERN> $(git rev-list --all)
+
