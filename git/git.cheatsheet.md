@@ -46,3 +46,8 @@ https://stackoverflow.com/questions/6217156/break-a-previous-commit-into-multipl
 
     git grep <PATTERN> $(git rev-list --all)
 
+# Git Rm
+
+When you want remove a file that has been committed 
+
+    git rm --cached /path/to/file
