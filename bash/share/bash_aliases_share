@@ -186,6 +186,7 @@ alias gss="git status -s"
 alias gst="git status --untracked-files=no"
 alias gsu="git ls-files --others --exclude-standard"
 alias gsup="git standup"
+alias gstup="git standup"
 
 ## Git Add
 alias gau="git add -u"
