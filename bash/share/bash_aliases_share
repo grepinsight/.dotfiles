@@ -221,7 +221,8 @@ alias grm="git rebase master"
 # Vim related
 
 alias vr="vim README*"
-alias v="vim --noplugin"
+alias v="vim"
+alias vn="vim --noplugin"
 alias vimu="vim --noplugin"
 alias vimm="vim --noplugin"
 alias js="jobs"

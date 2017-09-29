@@ -62,7 +62,7 @@ fi
 #---------------Initial Run-----------------------------
 if [ -f "${INIT_DIR}/local/bash_inirun_local" ]; then
    echo "-----------------------"
-   echo "Running ini run - local"
+   #echo "Running ini run - local"
    sh ${INIT_DIR}/local/bash_inirun_local
    echo "-----------------------"
 fi
