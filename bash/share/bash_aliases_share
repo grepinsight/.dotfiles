@@ -58,7 +58,9 @@ alias s_bsl="source $HOME/.dotfiles/bash/share/bash_aliases_share"
 # Average
 alias avg="awk 'BEGIN{sum=0;line=0};{sum+=\$1;line+=1};END{print sum/line}'"
 
-
+# Ag related
+alias agx="ag --tex"
+alias agr="ag --r"
 ##################################################
 # Ls related
 platform='unknown'
@@ -347,7 +349,7 @@ cat<<EOF > Makefile
 SHELL := /bin/bash
 
 help: ## Prints help for targets with comments
-	@grep -E '^[.0-9a-zA-Z_-]+:.*?## .*\$\$' \$(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", \$\$1, \$\$2}'
+	@grep -E '^[.0-9a-zA-Z_-/]+:.*?## .*\$\$' \$(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", \$\$1, \$\$2}'
 
 EOF
   else
