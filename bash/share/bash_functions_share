@@ -67,7 +67,7 @@ cd_func ()
   # Remove any other occurence of this dir, skipping the top of the stack
   for ((cnt=1; cnt <= 10; cnt++)); do
     x2=$(dirs +${cnt} 2>/dev/null)
-    [[ $? -ne 0 ]] && ls -lhtr && return 0
+    [[ $? -ne 0 ]] && return 0
     [[ ${x2:0:1} == '~' ]] && x2="${HOME}${x2:1}"
     if [[ "${x2}" == "${the_new_dir}" ]]; then
       popd -n +$cnt 2>/dev/null 1>/dev/null
@@ -78,7 +78,15 @@ cd_func ()
   return 0
 }
 
-alias cd=cd_func; 
+cd_func_decorated() {
+  cd_func "$1"
+  if [[ "$1" != "--" ]]; then
+    ls -Xlhp --group-directories-first
+    git status -s 2> /dev/null
+  fi
+
+}
+alias cd=cd_func_decorated
 
 
 cdf () {
