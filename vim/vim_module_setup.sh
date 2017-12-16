@@ -45,6 +45,9 @@ if cd $HOME/.vim/bundle; then
 
     # Web stuff
     git clone https://github.com/mattn/emmet-vim.git
+    
+    # Vim-go
+    git clone https://github.com/fatih/vim-go.git
 else
     echo "Cannot chdir to $HOME/.vim/bundle"
 fi
