@@ -467,3 +467,11 @@ nmap <Leader>w <Plug>(easymotion-overwin-w)
 
 "airline support
 let g:airline#extensions#tabline#enabled = 1
+
+
+
+"crontab stuff
+if $VIM_CRONTAB == "true"
+    set nobackup
+    set nowritebackup
+endif
