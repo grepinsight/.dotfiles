@@ -6,3 +6,5 @@ vim_testfile.txt
 *.combined
 
 # will be different from machine to machine, so just ignore them
+dotfiles.sublime-workspace
+dotfiles.sublime-project
