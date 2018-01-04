@@ -21,8 +21,10 @@
     diffs = diff --staged
     ls = ls-tree --full-tree -r HEAD
 [merge]
-        tool = vimdiff
+    tool = vimdiff
 [core]
-        editor = vim
+    editor = vim
 [color]
-        ui = auto
+    ui = auto
+[push]
+    default = simple
