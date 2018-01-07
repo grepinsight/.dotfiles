@@ -6,7 +6,6 @@ mkdir -p ~/.vim/autoload ~/.vim/bundle && curl -LSso ~/.vim/autoload/pathogen.vi
 if cd $HOME/.vim/bundle; then
     # Essentials
     git clone git://github.com/tpope/vim-sensible.git
-    git clone git://github.com/tpope/vim-fugitive.git                  
     git clone git://github.com/tpope/vim-surround.git
     git clone git://github.com/tpope/vim-commentary.git
     git clone https://github.com/tpope/vim-abolish.git
@@ -48,6 +47,10 @@ if cd $HOME/.vim/bundle; then
     
     # Vim-go
     git clone https://github.com/fatih/vim-go.git
+
+    # Git related
+    git clone git://github.com/airblade/vim-gitgutter.git
+    git clone git://github.com/tpope/vim-fugitive.git                  
 else
     echo "Cannot chdir to $HOME/.vim/bundle"
 fi

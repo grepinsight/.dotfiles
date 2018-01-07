@@ -475,3 +475,7 @@ if $VIM_CRONTAB == "true"
     set nobackup
     set nowritebackup
 endif
+
+"Golang
+let g:go_fmt_command = "goimports"
+
