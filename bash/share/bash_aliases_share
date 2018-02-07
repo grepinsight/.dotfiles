@@ -73,6 +73,7 @@ fi
 
 
 if [[ $platform == 'Darwin' ]]; then
+   alias ls="gls"
    alias ls='ls -G'
    alias ll='ls -G -lh'
    alias lll='ls -G -lh'
@@ -231,7 +232,8 @@ alias vimm="vim --noplugin"
 alias js="jobs"
 alias j="jobs"
 alias f="fg"
-alias vimrc="vim ~/bin/utils_setup/vim_setup/vimrc"
+alias vimrc="vim $HOME/.dotfiles/vim/vimrc"
+alias vimpack="vim $HOME/.dotfiles/vim/vim_module_setup.sh"
 
 ##################################################
 # etc
@@ -375,3 +377,7 @@ datediff() {
 
 # Crontab stuff
 alias crontab="VIM_CRONTAB=true crontab"
+
+alias sbal="source /Users/alee/.dotfiles/bash/local/bash_aliases_local"
+alias sbas="source /Users/alee/.dotfiles/bash/share/bash_aliases_share"
+alias sbsl="source /Users/alee/.dotfiles/bash/local/bash_settings_local"
