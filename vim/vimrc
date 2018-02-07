@@ -408,15 +408,15 @@ function! s:CopyMotionForType(type)
     endif
 endfunction
 
-function! s:AckMotion(type) abort
-    let reg_save = @@
+" function! s:AckMotion(type) abort
+"     let reg_save = @@
 
-    call s:CopyMotionForType(a:type)
+"     call s:CopyMotionForType(a:type)
 
-    execute "normal! :Ack! --literal " . shellescape(@@) . "\<cr>"
+"     execute "normal! :Ack! --literal " . shellescape(@@) . "\<cr>"
 
-    let @@ = reg_save
-endfunction
+"     let @@ = reg_save
+" endfunction
 
 " check file change every 4 seconds ('CursorHold') and reload the buffer upon detecting change
 au CursorHold * checktime  
@@ -479,3 +479,15 @@ endif
 "Golang
 let g:go_fmt_command = "goimports"
 
+if executable('ag')
+  let g:ackprg = 'ag --vimgrep'
+endif
+
+" NERDTreee
+let NERDTreeIgnore = ['\.pyc$', 'db.sqlite3']
+
+
+" CtrlP
+let g:ctrlp_custom_ignore = {
+  \ 'file':  '\v\.pyc',
+  \ }

@@ -13,7 +13,7 @@ if cd $HOME/.vim/bundle; then
 
     git clone https://github.com/scrooloose/nerdtree.git
     git clone https://github.com/scrooloose/syntastic                 # syntax checking plugin
-    git clone https://github.com/kien/ctrlp.vim.git
+    git clone https://github.com/ctrlpvim/ctrlp.vim.git
     git clone https://github.com/ervandew/supertab.git
 
     # Navigation
@@ -51,6 +51,9 @@ if cd $HOME/.vim/bundle; then
     # Git related
     git clone git://github.com/airblade/vim-gitgutter.git
     git clone git://github.com/tpope/vim-fugitive.git                  
+
+    # Python autocompletion
+    git clone --recursive https://github.com/davidhalter/jedi-vim.git ~/.vim/bundle/jedi-vim
 else
     echo "Cannot chdir to $HOME/.vim/bundle"
 fi
