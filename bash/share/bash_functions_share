@@ -81,7 +81,7 @@ cd_func ()
 cd_func_decorated() {
   cd_func "$1"
   if [[ "$1" != "--" ]]; then
-    ls -Xlhp --group-directories-first
+    #ls -Xlhp --group-directories-first 2> /dev/null || gls -Xlhp --group-directories-first
     git status -s 2> /dev/null
   fi
 
