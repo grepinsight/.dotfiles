@@ -207,6 +207,7 @@ alias gpom="git push origin master"
 
 ## Git Commit
 alias gc="git commit"
+alias gcv="git commit -v"
 alias gd="git diff"
 
 ## Git Update
