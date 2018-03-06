@@ -379,7 +379,7 @@ datediff() {
 # Crontab stuff
 alias crontab="VIM_CRONTAB=true crontab"
 
-alias sbal="source /Users/alee/.dotfiles/bash/local/bash_aliases_local"
-alias sbas="source /Users/alee/.dotfiles/bash/share/bash_aliases_share"
-alias sbsl="source /Users/alee/.dotfiles/bash/local/bash_settings_local"
-alias sbfl="source /Users/alee/.dotfiles/bash/local/bash_functions_local"
+alias sbal="source ${HOME}/.dotfiles/bash/local/bash_aliases_local"
+alias sbas="source ${HOME}/.dotfiles/bash/share/bash_aliases_share"
+alias sbsl="source ${HOME}/.dotfiles/bash/local/bash_settings_local"
+alias sbfl="source ${HOME}/.dotfiles/bash/local/bash_functions_local"
