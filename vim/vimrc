@@ -49,6 +49,9 @@ set background=light "Make the color suitable to dark background
 "colorscheme jellybeans   
 "colorscheme codeschool
 colorscheme solarized
+"colorscheme solarized
+"colorscheme 0x7A69_dark
+colorscheme Monokai
 "colorscheme Tomorrow
 "colorscheme monokain
 
@@ -129,6 +132,15 @@ set pastetoggle=<leader>p
     nmap gj <C-w>j
     nmap gk <C-w>k
     nmap gl <C-w>l
+    " Allow mouse for easy resizing
+    set mouse=a
+    set ttymouse=xterm2
+    set mouse+=a
+    if &term =~ '^screen'
+        " tmux knows the extended mouse mode
+        set ttymouse=xterm2
+    endif
+
 "Tab navigation
     nmap <C-l> gt
     nmap <C-h> gT
@@ -491,3 +503,43 @@ let NERDTreeIgnore = ['\.pyc$', 'db.sqlite3']
 let g:ctrlp_custom_ignore = {
   \ 'file':  '\v\.pyc',
   \ }
+
+" Tagbar
+nmap <F8> :TagbarToggle<CR>
+
+" Fugitive
+"  - blame
+nnoremap <leader>b :Gblame<CR>
+
+"  - diff 
+command Greview :Git! diff --staged
+nnoremap <leader>r :Greview<cr>
+
+"  - status
+" Obtained from https://gist.github.com/actionshrimp/6493611
+function! ToggleGStatus()
+    if buflisted(bufname('.git/index'))
+        bd .git/index
+    else
+        Gstatus
+    endif
+endfunction
+command ToggleGStatus :call ToggleGStatus()
+nnoremap <leader>s :ToggleGStatus<CR>
+
+" Copy and Paste : https://vi.stackexchange.com/questions/84/how-can-i-copy-text-to-the-system-clipboard-from-vim
+noremap <Leader>y "*y
+noremap <Leader>Y "+y
+"noremap <Leader>p "*p
+"noremap <Leader>P "+p
+
+" Autopair
+let g:AutoPairsShortcutToggle = '<Leader>m'
+
+
+" Spell file
+set spelllang=en
+set spellfile=$HOME/.dotfiles/vim/spell/en.utf-8.add
+set spell
+nnoremap <Leader>sp :e $HOME/.dotfiles/vim/spell/en.utf-8.add<CR>
+nnoremap <Leader>ssp :mkspell! $HOME/.dotfiles/vim/spell/en.utf-8.add<CR>
