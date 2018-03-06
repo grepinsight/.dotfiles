@@ -20,6 +20,12 @@
     addf = add --force
     diffs = diff --staged
     ls = ls-tree --full-tree -r HEAD
+
+    # From Jeff
+    undo = reset --soft HEAD^
+    su = !git branch --set-upstream-to=origin/$(git rev-parse --abbrev-ref HEAD) $(git rev-parse --abbrev-ref HEAD)
+    pb = !git push origin $(git rev-parse --abbrev-ref HEAD)
+    lol = log --graph --decorate --pretty=oneline --abbrev-commit
 [merge]
     tool = vimdiff
 [core]
