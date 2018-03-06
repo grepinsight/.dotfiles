@@ -9,6 +9,7 @@ all: tmux_setup git_setup ## run all recipes
 tmux_setup: tmux/tmux.conf.combined ## combine tmux base and tmux.conf and link it to $HOME/.tmux.conf 
 
 tmux/tmux.conf.combined: tmux/tmux.conf.share tmux/tmux.conf.local
+	touch tmux/tmux.conf.local
 	cat tmux/tmux.conf.share tmux/tmux.conf.local > tmux/tmux.conf.combined
 	ln -sf $$HOME/.dotfiles/tmux/tmux.conf.combined $$HOME/.tmux.conf
 	
