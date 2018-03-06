@@ -44,16 +44,7 @@ let g:snippets_dir="$HOME/bin/util_setup/vim_setup/snippets"
 
 let g:solarized_termcolors=256
 set background=light "Make the color suitable to dark background
-"colorscheme solarized
-"colorscheme BlackSea
-"colorscheme jellybeans   
-"colorscheme codeschool
 colorscheme solarized
-"colorscheme solarized
-"colorscheme 0x7A69_dark
-colorscheme Monokai
-"colorscheme Tomorrow
-"colorscheme monokain
 
 " Productivity Aliases
 " HTML Tidy
