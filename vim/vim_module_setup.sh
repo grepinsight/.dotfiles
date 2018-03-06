@@ -54,6 +54,9 @@ if cd $HOME/.vim/bundle; then
 
     # Python autocompletion
     git clone --recursive https://github.com/davidhalter/jedi-vim.git ~/.vim/bundle/jedi-vim
+
+    # Auto Pairs
+    git clone git://github.com/jiangmiao/auto-pairs.git ~/.vim/bundle/auto-pairs
 else
     echo "Cannot chdir to $HOME/.vim/bundle"
 fi
