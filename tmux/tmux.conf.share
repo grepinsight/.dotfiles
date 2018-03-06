@@ -28,8 +28,6 @@ set -g status-fg white
 set -g status-left ""
 set -g status-right "#[fg=green] #[fg=yellow]#S #[fg=green]#I:#P %l:%M %p :: #(date)::"
 
-# setup 'v' to begin selection as in Vim
-bind-key -t vi-copy v begin-selection
 ### Shortcut
 # Last Active Window
 bind-key C-a last-window
@@ -68,9 +66,10 @@ bind-key -n S-Right swap-window -t +1
 
 
 # Seletion act like a vim from http://superuser.com/a/413766/125768
-bind-key -t vi-copy 'v' begin-selection
-bind-key -t vi-copy 'y' copy-selection
-bind-key -t vi-copy 'C-v' rectangle-toggle # Begin selection in copy mode.
+# Vim mode
+bind-key -T copy-mode-vi 'v' send -X begin-selection
+bind-key -T copy-mode-vi 'y' send -X copy-selection-and-cancel
+
 
 #renumber when number changed
 set-option -g renumber-windows on
