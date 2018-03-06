@@ -36,10 +36,16 @@ fi
 
 echo "--- Downloading useful tools ---"
 if which git 2>/dev/null >&2 ; then 
-    if [[ ! -e $HOME/bin/bashmarks ]]; then
+    if [[ ! -e $HOME/src/bashmarks ]]; then
         echo "installing bashmarks"
-        mkdir -p $HOME/bin
-        cd $HOME/bin && git clone https://github.com/huyng/bashmarks.git && cd - 
+        mkdir -p $HOME/src
+        cd $HOME/src && git clone https://github.com/huyng/bashmarks.git && cd - 
+    fi
+
+    if [[ ! -e $HOME/src/gitstats ]]; then
+        echo "installing gitstats"
+        mkdir -p $HOME/src
+        cd $HOME/src && git clone git://github.com/hoxu/gitstats.git && cd - 
     fi
 else
     echo "git not found! install git and rerun this script again"
