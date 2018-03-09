@@ -225,6 +225,7 @@ alias gds="git diff --staged"
 alias gb="git branch"
 alias gcm="git checkout master"
 alias gco="git checkout"
+alias gcp="git checkout -p"
 
 ## Git Rebaise
 alias grm="git rebase master"
