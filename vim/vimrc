@@ -133,9 +133,6 @@ set pastetoggle=<leader>p
 nnoremap <Leader>no :call NoteToggle()<CR>
 inoremap <Leader>no <Esc>:call NoteToggle()<CR>
 
-    nmap gh <C-w>h
-    nmap gj <C-w>j
-    nmap gk <C-w>k
 """
 
 let g:note_is_open = 0
@@ -154,6 +151,10 @@ function! NoteToggle()
     endif
 endfunction
 
+    nnoremap <Leader>t :vsplit<CR>
+    nmap gh <C-w>h
+    nmap gj <C-w>j
+    nmap gk <C-w>k
     nmap gl <C-w>l
     " Allow mouse for easy resizing
     set mouse=a
