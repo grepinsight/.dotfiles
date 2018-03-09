@@ -130,6 +130,30 @@ set pastetoggle=<leader>p
 "Split navigation
     set splitbelow
     set splitright
+
+"""
+let g:spell_is_open = 0
+
+function! SpellToggle()
+    if g:spell_is_open
+        let g:spell_is_open = 0
+        :w
+        :mkspell! $HOME/.dotfiles/vim/spell/en.utf-8.add
+        :bd
+        execute g:spell_return_to_window . "wincmd w"
+    else 
+        let g:spell_return_to_window = winnr()
+        :vsplit $HOME/.dotfiles/vim/spell/en.utf-8.add
+        let g:spell_is_open = 1
+    endif
+endfunction
+
+nnoremap <Leader>no :call SpellToggle()<CR>
+inoremap <Leader>no <Esc>:call SpellToggle()<CR>
+
+
+
+"""
 nnoremap <Leader>no :call NoteToggle()<CR>
 inoremap <Leader>no <Esc>:call NoteToggle()<CR>
 
