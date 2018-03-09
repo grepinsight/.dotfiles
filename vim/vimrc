@@ -222,17 +222,6 @@ vnoremap / /\v
 " onoremap <F9> <C-C>za
 " vnoremap <F9> zf
 
-" Java Build
-map <F9> :set makeprg=javac\ %<CR>:make<CR>
-map <F10> :!echo %\|awk -F. '{print $1}'\|xargs java<CR>
-map <F11> :set makeprg=javac\ #<CR>:make<CR>
-map <F12> :!echo #\|awk -F. '{print $1}'\|xargs java<CR>
-
-map! <F9> <Esc>:set makeprg=javac\ %<CR>:make<CR>
-map! <F10> <Esc>:!echo %\|awk -F. '{print $1}'\|xargs java<CR>
-map! <F11> <Esc>set makeprg=javac\ #<CR>:make<CR>
-map! <F12> <Esc>!echo #\|awk -F. '{print $1}'\|xargs java<CR>
-
 " Tip: load a file into the default buffer, and its driver
 " into the alternate buffer, then use F9/F12 to build/run.
 " Note: # (alternate filename) isn't set until you :next to it!
