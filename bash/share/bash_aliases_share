@@ -194,6 +194,7 @@ alias gstup="git standup"
 ## Git Add
 alias gau="git add -u"
 alias gaa="git add -A"
+alias gap="git add -p"
 
 ## Git Log
 alias gl="git log"
