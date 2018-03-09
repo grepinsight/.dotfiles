@@ -130,9 +130,30 @@ set pastetoggle=<leader>p
 "Split navigation
     set splitbelow
     set splitright
+nnoremap <Leader>no :call NoteToggle()<CR>
+inoremap <Leader>no <Esc>:call NoteToggle()<CR>
+
     nmap gh <C-w>h
     nmap gj <C-w>j
     nmap gk <C-w>k
+"""
+
+let g:note_is_open = 0
+
+function! NoteToggle()
+    if g:note_is_open
+        let g:note_is_open = 0
+        " TODO close CMD here
+        :w
+        :bd
+        execute g:note_return_to_window . "wincmd w"
+    else 
+        let g:note_return_to_window = winnr()
+        :vsplit $HOME/src/notes/scratch.md
+        let g:note_is_open = 1
+    endif
+endfunction
+
     nmap gl <C-w>l
     " Allow mouse for easy resizing
     set mouse=a
