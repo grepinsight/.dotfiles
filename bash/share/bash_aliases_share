@@ -196,6 +196,10 @@ alias gau="git add -u"
 alias gaa="git add -A"
 alias gap="git add -p"
 
+## Git Reset
+
+alias grhp="git reset HEAD -p"
+
 ## Git Log
 alias gl="git log"
 alias glo="git log --oneline"
