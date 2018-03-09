@@ -128,6 +128,8 @@ set pastetoggle=<leader>p
     " xmap J 5j
     " xmap K 5k
 "Split navigation
+    set splitbelow
+    set splitright
     nmap gh <C-w>h
     nmap gj <C-w>j
     nmap gk <C-w>k
