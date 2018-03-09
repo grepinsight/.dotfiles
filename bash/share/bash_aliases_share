@@ -200,6 +200,8 @@ alias gap="git add -p"
 alias gl="git log"
 alias glo="git log --oneline"
 alias gg="git log --oneline --decorate --graph --all"
+alias vgrog='vim $(git grog | fzf --reverse | tr -d "|")'
+
 
 ## Git Push/Pull
 alias gpush="git push"
