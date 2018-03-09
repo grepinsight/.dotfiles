@@ -181,7 +181,7 @@ set pastetoggle=<leader>p
 inoremap \fn <C-R>=expand("%:t")<CR>
 
 "Editting source files
-nnoremap <Leader>ev :tabnew $MYVIMRC<CR>
+nnoremap <Leader>ev :e $HOME/.dotfiles/vim/vimrc<CR>
 nnoremap <Leader>sv :source $MYVIMRC<CR>
 nnoremap <Leader>es :vsplit ~/.vim/bundle/mysnippets/snippets<CR>
 
