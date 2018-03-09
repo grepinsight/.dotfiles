@@ -140,6 +140,7 @@ set pastetoggle=<leader>p
         " tmux knows the extended mouse mode
         set ttymouse=xterm2
     endif
+    set mouse=c
 
 "Tab navigation
     nmap <C-l> gt
