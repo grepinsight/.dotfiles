@@ -544,3 +544,35 @@ set spellfile=$HOME/.dotfiles/vim/spell/en.utf-8.add
 set spell
 nnoremap <Leader>sp :e $HOME/.dotfiles/vim/spell/en.utf-8.add<CR>
 nnoremap <Leader>ssp :mkspell! $HOME/.dotfiles/vim/spell/en.utf-8.add<CR>
+
+
+" Tag for R
+let g:tagbar_type_r = {
+    \ 'ctagstype' : 'r',
+    \ 'kinds'     : [
+        \ 'f:Functions',
+        \ 'g:GlobalVariables',
+        \ 'v:FunctionVariables',
+    \ ]
+\ }
+
+" Tag for markdown (https://github.com/majutsushi/tagbar/issues/70)
+let g:tagbar_type_markdown = {
+            \ 'ctagstype' : 'markdown',
+            \ 'kinds' : [
+                \ 'h:headings',
+                \ 'l:links',
+                \ 'i:images'
+            \ ],
+    \ "sort" : 0
+\ }
+
+let g:tagbar_type_rmd = {
+            \ 'ctagstype' : 'markdown',
+            \ 'kinds' : [
+                \ 'h:headings',
+                \ 'l:links',
+                \ 'i:images'
+            \ ],
+    \ "sort" : 0
+\ }
