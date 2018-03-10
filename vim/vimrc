@@ -502,7 +502,7 @@ let NERDTreeIgnore = ['\.pyc$', 'db.sqlite3']
 
 " CtrlP
 let g:ctrlp_custom_ignore = {
-  \ 'file':  '\v\.pyc',
+  \ 'file':  '\.pyc$\|\.Rd$',
   \ }
 
 " Tagbar
