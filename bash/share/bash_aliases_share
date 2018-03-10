@@ -199,6 +199,7 @@ alias gap="git add -p"
 ## Git Reset
 
 alias grhp="git reset HEAD -p"
+alias grh="git reset HEAD"
 
 ## Git Log
 alias gl="git log"
