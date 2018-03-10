@@ -148,8 +148,8 @@ function! SpellToggle()
     endif
 endfunction
 
-nnoremap <Leader>no :call SpellToggle()<CR>
-inoremap <Leader>no <Esc>:call SpellToggle()<CR>
+nnoremap <Leader>sp :call SpellToggle()<CR>
+inoremap <Leader>sp <Esc>:call SpellToggle()<CR>
 
 
 
