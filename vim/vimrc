@@ -1,12 +1,17 @@
-" Custom keyboard shortcut
-
 " R assignment
 execute "set <M-->=\033-"
 execute "set <M-m>=\033m"
 inoremap <M--> <- 
 inoremap <M-m> %>% 
 
+call plug#begin('~/.vim/plugged')
 
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all'  }
+Plug 'junegunn/fzf.vim'
+Plug 'ivanov/vim-ipython'
+Plug 'davidhalter/jedi-vim'
+
+call plug#end()
 
 set autoread  
 au CursorHold * checktime 
@@ -129,6 +134,54 @@ set pastetoggle=<leader>p
     " xmap J 5j
     " xmap K 5k
 "Split navigation
+    set splitbelow
+    set splitright
+
+"""
+let g:spell_is_open = 0
+
+function! SpellToggle()
+    if g:spell_is_open
+        let g:spell_is_open = 0
+        :w
+        :mkspell! $HOME/.dotfiles/vim/spell/en.utf-8.add
+        :bd
+        execute g:spell_return_to_window . "wincmd w"
+    else 
+        let g:spell_return_to_window = winnr()
+        :vsplit $HOME/.dotfiles/vim/spell/en.utf-8.add
+        let g:spell_is_open = 1
+    endif
+endfunction
+
+nnoremap <Leader>sp :call SpellToggle()<CR>
+inoremap <Leader>sp <Esc>:call SpellToggle()<CR>
+
+
+
+"""
+nnoremap <Leader>no :call NoteToggle()<CR>
+inoremap <Leader>no <Esc>:call NoteToggle()<CR>
+
+"""
+
+let g:note_is_open = 0
+
+function! NoteToggle()
+    if g:note_is_open
+        let g:note_is_open = 0
+        " TODO close CMD here
+        :w
+        :bd
+        execute g:note_return_to_window . "wincmd w"
+    else 
+        let g:note_return_to_window = winnr()
+        :vsplit $HOME/src/notes/scratch.md
+        let g:note_is_open = 1
+    endif
+endfunction
+
+    nnoremap <Leader>t :vsplit<CR>
     nmap gh <C-w>h
     nmap gj <C-w>j
     nmap gk <C-w>k
@@ -141,6 +194,7 @@ set pastetoggle=<leader>p
         " tmux knows the extended mouse mode
         set ttymouse=xterm2
     endif
+    set mouse=c
 
 "Tab navigation
     nmap <C-l> gt
@@ -181,7 +235,7 @@ set pastetoggle=<leader>p
 inoremap \fn <C-R>=expand("%:t")<CR>
 
 "Editting source files
-nnoremap <Leader>ev :tabnew $MYVIMRC<CR>
+nnoremap <Leader>ev :e $HOME/.dotfiles/vim/vimrc<CR>
 nnoremap <Leader>sv :source $MYVIMRC<CR>
 nnoremap <Leader>es :vsplit ~/.vim/bundle/mysnippets/snippets<CR>
 
@@ -219,17 +273,6 @@ vnoremap / /\v
 " nnoremap <F9> za
 " onoremap <F9> <C-C>za
 " vnoremap <F9> zf
-
-" Java Build
-map <F9> :set makeprg=javac\ %<CR>:make<CR>
-map <F10> :!echo %\|awk -F. '{print $1}'\|xargs java<CR>
-map <F11> :set makeprg=javac\ #<CR>:make<CR>
-map <F12> :!echo #\|awk -F. '{print $1}'\|xargs java<CR>
-
-map! <F9> <Esc>:set makeprg=javac\ %<CR>:make<CR>
-map! <F10> <Esc>:!echo %\|awk -F. '{print $1}'\|xargs java<CR>
-map! <F11> <Esc>set makeprg=javac\ #<CR>:make<CR>
-map! <F12> <Esc>!echo #\|awk -F. '{print $1}'\|xargs java<CR>
 
 " Tip: load a file into the default buffer, and its driver
 " into the alternate buffer, then use F9/F12 to build/run.
@@ -576,3 +619,16 @@ let g:tagbar_type_rmd = {
             \ ],
     \ "sort" : 0
 \ }
+
+colorscheme Tomorrow-Night
+
+" Mapping selecting mappings
+nmap <leader><tab> <plug>(fzf-maps-n)
+xmap <leader><tab> <plug>(fzf-maps-x)
+omap <leader><tab> <plug>(fzf-maps-o)
+
+" Insert mode completion
+imap <c-x><c-k> <plug>(fzf-complete-word)
+imap <c-x><c-f> <plug>(fzf-complete-path)
+imap <c-x><c-j> <plug>(fzf-complete-file-ag)
+imap <c-x><c-l> <plug>(fzf-complete-line)

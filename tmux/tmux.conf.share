@@ -96,9 +96,10 @@ set-option -g renumber-windows on
 bind r source-file ~/.tmux.conf \; display "Reloaded!"
 
 # Splitting panes
-bind-key | splitw -h
-bind-key _ splitw -v
-bind-key - splitw -v
+# opening current pane - credit: https://unix.stackexchange.com/a/118381
+bind-key | split-window -h -c "#{pane_current_path}"
+bind-key _ split-window -v -c "#{pane_current_path}"
+bind-key - split-window -v -c "#{pane_current_path}"
 
 #Cycle through windows, or panes.   I prefer using it for panes
 bind -n f12 select-pane -t :.+

@@ -194,11 +194,19 @@ alias gstup="git standup"
 ## Git Add
 alias gau="git add -u"
 alias gaa="git add -A"
+alias gap="git add -p"
+
+## Git Reset
+
+alias grhp="git reset HEAD -p"
+alias grh="git reset HEAD"
 
 ## Git Log
 alias gl="git log"
 alias glo="git log --oneline"
 alias gg="git log --oneline --decorate --graph --all"
+alias vgrog='vim $(git grog | fzf --reverse | tr -d "|")'
+
 
 ## Git Push/Pull
 alias gpush="git push"
@@ -218,6 +226,7 @@ alias gds="git diff --staged"
 alias gb="git branch"
 alias gcm="git checkout master"
 alias gco="git checkout"
+alias gcp="git checkout -p"
 
 ## Git Rebaise
 alias grm="git rebase master"
