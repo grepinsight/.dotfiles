@@ -63,6 +63,9 @@ if cd $HOME/.vim/bundle; then
 
     # tagbar
     git clone git://github.com/majutsushi/tagbar
+
+    # Plug
+    git clone https://github.com/junegunn/vim-plug.git
 else
     echo "Cannot chdir to $HOME/.vim/bundle"
 fi
