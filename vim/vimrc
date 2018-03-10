@@ -1,3 +1,13 @@
+" Custom keyboard shortcut
+
+" R assignment
+execute "set <M-->=\033-"
+execute "set <M-m>=\033m"
+inoremap <M--> <- 
+inoremap <M-m> %>% 
+
+
+
 set autoread  
 au CursorHold * checktime 
 
