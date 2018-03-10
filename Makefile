@@ -21,3 +21,8 @@ git/gitconfig.combined: git/gitconfig.share git/gitconfig.local
 
 ctags_setup: ctags/ctags.share  ## ctags setup
 	ln -sf $$HOME/.dotfiles/ctags/ctags.share $$HOME/.ctags
+
+vim_setup: vim/vimrc ## vim setup
+	bash vim/vim_module_setup.sh
+
+
