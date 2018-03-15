@@ -18,3 +18,6 @@ git_setup: git/gitconfig.combined ## combine gitconfig base and gitconfig local 
 git/gitconfig.combined: git/gitconfig.share git/gitconfig.local
 	cat git/gitconfig.share git/gitconfig.local > git/gitconfig.combined
 	ln -sf $$HOME/.dotfiles/git/gitconfig.combined $$HOME/.gitconfig
+
+ctags_setup: ctags/ctags.share  ## ctags setup
+	ln -sf $$HOME/.dotfiles/ctags/ctags.share $$HOME/.ctags

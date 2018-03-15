@@ -62,6 +62,12 @@ if cd $HOME/.vim/bundle; then
 
     # Auto Pairs
     git clone git://github.com/jiangmiao/auto-pairs.git ~/.vim/bundle/auto-pairs
+
+    # Session Management
+    git clone https://github.com/tpope/vim-obsession.git
+
+    # tagbar
+    git clone git://github.com/majutsushi/tagbar
 else
     echo "Cannot chdir to $HOME/.vim/bundle"
 fi
