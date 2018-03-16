@@ -354,6 +354,7 @@ alias find_empty='find . -not \( -path ./.git -prune \) -empty | grep -v .Rproj.
 ## Tmux Related
 alias tmrw="tmux rename-window"
 alias tmrs="tmux rename-session"
+alias tp="tmuxp"
 
 _makefile_init() {
   if [[ ! -e Makefile ]]; then
