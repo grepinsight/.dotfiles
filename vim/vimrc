@@ -1,3 +1,5 @@
+set pastetoggle=<F2>
+set clipboard=unnamed
 nnoremap <Leader>vv :e $HOME/.dotfiles/vim/vim.cheatsheet.md<CR>
 
 
