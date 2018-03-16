@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+set -x
+ROOT_DIR="$HOME/.dotfiles"
+
 ### bashrc
 
 
@@ -51,5 +54,10 @@ else
     echo "git not found! install git and rerun this script again"
 fi
 
-#touch tmux/tmux.conf.local
-#touch git/gitconfig.local
+
+
+
+# Basic set up
+
+cd $ROOT_DIR && touch tmux/tmux.conf.local
+cd $ROOT_DIR && touch git/gitconfig.local
