@@ -246,6 +246,7 @@ alias j="jobs"
 alias f="fg"
 alias vimrc="vim $HOME/.dotfiles/vim/vimrc"
 alias vimpack="vim $HOME/.dotfiles/vim/vim_module_setup.sh"
+alias vs="vim -S ./Session.vim"
 
 ##################################################
 # etc
