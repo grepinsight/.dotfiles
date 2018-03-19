@@ -251,6 +251,7 @@ alias vs="vim -S ./Session.vim"
 ##################################################
 # etc
 
+alias rt="reset"
 #tablemanipulate
 ### http://unix.stackexchange.com/questions/29023/how-to-display-tsv-csv-in-console-when-empty-cells-are-missed-by-column-t
 alias ctt="(sed ':x s/\(^\|\t\)\t/\1 \t/; t x' | column -ts$'\t')"
