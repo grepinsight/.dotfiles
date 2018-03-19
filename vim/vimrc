@@ -525,9 +525,12 @@ let g:ctrlp_custom_ignore = {
 " Tagbar
 nmap <F8> :TagbarToggle<CR>
 
-" Fugitive
+" ----------------------------------------------------------------------------
+" Fugitive 
+" ----------------------------------------------------------------------------
 "  - blame
 nnoremap <leader>b :Gblame<CR>
+nnoremap <leader>gcv :Gcommit -v <CR>
 
 "  - diff 
 command Greview :Git! diff --staged
