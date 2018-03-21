@@ -8,6 +8,13 @@ Show the entire history of the file [^1]
 
 [^1]: http://stackoverflow.com/questions/278192/view-the-change-history-of-a-file-using-git-versioning
 
+
+Show the stat of the changes between two commits(things you see when you pull)
+
+
+    git log COMIT..COMIT --stat
+
+
 # Git Commmit
 
 ## Commit only part of a file in Git
@@ -29,6 +36,24 @@ Show the entire history of the file [^1]
     e: manually edit the current hunk
     ?: print hunk help
 
+# Git
+
+# Git Branch
+
+## Rename
+```
+git branch -m <OLD_NAME> <NEW_NAME>
+```
+
+## Delete local/remote branch
+
+```
+# delete local branch
+git branch -d BRANCH_NAME
+
+# remote
+git push origin --delete BRANCH_NAME
+```
 
 # Git Reset
 
