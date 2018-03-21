@@ -27,15 +27,76 @@ inoremap <M-m> %>%
 
 call plug#begin('~/.vim/plugged')
 
+" Basic setup
+Plug 'tpope/vim-sensible'
+
+" Looks / Status
+Plug 'flazz/vim-colorschemes'
+Plug 'vim-airline/vim-airline'
+
+" Session Management
+Plug 'tpope/vim-obsession'
+
+" Files related
+Plug 'scrooloose/nerdtree'
+Plug 'tpope/vim-eunuch'
+
+" Search files
+Plug 'ctrlpvim/ctrlp.vim'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all'  }
 Plug 'junegunn/fzf.vim'
-Plug 'ivanov/vim-ipython'
-Plug 'davidhalter/jedi-vim'
+Plug 'junegunn/vim-peekaboo'
+Plug 'mileszs/ack.vim'
+
+" Navigation
+Plug 'Lokaltog/vim-easymotion'
+Plug 'vim-scripts/taglist.vim'
+Plug 'majutsushi/tagbar'
+
+" Editing
+Plug 'tpope/vim-surround'
+Plug 'tpope/vim-repeat'
 Plug 'terryma/vim-multiple-cursors'
+Plug 'junegunn/vim-after-object'
+Plug 'sjl/gundo.vim'
+Plug 'tpope/vim-commentary'
+Plug 'tommcdo/vim-exchange'
+Plug 'jiangmiao/auto-pairs'
+Plug 'Yggdroot/indentLine'
+Plug 'bronson/vim-trailing-whitespace'
+
+" Git
+Plug 'airblade/vim-gitgutter'
+Plug 'tpope/vim-fugitive'
+
+" Testing
 Plug 'janko-m/vim-test'
 Plug 'tpope/vim-dispatch'
-Plug 'tpope/vim-obsession'
-Plug 'junegunn/vim-after-object'
+
+" Python/Go
+Plug 'davidhalter/jedi-vim'
+Plug 'fatih/vim-go'
+
+" Lint
+Plug 'w0rp/ale'
+
+" Completions and snippets
+Plug 'Valloric/YouCompleteMe'
+Plug 'SirVer/ultisnips'
+Plug 'honza/vim-snippets'
+Plug 'ervandew/supertab'
+Plug 'grepinsight/mysnippets'
+
+" Writing
+Plug 'plasticboy/vim-markdown'
+Plug 'tpope/vim-abolish'
+Plug 'junegunn/goyo.vim'
+Plug 'junegunn/limelight.vim'
+
+" Misc
+Plug 'mattn/emmet-vim'
+Plug 'tomtom/tlib_vim'
+
 
 call plug#end()
 
@@ -77,8 +138,6 @@ au FocusGained * :set relativenumber
 
 "
 "Preamble
-"Pathongen Infection -------------------- {{{
-execute pathogen#infect()
 let vimrplugin_assign = 0 " Stop annoying vimRplugin reassignment
 let g:snippets_dir="$HOME/bin/util_setup/vim_setup/snippets"
 " }}}

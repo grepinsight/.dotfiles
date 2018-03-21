@@ -30,9 +30,6 @@ else
     echo " * Creating a symbolic link"
     echo " ->  ln -sf .dotfiles/vim/vimrc ../.vimrc"
     ln -s .dotfiles/vim/vimrc ../.vimrc
-
-    echo " * Installing vim plugins"
-    bash vim/vim_module_setup.sh
 fi
 
 ### Tools
