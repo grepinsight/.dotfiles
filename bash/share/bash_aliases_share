@@ -184,6 +184,7 @@ alias uniqc="uniq -c | sort -k2,2 | awk '{print $1\"\t\"$2}'"
 # Git related
 
 alias cdg='cd $(git rev-parse --show-toplevel)' # go to git root directory
+alias cdr='cd $(git rev-parse --show-toplevel)' # go to git root directory
 
 ## Git Status
 alias gs="git status"
