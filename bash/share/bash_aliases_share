@@ -359,6 +359,7 @@ alias find_empty='find . -not \( -path ./.git -prune \) -empty | grep -v .Rproj.
 alias tmrw="tmux rename-window"
 alias tmrs="tmux rename-session"
 alias tp="tmuxp"
+alias tall='tmux choose-window'
 
 _makefile_init() {
   if [[ ! -e Makefile ]]; then
@@ -397,3 +398,5 @@ alias sbal="source ${HOME}/.dotfiles/bash/local/bash_aliases_local"
 alias sbas="source ${HOME}/.dotfiles/bash/share/bash_aliases_share"
 alias sbsl="source ${HOME}/.dotfiles/bash/local/bash_settings_local"
 alias sbfl="source ${HOME}/.dotfiles/bash/local/bash_functions_local"
+alias sbfs="source ${HOME}/.dotfiles/bash/share/bash_functions_share"
+
