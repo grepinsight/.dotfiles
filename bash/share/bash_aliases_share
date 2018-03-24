@@ -183,6 +183,9 @@ alias uniqc="uniq -c | sort -k2,2 | awk '{print $1\"\t\"$2}'"
 ##################################################
 # Git related
 
+alias cdg='cd $(git rev-parse --show-toplevel)' # go to git root directory
+alias cdr='cd $(git rev-parse --show-toplevel)' # go to git root directory
+
 ## Git Status
 alias gs="git status"
 alias gss="git status -s"
@@ -244,11 +247,12 @@ alias js="jobs"
 alias j="jobs"
 alias f="fg"
 alias vimrc="vim $HOME/.dotfiles/vim/vimrc"
-alias vimpack="vim $HOME/.dotfiles/vim/vim_module_setup.sh"
+alias vs="vim -S ./Session.vim"
 
 ##################################################
 # etc
 
+alias rt="reset"
 #tablemanipulate
 ### http://unix.stackexchange.com/questions/29023/how-to-display-tsv-csv-in-console-when-empty-cells-are-missed-by-column-t
 alias ctt="(sed ':x s/\(^\|\t\)\t/\1 \t/; t x' | column -ts$'\t')"
@@ -355,6 +359,8 @@ alias find_empty='find . -not \( -path ./.git -prune \) -empty | grep -v .Rproj.
 ## Tmux Related
 alias tmrw="tmux rename-window"
 alias tmrs="tmux rename-session"
+alias tp="tmuxp"
+alias tall='tmux choose-window'
 
 _makefile_init() {
   if [[ ! -e Makefile ]]; then
@@ -393,3 +399,5 @@ alias sbal="source ${HOME}/.dotfiles/bash/local/bash_aliases_local"
 alias sbas="source ${HOME}/.dotfiles/bash/share/bash_aliases_share"
 alias sbsl="source ${HOME}/.dotfiles/bash/local/bash_settings_local"
 alias sbfl="source ${HOME}/.dotfiles/bash/local/bash_functions_local"
+alias sbfs="source ${HOME}/.dotfiles/bash/share/bash_functions_share"
+

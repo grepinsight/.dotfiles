@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+set -x
+ROOT_DIR="$HOME/.dotfiles"
+
 ### bashrc
 
 
@@ -27,9 +30,6 @@ else
     echo " * Creating a symbolic link"
     echo " ->  ln -sf .dotfiles/vim/vimrc ../.vimrc"
     ln -s .dotfiles/vim/vimrc ../.vimrc
-
-    echo " * Installing vim plugins"
-    bash vim/vim_module_setup.sh
 fi
 
 ### Tools
@@ -51,5 +51,10 @@ else
     echo "git not found! install git and rerun this script again"
 fi
 
-#touch tmux/tmux.conf.local
-#touch git/gitconfig.local
+
+
+
+# Basic set up
+
+cd $ROOT_DIR && touch tmux/tmux.conf.local
+cd $ROOT_DIR && touch git/gitconfig.local

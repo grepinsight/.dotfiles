@@ -1,143 +1,279 @@
-" R assignment
-execute "set <M-->=\033-"
-execute "set <M-m>=\033m"
-inoremap <M--> <- 
-inoremap <M-m> %>% 
-
-call plug#begin('~/.vim/plugged')
-
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all'  }
-Plug 'junegunn/fzf.vim'
-Plug 'ivanov/vim-ipython'
-Plug 'davidhalter/jedi-vim'
-
-call plug#end()
-
-set autoread  
-au CursorHold * checktime 
-
+" vim: set foldmethod=marker foldlevel=0 nomodeline:
+" ============================================================================
+" .vimrc of grepinsight
+" ============================================================================
+" Variables {{{
+" ============================================================================
+let vimrplugin_assign = 0 " Stop annoying vimRplugin reassignment
+let g:snippets_dir="$HOME/bin/util_setup/vim_setup/snippets"
+let s:darwin = has('mac')
+" }}}
+" ============================================================================
+" Basic Settings {{{
+" ============================================================================
+" Vim 8 defaults
+unlet! skip_defaults_vim
+silent! source $VIMRUNTIME/defaults.vim
 syntax on
-set nocp
+set encoding=UTF-8
+filetype plugin indent on
+runtime macros/matchit.vim
+set pastetoggle=<F5>
+set history=1000        " enable longer command mode history
+set autoread            " automatically read changed file again
+set autowrite
+set nocompatible        " enable modern vim features
 set cursorline          " highlight current line
 set lazyredraw          " redraw only when we need to.
 set showmatch           " highlight matching [{()}]
 set foldenable          " enable folding
 set foldlevelstart=10   " open most folds by default
-set autowrite           
-" space open/closes folds
-nnoremap <space> za     
 set foldmethod=indent   " fold based on indent level
+set splitright          " split navigation
+set hidden              " allow modified/unsaved buffers in the background.
+set number              " set number
+set smartcase           " if capital letter is used, then do not ignore case
+set ignorecase
+set shiftwidth=4        " size of an indent
+set softtabstop=4       " Indentation levels very four columns"
+set expandtab           " tabs are spaces
+set tabstop=4           " size of a hard tabstop number of visual spaces per TAB
+set incsearch           " search as characters are entered
+set hlsearch            " highlight matches
+set path+=**            " provides tab-completion for all file-related tasks
+set wildmenu            " display all matching files when we tab complete
+"set clipboard=unnamed
+
+" }}}
+" ============================================================================
+" VIM_PLUG BLOCK {{{
+" ============================================================================
+" ----------------------------------------------------------------------------
+" Automatically install Vim Plug {{{
+" ----------------------------------------------------------------------------
+if empty(glob('~/.vim/autoload/plug.vim'))
+  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
+" }}}
+
+call plug#begin('~/.vim/plugged')
+
+" Basic setup
+Plug 'tpope/vim-sensible'
+
+" Looks / Status
+Plug 'flazz/vim-colorschemes'
+Plug 'vim-airline/vim-airline'
+Plug 'junegunn/seoul256.vim'
+Plug 'ryanoasis/vim-devicons'
+"Plug 'yuttie/comfortable-motion.vim'
+
+" Session Management
+Plug 'tpope/vim-obsession'
+
+" Files related
+Plug 'scrooloose/nerdtree'
+Plug 'Xuyuanp/nerdtree-git-plugin'
+Plug 'tpope/vim-eunuch'
+
+" Search files
+Plug 'ctrlpvim/ctrlp.vim'
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all'  }
+Plug 'junegunn/fzf.vim'
+Plug 'junegunn/vim-peekaboo'
+Plug 'mileszs/ack.vim'
+
+Plug 'mhinz/vim-grepper'
+let g:grepper = {}
+runtime autoload/grepper.vim
+let g:grepper.tools = ['rg', 'git', 'ag']
+let g:grepper.jump = 1
+let g:grepper.stop = 500
+noremap <leader>gr :GrepperRg<Space>
+
+nmap gs  <plug>(GrepperOperator)
+xmap gs  <plug>(GrepperOperator)
+
+" Navigation
+Plug 'Lokaltog/vim-easymotion'
+Plug 'vim-scripts/taglist.vim'
+Plug 'majutsushi/tagbar'
+Plug 'tpope/vim-projectionist'
+Plug 'tpope/vim-unimpaired'
+
+" Editing
+Plug 'tpope/vim-surround'
+Plug 'tpope/vim-repeat'
+Plug 'terryma/vim-multiple-cursors'
+Plug 'junegunn/vim-after-object'
+Plug 'sjl/gundo.vim'
+Plug 'tpope/vim-commentary'
+Plug 'tommcdo/vim-exchange'
+Plug 'jiangmiao/auto-pairs'
+Plug 'Yggdroot/indentLine'
+Plug 'bronson/vim-trailing-whitespace'
+
+" Git
+Plug 'airblade/vim-gitgutter'
+Plug 'tpope/vim-fugitive'
+Plug 'junegunn/gv.vim'
+
+" Testing
+Plug 'metakirby5/codi.vim'
+Plug 'janko-m/vim-test'
+Plug 'tpope/vim-dispatch'
+
+" Python/Go
+Plug 'davidhalter/jedi-vim'
+Plug 'fatih/vim-go'
+
+" Lint
+Plug 'w0rp/ale'
+
+" Completions and snippets
+Plug 'Valloric/YouCompleteMe'
+Plug 'SirVer/ultisnips'
+Plug 'honza/vim-snippets'
+Plug 'ervandew/supertab'
+Plug 'grepinsight/mysnippets'
+
+" Writing
+Plug 'plasticboy/vim-markdown'
+Plug 'tpope/vim-abolish'
+Plug 'junegunn/goyo.vim'
+Plug 'junegunn/limelight.vim'
+Plug 'beloglazov/vim-online-thesaurus'
+
+" Misc
+Plug 'mattn/emmet-vim'
+Plug 'tomtom/tlib_vim'
+Plug 'itchyny/calendar.vim'
+
+
+call plug#end()
+
+" }}}
+" ============================================================================
+" Productivity Aliases {{{
+" ============================================================================
+" ----------------------------------------------------------------------------
+" R assignment {{{
+execute "set <M-->=\033-"
+execute "set <M-m>=\033m"
+inoremap <M--> <-
+inoremap <M-m> %>%
+command! MakeTags !ctags -R .
+" }}}
+" ----------------------------------------------------------------------------
+nnoremap <Leader>vv :e $HOME/.dotfiles/vim/vim.cheatsheet.md<CR>
+
+"insert file name : \fn in insert mode
+inoremap \fn <C-R>=expand("%:t")<CR>
+
+"focus current fold
+nnoremap zs zMzvzz
+
+" Make movement more visual oriented
+nnoremap j gj
+nnoremap k gk
+xnoremap j gj
+xnoremap k gk
+
+
+" Make movement between windows more intuitive
+nmap gh <C-w>h
+nmap gj <C-w>j
+nmap gk <C-w>k
+nmap gl <C-w>l
+
+nmap \l :setlocal number!<CR>
+nmap \q :nohlsearch<CR>
+nmap \e :NERDTreeToggle<CR>
+
+" Use sane regexes.
+nnoremap / /\v
+vnoremap / /\v
+
+
+"Keep search matches in the middle of the window and pulse the line when moving to them
+nnoremap n nzzzv
+nnoremap N Nzzzv
+nnoremap vv ^vg_
+
+" Make execute able
+nnoremap <Leader>x :!chmod 750 %<CR>
+
+" space open/closes folds
+nnoremap <space> za
 
 " highlight last inserted text
 nnoremap gV `[v`]
 
-" toggle gundo
-nnoremap <leader>u :GundoToggle<CR>
+" Editing source files
+nnoremap <Leader>ev :e $HOME/.dotfiles/vim/vimrc<CR>
+nnoremap <Leader>sv :source $MYVIMRC<CR>
+nnoremap <Leader>es :vsplit ~/.vim/bundle/mysnippets/snippets<CR>
+"reselect after indenting
+vnoremap < <gv
+vnoremap > >gv
+"never use Ex mode -- I never *mean* to press it
+nnoremap Q <ESC>
+"Escape Mode
+imap jj <Esc>
+"never use F1 -- I'm reaching for escape
+noremap  <F1> <ESC>
+noremap! <F1> <ESC>
+lnoremap <F1> <ESC>
+nnoremap aa pkj
 
+nnoremap <Leader>t :terminal<CR>
 
-function! NumberToggle()
-    if(&relativenumber == 1)
-        set norelativenumber
-        set number
-    else
-        set relativenumber
-    endif
-endfunc
+" Buffers {{{
+" close buffer
+nnoremap BB :bd<CR>
+nnoremap <F4> :bd<CR>
 
-nnoremap <C-n> :call NumberToggle()<cr>
+" reopen the closed buffer
+nnoremap <c-s-t> :b#<CR>
+" }}}
 
-au FocusLost * :set number
-au FocusGained * :set relativenumber
+" line find
+nnoremap <Leader>lf :Lines<CR>
 
+" Bash alias shortcut {{{
+nnoremap <Leader>bas :tabnew $HOME/.dotfiles/bash/share/bash_aliases_share<CR>
+nnoremap <Leader>bcs :tabnew $HOME/.dotfiles/bash/share/bash_colors_share<CR>
+nnoremap <Leader>bfs :tabnew $HOME/.dotfiles/bash/share/bash_functions_share<CR>
+nnoremap <Leader>bss :tabnew $HOME/.dotfiles/bash/share/bash_settings_share<CR>
+nnoremap <Leader>bal :tabnew $HOME/.dotfiles/bash/local/bash_aliases_local<CR>
+nnoremap <Leader>bpl :tabnew $HOME/.dotfiles/bash/local/bash_paths_local<CR>
+nnoremap <Leader>bsl :tabnew $HOME/.dotfiles/bash/local/bash_settings_local<CR>
+" }}}
+
+"Align Text {{{
+nnoremap <leader>Al :left<cr>
+nnoremap <leader>Ac :center<cr>
+nnoremap <leader>Ar :right<cr>
+vnoremap <leader>Al :left<cr>
+vnoremap <leader>Ac :center<cr>
+vnoremap <leader>Ar :right<cr>
+"}}}
 "
-"Preamble
-"Pathongen Infection -------------------- {{{
-execute pathogen#infect()
-let vimrplugin_assign = 0 " Stop annoying vimRplugin reassignment
-let g:snippets_dir="$HOME/bin/util_setup/vim_setup/snippets"
+" Run commands
+nnoremap <Leader>pl :w<CR> :!perl %<CR>
+nnoremap <Leader>cc :w<CR> :!g++ %;./a.exe<CR>
+nnoremap <Leader>py :w<CR> :!python %<CR>
+" reverse join
+nnoremap <Leader>j kJ
+
 " }}}
-
-let g:solarized_termcolors=256
-set background=light "Make the color suitable to dark background
-colorscheme solarized
-
-" Productivity Aliases
-" HTML Tidy
- vmap ,x :!tidy -q -i --show-errors 0<CR>
-"Run perlcode
- nnoremap <Leader>pl :w<CR> :!perl %<CR>
- nnoremap <Leader>cc :w<CR> :!g++ %;./a.exe<CR>
- nnoremap <Leader>py :w<CR> :!python %<CR>
- " Make executate able
- nnoremap <Leader>x :!chmod 750 %<CR>
- " reverse join
- nnoremap <Leader>j kJ
-
- " command mode
- " cnoremap ^ <home>
- " cnoremap $ <end>
-
-"Align Text
- nnoremap <leader>Al :left<cr>
- nnoremap <leader>Ac :center<cr>
- nnoremap <leader>Ar :right<cr>
- vnoremap <leader>Al :left<cr>
- vnoremap <leader>Ac :center<cr>
- vnoremap <leader>Ar :right<cr>
-
- "Yarking
- nnoremap <silent> <F6> :YRShow<cr>
-
-
-"Taglist Toggle
-nnoremap <silent> <F7> :TlistToggle<CR>
-"Paste Toggle
-set pastetoggle=<F8>
-set pastetoggle=<leader>p
-
-"Set Methods ---------------------{{{
-  set hidden "Allow modified/unsaved buffers in the background.
-  set history=1000
-  set nu "set number"
-  set smartcase "if captial letter is used, then do not ignore case!"
-  set ignorecase
-
-  set shiftwidth=4  " size of an "indent"
-  set softtabstop=4 " Indentation levels very four columns"
-                    " a combination of spaces and tabs are used to simulate tab stops at a width
-                    " other than the (hard)tabstop
-  set expandtab     " tabs are spaces
-  set tabstop=4     " size of a hard tabstop number of visual spaces per TAB
-
-
-
-  " set textwidth=78  "Wrap at this column"
-
-
-  " Search
-  set incsearch           " search as characters are entered
-  set hlsearch            " highlight matches
-  
-  runtime macros/matchit.vim
-  filetype plugin indent on
-  hi Comment  guifg=#80a0ff ctermfg=darkred
-" }}}
-
-"Movements--------------------------------------------------{{{
-    nnoremap j gj
-    nnoremap k gk
-    xnoremap j gj
-    xnoremap k gk
-"Fasta up and down
-  " nmap J 5j
-    " nmap K 5k
-    " xmap J 5j
-    " xmap K 5k
-"Split navigation
-    set splitbelow
-    set splitright
-
-"""
+" ============================================================================
+" Advanced Settings --------------------------------------------------{{{
+" ----------------------------------------------------------------------------
+" Spelling related {{{
 let g:spell_is_open = 0
 
 function! SpellToggle()
@@ -147,7 +283,7 @@ function! SpellToggle()
         :mkspell! $HOME/.dotfiles/vim/spell/en.utf-8.add
         :bd
         execute g:spell_return_to_window . "wincmd w"
-    else 
+    else
         let g:spell_return_to_window = winnr()
         :vsplit $HOME/.dotfiles/vim/spell/en.utf-8.add
         let g:spell_is_open = 1
@@ -155,11 +291,14 @@ function! SpellToggle()
 endfunction
 
 nnoremap <Leader>sp :call SpellToggle()<CR>
+nnoremap <Leader>nsp :set nospell<CR>
+nnoremap <Leader>ssp :set spell<CR>
 inoremap <Leader>sp <Esc>:call SpellToggle()<CR>
 
-
-
-"""
+" }}}
+" ----------------------------------------------------------------------------
+" ----------------------------------------------------------------------------
+" Notes Related {{{
 nnoremap <Leader>no :call NoteToggle()<CR>
 inoremap <Leader>no <Esc>:call NoteToggle()<CR>
 
@@ -174,139 +313,41 @@ function! NoteToggle()
         :w
         :bd
         execute g:note_return_to_window . "wincmd w"
-    else 
+    else
         let g:note_return_to_window = winnr()
         :vsplit $HOME/src/notes/scratch.md
         let g:note_is_open = 1
     endif
 endfunction
 
-    nnoremap <Leader>t :vsplit<CR>
-    nmap gh <C-w>h
-    nmap gj <C-w>j
-    nmap gk <C-w>k
-    nmap gl <C-w>l
-    " Allow mouse for easy resizing
-    set mouse=a
+" }}}
+" ----------------------------------------------------------------------------
+" ----------------------------------------------------------------------------
+"  Mouse Related {{{
+" Allow mouse for easy resizing
+set mouse=a
+set ttymouse=xterm2
+set mouse+=a
+if &term =~ '^screen'
+    " tmux knows the extended mouse mode
     set ttymouse=xterm2
-    set mouse+=a
-    if &term =~ '^screen'
-        " tmux knows the extended mouse mode
-        set ttymouse=xterm2
-    endif
-    set mouse=c
-
-"Tab navigation
-    nmap <C-l> gt
-    nmap <C-h> gT
-    nnoremap <silent> [t :tabp<CR> 
-    nnoremap <silent> ]t :tabn<CR>
-    nnoremap <silent> [T :tabfirst<CR>
-    nnoremap <silent> ]T :tablast<CR>
-"Buffer navigation
-    nnoremap <silent> [b :bprevious<CR> 
-    nnoremap <silent> ]b :bnext<CR>
-    nnoremap <silent> [B :bfirst<CR>
-    nnoremap <silent> ]B :blast<CR>
-"reselect after indenting
-    vnoremap < <gv
-    vnoremap > >gv
-"never use Ex mode -- I never *mean* to press it
-    nnoremap Q <ESC>
-"Escape Mode
-    imap jj <Esc>
-"never use F1 -- I'm reaching for escape
-    noremap  <F1> <ESC>
-    noremap! <F1> <ESC>
-    lnoremap <F1> <ESC>
-    nnoremap aa pkj
-
-"Ctags Tricks
-    map <Leader>] :tab split<CR>:exec("tag ".expand("<cword>"))<CR>
-    map <Leader>v :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
-"}}}
-
-""Keyboard shortcuts -------------------{{{
-  nmap \l :setlocal number!<CR>
-  nmap \q :nohlsearch<CR>
-  nmap \e :NERDTreeToggle<CR>
-
-"insert file name : \fn in insert mode
-inoremap \fn <C-R>=expand("%:t")<CR>
-
-"Editting source files
-nnoremap <Leader>ev :e $HOME/.dotfiles/vim/vimrc<CR>
-nnoremap <Leader>sv :source $MYVIMRC<CR>
-nnoremap <Leader>es :vsplit ~/.vim/bundle/mysnippets/snippets<CR>
-
-"Keep search matches in the middle of the window and pulse the line when moving to them
-nnoremap n nzzzv
-nnoremap N Nzzzv
-nnoremap vv ^vg_
-
-"Select all
-"nnoremap <C-a> ggvG
-"inoremap <C-a> <Esc>ggvG
-
-" Use sane regexes.
-nnoremap / /\v
-vnoremap / /\v
-
-" Clean trailing whitespace
-" nnoremap <leader>w mz:%s/\s\+$//<cr>:let @/=''<cr>`z
-" " Trailing whitespace {{{
-" " Only shown when not in insert mode so I don't go insane.
-
-" augroup trailing
-"     au!
-"     au InsertEnter * :set listchars-=trail:⌴
-" augroup END
-
-" " }}}
-
-"}}}
-
-"set smartindent
-
-"nnoremap <silent> <C-l> :nohl<CR><C-l>
-" inoremap <F9> <C-O>za
-" nnoremap <F9> za
-" onoremap <F9> <C-C>za
-" vnoremap <F9> zf
-
-" Tip: load a file into the default buffer, and its driver
-" into the alternate buffer, then use F9/F12 to build/run.
-" Note: # (alternate filename) isn't set until you :next to it!
-" Tip2: You can make then run without hitting ENTER to continue. F9-F12
-
-" With these you can cl/cn/cp (quickfix commands) to browse the errors
-" after you compile it with :make
-
-set makeprg=javac\ %
-set errorformat=%A:%f:%l:\ %m,%-Z%p^,%-C%.%#
-
-" If two files are loaded, switch to the alternate file, then back.
-" That sets # (the alternate file).
-if argc() == 2
-  n
-  e #
 endif
+set mouse=c
+"  }}}
+" ----------------------------------------------------------------------------
 
-
-"focus current fold
-nnoremap <leader>z zMzvzz
-
-"Remapping marking pos
-" nnoremap ' `
-" nnoremap ` '
+" Ctags Tricks
+map <Leader>] :tab split<CR>:exec("tag ".expand("<cword>"))<CR>
+map <Leader>v :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
+"}}}
+" ============================================================================
+" Auto settings {{{
+" ============================================================================
 "save when losing focus
 au FocusLost * :silent! wall
 au FocusLost * :wa
 
-
-
 " Make sure Vim returns to the same line when you reopen a file.
-" Thanks, Amit
 augroup line_return
     au!
     au BufReadPost *
@@ -315,43 +356,24 @@ augroup line_return
         \ endif
 augroup END
 
-" }}}
+au CursorHold * checktime
 
-"Shell command --------------------------------------------------{{{
-command! -complete=shellcmd -nargs=+ Shell call s:RunShellCommand(<q-args>)
-function! s:RunShellCommand(cmdline)
-  echo a:cmdline
-  let expanded_cmdline = a:cmdline
-  for part in split(a:cmdline, ' ')
-     if part[0] =~ '\v[%#<]'
-        let expanded_part = fnameescape(expand(part))
-        let expanded_cmdline = substitute(expanded_cmdline, part, expanded_part, '')
-     endif
-  endfor
-  botright new
-  setlocal buftype=nofile bufhidden=wipe nobuflisted noswapfile nowrap
-  call setline(1, 'You entered:    ' . a:cmdline)
-  call setline(2, 'Expanded Form:  ' .expanded_cmdline)
-  call setline(3,substitute(getline(2),'.','=','g'))
-  execute '$read !'. expanded_cmdline
-  setlocal nomodifiable
-  1
-endfunction
-"}}}
-
-function! RenameFile() "{{{
-    let old_name = expand('%')
-    let new_name = input('New file name: ', expand('%'), 'file')
-    if new_name != '' && new_name != old_name
-        exec ':saveas ' . new_name
-        exec ':silent !rm ' . old_name
-        redraw!
+function! NumberToggle()
+    if(&relativenumber == 1)
+        set norelativenumber
+        set number
+    else
+        set relativenumber
     endif
-endfunction
-nnoremap <Leader>n :call RenameFile()<cr>
+endfunc
 
-"}}}
+nnoremap <Leader>rel :call NumberToggle()<cr>
 
+au FocusLost * :set number
+au FocusGained * :set relativenumber
+
+" }}}
+" ============================================================================
 function! MarkWindowSwap() "{{{
   let g:markedWinNum = winnr()
   endfunction
@@ -368,75 +390,11 @@ function! DoWindowSwap()
   "Switch to dest and shuffle source->dest
   exe curNum . "wincmd w"
   "Hide and open so that we aren't prompted and keep history
-  exe 'hide buf' markedBuf 			   
+  exe 'hide buf' markedBuf
 endfunction
 
 nmap <silent> <leader>mw :call MarkWindowSwap()<CR>
 nmap <silent> <leader>pw :call DoWindowSwap()<CR>
-
-" Use CTRL-S for saving, also in Insert mode
-noremap <C-S> :update<CR>
-vnoremap <C-S> <C-C>:update<CR>
-inoremap <C-S> <C-O>:update<CR>
-
-
-
-
-function! HiInterestingWord(n) " {{{
-    " Save our location.
-    normal! mz
-
-    " Yank the current word into the z register.
-    normal! "zyiw
-
-    " Calculate an arbitrary match ID.  Hopefully nothing else is using it.
-    let mid = 86750 + a:n
-
-    " Clear existing matches, but don't worry if they don't exist.
-    silent! call matchdelete(mid)
-
-    " Construct a literal pattern that has to match at boundaries.
-    let pat = '\V\<' . escape(@z, '\') . '\>'
-
-    " Actually match the words.
-    call matchadd("InterestingWord" . a:n, pat, 1, mid)
-
-    " Move back to our original location.
-    normal! `z
-endfunction " }}}
-
-" Mappings {{{
-
-nnoremap <silent> <leader>1 :call HiInterestingWord(1)<cr>
-nnoremap <silent> <leader>2 :call HiInterestingWord(2)<cr>
-nnoremap <silent> <leader>3 :call HiInterestingWord(3)<cr>
-nnoremap <silent> <leader>4 :call HiInterestingWord(4)<cr>
-nnoremap <silent> <leader>5 :call HiInterestingWord(5)<cr>
-nnoremap <silent> <leader>6 :call HiInterestingWord(6)<cr>
-
-" }}}
-" Default Highlights {{{
-
-hi def InterestingWord1 guifg=#000000 ctermfg=16 guibg=#ffa724 ctermbg=214
-hi def InterestingWord2 guifg=#000000 ctermfg=16 guibg=#aeee00 ctermbg=154
-hi def InterestingWord3 guifg=#000000 ctermfg=16 guibg=#8cffba ctermbg=121
-hi def InterestingWord4 guifg=#000000 ctermfg=16 guibg=#b88853 ctermbg=137
-hi def InterestingWord5 guifg=#000000 ctermfg=16 guibg=#ff9eb8 ctermbg=211
-hi def InterestingWord6 guifg=#000000 ctermfg=16 guibg=#ff2c4b ctermbg=195
-
-
-let g:indentguides_state = 0
-function! IndentGuides() " {{{
-    if g:indentguides_state
-        let g:indentguides_state = 0
-        2match None
-    else
-        let g:indentguides_state = 1
-        execute '2match IndentGuides /\%(\_^\s*\)\@<=\%(\%'.(0*&sw+1).'v\|\%'.(1*&sw+1).'v\|\%'.(2*&sw+1).'v\|\%'.(3*&sw+1).'v\|\%'.(4*&sw+1).'v\|\%'.(5*&sw+1).'v\|\%'.(6*&sw+1).'v\|\%'.(7*&sw+1).'v\)\s/'
-    endif
-endfunction " }}}
-hi def IndentGuides guibg=#303030 ctermbg=234
-nnoremap <leader>I :call IndentGuides()<cr>
 
 """""""""""""""""
 " Ack motions {{{
@@ -456,6 +414,9 @@ xnoremap <silent> <leader>A :<C-U>call <SID>AckMotion(visualmode())<CR>
 "nnoremap <bs> :Ack! '\b<c-r><c-w>\b'<cr>
 "xnoremap <silent> <bs> :<C-U>call <SID>AckMotion(visualmode())<CR>
 
+nmap <Leader>kk :Ack! "\b<cword>\b" <CR>
+
+
 function! s:CopyMotionForType(type)
     if a:type ==# 'v'
         silent execute "normal! `<" . a:type . "`>y"
@@ -464,28 +425,19 @@ function! s:CopyMotionForType(type)
     endif
 endfunction
 
-" function! s:AckMotion(type) abort
-"     let reg_save = @@
+function! s:AckMotion(type) abort
+    let reg_save = @@
 
-"     call s:CopyMotionForType(a:type)
+    call s:CopyMotionForType(a:type)
 
-"     execute "normal! :Ack! --literal " . shellescape(@@) . "\<cr>"
+    execute "normal! :Ack! --literal " . shellescape(@@) . "\<cr>"
 
-"     let @@ = reg_save
-" endfunction
+    let @@ = reg_save
+endfunction
 
 " check file change every 4 seconds ('CursorHold') and reload the buffer upon detecting change
-au CursorHold * checktime  
+au CursorHold * checktime
 
-"Ultistnip
-let g:UltiSnipsExpandTrigger="<S-tab>"
-" let g:UltiSnipsJumpForwardTrigger="<c-j>"
-" let g:UltiSnipsJumpBackwardTrigger="<c-k>"
-" 
-" " If you want :UltiSnipsEdit to split your window.
-let g:UltiSnipsEditSplit="vertical"
-let g:UltiSnipsNoPythonWarning = 1
-let g:UltiSnipsSnippetsDir="~/.vim/bundle/mysnippets/snippets/"
 
 " Useful hotkeys
 
@@ -496,15 +448,6 @@ nnoremap <Leader>ls :ls<CR>
 
 " Open markdown
 nnoremap <Leader>md :w<CR> :!cygstart %<CR>
-
-" Bash alias shortcut
-nnoremap <Leader>bas :tabnew $HOME/.dotfiles/bash/share/bash_aliases_share<CR>
-nnoremap <Leader>bcs :tabnew $HOME/.dotfiles/bash/share/bash_colors_share<CR>
-nnoremap <Leader>bfs :tabnew $HOME/.dotfiles/bash/share/bash_functions_share<CR>
-nnoremap <Leader>bss :tabnew $HOME/.dotfiles/bash/share/bash_settings_share<CR>
-nnoremap <Leader>bal :tabnew $HOME/.dotfiles/bash/local/bash_aliases_local<CR>
-nnoremap <Leader>bpl :tabnew $HOME/.dotfiles/bash/local/bash_paths_local<CR>
-nnoremap <Leader>bsl :tabnew $HOME/.dotfiles/bash/local/bash_settings_local<CR>
 
 " <Leader>f{char} to move to {char}
 map  <Leader>f <Plug>(easymotion-bd-f)
@@ -525,8 +468,7 @@ nmap <Leader>w <Plug>(easymotion-overwin-w)
 let g:airline#extensions#tabline#enabled = 1
 
 
-
-"crontab stuff
+" crontab stuff
 if $VIM_CRONTAB == "true"
     set nobackup
     set nowritebackup
@@ -551,11 +493,14 @@ let g:ctrlp_custom_ignore = {
 " Tagbar
 nmap <F8> :TagbarToggle<CR>
 
-" Fugitive
+" ----------------------------------------------------------------------------
+" Plugin - Fugitive
+" ----------------------------------------------------------------------------
 "  - blame
 nnoremap <leader>b :Gblame<CR>
+nnoremap <leader>gcv :Gcommit -v <CR>
 
-"  - diff 
+"  - diff
 command Greview :Git! diff --staged
 nnoremap <leader>r :Greview<cr>
 
@@ -574,8 +519,8 @@ nnoremap <leader>s :ToggleGStatus<CR>
 " Copy and Paste : https://vi.stackexchange.com/questions/84/how-can-i-copy-text-to-the-system-clipboard-from-vim
 noremap <Leader>y "*y
 noremap <Leader>Y "+y
-"noremap <Leader>p "*p
-"noremap <Leader>P "+p
+noremap <Leader>p "*p
+noremap <Leader>P "+p
 
 " Autopair
 let g:AutoPairsShortcutToggle = '<Leader>m'
@@ -601,14 +546,29 @@ let g:tagbar_type_r = {
 
 " Tag for markdown (https://github.com/majutsushi/tagbar/issues/70)
 let g:tagbar_type_markdown = {
-            \ 'ctagstype' : 'markdown',
-            \ 'kinds' : [
-                \ 'h:headings',
-                \ 'l:links',
-                \ 'i:images'
-            \ ],
-    \ "sort" : 0
+    \ 'ctagstype': 'markdown',
+    \ 'ctagsbin' : '~/src/markdown2ctags/markdown2ctags.py',
+    \ 'ctagsargs' : '-f - --sort=yes',
+    \ 'kinds' : [
+        \ 's:sections',
+        \ 'i:images'
+    \ ],
+    \ 'sro' : '|',
+    \ 'kind2scope' : {
+        \ 's' : 'section',
+    \ },
+    \ 'sort': 0,
 \ }
+
+" let g:tagbar_type_markdown = {
+"             \ 'ctagstype' : 'markdown',
+"             \ 'kinds' : [
+"                 \ 'h:headings',
+"                 \ 'l:links',
+"                 \ 'i:images'
+"             \ ],
+"     \ 'sort' : 0
+" \ }
 
 let g:tagbar_type_rmd = {
             \ 'ctagstype' : 'markdown',
@@ -620,7 +580,8 @@ let g:tagbar_type_rmd = {
     \ "sort" : 0
 \ }
 
-colorscheme Tomorrow-Night
+"colorscheme Tomorrow-Night
+colorscheme seoul256
 
 " Mapping selecting mappings
 nmap <leader><tab> <plug>(fzf-maps-n)
@@ -632,3 +593,164 @@ imap <c-x><c-k> <plug>(fzf-complete-word)
 imap <c-x><c-f> <plug>(fzf-complete-path)
 imap <c-x><c-j> <plug>(fzf-complete-file-ag)
 imap <c-x><c-l> <plug>(fzf-complete-line)
+
+"=================================================================
+" Plugin - Vim Test
+"=================================================================
+let test#python#runner = 'pytest'
+
+" these "Ctrl mappings" work well when Caps Lock is mapped to Ctrl
+nmap <silent> t<C-n> :TestNearest<CR> " t Ctrl+n
+nmap <silent> t<C-f> :TestFile<CR>    " t Ctrl+f
+nmap <silent> t<C-s> :TestSuite<CR>   " t Ctrl+s
+nmap <silent> t<C-l> :TestLast<CR>    " t Ctrl+l
+nmap <silent> t<C-g> :TestVisit<CR>   " t Ctrl+g
+let g:test#preserve_screen = 1
+let test#strategy = "dispatch"
+
+
+function! s:goyo_enter()
+  silent !tmux set status off
+  silent !tmux list-panes -F '\#F' | grep -q Z || tmux resize-pane -Z
+  set noshowmode
+  set noshowcmd
+  set scrolloff=999
+  set nospell
+  Limelight
+  " ...
+endfunction
+
+function! s:goyo_leave()
+  silent !tmux set status on
+  silent !tmux list-panes -F '\#F' | grep -q Z && tmux resize-pane -Z
+  set showmode
+  set showcmd
+  set scrolloff=5
+  set spell
+  Limelight!
+  " ...
+endfunction
+
+autocmd! User GoyoEnter nested call <SID>goyo_enter()
+autocmd! User GoyoLeave nested call <SID>goyo_leave()
+
+" Plugin - jedi-vim ----
+" to play nicely with YCM
+"let g:jedi#completions_enabled = 0
+
+
+
+" }}}
+
+" }}}
+" ============================================================================
+" Plugin Specific Settings {{{
+" ============================================================================
+" ----------------------------------------------------------------------------
+" Plugin - fzf ----
+" ----------------------------------------------------------------------------
+
+nnoremap <F3> :call fzf#run({'source': 'find -L ~/src/notes . -type f -not -path "*/\.*" -not -path "./env/*"', 'sink': 'edit'})<CR>
+inoremap <F3> :call fzf#run({'source': 'find -L ~/src/notes . -type f -not -path "*/\.*" -not -path "./env/*"', 'sink': 'edit'})<CR>
+nnoremap <Leader>pv :call fzf#vim#gitfiles('', fzf#vim#with_preview('right'))<CR>
+nmap ; :Buffers<CR>
+
+" ----------------------------------------------------------------------------
+" Gundo
+" ----------------------------------------------------------------------------
+" toggle gundo
+nnoremap <leader>u :GundoToggle<CR>
+
+" ----------------------------------------------------------------------------
+" vim-after-object
+" ----------------------------------------------------------------------------
+silent! if has_key(g:plugs, 'vim-after-object')
+  autocmd VimEnter * silent! call after_object#enable('=', ':', '#', ' ', '|')
+endif
+
+" ----------------------------------------------------------------------------
+" Plugin - Calendar
+" ----------------------------------------------------------------------------
+let g:calendar_google_calendar = 1
+let g:calendar_google_task = 1
+
+" ----------------------------------------------------------------------------
+" Plugin - Taglist
+" ----------------------------------------------------------------------------
+
+"Taglist Toggle
+nnoremap <silent> <F7> :TlistToggle<CR>
+
+
+" ----------------------------------------------------------------------------
+" YouCompleteMe
+" ----------------------------------------------------------------------------
+let g:ycm_key_list_select_completion=[]
+let g:ycm_key_list_previous_completion=[]
+" ----------------------------------------------------------------------------
+" Ultistnip
+" ----------------------------------------------------------------------------
+
+"let g:UltiSnipsExpandTrigger="<S-tab>"
+let g:UltiSnipsJumpForwardTrigger="<c-j>"
+let g:UltiSnipsJumpBackwardTrigger="<c-k>"
+"
+" " If you want :UltiSnipsEdit to split your window.
+let g:UltiSnipsEditSplit="vertical"
+let g:UltiSnipsNoPythonWarning = 1
+let g:UltiSnipsSnippetsDir="~/.vim/bundle/mysnippets/snippets/"
+
+" }}}
+" ============================================================================
+" Etc {{{
+" ============================================================================
+"
+" If two files are loaded, switch to the alternate file, then back.
+" That sets # (the alternate file).
+if argc() == 2
+  n
+  e #
+endif
+
+function! RenameFile() "{{{
+    let old_name = expand('%')
+    let new_name = input('New file name: ', expand('%'), 'file')
+    if new_name != '' && new_name != old_name
+        exec ':saveas ' . new_name
+        exec ':silent !rm ' . old_name
+        redraw!
+    endif
+endfunction
+nnoremap <F2> :call RenameFile()<cr>
+
+"}}}
+" }}}
+" ============================================================================
+" Unused/Disabled {{{
+"hi Comment  guifg=#80a0ff ctermfg=darkred
+"
+""Buffer navigation
+"nnoremap <silent> [b :bprevious<CR>
+"nnoremap <silent> ]b :bnext<CR>
+"nnoremap <silent> [B :bfirst<CR>
+"nnoremap <silent> ]B :blast<CR>
+"
+"Remapping marking pos
+" nnoremap ' `
+" nnoremap ` '
+
+" let g:indentguides_state = 0
+" function! IndentGuides() " {{{
+"     if g:indentguides_state
+"         let g:indentguides_state = 0
+"         2match None
+"     else
+"         let g:indentguides_state = 1
+"         execute '2match IndentGuides /\%(\_^\s*\)\@<=\%(\%'.(0*&sw+1).'v\|\%'.(1*&sw+1).'v\|\%'.(2*&sw+1).'v\|\%'.(3*&sw+1).'v\|\%'.(4*&sw+1).'v\|\%'.(5*&sw+1).'v\|\%'.(6*&sw+1).'v\|\%'.(7*&sw+1).'v\)\s/'
+"     endif
+" endfunction " }}}
+" hi def IndentGuides guibg=#303030 ctermbg=234
+" nnoremap <leader>I :call IndentGuides()<cr>
+"
+" }}}
+" ============================================================================
