@@ -76,3 +76,8 @@ https://stackoverflow.com/questions/6217156/break-a-previous-commit-into-multipl
 When you want remove a file that has been committed 
 
     git rm --cached /path/to/file
+
+# Git Clean
+
+    git clean -f # deletes files
+    git clean -df # deletes directory, including empty directory!
