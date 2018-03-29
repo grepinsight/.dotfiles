@@ -414,7 +414,7 @@ xnoremap <silent> <leader>A :<C-U>call <SID>AckMotion(visualmode())<CR>
 "nnoremap <bs> :Ack! '\b<c-r><c-w>\b'<cr>
 "xnoremap <silent> <bs> :<C-U>call <SID>AckMotion(visualmode())<CR>
 
-nmap <Leader>kk :Ack! "\b<cword>\b" <CR>
+nmap <Leader>ack :Ack! "\b<cword>\b" <CR>
 
 
 function! s:CopyMotionForType(type)
