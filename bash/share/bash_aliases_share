@@ -223,7 +223,16 @@ alias gd="git diff"
 
 ## Git Update
 alias gupdate='cd ~/.dotfiles && git pull && cd -'
-alias gds="git diff --staged" 
+
+
+function gds() {
+    if which diff-so-fancy; then
+        git diff --staged | diff-so-fancy
+    else
+        git diff --staged
+    fi
+}
+alias gds=gds
 
 ## Git Branch/Checkout
 alias gb="git branch"
