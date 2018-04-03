@@ -12,12 +12,19 @@ tmux/tmux.conf.combined: tmux/tmux.conf.share tmux/tmux.conf.local
 	touch tmux/tmux.conf.local
 	cat tmux/tmux.conf.share tmux/tmux.conf.local > tmux/tmux.conf.combined
 	ln -sf $$HOME/.dotfiles/tmux/tmux.conf.combined $$HOME/.tmux.conf
+
+tmux/tmux.conf.local:
+	touch $@ 
 	
 git_setup: git/gitconfig.combined ## combine gitconfig base and gitconfig local and link it to $HOME/.gitconfig
 
 git/gitconfig.combined: git/gitconfig.share git/gitconfig.local
+	touch git/gitconfig.local
 	cat git/gitconfig.share git/gitconfig.local > git/gitconfig.combined
 	ln -sf $$HOME/.dotfiles/git/gitconfig.combined $$HOME/.gitconfig
+
+git/gitconfig.local:
+	touch $@
 
 ctags_setup: ctags/ctags.share  ## ctags setup
 	ln -sf $$HOME/.dotfiles/ctags/ctags.share $$HOME/.ctags
