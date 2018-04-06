@@ -543,7 +543,7 @@ let g:ctrlp_custom_ignore = {
   \ 'dir' : '__pycache__',
   \ }
 
-let g:ctrlp_user_command = 'fd -E "*.pyc" -E "__pycache__"'
+let g:ctrlp_user_command = 'fd $FD_OPTS'
 " Tagbar
 nmap <F8> :TagbarToggle<CR>
 
@@ -705,8 +705,8 @@ autocmd! User GoyoLeave nested call <SID>goyo_leave()
 " Plugin - fzf ----
 " ----------------------------------------------------------------------------
 
-nnoremap <F3> :call fzf#run({'source': 'fd .', 'sink': 'edit'})<CR>
-inoremap <F3> :call fzf#run({'source': 'fd .', 'sink': 'edit'})<CR>
+nnoremap <F3> :call fzf#run({'source': 'fd $FD_OPTS . $HOME', 'sink': 'edit'})<CR>
+inoremap <F3> :call fzf#run({'source': 'fd $FD_OPTS . $HOME', 'sink': 'edit'})<CR>
 nnoremap <Leader>pv :call fzf#vim#gitfiles('', fzf#vim#with_preview('right'))<CR>
 nmap ; :Buffers<CR>
 
