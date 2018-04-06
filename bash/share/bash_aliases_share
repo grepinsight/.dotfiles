@@ -208,6 +208,8 @@ alias grh="git reset HEAD"
 alias gl="git log"
 alias glo="git log --oneline"
 alias gg="git log --oneline --decorate --graph --all"
+alias ggb="git log --oneline --decorate --graph master.." # current branch only
+alias ggbb="git log --oneline --decorate --graph --format=format:\"%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(dim white) - %an%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n %C(white)%s%C(reset)\" --name-only master.." # current branch only
 alias vgrog='vim $(git grog | fzf --reverse | tr -d "|")'
 
 
@@ -225,14 +227,7 @@ alias gd="git diff"
 alias gupdate='cd ~/.dotfiles && git pull && cd -'
 
 
-function gds() {
-    if which diff-so-fancy; then
-        git diff --staged | diff-so-fancy
-    else
-        git diff --staged
-    fi
-}
-alias gds=gds
+alias gds="git diff --staged"
 
 ## Git Branch/Checkout
 alias gb="git branch"
@@ -405,7 +400,12 @@ alias crontab="VIM_CRONTAB=true crontab"
 
 alias sbal="source ${HOME}/.dotfiles/bash/local/bash_aliases_local"
 alias sbas="source ${HOME}/.dotfiles/bash/share/bash_aliases_share"
+alias sbss="source ${HOME}/.dotfiles/bash/share/bash_settings_share"
 alias sbsl="source ${HOME}/.dotfiles/bash/local/bash_settings_local"
 alias sbfl="source ${HOME}/.dotfiles/bash/local/bash_functions_local"
 alias sbfs="source ${HOME}/.dotfiles/bash/share/bash_functions_share"
 
+
+# Vim calendar#
+alias calv="vim -c 'Calendar -view=week'"
+alias vnote="vim ${INSIGHT_NOTEPATH}/"$(date "+%Y-%m-%d")'.md'

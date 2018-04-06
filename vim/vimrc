@@ -119,6 +119,7 @@ Plug 'bronson/vim-trailing-whitespace'
 " Git
 Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-rhubarb'
 Plug 'junegunn/gv.vim'
 
 " Testing
@@ -148,6 +149,7 @@ Plug 'junegunn/limelight.vim'
 Plug 'beloglazov/vim-online-thesaurus'
 
 " Misc
+Plug 'szw/vim-g'
 Plug 'mattn/emmet-vim'
 Plug 'tomtom/tlib_vim'
 Plug 'itchyny/calendar.vim'
@@ -175,6 +177,8 @@ inoremap \fn <C-R>=expand("%:t")<CR>
 
 "focus current fold
 nnoremap zs zMzvzz
+nnoremap <Leader>fmi :set foldmethod=indent<CR>
+nnoremap <Leader>fms :set foldmethod=syntax<CR>
 
 " Make movement more visual oriented
 nnoremap j gj
@@ -229,6 +233,8 @@ noremap! <F1> <ESC>
 lnoremap <F1> <ESC>
 nnoremap aa pkj
 
+
+nnoremap <Leader>c :ccl<CR>
 nnoremap <Leader>t :terminal<CR>
 
 " Buffers {{{
@@ -237,7 +243,7 @@ nnoremap BB :bd<CR>
 nnoremap <F4> :bd<CR>
 
 " reopen the closed buffer
-nnoremap <c-s-t> :b#<CR>
+nnoremap <c-s-t> :b#<CR>:e<CR>
 " }}}
 
 " line find
@@ -269,9 +275,32 @@ nnoremap <Leader>py :w<CR> :!python %<CR>
 " reverse join
 nnoremap <Leader>j kJ
 
+" PythonRelated
+
+function! ImportFix()
+    ^cwfrom^[$F.r i import^[^
+endfunction
+
+" TODO run it only on python file and only if yapf is available
+" setlocal equalprg=yapf
+
+nnoremap <Leader>if ^cwfrom<Esc>$F.r i import<Esc>^
+
+
+" Notes
+
 " }}}
 " ============================================================================
 " Advanced Settings --------------------------------------------------{{{
+"
+" ----------------------------------------------------------------------------
+" Undo {{{
+"
+set undofile                " Save undos after file closes
+set undodir=$HOME/.vim/undo " where to save undo histories
+set undolevels=10000         " How many undos
+set undoreload=10000        " number of lines to save for undo
+" }}}
 " ----------------------------------------------------------------------------
 " Spelling related {{{
 let g:spell_is_open = 0
@@ -299,6 +328,8 @@ inoremap <Leader>sp <Esc>:call SpellToggle()<CR>
 " ----------------------------------------------------------------------------
 " ----------------------------------------------------------------------------
 " Notes Related {{{
+nnoremap <Leader>nt :e $INSIGHT_NOTEPATH/<C-R>=strftime("%Y-%m-%d")<CR>.md<CR>
+nnoremap <Leader>vn :e $INSIGHT_NOTEPATH/<C-R>=strftime("%Y-%m-%d")<CR>.md<CR>
 nnoremap <Leader>no :call NoteToggle()<CR>
 inoremap <Leader>no <Esc>:call NoteToggle()<CR>
 
@@ -368,6 +399,7 @@ function! NumberToggle()
 endfunc
 
 nnoremap <Leader>rel :call NumberToggle()<cr>
+set relativenumber
 
 au FocusLost * :set number
 au FocusGained * :set relativenumber
@@ -409,6 +441,7 @@ nmap <silent> <leader>pw :call DoWindowSwap()<CR>
 " searches line-by-line.
 
 nnoremap <silent> <leader>A :set opfunc=<SID>AckMotion<CR>g@
+xnoremap <silent> <leader>A :<C-U>call <SID>AckMotion(visualmode())<CR>
 xnoremap <silent> <leader>A :<C-U>call <SID>AckMotion(visualmode())<CR>
 
 "nnoremap <bs> :Ack! '\b<c-r><c-w>\b'<cr>
@@ -485,11 +518,15 @@ endif
 let NERDTreeIgnore = ['\.pyc$', 'db.sqlite3']
 
 
-" CtrlP
+" ----------------------------------------------------------------------------
+" Plugin - CtrlP
+" ----------------------------------------------------------------------------
 let g:ctrlp_custom_ignore = {
   \ 'file':  '\.pyc$\|\.Rd$',
+  \ 'dir' : '__pycache__',
   \ }
 
+let g:ctrlp_user_command = 'fd -E "*.pyc" -E "__pycache__"'
 " Tagbar
 nmap <F8> :TagbarToggle<CR>
 
@@ -598,6 +635,7 @@ imap <c-x><c-l> <plug>(fzf-complete-line)
 " Plugin - Vim Test
 "=================================================================
 let test#python#runner = 'pytest'
+let test#python#pytest#options = '-s -v'
 
 " these "Ctrl mappings" work well when Caps Lock is mapped to Ctrl
 nmap <silent> t<C-n> :TestNearest<CR> " t Ctrl+n
@@ -650,8 +688,8 @@ autocmd! User GoyoLeave nested call <SID>goyo_leave()
 " Plugin - fzf ----
 " ----------------------------------------------------------------------------
 
-nnoremap <F3> :call fzf#run({'source': 'find -L ~/src/notes . -type f -not -path "*/\.*" -not -path "./env/*"', 'sink': 'edit'})<CR>
-inoremap <F3> :call fzf#run({'source': 'find -L ~/src/notes . -type f -not -path "*/\.*" -not -path "./env/*"', 'sink': 'edit'})<CR>
+nnoremap <F3> :call fzf#run({'source': 'fd .', 'sink': 'edit'})<CR>
+inoremap <F3> :call fzf#run({'source': 'fd .', 'sink': 'edit'})<CR>
 nnoremap <Leader>pv :call fzf#vim#gitfiles('', fzf#vim#with_preview('right'))<CR>
 nmap ; :Buffers<CR>
 
@@ -686,6 +724,7 @@ nnoremap <silent> <F7> :TlistToggle<CR>
 " ----------------------------------------------------------------------------
 nnoremap <leader>aa :A <CR>
 nnoremap <leader><leader>a :A <CR>
+nnoremap <leader>a :A <CR>
 
 " ----------------------------------------------------------------------------
 " YouCompleteMe
