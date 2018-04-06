@@ -42,6 +42,9 @@ set incsearch           " search as characters are entered
 set hlsearch            " highlight matches
 set path+=**            " provides tab-completion for all file-related tasks
 set wildmenu            " display all matching files when we tab complete
+
+nnoremap <SPACE> <Nop>
+let maplocalleader=" "
 "set clipboard=unnamed
 
 " }}}
@@ -161,6 +164,19 @@ call plug#end()
 " ============================================================================
 " Productivity Aliases {{{
 " ============================================================================
+
+
+" never ring a bell
+if exists('&belloff')
+    set belloff=all
+endif
+
+nnoremap <LocalLeader><LocalLeader> <C-^>
+nnoremap <LocalLeader>o :only<CR>
+nnoremap <LocalLeader>p :echo expand('%') <CR>
+nnoremap <LocalLeader>q :quit <CR>
+nnoremap <LocalLeader>e :edit <C-R>=expand('%:p:h') . '/' <CR>
+
 " ----------------------------------------------------------------------------
 " R assignment {{{
 execute "set <M-->=\033-"
@@ -174,6 +190,7 @@ nnoremap <Leader>vv :e $HOME/.dotfiles/vim/vim.cheatsheet.md<CR>
 
 "insert file name : \fn in insert mode
 inoremap \fn <C-R>=expand("%:t")<CR>
+inoremap <Leader>fn <C-R>=expand("%:t")<CR>
 
 "focus current fold
 nnoremap zs zMzvzz
@@ -193,9 +210,9 @@ nmap gj <C-w>j
 nmap gk <C-w>k
 nmap gl <C-w>l
 
-nmap \l :setlocal number!<CR>
+nmap <leader>l :setlocal number!<CR>
 nmap \q :nohlsearch<CR>
-nmap \e :NERDTreeToggle<CR>
+nmap <leader>e :NERDTreeToggle<CR>
 
 " Use sane regexes.
 nnoremap / /\v
