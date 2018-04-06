@@ -250,7 +250,7 @@ alias js="jobs"
 alias j="jobs"
 alias f="fg"
 alias vimrc="vim $HOME/.dotfiles/vim/vimrc"
-alias vs="vim -S ./Session.vim"
+alias vs="if [[ -e './Session.vim' ]]; then vim -S ./Session.vim; else vim ; fi"
 
 ##################################################
 # etc
