@@ -76,3 +76,10 @@ export TERM="xterm-256color"
 
 
 export INSIGHT_NOTEPATH=$HOME/src/notes/
+
+
+# custom global option for fc
+if [[ -e $HOME/.fdrc ]]; then
+    source $HOME/.fdrc
+fi
+
