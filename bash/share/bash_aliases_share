@@ -208,6 +208,7 @@ alias grh="git reset HEAD"
 alias gl="git log"
 alias glo="git log --oneline"
 alias gg="git log --oneline --decorate --graph --all"
+alias ggcb="git log --oneline --decorate --graph" # git current branch
 alias ggb="git log --oneline --decorate --graph master.." # current branch only
 alias ggbb="git log --oneline --decorate --graph --format=format:\"%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(dim white) - %an%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n %C(white)%s%C(reset)\" --name-only master.." # current branch only
 alias vgrog='vim $(git grog | fzf --reverse | tr -d "|")'
@@ -406,7 +407,12 @@ alias sbsl="source ${HOME}/.dotfiles/bash/local/bash_settings_local"
 alias sbfl="source ${HOME}/.dotfiles/bash/local/bash_functions_local"
 alias sbfs="source ${HOME}/.dotfiles/bash/share/bash_functions_share"
 
+function vnote() {
+    TODAY=$(date "+%Y-%m-%d")
+    notepath="${INSIGHT_NOTEPATH}/${TODAY}.md"
+    
+    vim $notepath
+}
 
 # Vim calendar#
 alias calv="vim -c 'Calendar -view=week'"
-alias vnote="vim ${INSIGHT_NOTEPATH}/"$(date "+%Y-%m-%d")'.md'

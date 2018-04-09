@@ -18,7 +18,7 @@ syntax on
 set encoding=UTF-8
 filetype plugin indent on
 runtime macros/matchit.vim
-set pastetoggle=<F5>
+set pastetoggle=<F6>
 set history=1000        " enable longer command mode history
 set autoread            " automatically read changed file again
 set autowrite
@@ -152,6 +152,7 @@ Plug 'junegunn/limelight.vim'
 Plug 'beloglazov/vim-online-thesaurus'
 
 " Misc
+Plug 'wincent/terminus'  " Make terminal and vim play nicely. Supports auto change
 Plug 'szw/vim-g'
 Plug 'mattn/emmet-vim'
 Plug 'tomtom/tlib_vim'
@@ -175,6 +176,8 @@ nnoremap <LocalLeader><LocalLeader> <C-^>
 nnoremap <LocalLeader>o :only<CR>
 nnoremap <LocalLeader>p :echo expand('%') <CR>
 nnoremap <LocalLeader>q :quit <CR>
+nnoremap <LocalLeader>w :write <CR>
+nnoremap <LocalLeader>wq :wq <CR>
 nnoremap <LocalLeader>e :edit <C-R>=expand('%:p:h') . '/' <CR>
 
 " ----------------------------------------------------------------------------
@@ -257,6 +260,7 @@ nnoremap <Leader>t :terminal<CR>
 " Buffers {{{
 " close buffer
 nnoremap BB :bd<CR>
+nnoremap QQ :q<CR>
 nnoremap <F4> :bd<CR>
 
 " reopen the closed buffer
@@ -373,14 +377,14 @@ endfunction
 " ----------------------------------------------------------------------------
 "  Mouse Related {{{
 " Allow mouse for easy resizing
-set mouse=a
-set ttymouse=xterm2
-set mouse+=a
-if &term =~ '^screen'
-    " tmux knows the extended mouse mode
-    set ttymouse=xterm2
-endif
-set mouse=c
+" set mouse=a
+" set ttymouse=xterm2
+" set mouse+=a
+" if &term =~ '^screen'
+"     " tmux knows the extended mouse mode
+"     set ttymouse=xterm2
+" endif
+" set mouse=c
 "  }}}
 " ----------------------------------------------------------------------------
 

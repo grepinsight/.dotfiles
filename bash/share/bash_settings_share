@@ -83,3 +83,5 @@ if [[ -e $HOME/.fdrc ]]; then
     source $HOME/.fdrc
 fi
 
+[ -f ~/.fzf.bash ] && source ~/.dotfiles/fzf/fzf.bash
+
