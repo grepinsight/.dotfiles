@@ -153,6 +153,7 @@ Plug 'junegunn/limelight.vim'
 Plug 'beloglazov/vim-online-thesaurus'
 
 " Misc
+Plug 'editorconfig/editorconfig-vim'
 Plug 'wincent/terminus'  " Make terminal and vim play nicely. Supports auto change
 Plug 'szw/vim-g'
 Plug 'mattn/emmet-vim'
