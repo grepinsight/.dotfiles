@@ -36,7 +36,7 @@ set smartcase           " if capital letter is used, then do not ignore case
 set ignorecase
 set shiftwidth=4        " size of an indent
 set softtabstop=4       " Indentation levels very four columns"
-set expandtab           " tabs are spaces
+"set expandtab           " tabs are spaces
 set tabstop=4           " size of a hard tabstop number of visual spaces per TAB
 set incsearch           " search as characters are entered
 set hlsearch            " highlight matches
@@ -106,6 +106,7 @@ Plug 'vim-scripts/taglist.vim'
 Plug 'majutsushi/tagbar'
 Plug 'tpope/vim-projectionist'
 Plug 'tpope/vim-unimpaired'
+Plug 'christoomey/vim-tmux-navigator'
 
 " Editing
 Plug 'tpope/vim-surround'
@@ -172,13 +173,21 @@ if exists('&belloff')
     set belloff=all
 endif
 
-nnoremap <LocalLeader><LocalLeader> <C-^>
-nnoremap <LocalLeader>o :only<CR>
-nnoremap <LocalLeader>p :echo expand('%') <CR>
+
+" First line
 nnoremap <LocalLeader>q :quit <CR>
 nnoremap <LocalLeader>w :write <CR>
 nnoremap <LocalLeader>wq :wq <CR>
 nnoremap <LocalLeader>e :edit <C-R>=expand('%:p:h') . '/' <CR>
+nnoremap <LocalLeader>o :only<CR>
+nnoremap <LocalLeader>p :echo expand('%') <CR>
+nnoremap <LocalLeader>a :A <CR>
+
+" 3rd line
+nnoremap <LocalLeader>c :ccl<CR>
+nmap <LocalLeader>b :Buffers<CR>
+
+nnoremap <LocalLeader><LocalLeader> <C-^>
 
 " ----------------------------------------------------------------------------
 " R assignment {{{
@@ -557,6 +566,7 @@ nmap <F8> :TagbarToggle<CR>
 "  - blame
 nnoremap <leader>b :Gblame<CR>
 nnoremap <leader>gcv :Gcommit -v <CR>
+nnoremap <leader>gau :Git add -u<CR><CR>
 
 "  - diff
 command Greview :Git! diff --staged
@@ -573,6 +583,8 @@ function! ToggleGStatus()
 endfunction
 command ToggleGStatus :call ToggleGStatus()
 nnoremap <leader>s :ToggleGStatus<CR>
+nnoremap <leader>ss :ToggleGStatus<CR>
+nnoremap <leader><leader>s :ToggleGStatus<CR>
 
 " Copy and Paste : https://vi.stackexchange.com/questions/84/how-can-i-copy-text-to-the-system-clipboard-from-vim
 noremap <Leader>y "*y
@@ -656,7 +668,8 @@ imap <c-x><c-l> <plug>(fzf-complete-line)
 " Plugin - Vim Test
 "=================================================================
 let test#python#runner = 'pytest'
-let test#python#pytest#options = '-s -v'
+"let test#python#pytest#options = '-s -v'
+let test#python#pytest#options = ''
 
 " these "Ctrl mappings" work well when Caps Lock is mapped to Ctrl
 nmap <silent> t<C-n> :TestNearest<CR> " t Ctrl+n
@@ -716,7 +729,6 @@ let g:go_version_warning = 0
 nnoremap <F3> :call fzf#run({'source': 'fd $FD_OPTS . $HOME', 'sink': 'edit'})<CR>
 inoremap <F3> :call fzf#run({'source': 'fd $FD_OPTS . $HOME', 'sink': 'edit'})<CR>
 nnoremap <Leader>pv :call fzf#vim#gitfiles('', fzf#vim#with_preview('right'))<CR>
-nmap ; :Buffers<CR>
 
 " ----------------------------------------------------------------------------
 " Gundo
@@ -750,6 +762,18 @@ nnoremap <silent> <F7> :TlistToggle<CR>
 nnoremap <leader>aa :A <CR>
 nnoremap <leader><leader>a :A <CR>
 nnoremap <leader>a :A <CR>
+
+" ----------------------------------------------------------------------------
+" Ale
+" ----------------------------------------------------------------------------
+nnoremap ]al :ALENext<CR>
+nnoremap [al :ALEPrevious<CR>
+
+"let g:ale_set_loclist = 0
+"let g:ale_set_quickfix = 1
+" let g:ale_open_list = 1
+"nnoremap ]al <Plug>(ale_next)
+"nnoremap ]al <Plug>(ale_previous)
 
 " ----------------------------------------------------------------------------
 " YouCompleteMe
@@ -823,3 +847,24 @@ nnoremap <F2> :call RenameFile()<cr>
 "
 " }}}
 " ============================================================================
+
+
+let g:ale_linters={'python': ['flake8']}
+
+
+
+if exists('+colorcolumn')
+  " Highlight up to 255 columns (this is the current Vim max) beyond 'textwidth'
+  let &l:colorcolumn='+' . join(range(0, 254), ',+')
+endif
+
+set list                              " show whitespace
+set listchars=nbsp:⦸                  " CIRCLED REVERSE SOLIDUS (U+29B8, UTF-8: E2 A6 B8)
+set listchars+=tab:▷┅                 " WHITE RIGHT-POINTING TRIANGLE (U+25B7, UTF-8: E2 96 B7)
+                                      " + BOX DRAWINGS HEAVY TRIPLE DASH HORIZONTAL (U+2505, UTF-8: E2 94 85)
+set listchars+=extends:»              " RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK (U+00BB, UTF-8: C2 BB)
+set listchars+=precedes:«             " LEFT-POINTING DOUBLE ANGLE QUOTATION MARK (U+00AB, UTF-8: C2 AB)
+set listchars+=trail:•                " BULLET (U+2022, UTF-8: E2 80 A2)
+set nojoinspaces                      " don't autoinsert two spaces after '.', '?', '!' for join command
+
+nnoremap <Leader>fw :FixWhitespace<CR>

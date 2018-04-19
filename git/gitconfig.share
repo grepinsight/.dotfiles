@@ -26,12 +26,16 @@
     su = !git branch --set-upstream-to=origin/$(git rev-parse --abbrev-ref HEAD) $(git rev-parse --abbrev-ref HEAD)
     pb = !git push origin $(git rev-parse --abbrev-ref HEAD)
     lol = log --graph --decorate --pretty=oneline --abbrev-commit
+
+    brmr = push origin --delete
+    brm = branch -d
 [merge]
     tool = vimdiff
 [core]
     editor = vim
+    pager = diff-so-fancy | less --tabs=4 -RFX
 [color]
-    ui = auto
+    ui = true
 [push]
     default = simple
 

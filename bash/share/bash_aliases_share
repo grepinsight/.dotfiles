@@ -1,4 +1,13 @@
 ##################################################
+function get_platform
+{
+    if [[ $(uname) == "Darwin" ]];then
+        echo "mac"
+    else
+        echo "linux"
+    fi
+}
+export -f get_platform
 # Administrative 
 
 alias reload_alias_share="source $HOME/.dotfiles/bash/share/bash_aliases_share"
@@ -417,3 +426,16 @@ function vnote() {
 
 # Vim calendar#
 alias calv="vim -c 'Calendar -view=week'"
+alias vcal="vim -c 'Calendar -view=week'"
+
+
+# Update commands
+
+alias update_gitconfig="cd $HOME/.dotfiles && make git_setup && cd -"
+
+# if mac
+if [[ $(get_platform) == mac ]]; then
+    alias openh="open ."
+fi
+
+
