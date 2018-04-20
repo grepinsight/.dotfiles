@@ -36,6 +36,10 @@ Show the stat of the changes between two commits(things you see when you pull)
     e: manually edit the current hunk
     ?: print hunk help
 
+## Commit empty commit
+
+    git commit --allow-empty
+
 # Git
 
 # Git Branch
@@ -73,7 +77,7 @@ https://stackoverflow.com/questions/6217156/break-a-previous-commit-into-multipl
 
 # Git Rm
 
-When you want remove a file that has been committed 
+When you want remove a file that has been committed
 
     git rm --cached /path/to/file
 
