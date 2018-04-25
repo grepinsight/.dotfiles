@@ -552,12 +552,9 @@ let NERDTreeIgnore = ['\.pyc$', 'db.sqlite3']
 " ----------------------------------------------------------------------------
 " Plugin - CtrlP
 " ----------------------------------------------------------------------------
-let g:ctrlp_custom_ignore = {
-  \ 'file':  '\.pyc$\|\.Rd$',
-  \ 'dir' : '__pycache__',
-  \ }
+let g:ctrlp_use_caching = 0
+let g:ctrlp_user_command = 'fd $FD_OPTS -E "*.pdf"'
 
-let g:ctrlp_user_command = 'fd $FD_OPTS'
 " Tagbar
 nmap <F8> :TagbarToggle<CR>
 
