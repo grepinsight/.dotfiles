@@ -1,13 +1,42 @@
 root = true
 
+[*]
+trim_trailing_whitespace = true
+
+[vimrc]
+trim_trailing_whitespace = false
+
+[*.stan]
+indent_style = space
+indent_size = 2
+
+
 [*.md]
+indent_style = space
+indent_size = 4
+
+[Snakefile*]
+indent_style = space
+indent_size = 4
+
+[*.smk]
 indent_style = space
 indent_size = 4
 
 [*.py]
 indent_style = space
 indent_size = 4
-trim_trailing_whitespace = true
 
 [*.rst]
+indent_style = tab
+
+[*.{R,Rmd}]
+indent_style = space
+indent_size = 2
+
+[*.{yml,yaml}]
+indent_style = space
+indent_size = 2
+
+[Makefile]
 indent_style = tab
