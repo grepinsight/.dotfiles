@@ -25,6 +25,7 @@
     undo = reset --soft HEAD^
     su = !git branch --set-upstream-to=origin/$(git rev-parse --abbrev-ref HEAD) $(git rev-parse --abbrev-ref HEAD)
     pb = !git push origin $(git rev-parse --abbrev-ref HEAD)
+	plb = !git pull origin $(git rev-parse --abbrev-ref HEAD)
     lol = log --graph --decorate --pretty=oneline --abbrev-commit
 
     brmr = push origin --delete
