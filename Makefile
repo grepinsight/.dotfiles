@@ -6,7 +6,7 @@ bootstrap: ## Boostrap configuration
 
 all: tmux_setup git_setup editorconfig_setup## run all recipes
 
-tmux_setup: tmux/tmux.conf.combined ## combine tmux base and tmux.conf and link it to $HOME/.tmux.conf 
+tmux_setup: tmux/tmux.conf.combined ## combine tmux base and tmux.conf and link it to $HOME/.tmux.conf
 
 tmux/tmux.conf.combined: tmux/tmux.conf.share tmux/tmux.conf.local
 	touch tmux/tmux.conf.local
@@ -14,7 +14,7 @@ tmux/tmux.conf.combined: tmux/tmux.conf.share tmux/tmux.conf.local
 	ln -sf $$HOME/.dotfiles/tmux/tmux.conf.combined $$HOME/.tmux.conf
 
 tmux/tmux.conf.local:
-	touch $@ 
+	touch $@
 
 git_setup: git/gitconfig.combined ## combine gitconfig base and gitconfig local and link it to $HOME/.gitconfig
 
@@ -36,4 +36,7 @@ vim_setup: vim/vimrc ## vim setup
 	bash vim/vim_module_setup.sh
 
 update_brew:
-	brew bundle dump --force
+	brew bundle dump --force && mv Brewfile osx
+	brew list > osx/brew.list
+	brew cask list > osx/brew.cask.list
+	brew leaves > osx/brew.leaves.list
