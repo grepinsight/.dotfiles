@@ -14,8 +14,20 @@ Show the stat of the changes between two commits(things you see when you pull)
 
     git log COMIT..COMIT --stat
 
+# Git Diff
+
+```
+git diff ..master --  <FILE_NAME
+```
+
 
 # Git Commmit
+
+How to change commit messages
+
+```
+git commit --amend
+```
 
 ## Commit only part of a file in Git
 
