@@ -446,3 +446,4 @@ fi
 
 alias aa="source .venv/bin/activate"
 alias ad="source deactivate"
+alias al="alias | fzf"
