@@ -883,6 +883,7 @@ set nojoinspaces                      " don't autoinsert two spaces after '.', '
 
 nnoremap <Leader>fw :FixWhitespace<CR>
 
+if !empty(glob("/Users/alee/.vim/autoload/wincent"))
 if exists('+winhighlight')
   autocmd BufEnter,FocusGained,VimEnter,WinEnter * if wincent#autocmds#should_colorcolumn() | set winhighlight= | endif
   autocmd FocusLost,WinLeave * if wincent#autocmds#should_colorcolumn() | set winhighlight=CursorLineNr:LineNr,IncSearch:ColorColumn,Normal:ColorColumn,NormalNC:ColorColumn,SignColumn:ColorColumn | endif
@@ -899,6 +900,7 @@ autocmd InsertEnter,WinLeave * if wincent#autocmds#should_cursorline() | setloca
 
 autocmd BufEnter,FocusGained,VimEnter,WinEnter * call wincent#autocmds#focus_window()
 autocmd FocusLost,WinLeave * call wincent#autocmds#blur_window()
+endif
 
 inoremap \date <C-R>=strftime("%Y-%m-%d")<CR>
 inoremap \time <C-R>=strftime("%Y-%m-%dT%H-%M-%S")<CR>
