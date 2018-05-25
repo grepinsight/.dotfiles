@@ -8,20 +8,20 @@ function get_platform
     fi
 }
 export -f get_platform
-# Administrative 
+# Administrative
 
 alias reload_alias_share="source $HOME/.dotfiles/bash/share/bash_aliases_share"
 alias reload_alias_local="source $HOME/.dotfiles/bash/local/bash_aliases_local"
 alias reload_bashrc="source $HOME/.bashrc"
 alias lo="exit"
 
-## Fly - will fly to the directory 
+## Fly - will fly to the directory
 _fly() {
   if [[ -z $1 ]]; then
     echo "No argument provided!"
   else
     cd $(dirname $1)
-     
+
   fi
 }
 
@@ -111,7 +111,7 @@ fi
 
 
 ### llf - ll, files only
-alias llf='ls -lh -F | grep -v /' 
+alias llf='ls -lh -F | grep -v /'
 alias ls2="ls -Xlhp --group-directories-first"
 
 ### lld - ll, directories only
@@ -169,7 +169,7 @@ alias .....="cd ../../../..;ls -lh"
 alias acki="ack -i"
 
 ## Add color by default
-alias grep='grep --color'       
+alias grep='grep --color'
 alias egrep='egrep --color=auto'
 alias fgrep='fgrep --color=auto'
 
@@ -226,6 +226,7 @@ alias vgrog='vim $(git grog | fzf --reverse | tr -d "|")'
 ## Git Push/Pull
 alias gpush="git push"
 alias gpull="git pull"
+alias gpl="git pull"
 alias gpom="git push origin master"
 
 ## Git Commit
@@ -237,6 +238,11 @@ alias gd="git diff"
 
 ## Git Update
 alias gupdate='cd ~/.dotfiles && git pull && cd -'
+
+## Git etc
+
+alias gcf="git clean -f"
+alias gex="vim .git/info/exclude"
 
 
 alias gds="git diff --staged"
@@ -326,8 +332,8 @@ alias tree_limit10="tree --filelimit 10" # tree short
 # Find related
 
 ## Find files
-function findf(){ 
-    find $1 -type f 
+function findf(){
+    find $1 -type f
 }
 
 ## Find crap vim produces
@@ -420,7 +426,7 @@ alias sbfs="source ${HOME}/.dotfiles/bash/share/bash_functions_share"
 function vnote() {
     TODAY=$(date "+%Y-%m-%d")
     notepath="${INSIGHT_NOTEPATH}/${TODAY}.md"
-    
+
     vim $notepath
 }
 
@@ -438,4 +444,5 @@ if [[ $(get_platform) == mac ]]; then
     alias openh="open ."
 fi
 
-
+alias aa="source .venv/bin/activate"
+alias ad="source deactivate"

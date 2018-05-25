@@ -62,8 +62,8 @@ EX="ex=$BG"       # +x file
 AR="$BR"
 ARCHIVE="*.tar=$AR:*.tgz=$AR:*.arj=$AR:*.taz=$AR:*.lzh=$AR:*.lzma=$AR:*.tlz=$AR:*.txz=$AR:*.zip=$AR:*.z=$AR:*.Z=$AR:*.dz=$AR:*.gz=$AR:*.lz=$AR:*.xz=$AR:*.bz2=$AR:*.bz=$AR:*.tbz=$AR:*.tbz2=$AR:*.tz=$AR:*.deb=$AR:*.rpm=$AR:*.jar=$AR:*.war=$AR:*.ear=$AR:*.sar=$AR:*.rar=$AR:*.ace=$AR:*.zoo=$AR:*.cpio=$AR:*.7z=$AR:*.rz=$AR"
 
-IMG="$BL;$BGGR"
-IMAGE="*.jpg=$IMG:*.jpeg=$IMG:*.gif=$IMG:*.bmp=$IMG:*.pbm=$IMG:*.pgm=$IMG:*.ppm=$IMG:*.tga=$IMG:*.xbm=$IMG:*.xpm=$IMG:*.tif=$IMG:*.tiff=$IMG:*.png=$IMG:*.svg=$IMG:*.svgz=$IMG:*.mng=$IMG:*.pcx=$IMG"
+#IMG="$BL;$BGGR"
+#IMAGE="*.jpg=$IMG:*.jpeg=$IMG:*.gif=$IMG:*.bmp=$IMG:*.pbm=$IMG:*.pgm=$IMG:*.ppm=$IMG:*.tga=$IMG:*.xbm=$IMG:*.xpm=$IMG:*.tif=$IMG:*.tiff=$IMG:*.png=$IMG:*.svg=$IMG:*.svgz=$IMG:*.mng=$IMG:*.pcx=$IMG"
 
 MOV="$M"
 MOVIE="*.mov=$MOV:*.mpg=$MOV:*.mpeg=$MOV:*.m2v=$MOV:*.mkv=$MOV:*.webm=$MOV:*.ogm=$MOV:*.mp4=$MOV:*.m4v=$MOV:*.mp4v=$MOV:*.vob=$MOV:*.qt=$MOV:*.nuv=$MOV:*.wmv=$MOV:*.asf=$MOV:*.rm=$MOV:*.rmvb=$MOV:*.flc=$MOV:*.avi=$MOV:*.fli=$MOV:*.flv=$MOV:*.gl=$MOV:*.dl=$MOV:*.xcf=$MOV:*.xwd=$MOV:*.yuv=$MOV:*.cgm=$MOV:*.emf=$MOV:*.axv=$MOV:*.anx=$MOV:*.ogv=$MOV:*.ogx=$MOV:*.M2TS=$MOV:*.m2ts=$MOV:*.ts=$MOV"
@@ -97,7 +97,8 @@ NOTES="*notes=$M"  # magenta for notes
 FASTA="*.fa=$BB:*.fasta=$BB"
 LIST="*.list=$BM:*.id=$BM"
 
-TYPES="$JOB_FILES:$NOTES:$ARCHIVE:$IMAGE:$MOVIE:$AUDIO:$SOURCE:$HEADER:$DIM:$TEXT:$PDF:$HTML:$PHP:$CSS:$FASTA:$LIST"
+#TYPES="$JOB_FILES:$NOTES:$ARCHIVE:$IMAGE:$MOVIE:$AUDIO:$SOURCE:$HEADER:$DIM:$TEXT:$PDF:$HTML:$PHP:$CSS:$FASTA:$LIST"
+TYPES="$JOB_FILES:$NOTES:$ARCHIVE:$MOVIE:$AUDIO:$SOURCE:$HEADER:$DIM:$TEXT:$PDF:$HTML:$PHP:$CSS:$FASTA:$LIST"
 
 LS_COLORS="$RS:$DI:$LN:$PI:$SO:$DO:$BD:$CD:$OR:$SU:$SG:$CA:$TW:$OW:$ST:$EX:"$TYPES
 

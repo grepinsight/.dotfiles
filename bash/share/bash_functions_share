@@ -16,12 +16,12 @@ function parse_git_branch {
 
 
 # calculator
-calc() { 
+calc() {
   echo $@| tr -d ',' | perl -ne 'print eval . "\n"'
 }
 
 # b) function cd_func
-# This function defines a 'cd' replacement function capable of keeping, 
+# This function defines a 'cd' replacement function capable of keeping,
 # displaying and accessing history of visited directories, up to 10 entries.
 # To use it, uncomment it, source this file and try 'cd --'.
 # acd_func 1.0.5, 10-nov-2004
@@ -139,9 +139,9 @@ wiki() { dig +short txt $1.wp.dg.cx; }
 
 
  # a) function settitle
-settitle () 
- { 
- echo -ne "\e]2;$@\a\e]1;$@\a"; 
+settitle ()
+ {
+ echo -ne "\e]2;$@\a\e]1;$@\a";
 }
 #ls what is most relevant right now
 function lt() { ls -ltrsa "$@" | tail; }
@@ -192,7 +192,7 @@ function bsm {
 # }
 
 export MARKPATH=$HOME/.marks
-function jump { 
+function jump {
     unjump_dir=$(pwd)
     cd $MARKPATH/$1 2>/dev/null || echo "No such mark: $1"
     cd $(readlink -m $(pwd))
@@ -207,11 +207,11 @@ function unjump {
 	ls -lh
     fi
 }
-function mark { 
+function mark {
     mkdir -p $MARKPATH; ln -sf $(pwd) $MARKPATH/$1
 }
-function unmark { 
-    rm -i $MARKPATH/$1 
+function unmark {
+    rm -i $MARKPATH/$1
 }
 function marks {
     ls -l $MARKPATH | sed 's/  / /g' | cut -d' ' -f9- | sed 's/ -/\t-/g' && echo
@@ -253,7 +253,7 @@ function _up() {
     updir=`echo $PWD | ruby -e "print STDIN.read.sub(/(.*\/${rx}[^\/]*\/).*/i,'\1')"`
     echo -n "$updir"
 }
- 
+
 function up() {
     if [ $# -eq 0 ]; then
 	echo "up: traverses up the current working directory to first match and cds to it"
@@ -372,4 +372,34 @@ codi() {
     hi VertSplit ctermbg=NONE |\
     hi NonText ctermfg=0 |\
     Codi $syntax" "$@"
+}
+
+gprj() {
+	cd $HOME/prj/$(git rev-parse --abbrev-ref HEAD)
+}
+fs() {
+	local -r fmt='#{session_id}:|#S|(#{session_attached} attached)'
+	{ tmux display-message -p -F "$fmt" && tmux list-sessions -F "$fmt"; } \
+		| awk '!seen[$1]++' \
+		| column -t -s'|' \
+		| fzf -q '$' --reverse --prompt 'switch session: ' -1 \
+		| cut -d':' -f1 \
+		| xargs tmux switch-client -t
+}
+export -f fs
+
+
+# https://junegunn.kr/2015/04/browsing-chrome-history-with-fzf/
+c() {
+  local cols sep
+  cols=$(( COLUMNS / 3 ))
+  sep='{::}'
+
+  cp -f ~/Library/Application\ Support/Google/Chrome/Default/History /tmp/h
+
+  sqlite3 -separator $sep /tmp/h \
+    "select substr(title, 1, $cols), url
+     from urls order by last_visit_time desc" |
+  awk -F $sep '{printf "%-'$cols's  \x1b[36m%s\x1b[m\n", $1, $2}' |
+  fzf --ansi --multi | sed 's#.*\(https*://\)#\1#' | xargs open
 }
