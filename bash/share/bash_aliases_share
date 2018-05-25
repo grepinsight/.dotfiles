@@ -378,6 +378,7 @@ alias find_png='find . -type f -name "*.png"'
 alias find_empty='find . -not \( -path ./.git -prune \) -empty | grep -v .Rproj.user | grep -v _cache'
 
 ## Tmux Related
+alias ta="tmux attach"
 alias tmrw="tmux rename-window"
 alias tmrs="tmux rename-session"
 alias tp="tmuxp"
