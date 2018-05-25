@@ -35,4 +35,5 @@ ctags_setup: ctags/ctags.share  ## ctags setup
 vim_setup: vim/vimrc ## vim setup
 	bash vim/vim_module_setup.sh
 
-
+update_brew:
+	brew bundle dump --force
