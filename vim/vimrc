@@ -152,6 +152,7 @@ Plug 'tpope/vim-abolish'
 Plug 'junegunn/goyo.vim'
 Plug 'junegunn/limelight.vim'
 Plug 'beloglazov/vim-online-thesaurus'
+Plug 'vimwiki/vimwiki'
 
 " Interactive coding
 Plug 'jpalardy/vim-slime'
