@@ -152,6 +152,7 @@ Plug 'tpope/vim-abolish'
 Plug 'junegunn/goyo.vim'
 Plug 'junegunn/limelight.vim'
 Plug 'beloglazov/vim-online-thesaurus'
+Plug 'vimwiki/vimwiki'
 
 " Interactive coding
 Plug 'jpalardy/vim-slime'
@@ -964,5 +965,6 @@ nnoremap <Leader>pf :%s/<F2[23]>//g <CR>
 nnoremap <Leader>h yypVr=
 nnoremap <Leader>h1 yypVr=
 nnoremap <Leader>h2 yypVr-
+nnoremap TT :wall<CR>: !tmux kill-pane<CR>
 
 "autocmd FileType python setlocal foldenable foldmethod=syntax
