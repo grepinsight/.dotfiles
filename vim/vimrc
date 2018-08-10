@@ -971,5 +971,11 @@ nnoremap <Leader>h yypVr=
 nnoremap <Leader>h1 yypVr=
 nnoremap <Leader>h2 yypVr-
 nnoremap TT :wall<CR>: !tmux kill-pane<CR>
+nnoremap <Leader>def :e $HOME/vimwiki/Definitions.wiki<CR>
+nnoremap <Leader>k :VimwikiToggleListItem<CR>
+let g:vimwiki_folding='list'
 
 "autocmd FileType python setlocal foldenable foldmethod=syntax
+"
+" Make python <> vim-slime play well together
+let g:slime_python_ipython = 1

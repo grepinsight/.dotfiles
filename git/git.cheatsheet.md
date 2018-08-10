@@ -61,7 +61,7 @@ git commit --amend
 git branch -m <OLD_NAME> <NEW_NAME>
 ```
 
-## Delete local/remote branch
+## Delete or remove local/remote branch
 
 ```
 # delete local branch
