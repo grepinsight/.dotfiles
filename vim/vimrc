@@ -140,7 +140,12 @@ Plug 'fatih/vim-go'
 Plug 'w0rp/ale'
 
 " Completions and snippets
-Plug 'Valloric/YouCompleteMe'
+if v:version >= 800
+    try
+		Plug 'Valloric/YouCompleteMe'
+    catch
+    endtry
+endif
 Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 Plug 'ervandew/supertab'
