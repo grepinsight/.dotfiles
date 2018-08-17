@@ -1,0 +1,17 @@
+*.swo
+*.swp
+
+# R related
+.RData
+.Rhistory
+.Rhistory
+.Rproj.user
+.Ruserdata
+
+# Jupyter
+.ipynb_checkpoints
+
+# Vim
+Session.vim
+
+.pytest_cache/
