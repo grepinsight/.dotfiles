@@ -20,7 +20,7 @@ _fly() {
   if [[ -z $1 ]]; then
     echo "No argument provided!"
   else
-    cd $(dirname $1)
+    cd $(dirname $(which $1))
 
   fi
 }
