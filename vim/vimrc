@@ -153,6 +153,7 @@ Plug 'junegunn/goyo.vim'
 Plug 'junegunn/limelight.vim'
 Plug 'beloglazov/vim-online-thesaurus'
 Plug 'vimwiki/vimwiki'
+Plug 'lervag/vimtex'
 
 " Interactive coding
 Plug 'jpalardy/vim-slime'
@@ -863,7 +864,7 @@ nnoremap <F2> :call RenameFile()<cr>
 " ============================================================================
 
 
-let g:ale_linters={'python': ['flake8']}
+let g:ale_linters={'python': ['flake8'], 'r': ['lintr']}
 let g:ale_fixers = ['yapf']
 
 
@@ -974,3 +975,7 @@ let g:vimwiki_folding='list'
 "
 " Make python <> vim-slime play well together
 let g:slime_python_ipython = 1
+
+
+" Vimtex
+let g:vimtex_view_method = 'skim'

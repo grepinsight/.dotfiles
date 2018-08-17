@@ -163,6 +163,20 @@ alias ...="cd ../..;ls -lh"
 alias ....="cd ../../..;ls -lh"
 alias .....="cd ../../../..;ls -lh"
 
+function cd_fzf() {
+	dir_to_go_to=$(ls -d */ | strip_color | fzf)
+
+	if [[ $? == 0  ]]; then
+		cd ${dir_to_go_to}
+		pwd -P
+		ls -thor
+	fi
+}
+
+export -f cd_fzf
+alias cdd="cd_fzf; "
+
+
 ##################################################
 # Grep/Ack related
 
@@ -241,7 +255,7 @@ alias gupdate='cd ~/.dotfiles && git pull && cd -'
 
 ## Git etc
 
-alias gcf="git clean -f"
+alias gcf="git clean -f -i"
 alias gex="vim .git/info/exclude"
 
 
@@ -450,3 +464,9 @@ fi
 alias aa="source .venv/bin/activate"
 alias ad="source deactivate"
 alias al="alias | fzf"
+
+
+alias ra="ranger"
+
+alias R='R --no-save'
+alias workflow="vim ~/.dotfiles/docs/workflow.md"
