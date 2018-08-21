@@ -917,6 +917,7 @@ nnoremap \nosym :e <C-R>=resolve(expand("%"))<CR>
 
 
 
+
 " Follow symlinks when opening a file
 " Sources:
 "  - https://github.com/tpope/vim-fugitive/issues/147#issuecomment-7572351
@@ -984,3 +985,7 @@ let g:slime_python_ipython = 1
 
 " Vimtex
 let g:vimtex_view_method = 'skim'
+
+" Vimwiki
+nnoremap ]d :VimwikiDiaryNextDay<CR>
+nnoremap [d :VimwikiDiaryPrevDay<CR>
