@@ -2,17 +2,24 @@
 
 # Git Log
 
-Show the entire history of the file [^1]
+1. Show the entire history of the file [^1]
 
     git log --follow -p -- <file>
 
 [^1]: http://stackoverflow.com/questions/278192/view-the-change-history-of-a-file-using-git-versioning
 
 
-Show the stat of the changes between two commits(things you see when you pull)
-
+2. Show the stat of the changes between two commits(things you see when you pull)
 
     git log COMIT..COMIT --stat
+
+3. Show the last N commits
+
+    git log -n 5 # show last 5 commits
+
+4. Show the source along with commit messages
+
+    git log -p
 
 # Git Diff
 
