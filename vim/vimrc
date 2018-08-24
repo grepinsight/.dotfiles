@@ -121,6 +121,8 @@ Plug 'jiangmiao/auto-pairs'
 Plug 'Yggdroot/indentLine'
 Plug 'bronson/vim-trailing-whitespace'
 Plug 'dhruvasagar/vim-table-mode'
+Plug 'Konfekt/FastFold'
+Plug 'kalekundert/vim-coiled-snake'
 
 " Git
 Plug 'airblade/vim-gitgutter'
