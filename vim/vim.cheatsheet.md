@@ -15,6 +15,13 @@
 | `gq`    | wrap line     |
 
 
+# Spelling
+
+| command | description                 |
+|---------+-----------------------------|
+| `zg`    | add word to dictionary      |
+| `zw`    | mark the word as wrong word |
+
 # Autocompletion
 
 | command      | description                  |
