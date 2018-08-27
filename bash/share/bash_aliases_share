@@ -471,3 +471,4 @@ alias ra="ranger"
 alias R='R --no-save'
 alias workflow="vim ~/.dotfiles/docs/workflow.md"
 alias qs="qstat"
+alias rgi="rg -i"

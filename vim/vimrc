@@ -138,6 +138,7 @@ Plug 'tpope/vim-dispatch'
 " Python/Go
 Plug 'davidhalter/jedi-vim'
 Plug 'fatih/vim-go'
+Plug 'michaeljsmith/vim-indent-object'
 
 " Lint
 Plug 'w0rp/ale'
@@ -992,3 +993,4 @@ let g:vimtex_view_method = 'skim'
 " Vimwiki
 nnoremap ]d :VimwikiDiaryNextDay<CR>
 nnoremap [d :VimwikiDiaryPrevDay<CR>
+let g:auto_tags = 1
