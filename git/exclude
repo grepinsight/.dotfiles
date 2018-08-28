@@ -16,3 +16,7 @@
 Session.vim
 
 .pytest_cache/
+
+# Etc
+._.DS_Store
+.DS_Store
