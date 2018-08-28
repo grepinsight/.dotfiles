@@ -25,7 +25,7 @@
     undo = reset --soft HEAD^
     su = !git branch --set-upstream-to=origin/$(git rev-parse --abbrev-ref HEAD) $(git rev-parse --abbrev-ref HEAD)
     pb = !git push origin $(git rev-parse --abbrev-ref HEAD)
-	plb = !git pull origin $(git rev-parse --abbrev-ref HEAD)
+    plb = !git pull origin $(git rev-parse --abbrev-ref HEAD)
     lol = log --graph --decorate --pretty=oneline --abbrev-commit
 
     brmr = push origin --delete
@@ -34,10 +34,10 @@
     tool = vimdiff
 [core]
     editor = vim
-	excludesfile = $HOME/.dotfiles/git/exclude
-    pager = diff-so-fancy | less --tabs=4 -RFX
+	excludesfile = ~/.dotfiles/git/exclude
+	pager = diff-so-fancy | less --tabs=4 -RFX
 [color]
-    ui = true
+	ui = true
 [push]
     default = simple
 [color "diff-highlight"]
