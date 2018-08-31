@@ -44,3 +44,6 @@ indent_style = tab
 [*.wiki]
 indent_style = space
 indent_size = 4
+
+[.doingrc]
+indent_style = space
