@@ -44,3 +44,7 @@ update_brew:
 	brew list > osx/brew.list
 	brew cask list > osx/brew.cask.list
 	brew leaves > osx/brew.leaves.list
+
+doing_setup:
+	@echo "Setting up doingrc"
+	ln -sf $$HOME/.dotfiles/etc/doingrc $$HOME/.doingrc

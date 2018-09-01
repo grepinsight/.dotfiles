@@ -9,6 +9,7 @@ autotag:
   - writing
   - organizing
   - learning
+  - break
   synonyms:
     playing:
     - hacking
@@ -24,6 +25,8 @@ autotag:
     learning:
     - lesson
     - learned
+    break:
+    - rest
 doing_file: "~/what_was_i_doing.md"
 current_section: Currently
 editor_app: 
