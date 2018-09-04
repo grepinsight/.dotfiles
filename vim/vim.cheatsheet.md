@@ -29,4 +29,8 @@
 | `<C-X><C-K>` | autocomplete from dictionary |
 
 
+# Surrounds
 
+| command | description       |
+|---------+-------------------|
+| `yss`   | Surround the line |
