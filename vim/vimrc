@@ -873,7 +873,7 @@ nnoremap <F2> :call RenameFile()<cr>
 " ============================================================================
 
 
-let g:ale_linters={'python': ['flake8'], 'r': ['lintr']}
+let g:ale_linters={'python': ['flake8', 'mypy'], 'r': ['lintr']}
 let g:ale_fixers = ['yapf']
 
 
