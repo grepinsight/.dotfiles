@@ -11,6 +11,8 @@ let s:darwin = has('mac')
 " ============================================================================
 " Basic Settings {{{
 " ============================================================================
+"
+"nnoremap <Leader>dos :e ++ff=dos<CR> | set ff=unix <CR>
 " Vim 8 defaults
 unlet! skip_defaults_vim
 silent! source $VIMRUNTIME/defaults.vim
@@ -76,6 +78,9 @@ Plug 'ryanoasis/vim-devicons'
 
 " Session Management
 Plug 'tpope/vim-obsession'
+
+" Buffer Management
+Plug 'vim-scripts/BufOnly.vim'
 
 " Files related
 Plug 'scrooloose/nerdtree'
@@ -178,6 +183,7 @@ Plug 'szw/vim-g'
 Plug 'mattn/emmet-vim'
 Plug 'tomtom/tlib_vim'
 Plug 'itchyny/calendar.vim'
+Plug 'sgur/vim-editorconfig'
 
 
 " Syntax Highlighting
@@ -994,3 +1000,13 @@ let g:vimtex_view_method = 'skim'
 nnoremap ]d :VimwikiDiaryNextDay<CR>
 nnoremap [d :VimwikiDiaryPrevDay<CR>
 let g:auto_tags = 1
+
+" ============================================================================ "
+nnoremap ㅏ k
+nnoremap ㅓ j
+nnoremap ㅑ i
+nnoremap ㅐ o
+nnoremap ㅒ O
+nnoremap ㅇㅇ dd
+
+
