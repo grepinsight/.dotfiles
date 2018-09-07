@@ -475,3 +475,4 @@ alias rgi="rg -i"
 
 
 alias b="bat"
+alias hedit="vim $HOME/.bash_eternal_history"
