@@ -997,6 +997,6 @@ nnoremap [d :VimwikiDiaryPrevDay<CR>
 nnoremap <Leader>toc :VimwikiTOC<CR>
 let g:auto_tags = 1
 
- let g:vimwiki_list = [{'path': '~/vimwiki/',
+ let g:vimwiki_list = [{'path': '~/Dropbox/vimwiki/',
                        \ 'syntax': 'markdown', 'ext': '.md'}]
 
