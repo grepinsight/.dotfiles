@@ -979,6 +979,7 @@ nnoremap <Leader>fs :!fs<CR>
 
 " paste FIX
 nnoremap <Leader>pf :%s/<F2[23]>//g <CR>
+nnoremap <Leader>vf :%s/ / /g <CR>
 nnoremap <Leader>h yypVr=
 nnoremap <Leader>h1 yypVr=
 nnoremap <Leader>h2 yypVr-
@@ -999,6 +1000,7 @@ let g:vimtex_view_method = 'skim'
 " Vimwiki
 nnoremap ]d :VimwikiDiaryNextDay<CR>
 nnoremap [d :VimwikiDiaryPrevDay<CR>
+nnoremap <Leader>toc :VimwikiTOC<CR>
 let g:auto_tags = 1
 
 " ============================================================================ "
@@ -1009,4 +1011,6 @@ nnoremap ㅐ o
 nnoremap ㅒ O
 nnoremap ㅇㅇ dd
 
+let g:vimwiki_list = [{'path': '~/Dropbox/vimwiki/',
+				   \ 'syntax': 'markdown', 'ext': '.md'}]
 
