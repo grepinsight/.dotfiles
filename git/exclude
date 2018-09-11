@@ -20,3 +20,6 @@ Session.vim
 # Etc
 ._.DS_Store
 .DS_Store
+
+# mypy
+.mypy_cache
