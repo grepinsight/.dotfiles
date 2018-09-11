@@ -104,3 +104,26 @@ When you want remove a file that has been committed
 
     git clean -f # deletes files
     git clean -df # deletes directory, including empty directory!
+
+
+# How to find things
+
+
+Search commit *message* :
+
+```
+git log --grep=<SUBSTRING TO SEARCH IN COMMIT MESSAGE>
+```
+
+Search commit *contents* (if a REGEX is different)
+
+```
+git log -G REGEX -p
+```
+
+Search commit *contents* : (if a REGEX is added or not)
+
+```
+-S<regex> --pickaxe-regex -p
+```
+
