@@ -23,3 +23,5 @@ Session.vim
 
 # mypy
 .mypy_cache
+
+.dropbox
