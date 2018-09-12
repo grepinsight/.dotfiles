@@ -5,7 +5,6 @@
 " Variables {{{
 " ============================================================================
 let vimrplugin_assign = 0 " Stop annoying vimRplugin reassignment
-let g:snippets_dir="$HOME/bin/util_setup/vim_setup/snippets"
 let s:darwin = has('mac')
 " }}}
 " ============================================================================
@@ -84,6 +83,7 @@ Plug 'vim-scripts/BufOnly.vim'
 
 " Files related
 Plug 'scrooloose/nerdtree'
+Plug 'francoiscabrol/ranger.vim'
 Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'tpope/vim-eunuch'
 
@@ -177,7 +177,6 @@ Plug 'JamshedVesuna/vim-markdown-preview'
 Plug 'wikimatze/hammer.vim'
 
 " Misc
-Plug 'editorconfig/editorconfig-vim'
 Plug 'wincent/terminus'  " Make terminal and vim play nicely. Supports auto change
 Plug 'szw/vim-g'
 Plug 'mattn/emmet-vim'
@@ -279,7 +278,7 @@ nnoremap gV `[v`]
 " Editing source files
 nnoremap <Leader>ev :e $HOME/.dotfiles/vim/vimrc<CR>
 nnoremap <Leader>sv :source $MYVIMRC<CR>
-nnoremap <Leader>es :vsplit ~/.vim/bundle/mysnippets/snippets<CR>
+nnoremap <Leader>es :vsplit ~/.vim/plugged/mysnippets/UltiSnips<CR>
 "reselect after indenting
 vnoremap < <gv
 vnoremap > >gv
@@ -821,7 +820,7 @@ let g:UltiSnipsJumpBackwardTrigger="<c-k>"
 " " If you want :UltiSnipsEdit to split your window.
 let g:UltiSnipsEditSplit="vertical"
 let g:UltiSnipsNoPythonWarning = 1
-let g:UltiSnipsSnippetsDir="~/.vim/bundle/mysnippets/snippets/"
+let g:UltiSnipsSnippetsDir="~/.vim/plugged/mysnippets/UltiSnips/"
 
 " }}}
 " ============================================================================
