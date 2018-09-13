@@ -25,3 +25,5 @@ Session.vim
 .mypy_cache
 
 .dropbox
+
+.tmsu
