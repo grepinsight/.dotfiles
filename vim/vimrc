@@ -1013,3 +1013,6 @@ nnoremap ㅇㅇ dd
 let g:vimwiki_list = [{'path': '~/Dropbox/vimwiki/',
 				   \ 'syntax': 'markdown', 'ext': '.md'}]
 
+
+vmap <F9> :call UltiSnips#SaveLastVisualSelection()<CR>gvs
+imap <F9> <C-R>=UltiSnips#ExpandSnippet()<CR>
