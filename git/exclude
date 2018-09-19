@@ -27,3 +27,5 @@ Session.vim
 .dropbox
 
 .tmsu
+
+__pycache__/
