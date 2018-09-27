@@ -1016,3 +1016,5 @@ let g:vimwiki_list = [{'path': '~/Dropbox/vimwiki/',
 
 vmap <F9> :call UltiSnips#SaveLastVisualSelection()<CR>gvs
 imap <F9> <C-R>=UltiSnips#ExpandSnippet()<CR>
+
+inoremap <expr> <c-x><c-k> fzf#complete('cat /usr/share/dict/words $HOME/.dotfiles/vim/spell/en.utf-8.add 2>/dev/null')
