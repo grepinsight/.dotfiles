@@ -168,6 +168,7 @@ Plug 'junegunn/limelight.vim'
 Plug 'beloglazov/vim-online-thesaurus'
 Plug 'vimwiki/vimwiki'
 Plug 'lervag/vimtex'
+Plug 'reedes/vim-wordy'
 
 " Interactive coding
 Plug 'jpalardy/vim-slime'
@@ -1018,3 +1019,23 @@ vmap <F9> :call UltiSnips#SaveLastVisualSelection()<CR>gvs
 imap <F9> <C-R>=UltiSnips#ExpandSnippet()<CR>
 
 inoremap <expr> <c-x><c-k> fzf#complete('cat /usr/share/dict/words $HOME/.dotfiles/vim/spell/en.utf-8.add 2>/dev/null')
+
+
+let g:wordy#ring = [
+  \ 'alby',
+  \ 'weak',
+  \ ['being', 'passive-voice', ],
+  \ 'business-jargon',
+  \ 'weasel',
+  \ 'puffery',
+  \ ['problematic', 'redundant', ],
+  \ ['colloquial', 'idiomatic', 'similies', ],
+  \ 'art-jargon',
+  \ ['contractions', 'opinion', 'vague-time', 'said-synonyms', ],
+  \ 'adjectives',
+  \ 'adverbs',
+  \ ]
+
+noremap  <silent> <F9> :<C-u>NextWordy<cr>
+xnoremap <silent> <F9> :<C-u>NextWordy<cr>
+inoremap <silent> <F9> <C-o>:NextWordy<cr>
