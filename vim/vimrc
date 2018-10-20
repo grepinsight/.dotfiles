@@ -766,6 +766,9 @@ nnoremap <Leader>pv :call fzf#vim#gitfiles('', fzf#vim#with_preview('right'))<CR
 " toggle gundo
 nnoremap <leader>u :GundoToggle<CR>
 
+" python3 support
+let g:gundo_prefer_python3 = 1
+
 " ----------------------------------------------------------------------------
 " vim-after-object
 " ----------------------------------------------------------------------------
@@ -1039,3 +1042,5 @@ let g:wordy#ring = [
 noremap  <silent> <F9> :<C-u>NextWordy<cr>
 xnoremap <silent> <F9> :<C-u>NextWordy<cr>
 inoremap <silent> <F9> <C-o>:NextWordy<cr>
+
+set noswapfile 
