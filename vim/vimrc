@@ -211,7 +211,7 @@ nnoremap <LocalLeader>w :write <CR>
 nnoremap <LocalLeader>wq :wq <CR>
 nnoremap <LocalLeader>e :edit <C-R>=expand('%:p:h') . '/' <CR>
 nnoremap <LocalLeader>o :only<CR>
-nnoremap <LocalLeader>p :echo expand('%') <CR>
+nnoremap <LocalLeader>p :echo expand('%:p')<CR>
 nnoremap <LocalLeader>a :A <CR>
 
 " 3rd line
@@ -295,7 +295,7 @@ nnoremap aa pkj
 
 
 nnoremap <Leader>c :ccl<CR>
-nnoremap <Leader>t :sp ~/vimwiki/diary/<C-R>=strftime("%Y-%m-%d")<CR>.wiki<CR>
+nnoremap <Leader>t :sp ~/Dropbox/vimwiki/diary/<C-R>=strftime("%Y-%m-%d")<CR>.md<CR>
 
 " Buffers {{{
 " close buffer
@@ -1042,5 +1042,7 @@ let g:wordy#ring = [
 noremap  <silent> <F9> :<C-u>NextWordy<cr>
 xnoremap <silent> <F9> :<C-u>NextWordy<cr>
 inoremap <silent> <F9> <C-o>:NextWordy<cr>
+
+noremap <silent> <Leader>ult :UltiSnipsEdit<CR>
 
 set noswapfile 
