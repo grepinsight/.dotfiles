@@ -34,3 +34,12 @@
 | command | description       |
 |---------+-------------------|
 | `yss`   | Surround the line |
+
+
+# Navigation
+
+
+| command | description                                      |
+|---------+--------------------------------------------------|
+| `]m`    | Jump forward to begin of next method/scope       |
+| `[m`    | Jump backwards to begin of previous method/scope |
