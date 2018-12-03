@@ -826,6 +826,13 @@ let g:UltiSnipsEditSplit="vertical"
 let g:UltiSnipsNoPythonWarning = 1
 let g:UltiSnipsSnippetsDir="~/.vim/plugged/mysnippets/UltiSnips/"
 
+" ----------------------------------------------------------------------------
+" Wordy
+" ----------------------------------------------------------------------------
+noremap  <silent> <F9> :<C-u>NextWordy<cr>
+xnoremap <silent> <F9> :<C-u>NextWordy<cr>
+inoremap <silent> <F9> <C-o>:NextWordy<cr>
+
 " }}}
 " ============================================================================
 " Etc {{{
@@ -1040,9 +1047,6 @@ let g:wordy#ring = [
   \ 'adverbs',
   \ ]
 
-noremap  <silent> <F9> :<C-u>NextWordy<cr>
-xnoremap <silent> <F9> :<C-u>NextWordy<cr>
-inoremap <silent> <F9> <C-o>:NextWordy<cr>
 
 noremap <silent> <Leader>ult :UltiSnipsEdit<CR>
 noremap <silent> <Leader>tme :TableModeEnable<CR>
