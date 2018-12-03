@@ -926,6 +926,7 @@ inoremap \date <C-R>=strftime("%Y-%m-%d")<CR>
 inoremap \time <C-R>=strftime("%Y-%m-%dT%H-%M-%S")<CR>
 inoremap \todo [ ] 
 inoremap \td [ ] 
+inoremap \qtd [ ] :question: 
 nnoremap \nosym :e <C-R>=resolve(expand("%"))<CR>
 
 
@@ -1044,5 +1045,6 @@ xnoremap <silent> <F9> :<C-u>NextWordy<cr>
 inoremap <silent> <F9> <C-o>:NextWordy<cr>
 
 noremap <silent> <Leader>ult :UltiSnipsEdit<CR>
+noremap <silent> <Leader>tme :TableModeEnable<CR>
 
 set noswapfile 

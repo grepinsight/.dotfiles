@@ -478,3 +478,4 @@ alias b="bat"
 alias hedit="vim $HOME/.bash_eternal_history"
 
 alias opr="open $(find . -maxdepth 1 -type f -name '*Rproj')"
+alias ip="curl https://ipinfo.io/ip"
