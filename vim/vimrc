@@ -43,6 +43,7 @@ set incsearch           " search as characters are entered
 set hlsearch            " highlight matches
 set path+=**            " provides tab-completion for all file-related tasks
 set wildmenu            " display all matching files when we tab complete
+set noswapfile 
 
 nnoremap <SPACE> <Nop>
 let maplocalleader=" "
@@ -802,6 +803,10 @@ nnoremap <leader>a :A <CR>
 nnoremap ]al :ALENext<CR>
 nnoremap [al :ALEPrevious<CR>
 
+let g:ale_linters={'python': ['flake8', 'mypy'], 'r': ['lintr']}
+let g:ale_fixers = ['yapf']
+
+
 "let g:ale_set_loclist = 0
 "let g:ale_set_quickfix = 1
 " let g:ale_open_list = 1
@@ -826,12 +831,31 @@ let g:UltiSnipsEditSplit="vertical"
 let g:UltiSnipsNoPythonWarning = 1
 let g:UltiSnipsSnippetsDir="~/.vim/plugged/mysnippets/UltiSnips/"
 
+noremap <silent> <Leader>ult :UltiSnipsEdit<CR>
+vmap <F9> :call UltiSnips#SaveLastVisualSelection()<CR>gvs
+imap <F9> <C-R>=UltiSnips#ExpandSnippet()<CR>
+
 " ----------------------------------------------------------------------------
 " Wordy
 " ----------------------------------------------------------------------------
 noremap  <silent> <F9> :<C-u>NextWordy<cr>
 xnoremap <silent> <F9> :<C-u>NextWordy<cr>
 inoremap <silent> <F9> <C-o>:NextWordy<cr>
+
+let g:wordy#ring = [
+  \ 'alby',
+  \ 'weak',
+  \ ['being', 'passive-voice', ],
+  \ 'business-jargon',
+  \ 'weasel',
+  \ 'puffery',
+  \ ['problematic', 'redundant', ],
+  \ ['colloquial', 'idiomatic', 'similies', ],
+  \ 'art-jargon',
+  \ ['contractions', 'opinion', 'vague-time', 'said-synonyms', ],
+  \ 'adjectives',
+  \ 'adverbs',
+  \ ]
 
 " }}}
 " ============================================================================
@@ -888,9 +912,6 @@ nnoremap <F2> :call RenameFile()<cr>
 " }}}
 " ============================================================================
 
-
-let g:ale_linters={'python': ['flake8', 'mypy'], 'r': ['lintr']}
-let g:ale_fixers = ['yapf']
 
 
 
@@ -1012,6 +1033,8 @@ let g:vimtex_view_method = 'skim'
 nnoremap ]d :VimwikiDiaryNextDay<CR>
 nnoremap [d :VimwikiDiaryPrevDay<CR>
 nnoremap <Leader>toc :VimwikiTOC<CR>
+let g:vimwiki_list = [{'path': '~/Dropbox/vimwiki/',
+				   \ 'syntax': 'markdown', 'ext': '.md'}]
 let g:auto_tags = 1
 
 " ============================================================================ "
@@ -1022,33 +1045,7 @@ nnoremap ㅐ o
 nnoremap ㅒ O
 nnoremap ㅇㅇ dd
 
-let g:vimwiki_list = [{'path': '~/Dropbox/vimwiki/',
-				   \ 'syntax': 'markdown', 'ext': '.md'}]
-
-
-vmap <F9> :call UltiSnips#SaveLastVisualSelection()<CR>gvs
-imap <F9> <C-R>=UltiSnips#ExpandSnippet()<CR>
 
 inoremap <expr> <c-x><c-k> fzf#complete('cat /usr/share/dict/words $HOME/.dotfiles/vim/spell/en.utf-8.add 2>/dev/null')
-
-
-let g:wordy#ring = [
-  \ 'alby',
-  \ 'weak',
-  \ ['being', 'passive-voice', ],
-  \ 'business-jargon',
-  \ 'weasel',
-  \ 'puffery',
-  \ ['problematic', 'redundant', ],
-  \ ['colloquial', 'idiomatic', 'similies', ],
-  \ 'art-jargon',
-  \ ['contractions', 'opinion', 'vague-time', 'said-synonyms', ],
-  \ 'adjectives',
-  \ 'adverbs',
-  \ ]
-
-
-noremap <silent> <Leader>ult :UltiSnipsEdit<CR>
 noremap <silent> <Leader>tme :TableModeEnable<CR>
 
-set noswapfile 
