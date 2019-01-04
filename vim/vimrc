@@ -191,6 +191,7 @@ Plug 'sgur/vim-editorconfig'
 " Syntax Highlighting
 Plug 'maverickg/stan.vim'
 Plug 'ibab/vim-snakemake'
+Plug 'broadinstitute/vim-wdl'
 
 
 call plug#end()
