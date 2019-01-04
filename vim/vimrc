@@ -108,6 +108,7 @@ xmap gs  <plug>(GrepperOperator)
 
 " Navigation
 Plug 'Lokaltog/vim-easymotion'
+Plug 'justinmk/vim-sneak'
 Plug 'vim-scripts/taglist.vim'
 Plug 'majutsushi/tagbar'
 Plug 'tpope/vim-projectionist'
