@@ -757,6 +757,19 @@ autocmd! User GoyoLeave nested call <SID>goyo_leave()
 let g:sneak#s_next = 1
 
 " ----------------------------------------------------------------------------
+" Plugin - vim-wiki ----
+" ----------------------------------------------------------------------------
+" Vimwiki
+nnoremap ]d :VimwikiDiaryNextDay<CR>
+nnoremap [d :VimwikiDiaryPrevDay<CR>
+nnoremap <Leader>toc :VimwikiTOC<CR>
+let g:vimwiki_list = [{'path': '~/Dropbox/vimwiki/',
+				   \ 'syntax': 'markdown', 'ext': '.md'}]
+let g:auto_tags = 1
+let g:vimwiki_table_mappings = 0
+
+
+" ----------------------------------------------------------------------------
 " Plugin - vim-surround ----
 " ----------------------------------------------------------------------------
 let g:surround_45 = "``` \r ```"
@@ -1041,13 +1054,6 @@ let g:slime_python_ipython = 1
 " Vimtex
 let g:vimtex_view_method = 'skim'
 
-" Vimwiki
-nnoremap ]d :VimwikiDiaryNextDay<CR>
-nnoremap [d :VimwikiDiaryPrevDay<CR>
-nnoremap <Leader>toc :VimwikiTOC<CR>
-let g:vimwiki_list = [{'path': '~/Dropbox/vimwiki/',
-				   \ 'syntax': 'markdown', 'ext': '.md'}]
-let g:auto_tags = 1
 
 " ============================================================================ "
 nnoremap ㅏ k
@@ -1061,4 +1067,5 @@ nnoremap ㅇㅇ dd
 inoremap <expr> <c-x><c-k> fzf#complete('cat /usr/share/dict/words $HOME/.dotfiles/vim/spell/en.utf-8.add 2>/dev/null')
 noremap <silent> <Leader>tme :TableModeEnable<CR>
 noremap <silent> <Leader>one :e $MY_ONE_ON_ONE<CR>
+
 
