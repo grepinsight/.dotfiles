@@ -171,6 +171,7 @@ Plug 'beloglazov/vim-online-thesaurus'
 Plug 'vimwiki/vimwiki'
 Plug 'lervag/vimtex'
 Plug 'reedes/vim-wordy'
+Plug 'AndrewRadev/switch.vim'
 
 " Interactive coding
 Plug 'jpalardy/vim-slime'
@@ -769,6 +770,7 @@ let g:vimwiki_list = [{'path': '~/Dropbox/vimwiki/',
 let g:auto_tags = 1
 let g:vimwiki_table_mappings = 0
 
+noremap <LocalLeader>x :VimwikiToggleListItem<CR>
 
 " ----------------------------------------------------------------------------
 " Plugin - vim-surround ----
@@ -1087,3 +1089,115 @@ nnoremap <silent> <Up> :resize +5<cr>
 nnoremap <silent> <Down> :resize -5<cr>
 " automatically rebalance windows on vim resize
 autocmd VimResized * :wincmd =
+
+" qq to record, Q to replay
+nnoremap Q @q
+
+" ----------------------------------------------------------------------------
+" tmux
+" ----------------------------------------------------------------------------
+function! s:tmux_send(content, dest) range
+  let dest = empty(a:dest) ? input('To which pane? ') : a:dest
+  let tempfile = tempname()
+  call writefile(split(a:content, "\n", 1), tempfile, 'b')
+  call system(printf('tmux load-buffer -b vim-tmux %s \; paste-buffer -d -b vim-tmux -t %s',
+        \ shellescape(tempfile), shellescape(dest)))
+  call delete(tempfile)
+endfunction
+
+function! s:tmux_map(key, dest)
+  execute printf('nnoremap <silent> %s "tyy:call <SID>tmux_send(@t, "%s")<cr>', a:key, a:dest)
+  execute printf('xnoremap <silent> %s "ty:call <SID>tmux_send(@t, "%s")<cr>gv', a:key, a:dest)
+endfunction
+
+call s:tmux_map('<leader>tt', '')
+call s:tmux_map('<leader>th', '.left')
+call s:tmux_map('<leader>tj', '.bottom')
+call s:tmux_map('<leader>tk', '.top')
+call s:tmux_map('<leader>tl', '.right')
+call s:tmux_map('<leader>ty', '.top-left')
+call s:tmux_map('<leader>to', '.top-right')
+call s:tmux_map('<leader>tn', '.bottom-left')
+call s:tmux_map('<leader>t.', '.bottom-right')
+
+" ----------------------------------------------------------------------------
+" #!! | Shebang
+" ----------------------------------------------------------------------------
+inoreabbrev <expr> #!! "#!/usr/bin/env" . (empty(&filetype) ? '' : ' '.&filetype)
+
+
+function! s:root()
+  let root = systemlist('git rev-parse --show-toplevel')[0]
+  if v:shell_error
+    echo 'Not in git repo'
+  else
+    execute 'lcd' root
+    echo 'Changed directory to: '.root
+  endif
+endfunction
+command! Root call s:root()
+
+
+
+function! s:hl()
+  " echo synIDattr(synID(line('.'), col('.'), 0), 'name')
+  echo join(map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")'), '/')
+endfunction
+command! HL call <SID>hl()
+" ----------------------------------------------------------------------------
+" Todo
+" ----------------------------------------------------------------------------
+function! s:todo() abort
+  let entries = []
+  for cmd in ['git grep -niI -e TODO -e FIXME -e XXX 2> /dev/null',
+            \ 'grep -rniI -e TODO -e FIXME -e XXX * 2> /dev/null']
+    let lines = split(system(cmd), '\n')
+    if v:shell_error != 0 | continue | endif
+    for line in lines
+      let [fname, lno, text] = matchlist(line, '^\([^:]*\):\([^:]*\):\(.*\)')[1:3]
+      call add(entries, { 'filename': fname, 'lnum': lno, 'text': text })
+    endfor
+    break
+  endfor
+
+  if !empty(entries)
+    call setqflist(entries)
+    copen
+  endif
+endfunction
+command! Todo call s:todo()
+
+
+" ----------------------------------------------------------------------------
+" <Leader>?/! | Google it / Feeling lucky
+" ----------------------------------------------------------------------------
+function! s:goog(pat, lucky)
+  let q = '"'.substitute(a:pat, '["\n]', ' ', 'g').'"'
+  let q = substitute(q, '[[:punct:] ]',
+       \ '\=printf("%%%02X", char2nr(submatch(0)))', 'g')
+  call system(printf('open "https://www.google.com/search?%sq=%s"',
+                   \ a:lucky ? 'btnI&' : '', q))
+endfunction
+
+nnoremap <leader>? :call <SID>goog(expand("<cWORD>"), 0)<cr>
+nnoremap <leader>! :call <SID>goog(expand("<cWORD>"), 1)<cr>
+xnoremap <leader>? "gy:call <SID>goog(@g, 0)<cr>gv
+xnoremap <leader>! "gy:call <SID>goog(@g, 1)<cr>gv
+
+" ----------------------------------------------------------------------------
+" switch.vim
+" ----------------------------------------------------------------------------
+let g:switch_mapping = '-'
+let g:switch_custom_definitions = [
+\   ['MON', 'TUE', 'WED', 'THU', 'FRI']
+\ ]
+
+
+
+" Automatic rename of tmux window
+if exists('$TMUX') && !exists('$NORENAME')
+	au BufEnter * if empty(&buftype) | call system('tmux rename-window '.expand('%:t:S')) | endif
+	au VimLeave * call system('tmux set-window automatic-rename on')
+endif
+
+
