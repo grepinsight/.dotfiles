@@ -403,3 +403,12 @@ c() {
   awk -F $sep '{printf "%-'$cols's  \x1b[36m%s\x1b[m\n", $1, $2}' |
   fzf --ansi --multi | sed 's#.*\(https*://\)#\1#' | xargs open
 }
+
+PS1_toggle() {
+	if [[ $PS1 == '$ ' ]]; then
+		export PS1=$PS1_PREVIOUS
+	else
+		export PS1_PREVIOUS=$PS1
+		export PS1='$ '
+	fi
+}
