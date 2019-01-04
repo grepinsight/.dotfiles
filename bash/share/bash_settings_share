@@ -21,7 +21,7 @@ HISTORY_DIRPATH=${HOME}/.history/$(date +%Y/%m)
 if [[ ! -e $HISTORY_DIRPATH ]]; then
     echo "--> HISTORY_DIRPATH doesn't exist. Creating $HISTORY_DIRPATH..."
 
-    mkdir -p $HISTORY_DIRPATH 
+    mkdir -p $HISTORY_DIRPATH
 fi
 
 HOSTNAME="$(hostname)"
@@ -38,6 +38,7 @@ export PROMPT_COMMAND="history -a; history -n"
 # Use eternal history - https://debian-administration.org/article/543/Bash_eternal_history
 export HISTTIMEFORMAT="%s "
 PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND ; }"'echo $$ $USER $(date "+%Y-%m-%d %H:%M:%S") \
+				"@ $(pwd -P) | " \
                "$(history 1)" >> ~/.bash_eternal_history'
 #PROMT & LS
 # PS1='\e[0;32m[\#] \u@\[\033]0;\h:\W\007\]\h:\W] \e[m'
@@ -48,8 +49,8 @@ PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND ; }"'echo $$ $USER $(date "+%Y
 export LESS_TERMCAP_mb=$'\E[01;31m'
 export LESS_TERMCAP_md=$'\E[01;31m'
 export LESS_TERMCAP_me=$'\E[0m'
-export LESS_TERMCAP_se=$'\E[0m'                           
-export LESS_TERMCAP_so=$'\E[01;44;33m'                                 
+export LESS_TERMCAP_se=$'\E[0m'
+export LESS_TERMCAP_so=$'\E[01;44;33m'
 export LESS_TERMCAP_ue=$'\E[0m'
 export LESS_TERMCAP_us=$'\E[01;32m'
 
@@ -58,7 +59,7 @@ export EDITOR=vim #set up editor
 
 
 # When changing directory small typos can be ignored by bash. for example, cd /vr/lgo/apaache would find /var/log/apache
-shopt -s cdspell 
+shopt -s cdspell
 
 #Add current path to the path
 PATH=$PATH:.
