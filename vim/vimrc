@@ -221,6 +221,7 @@ nnoremap <LocalLeader>a :A <CR>
 nnoremap <LocalLeader>c :ccl<CR>
 nmap <LocalLeader>b :Buffers<CR>
 
+" Switch between the last two files
 nnoremap <LocalLeader><LocalLeader> <C-^>
 
 " ----------------------------------------------------------------------------
