@@ -83,6 +83,17 @@ git push origin --delete BRANCH_NAME
 ```
 git reset HEAD~
 ```
+
+# Break commits into multiple commits
+
+
+```
+git rebase -i COMMIT^
+git reset HEAD^
+git add -p
+git commit
+gt rebase --continue
+```
 ## Break a previous commit into multiple commits
 
 https://stackoverflow.com/questions/6217156/break-a-previous-commit-into-multiple-commits
