@@ -46,6 +46,10 @@ indent_style = tab
 indent_style = space
 indent_size = 4
 
+[*.wdl]
+indent_style = space
+indent_size = 4
+
 [.doingrc]
 indent_style = space
 
