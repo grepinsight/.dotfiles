@@ -15,7 +15,7 @@ let s:darwin = has('mac')
 " Vim 8 defaults
 unlet! skip_defaults_vim
 silent! source $VIMRUNTIME/defaults.vim
-syntax on
+" 'syntax on
 set encoding=UTF-8
 filetype plugin indent on
 runtime macros/matchit.vim
@@ -67,11 +67,11 @@ endif
 call plug#begin('~/.vim/plugged')
 
 " Basic setup
-Plug 'tpope/vim-sensible'
+"Plug 'tpope/vim-sensible'
 
 " Looks / Status
-Plug 'flazz/vim-colorschemes'
-Plug 'vim-airline/vim-airline'
+" Plug 'flazz/vim-colorschemes'
+"Plug 'vim-airline/vim-airline'
 Plug 'junegunn/seoul256.vim'
 Plug 'ryanoasis/vim-devicons'
 "Plug 'yuttie/comfortable-motion.vim'
@@ -83,9 +83,9 @@ Plug 'tpope/vim-obsession'
 Plug 'vim-scripts/BufOnly.vim'
 
 " Files related
-Plug 'scrooloose/nerdtree'
+"Plug 'scrooloose/nerdtree'
 Plug 'francoiscabrol/ranger.vim'
-Plug 'Xuyuanp/nerdtree-git-plugin'
+"Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'tpope/vim-eunuch'
 
 " Search files
@@ -95,7 +95,7 @@ Plug 'junegunn/fzf.vim'
 Plug 'junegunn/vim-peekaboo'
 Plug 'mileszs/ack.vim'
 
-Plug 'mhinz/vim-grepper'
+"Plug 'mhinz/vim-grepper'
 let g:grepper = {}
 runtime autoload/grepper.vim
 let g:grepper.tools = ['rg', 'git', 'ag']
@@ -109,10 +109,10 @@ xmap gs  <plug>(GrepperOperator)
 " Navigation
 Plug 'Lokaltog/vim-easymotion'
 Plug 'justinmk/vim-sneak'
-Plug 'vim-scripts/taglist.vim'
+"Plug 'vim-scripts/taglist.vim'
 Plug 'majutsushi/tagbar'
 Plug 'tpope/vim-projectionist'
-Plug 'tpope/vim-unimpaired'
+"Plug 'tpope/vim-unimpaired'
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'MattesGroeger/vim-bookmarks'
 
@@ -123,8 +123,8 @@ Plug 'terryma/vim-multiple-cursors'
 Plug 'junegunn/vim-after-object'
 Plug 'sjl/gundo.vim'
 Plug 'tpope/vim-commentary'
-Plug 'tommcdo/vim-exchange'
-Plug 'jiangmiao/auto-pairs'
+"Plug 'tommcdo/vim-exchange'
+"Plug 'jiangmiao/auto-pairs'
 Plug 'Yggdroot/indentLine'
 Plug 'bronson/vim-trailing-whitespace'
 Plug 'dhruvasagar/vim-table-mode'
@@ -132,10 +132,10 @@ Plug 'Konfekt/FastFold'
 Plug 'kalekundert/vim-coiled-snake'
 
 " Git
-Plug 'airblade/vim-gitgutter'
-Plug 'tpope/vim-fugitive'
+"Plug 'airblade/vim-gitgutter'
+"Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-rhubarb'
-Plug 'junegunn/gv.vim'
+" Plug 'junegunn/gv.vim'
 
 " Testing
 Plug 'metakirby5/codi.vim'
@@ -143,20 +143,20 @@ Plug 'janko-m/vim-test'
 Plug 'tpope/vim-dispatch'
 
 " Python/Go
-Plug 'davidhalter/jedi-vim'
+"Plug 'davidhalter/jedi-vim'
 Plug 'fatih/vim-go'
 Plug 'michaeljsmith/vim-indent-object'
 
 " Lint
-Plug 'w0rp/ale'
+"Plug 'w0rp/ale'
 
 " Completions and snippets
-if v:version >= 800
-    try
-		Plug 'Valloric/YouCompleteMe'
-    catch
-    endtry
-endif
+" if v:version >= 800
+"     try
+" 		Plug 'Valloric/YouCompleteMe'
+"     catch
+"     endtry
+" endif
 Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 Plug 'ervandew/supertab'
@@ -167,7 +167,7 @@ Plug 'plasticboy/vim-markdown'
 Plug 'tpope/vim-abolish'
 Plug 'junegunn/goyo.vim'
 Plug 'junegunn/limelight.vim'
-Plug 'beloglazov/vim-online-thesaurus'
+"Plug 'beloglazov/vim-online-thesaurus'
 Plug 'vimwiki/vimwiki'
 Plug 'lervag/vimtex'
 Plug 'reedes/vim-wordy'
@@ -183,7 +183,7 @@ Plug 'wikimatze/hammer.vim'
 " Misc
 Plug 'wincent/terminus'  " Make terminal and vim play nicely. Supports auto change
 Plug 'szw/vim-g'
-Plug 'mattn/emmet-vim'
+" Plug 'mattn/emmet-vim'
 Plug 'tomtom/tlib_vim'
 Plug 'itchyny/calendar.vim'
 Plug 'sgur/vim-editorconfig'
@@ -465,7 +465,7 @@ function! NumberToggle()
 endfunc
 
 nnoremap <Leader>rel :call NumberToggle()<cr>
-set relativenumber
+"set relativenumber
 
 "au FocusLost * :set number
 "au FocusGained * :set relativenumber
@@ -630,9 +630,9 @@ let g:AutoPairsShortcutToggle = '<Leader>m'
 
 
 " Spell file
-set spelllang=en
-set spellfile=$HOME/.dotfiles/vim/spell/en.utf-8.add
-set spell
+" set spelllang=en
+" set spellfile=$HOME/.dotfiles/vim/spell/en.utf-8.add
+" set spell
 nnoremap <Leader>sp :e $HOME/.dotfiles/vim/spell/en.utf-8.add<CR>
 nnoremap <Leader>ssp :mkspell! $HOME/.dotfiles/vim/spell/en.utf-8.add<CR>
 
@@ -684,7 +684,7 @@ let g:tagbar_type_rmd = {
 \ }
 
 "colorscheme Tomorrow-Night
-colorscheme seoul256
+"colorscheme seoul256
 
 " Mapping selecting mappings
 nmap <leader><tab> <plug>(fzf-maps-n)
@@ -959,24 +959,24 @@ set nojoinspaces                      " don't autoinsert two spaces after '.', '
 
 nnoremap <Leader>fw :FixWhitespace<CR>
 
-if !empty(glob("/Users/alee/.vim/autoload/wincent"))
-if exists('+winhighlight')
-  autocmd BufEnter,FocusGained,VimEnter,WinEnter * if wincent#autocmds#should_colorcolumn() | set winhighlight= | endif
-  autocmd FocusLost,WinLeave * if wincent#autocmds#should_colorcolumn() | set winhighlight=CursorLineNr:LineNr,IncSearch:ColorColumn,Normal:ColorColumn,NormalNC:ColorColumn,SignColumn:ColorColumn | endif
-  if exists('+colorcolumn')
-	autocmd BufEnter,FocusGained,VimEnter,WinEnter * if wincent#autocmds#should_colorcolumn() | let &l:colorcolumn='+' . join(range(0, 254), ',+') | endif
-  endif
-elseif exists('+colorcolumn')
-  autocmd BufEnter,FocusGained,VimEnter,WinEnter * if wincent#autocmds#should_colorcolumn() | let &l:colorcolumn='+' . join(range(0, 254), ',+') | endif
-  autocmd FocusLost,WinLeave * if wincent#autocmds#should_colorcolumn() | let &l:colorcolumn=join(range(1, 255), ',') | endif
-endif
-autocmd InsertLeave,VimEnter,WinEnter * if wincent#autocmds#should_cursorline() | setlocal cursorline | endif
-autocmd InsertEnter,WinLeave * if wincent#autocmds#should_cursorline() | setlocal nocursorline | endif
+" if !empty(glob("/Users/alee/.vim/autoload/wincent"))
+" if exists('+winhighlight')
+"   autocmd BufEnter,FocusGained,VimEnter,WinEnter * if wincent#autocmds#should_colorcolumn() | set winhighlight= | endif
+"   autocmd FocusLost,WinLeave * if wincent#autocmds#should_colorcolumn() | set winhighlight=CursorLineNr:LineNr,IncSearch:ColorColumn,Normal:ColorColumn,NormalNC:ColorColumn,SignColumn:ColorColumn | endif
+"   if exists('+colorcolumn')
+" 	autocmd BufEnter,FocusGained,VimEnter,WinEnter * if wincent#autocmds#should_colorcolumn() | let &l:colorcolumn='+' . join(range(0, 254), ',+') | endif
+"   endif
+" elseif exists('+colorcolumn')
+"   autocmd BufEnter,FocusGained,VimEnter,WinEnter * if wincent#autocmds#should_colorcolumn() | let &l:colorcolumn='+' . join(range(0, 254), ',+') | endif
+"   autocmd FocusLost,WinLeave * if wincent#autocmds#should_colorcolumn() | let &l:colorcolumn=join(range(1, 255), ',') | endif
+" endif
+" autocmd InsertLeave,VimEnter,WinEnter * if wincent#autocmds#should_cursorline() | setlocal cursorline | endif
+" autocmd InsertEnter,WinLeave * if wincent#autocmds#should_cursorline() | setlocal nocursorline | endif
 
 
-autocmd BufEnter,FocusGained,VimEnter,WinEnter * call wincent#autocmds#focus_window()
-autocmd FocusLost,WinLeave * call wincent#autocmds#blur_window()
-endif
+" autocmd BufEnter,FocusGained,VimEnter,WinEnter * call wincent#autocmds#focus_window()
+" autocmd FocusLost,WinLeave * call wincent#autocmds#blur_window()
+" endif
 
 
 
