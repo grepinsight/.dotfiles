@@ -114,7 +114,7 @@ Plug 'majutsushi/tagbar'
 Plug 'tpope/vim-projectionist'
 Plug 'tpope/vim-unimpaired'
 Plug 'christoomey/vim-tmux-navigator'
-Plug 'MattesGroeger/vim-bookmarks'
+"Plug 'MattesGroeger/vim-bookmarks'
 
 " Editing
 Plug 'tpope/vim-surround'
@@ -132,7 +132,7 @@ Plug 'Konfekt/FastFold'
 Plug 'kalekundert/vim-coiled-snake'
 
 " Git
-Plug 'airblade/vim-gitgutter'
+Plug 'airblade/vim-gitgutter', { 'on': [] }
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-rhubarb'
 Plug 'junegunn/gv.vim'
@@ -215,7 +215,8 @@ nnoremap <LocalLeader>w :write <CR>
 nnoremap <LocalLeader>wq :wq <CR>
 nnoremap <LocalLeader>e :edit <C-R>=expand('%:p:h') . '/' <CR>
 nnoremap <LocalLeader>o :only<CR>
-nnoremap <LocalLeader>p :echo expand('%:p')<CR>
+"nnoremap <LocalLeader>p :echo expand('%:p')<CR>
+nnoremap <silent> <LocalLeader>p :let @" = expand("%:p")<CR> <bar> :echo expand('%:p')<CR>
 nnoremap <LocalLeader>a :A <CR>
 
 " 3rd line
@@ -1042,7 +1043,8 @@ let g:vimtex_view_method = 'skim'
 " Useful shortcuts
 "
 inoremap \date <C-R>=strftime("%Y-%m-%d")<CR>
-inoremap \time <C-R>=strftime("%Y-%m-%dT%H-%M-%S")<CR>
+inoremap \time <C-R>=strftime("%Y-%m-%dT%H:%M:%S")<CR>
+inoremap \iso <C-R>=strftime("%FT%T%z")<CR>
 inoremap \todo [ ] 
 inoremap \td [ ] 
 inoremap \qtd [ ] :question: 
@@ -1149,8 +1151,8 @@ command! HL call <SID>hl()
 " ----------------------------------------------------------------------------
 function! s:todo() abort
   let entries = []
-  for cmd in ['git grep -niI -e TODO -e FIXME -e XXX 2> /dev/null',
-            \ 'grep -rniI -e TODO -e FIXME -e XXX * 2> /dev/null']
+  for cmd in ['git grep -niI -e TODO -e FIXME -e XXX -e "\[ \]" 2> /dev/null',
+            \ 'grep -rniI -e TODO -e FIXME -e XXX -e "\[ \]" * 2> /dev/null']
     let lines = split(system(cmd), '\n')
     if v:shell_error != 0 | continue | endif
     for line in lines
@@ -1166,6 +1168,7 @@ function! s:todo() abort
   endif
 endfunction
 command! Todo call s:todo()
+nnoremap <Leader>T :call s:todo()
 
 
 " ----------------------------------------------------------------------------
@@ -1200,4 +1203,14 @@ if exists('$TMUX') && !exists('$NORENAME')
 	au VimLeave * call system('tmux set-window automatic-rename on')
 endif
 
+autocmd FileType r vnoremap af :<C-U>silent! normal! [[vt{%<CR>
+autocmd FileType r omap af :normal Vaf<CR>
 
+map <leader>C :CtrlPClearCache<cr>
+
+command! -bang -nargs=* Rg
+  \ call fzf#vim#grep(
+  \   'rg -g "!*.pkl" --column --line-number --no-heading --color=always --smart-case '.shellescape(<q-args>), 1,
+  \   <bang>0 ? fzf#vim#with_preview('up:60%')
+  \           : fzf#vim#with_preview('right:50%:hidden', '?'),
+  \   <bang>0)
