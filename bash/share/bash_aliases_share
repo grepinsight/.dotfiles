@@ -83,8 +83,12 @@ fi
 
 if [[ $platform == 'Darwin' ]]; then
    alias ls="gls"
+   command -v exa > /dev/null && alias ls="exa"
    alias ls='ls -G'
+
    alias ll='ls -G -lh'
+   # if exa is avalable use that
+   command -v exa > /dev/null && alias ll="exa -l -g" # list, show group
    alias lll='ls -G -lh'
 else
     alias ls='ls --color=auto'
@@ -122,6 +126,7 @@ alias llsep='ls -l --group-directories-first'
 
 ### llt  - ll, sort by time
 alias llt='ls -lh -tr'
+command -v exa > /dev/null && alias llt="exa --sort=time -l"
 
 ### lltd - ll, sort by time, directories only
 alias lltd='ls -lh -tr -d */'
@@ -484,3 +489,5 @@ alias o="open"
 alias h='cat ~/.bash_eternal_history'
 alias fd2='fd -c never --no-ignore'
 alias pdf="open -a 'Adobe Acrobat Reader DC.app'"
+alias :q="exit"
+alias vu="vim -u NONE"
