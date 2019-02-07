@@ -33,7 +33,7 @@ function mkcd
   mkdir -p "$dir" && cd "$dir";
 }
 
-alias nosym='cd $(readlink -m $(pwd))'
+alias nosym='cd $(pwd -P)'
 ##################################################
 # Dotfiles related
 
