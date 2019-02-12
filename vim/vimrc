@@ -70,8 +70,8 @@ call plug#begin('~/.vim/plugged')
 "Plug 'tpope/vim-sensible'
 
 " Looks / Status
-" Plug 'flazz/vim-colorschemes'
-"Plug 'vim-airline/vim-airline'
+Plug 'flazz/vim-colorschemes'
+Plug 'vim-airline/vim-airline'
 Plug 'junegunn/seoul256.vim'
 Plug 'ryanoasis/vim-devicons'
 "Plug 'yuttie/comfortable-motion.vim'
@@ -112,7 +112,7 @@ Plug 'justinmk/vim-sneak'
 "Plug 'vim-scripts/taglist.vim'
 Plug 'majutsushi/tagbar'
 Plug 'tpope/vim-projectionist'
-"Plug 'tpope/vim-unimpaired'
+Plug 'tpope/vim-unimpaired'
 Plug 'christoomey/vim-tmux-navigator'
 "Plug 'MattesGroeger/vim-bookmarks'
 
@@ -143,7 +143,7 @@ Plug 'janko-m/vim-test'
 Plug 'tpope/vim-dispatch'
 
 " Python/Go
-"Plug 'davidhalter/jedi-vim'
+Plug 'davidhalter/jedi-vim'
 Plug 'fatih/vim-go'
 Plug 'michaeljsmith/vim-indent-object'
 
@@ -632,7 +632,7 @@ let g:AutoPairsShortcutToggle = '<Leader>m'
 
 " Spell file
 " set spelllang=en
-" set spellfile=$HOME/.dotfiles/vim/spell/en.utf-8.add
+set spellfile=$HOME/.dotfiles/vim/spell/en.utf-8.add
 " set spell
 nnoremap <Leader>sp :e $HOME/.dotfiles/vim/spell/en.utf-8.add<CR>
 nnoremap <Leader>ssp :mkspell! $HOME/.dotfiles/vim/spell/en.utf-8.add<CR>
@@ -674,18 +674,8 @@ let g:tagbar_type_markdown = {
 "     \ 'sort' : 0
 " \ }
 
-let g:tagbar_type_rmd = {
-            \ 'ctagstype' : 'markdown',
-            \ 'kinds' : [
-                \ 'h:headings',
-                \ 'l:links',
-                \ 'i:images'
-            \ ],
-    \ "sort" : 0
-\ }
-
 "colorscheme Tomorrow-Night
-"colorscheme seoul256
+colorscheme seoul256
 
 " Mapping selecting mappings
 nmap <leader><tab> <plug>(fzf-maps-n)
@@ -1078,11 +1068,11 @@ nnoremap ㅇㅇ dd
 inoremap <expr> <c-x><c-k> fzf#complete('cat /usr/share/dict/words $HOME/.dotfiles/vim/spell/en.utf-8.add 2>/dev/null')
 
 
-" Auto resize Vim splits to active split
-set winwidth=104
-set winheight=5
-set winminheight=5
-set winheight=999
+" " Auto resize Vim splits to active split
+" set winwidth=104
+" set winheight=5
+" set winminheight=5
+" set winheight=999
 
 " resize panes
 nnoremap <silent> <Left> :vertical resize +5<cr>
@@ -1214,3 +1204,45 @@ command! -bang -nargs=* Rg
   \   <bang>0 ? fzf#vim#with_preview('up:60%')
   \           : fzf#vim#with_preview('right:50%:hidden', '?'),
   \   <bang>0)
+
+
+" Zoom / Restore window.
+function! s:ZoomToggle() abort
+    if exists('t:zoomed') && t:zoomed
+		call system("tmux resize-pane -Z")
+        execute t:zoom_winrestcmd
+        let t:zoomed = 0
+		"execute 'silent ' . '!tmux resize-pane -Z'
+    else
+        let t:zoom_winrestcmd = winrestcmd()
+		call system("tmux resize-pane -Z")
+        resize
+        vertical resize
+        let t:zoomed = 1
+		"execute 'silent ' . '!tmux resize-pane -Z' 
+
+    endif
+endfunction
+command! ZoomToggle call s:ZoomToggle()
+nnoremap <silent> <LocalLeader>z :ZoomToggle<CR>
+
+let g:tagbar_type_vimwiki = {
+			\   'ctagstype':'vimwiki'
+			\ , 'kinds':['h:header']
+			\ , 'sro':'&&&'
+			\ , 'kind2scope':{'h':'header'}
+			\ , 'sort':0
+			\ , 'ctagsbin':"$HOME/src/productivity/tagbar_vimwiki.py"
+			\ , 'ctagsargs': 'markdown'
+			\ }
+
+let g:tagbar_type_rmd = {
+          \   'ctagstype':'rmd'
+          \ , 'kinds':['h:header', 'c:chunk', 'f:function', 'v:variable']
+          \ , 'sro':'&&&'
+          \ , 'kind2scope':{'h':'header', 'c':'chunk', 'f':'function', 'v':'variable'}
+          \ , 'sort':0
+          \ , 'ctagsbin':"$HOME/src/productivity/tagbar_rmarkdown.py"
+          \ , 'ctagsargs':''
+          \ }
+

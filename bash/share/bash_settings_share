@@ -68,6 +68,7 @@ PATH=$PATH:.
 #stty erase ^H
 # Add completion function for makefile: http://stackoverflow.com/a/38415982/1058663
 complete -W "\`grep -oE '^[.a-zA-Z0-9_-]+:([^=]|$)' Makefile | sed 's/[^a-zA-Z0-9_-]*$//'\`" make
+complete -W "\`tmsu tags\`" tmsu
 
 # To make tmux color work in Vim
 export TERM="xterm-256color"

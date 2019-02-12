@@ -491,3 +491,6 @@ alias fd2='fd -c never --no-ignore'
 alias pdf="open -a 'Adobe Acrobat Reader DC.app'"
 alias :q="exit"
 alias vu="vim -u NONE"
+alias rd="vim /Users/allee/Dropbox/vimwiki/2019-roadmap.md"
+alias t="tmsu"
+alias vimdo="vim - && ls xxx 2>/dev/null > /dev/null && cat xxx | bash && rm xxx"
