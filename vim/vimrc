@@ -209,7 +209,6 @@ let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
 
 set background=dark " Setting dark mode
 
-colorscheme deus
 
 let g:deus_termcolors=256
 
@@ -692,7 +691,8 @@ let g:tagbar_type_markdown = {
 " \ }
 
 "colorscheme Tomorrow-Night
-colorscheme seoul256
+"colorscheme seoul256
+colorscheme deus
 
 " Mapping selecting mappings
 nmap <leader><tab> <plug>(fzf-maps-n)
