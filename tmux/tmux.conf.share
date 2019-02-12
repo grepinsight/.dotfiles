@@ -25,14 +25,20 @@ set-window-option -g window-status-current-bg red
 # Status Bar
 set -g status-bg black
 set -g status-fg white
-set -g status-left ""
 set -g status-right-length 180
 set -g status-left-length 20
 set -g status-interval 10
 #set -g status-right "#[fg=red] #(todo_today) #[fg=yellow]#S #[fg=green]#I:#P %l:%M %p :: #(date): :: #(/usr/local/bin/tmux-mem-cpu-load)"
 
+set -g status-position bottom
 set -g status-left '#[fg=yellow,bold] ❐ #S - '
-set -g status-right "#[fg=red] #(todo_today)#[fg=green]%l:%M %p :: #(date)"
+#set -g status-right "#[fg=white] #{spotify_status} #{spotify_track} (#{spotify_artist}) | #(doing-tmux) :: #[fg=red]#(todo_today) #[fg=white]:: Batt: #{battery_icon} #{battery_percentage} #{battery_remain} | #[fg=green]#(date '+%Y-%m-%d') %l:%M %p"
+
+
+bind t set -g status-right "#[fg=white]:: Batt: #{battery_icon} #{battery_percentage} #{battery_remain} | #[fg=green]#(date '+%Y-%m-%d') %l:%M %p"
+
+bind T set -g status-right "#[fg=red]#(todo_today) #[fg=white]:: Batt: #{battery_icon} #{battery_percentage} #{battery_remain} | #[fg=green]#(date '+%Y-%m-%d') %l:%M %p"
+#set -g status-right "#[fg=white] #{spotify_all} | #(doing-tmux) :: #[fg=red]#(todo_today) #[fg=white]:: Batt: #{battery_icon} #{battery_percentage} #{battery_remain} | #[fg=green]#(date '+%Y-%m-%d') %l:%M %p"
 
 ### Shortcut
 # Last Active Window
@@ -52,19 +58,20 @@ bind - last-window \; swap-pane -s tmux-zoom.0 \; kill-window -t tmux-zoom
 # set -g mouse-select-window on
 
 # # Toggle mouse on with ^B m
- bind m \
-    set -g mode-mouse on \;\
-    set -g mouse-resize-pane on \;\
-    set -g mouse-select-pane on \;\
-    set -g mouse-select-window on \;\
-    display 'Mouse: ON'
-# Toggle mouse off with ^b M
- bind M \
-    set -g mode-mouse off \;\
-    set -g mouse-resize-pane off \;\
-    set -g mouse-select-pane off \;\
-    set -g mouse-select-window off \;\
-    display 'Mouse: off'
+# DEPRECIATED
+ # bind m \
+ #    set -g mode-mouse on \;\
+ #    set -g mouse-resize-pane on \;\
+ #    set -g mouse-select-pane on \;\
+ #    set -g mouse-select-window on \;\
+ #    display 'Mouse: ON'
+# # Toggle mouse off with ^b M
+ # bind M \
+ #    set -g mode-mouse off \;\
+ #    set -g mouse-resize-pane off \;\
+ #    set -g mouse-select-pane off \;\
+ #    set -g mouse-select-window off \;\
+ #    display 'Mouse: off'
 
 # Swapping Window
 bind-key -n S-Left swap-window -t -1
@@ -103,7 +110,8 @@ bind r source-file ~/.tmux.conf \; display "Reloaded!"
 # current_path credit: https://unix.stackexchange.com/a/118381
 bind-key | split-window -h -c "#{pane_current_path}"
 bind-key _ split-window -v -c "#{pane_current_path}"
-bind-key - split-window -v -c "#{pane_current_path}"
+bind-key - split-window -vb -c "#{pane_current_path}"
+
 
 #Cycle through windows, or panes.   I prefer using it for panes
 bind -n f12 select-pane -t :.+
@@ -116,3 +124,77 @@ bind -n f12 select-pane -t :.+
 
 
 bind-key 0 run "tmux split-window -p 40 'bash -ci \"ftpane.sh\"'"
+
+# Smart pane switching with awareness of Vim splits.
+# See: https://github.com/christoomey/vim-tmux-navigator
+is_vim="ps -o state= -o comm= -t '#{pane_tty}' \
+    | grep -iqE '^[^TXZ ]+ +(\\S+\\/)?g?(view|n?vim?x?)(diff)?$'"
+bind-key -n C-h if-shell "$is_vim" "send-keys C-h"  "select-pane -L"
+bind-key -n C-j if-shell "$is_vim" "send-keys C-j"  "select-pane -D"
+bind-key -n C-k if-shell "$is_vim" "send-keys C-k"  "select-pane -U"
+bind-key -n C-l if-shell "$is_vim" "send-keys C-l"  "select-pane -R"
+bind-key -n C-\ if-shell "$is_vim" "send-keys C-\\" "select-pane -l"
+bind-key -T copy-mode-vi C-h select-pane -L
+bind-key -T copy-mode-vi C-j select-pane -D
+bind-key -T copy-mode-vi C-k select-pane -U
+bind-key -T copy-mode-vi C-l select-pane -R
+bind-key -T copy-mode-vi C-\ select-pane -l
+
+set -g mouse on
+bind m set -g mouse on
+bind M set -g mouse off
+
+# pane navigation
+bind > swap-pane -D       # swap current pane with the next one
+bind < swap-pane -U       # swap current pane with the previous one
+
+bind + run 'cut -c3- ~/src/.tmux/.tmux.conf | sh -s _maximize_pane "#{session_name}" #D'
+
+# pane resizing
+# bind -r H resize-pane -L 2
+# bind -r J resize-pane -D 2
+# bind -r K resize-pane -U 2
+# bind -r L resize-pane -R 2
+
+bind P choose-buffer # choose which buffer to paste from
+
+# List of plugins
+set -g @plugin 'tmux-plugins/tpm'
+set -g @plugin 'tmux-plugins/tmux-sensible'
+
+
+set -g @plugin 'tmux-plugins/tmux-copycat'
+set -g @plugin 'tmux-plugins/tmux-open'
+set -g @plugin 'tmux-plugins/tmux-yank'
+set -g @open-G 'https://www.google.com/search?q='
+
+set -g @plugin 'tmux-plugins/tmux-resurrect'
+set -g @plugin 'tmux-plugins/tmux-continuum'
+
+set -g @plugin 'tmux-plugins/tmux-battery'
+
+set -g @plugin 'jbnicolai/tmux-fpp'
+set -g @plugin 'tmux-plugins/tmux-sidebar'
+
+set -g @plugin 'Morantron/tmux-fingers'
+
+set -g @plugin 'tmux-plugins/tmux-urlview'
+
+set -g @plugin 'robhurring/tmux-spotify'
+
+
+# to capture RGB color code
+set -g @fingers-pattern-0 '#[A-Za-z0-9][A-Za-z0-9][A-Za-z0-9][A-Za-z0-9][A-Za-z0-9][A-Za-z0-9]'
+set -g @fingers-pattern-1 'swift://[^, ]*'
+set -g @fingers-pattern-2 'IPS_RES_[0-9]*'
+set -g @fingers-pattern-3 'job-[0-9A-Za-z]*'
+set -g @fingers-pattern-4 'grepinsight\+work@gmail.com\/[0-9A-Za-z.-]*'
+set -g @fingers-pattern-5 'project-[0-9A-Za-z]*'
+set -g @fingers-pattern-6 'file-[0-9A-Za-z]*'
+set -g @fingers-pattern-7 'BIOINF-[0-9A-Za-z]*'
+
+set -g @continuum-restore 'on'
+
+
+run '~/.tmux/plugins/tpm/tpm'
+
