@@ -10,8 +10,9 @@ else
 	 dpkg -i ripgrep_0.10.0_amd64.deb
 	 apt-get install ripgrep
 
-	 dpkg -i fd_7.2.0_amd64.deb
-	 apt-get install fd-find
+	 curl -LO https://github.com/sharkdp/fd/releases/download/v7.3.0/fd_7.3.0_amd64.deb
+	 dpkg -i fd_7.3.0_amd64.deb
+	 apt-get install fd
 
 fi
 
