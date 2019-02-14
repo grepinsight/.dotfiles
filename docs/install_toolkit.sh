@@ -4,6 +4,8 @@ if [[ $platform == "Darwin" ]]; then
 	#statements
 	 brew install ripgrep
 	 brew install fd
+	 brew install tree
+
 else
 	# install ripgrep
 	 curl -LO https://github.com/BurntSushi/ripgrep/releases/download/0.10.0/ripgrep_0.10.0_amd64.deb
@@ -14,6 +16,9 @@ else
 	 dpkg -i fd_7.3.0_amd64.deb
 	 apt-get install fd
 
+	 sudo apt-get install tree
+
 fi
 
+curl https://pyenv.run | bash
 #pip install csvkit
