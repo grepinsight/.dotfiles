@@ -149,7 +149,11 @@ set -g @fingers-pattern-4 'grepinsight\+work@gmail.com\/[0-9A-Za-z.-]*'
 set -g @fingers-pattern-5 'project-[0-9A-Za-z]*'
 set -g @fingers-pattern-6 'file-[0-9A-Za-z]*'
 set -g @fingers-pattern-7 'BIOINF-[0-9A-Za-z]*'
+set -g @fingers-pattern-8 '[-0-9A-Za-z]*.md'
+set -g @fingers-pattern-9 '[-0-9A-Za-z]*.txt'
 set -g @continuum-restore 'on'
 
 run '~/.tmux/plugins/tpm/tpm'
 
+set -s command-alias[10] s='split-window'
+set -s command-alias[10] w='split-window fs'

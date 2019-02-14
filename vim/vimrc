@@ -96,6 +96,7 @@ Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all'  }
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/vim-peekaboo'
 Plug 'mileszs/ack.vim'
+Plug 'google/vim-searchindex'
 
 "Plug 'mhinz/vim-grepper'
 let g:grepper = {}
@@ -135,7 +136,7 @@ Plug 'kalekundert/vim-coiled-snake'
 
 " Git
 "Plug 'airblade/vim-gitgutter'
-"Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-rhubarb'
 " Plug 'junegunn/gv.vim'
 
@@ -148,6 +149,8 @@ Plug 'tpope/vim-dispatch'
 Plug 'davidhalter/jedi-vim'
 Plug 'fatih/vim-go'
 Plug 'michaeljsmith/vim-indent-object'
+Plug 'kana/vim-textobj-user'
+Plug 'jeetsukumaran/vim-pythonsense'
 
 " Lint
 "Plug 'w0rp/ale'
@@ -179,8 +182,7 @@ Plug 'AndrewRadev/switch.vim'
 Plug 'jpalardy/vim-slime'
 
 " Reading
-Plug 'JamshedVesuna/vim-markdown-preview'
-Plug 'wikimatze/hammer.vim'
+"Plug 'JamshedVesuna/vim-markdown-preview'
 
 " Misc
 Plug 'wincent/terminus'  " Make terminal and vim play nicely. Supports auto change
@@ -231,6 +233,7 @@ nnoremap <LocalLeader>w :write <CR>
 nnoremap <LocalLeader>wq :wq <CR>
 nnoremap <LocalLeader>e :edit <C-R>=expand('%:p:h') . '/' <CR>
 nnoremap <LocalLeader>o :only<CR>
+nnoremap <LocalLeader>t :!typora %<CR>
 "nnoremap <LocalLeader>p :echo expand('%:p')<CR>
 nnoremap <silent> <LocalLeader>p :let @" = expand("%:p")<CR> <bar> :echo expand('%:p')<CR>
 nnoremap <LocalLeader>a :A <CR>
@@ -1263,3 +1266,4 @@ let g:tagbar_type_rmd = {
           \ , 'ctagsargs':''
           \ }
 
+let g:sneak#use_ic_scs = 1

@@ -1,6 +1,7 @@
 set completion-ignore-case on
 
 set editing-mode vi
+set keymap vi
 
 $if mode=vi
     set keymap vi-insert
