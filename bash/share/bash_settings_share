@@ -1,5 +1,6 @@
 # TZ variable causing a numerous errors. unset it
 unset TZ
+declare -x VISUAL="vim"
 
 #keyboard setting
 set -o vi

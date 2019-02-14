@@ -12,6 +12,7 @@ bash_setup:
 
 tmux_setup: ## setup tmux
 	ln -sf $$HOME/.dotfiles/tmux/tmux.conf.share $$HOME/.tmux.conf
+	git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
 tmux/tmux.conf.local:
 	touch $@

@@ -26,6 +26,11 @@ if [ -f "${INIT_DIR}/share/bash_functions_share" ]; then
    echo "bash_functions_share loaded"
 fi
 
+if [ -f "${INIT_DIR}/share/bash_paths_share" ]; then
+   source "${INIT_DIR}/share/bash_paths_share"
+   echo "bash_paths_share loaded"
+fi
+
 #colors
 #
 if [ -f "${INIT_DIR}/share/bash_colors_share" ]; then
