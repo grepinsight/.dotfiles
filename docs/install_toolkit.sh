@@ -32,3 +32,9 @@ fi
 
 curl https://pyenv.run | bash
 #pip install csvkit
+
+
+mkdir $HOME/bin
+
+# diff-so-fancy
+cd $HOME/bin/; curl -O "https://raw.githubusercontent.com/so-fancy/diff-so-fancy/master/third_party/build_fatpack/diff-so-fancy" ; chmod 750 diff-so-fancy; cd -
