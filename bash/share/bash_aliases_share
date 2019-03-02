@@ -294,6 +294,7 @@ alias vs="if [[ -e './Session.vim' ]]; then vim -S ./Session.vim; else vim ; fi"
 # etc
 
 alias rt="reset"
+alias cl="clear"
 #tablemanipulate
 ### http://unix.stackexchange.com/questions/29023/how-to-display-tsv-csv-in-console-when-empty-cells-are-missed-by-column-t
 alias ctt="(sed ':x s/\(^\|\t\)\t/\1 \t/; t x' | column -ts$'\t')"
