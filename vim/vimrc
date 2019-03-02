@@ -230,6 +230,7 @@ endif
 " First line
 nnoremap <LocalLeader>q :quit <CR>
 nnoremap <LocalLeader>w :write <CR>
+nnoremap <LocalLeader>g :Google <CR>
 nnoremap <LocalLeader>wq :wq <CR>
 nnoremap <LocalLeader>e :edit <C-R>=expand('%:p:h') . '/' <CR>
 nnoremap <LocalLeader>o :only<CR>
@@ -1053,6 +1054,7 @@ let g:vimtex_view_method = 'skim'
 " Useful shortcuts
 "
 inoremap \date <C-R>=strftime("%Y-%m-%d")<CR>
+inoremap \dow <C-R>=strftime("%A")<CR>
 inoremap \time <C-R>=strftime("%Y-%m-%dT%H:%M:%S")<CR>
 inoremap \iso <C-R>=strftime("%FT%T%z")<CR>
 inoremap \todo [ ] 
