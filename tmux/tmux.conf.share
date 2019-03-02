@@ -38,7 +38,8 @@ set -g status-right-length 180
 set -g status-left-length 20
 set -g status-interval 10
 set -g status-left '#[fg=yellow,bold] ❐ #S - '
-bind t set -g status-right "#[fg=white]:: Batt: #{battery_icon} #{battery_percentage} #{battery_remain} | #[fg=green]#(date '+%Y-%m-%d') %l:%M %p"
+set -g status-right "#[fg=white]:: Batt: #{battery_icon} #{battery_percentage} #{battery_remain} | #[fg=green]#(date '+%Y-%m-%d') %l:%M %p"
+bind t set -g status-right "#[fg=white]:: Batt: #{battery_icon} #{battery_percentage} #{battery_remain} | #[fg=green]#(date '+%Y-%m-%d') %l:%M %p"; display "no todo!"
 bind T set -g status-right "#[fg=red]#(todo_today) #[fg=white]:: Batt: #{battery_icon} #{battery_percentage} #{battery_remain} | #[fg=green]#(date '+%Y-%m-%d') %l:%M %p"
 
 # Shortcut

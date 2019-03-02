@@ -15,7 +15,9 @@
 # Vim
 Session.vim
 
+# Python
 .pytest_cache/
+.python-version
 
 # Etc
 ._.DS_Store
@@ -31,3 +33,4 @@ Session.vim
 __pycache__/
 
 Icon
+
