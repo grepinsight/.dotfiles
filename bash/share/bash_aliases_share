@@ -271,7 +271,9 @@ alias gds="git diff --staged"
 alias gb="git branch"
 alias gcm="git checkout master"
 alias gco="git checkout"
+alias gcb="git checkout -b"
 alias gcp="git checkout -p"
+alias gcmm="git checkout --"
 
 ## Git Rebaise
 alias grm="git rebase master"
@@ -498,3 +500,4 @@ alias vimdo="vim - && ls xxx 2>/dev/null > /dev/null && cat xxx | bash && rm xxx
 alias gcmd="git commend"
 alias tmuxrc="vim $HOME/.tmux.conf"
 alias fdf="fd -t f"
+alias sda="source deactivate"

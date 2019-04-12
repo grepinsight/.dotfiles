@@ -135,7 +135,7 @@ Plug 'Konfekt/FastFold'
 Plug 'kalekundert/vim-coiled-snake'
 
 " Git
-"Plug 'airblade/vim-gitgutter'
+Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-rhubarb'
 " Plug 'junegunn/gv.vim'
@@ -153,7 +153,7 @@ Plug 'kana/vim-textobj-user'
 Plug 'jeetsukumaran/vim-pythonsense'
 
 " Lint
-"Plug 'w0rp/ale'
+Plug 'w0rp/ale'
 
 " Completions and snippets
 " if v:version >= 800
@@ -1078,6 +1078,7 @@ nnoremap <Leader>h2 yypVr-
 nnoremap TT :wall<CR>: !tmux kill-pane<CR>
 nnoremap <Leader>def :e $HOME/vimwiki/Definitions.wiki<CR>
 nnoremap <Leader>k :VimwikiToggleListItem<CR>
+nnoremap <Leader>tag :!tmsu tag % 
 
 
 nnoremap ㅏ k
