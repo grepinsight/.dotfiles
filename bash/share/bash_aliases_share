@@ -365,7 +365,7 @@ function findf(){
 alias find_vimcrap='find . -name "*.swp" -o -name "*.swo" -o -name "*.un~"'
 
 ## List files by recency
-alias find_recent='find . \( -path ./.git -o -path ./.Rproj.user \) -prune -o -type f -printf "%T+\t%p\n" | sort'
+alias find_recent='find . \( -path ./.git -o -path ./.Rproj.user \) -prune -o -type f -printf "%T+\t%p\n" | sort | egrep -v "\.git|\.Rproj.user|\.mypy_cache"'
 
 ## List files that changed last 30 minutes ago only
 alias find_justnow='find . \( -path ./.git -o -path ./.Rproj.user \) -prune -o -type f -cmin -30 -printf "%T+\t%p\n" | sort'
