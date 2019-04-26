@@ -3,6 +3,9 @@ root = true
 [*]
 trim_trailing_whitespace = true
 
+[*.diff]
+trim_trailing_whitespace = false
+
 [vimrc]
 trim_trailing_whitespace = false
 
