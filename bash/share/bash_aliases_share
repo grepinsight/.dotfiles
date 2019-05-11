@@ -10,6 +10,7 @@ function get_platform
 export -f get_platform
 # Administrative
 
+alias reload="source $HOME/.dotfiles/bash/bashrc_init"
 alias reload_alias_share="source $HOME/.dotfiles/bash/share/bash_aliases_share"
 alias reload_alias_local="source $HOME/.dotfiles/bash/local/bash_aliases_local"
 alias reload_bashrc="source $HOME/.bashrc"
