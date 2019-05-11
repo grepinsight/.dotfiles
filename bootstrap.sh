@@ -35,17 +35,46 @@ fi
 ### Tools
 
 echo "--- Downloading useful tools ---"
-if which git 2>/dev/null >&2 ; then 
+if which git 2>/dev/null >&2 ; then
     if [[ ! -e $HOME/src/bashmarks ]]; then
         echo "installing bashmarks"
         mkdir -p $HOME/src
-        cd $HOME/src && git clone https://github.com/huyng/bashmarks.git && cd - 
+        cd $HOME/src && git clone https://github.com/huyng/bashmarks.git && cd -
+		mkdir -p $HOME/.dotfiles/bash/local
+		cd $HOME/src/bashmarks && \
+			make install && \
+			echo "source ~/.local/bin/bashmarks.sh" >> $HOME/.dotfiles/bash/local/bash_settings_local && \
+			source ~/.local/bin/bashmarks.sh \
+			cd - \
+			s dot
+		# set up basisc book mark files
+			echo "export DIR_dot=\"$HOME/.dotfiles\"" >> $HOME/.sdirs
+			echo "export DIR_src=\"$HOME/src\"" >> $HOME/.sdirs
+			echo "export DIR_dotvim=\"$HOME/.vim/bundle\"" >> $HOME/.sdirs
+			echo "export DIR_tmuxp=\"$HOME/.tmuxp\"" >> $HOME/.sdirs
+			echo "export DIR_bundle=\"$HOME/.vim/bundle\"" >> $HOME/.sdirs
+			echo "export DIR_dt=\"$HOME/Desktop\"" >> $HOME/.sdirs
+			echo "export DIR_ssh=\"$HOME/.ssh\"" >> $HOME/.sdirs
+			echo "export DIR_prj=\"$HOME/prj\"" >> $HOME/.sdirs
+			echo "export DIR_p=\"$HOME/prj\"" >> $HOME/.sdirs
+			echo "export DIR_md=\"$HOME/Documents\"" >> $HOME/.sdirs
+			echo "export DIR_bin=\"$HOME/bin\"" >> $HOME/.sdirs
+			echo "export DIR_prd=\"$HOME/src/productivity\"" >> $HOME/.sdirs
+			echo "export DIR_d=\"$HOME/Desktop\"" >> $HOME/.sdirs
+			echo "export DIR_prod=\"$HOME/src/productivity\"" >> $HOME/.sdirs
+			echo "export DIR_wiki=\"$HOME/Dropbox/vimwiki\"" >> $HOME/.sdirs
+			echo "export DIR_l=\"$HOME/Downloads\"" >> $HOME/.sdirs
+			echo "export DIR_doc=\"$HOME/Documents\"" >> $HOME/.sdirs
+			echo "export DIR_snip=\"$HOME/.vim/plugged/mysnippets/UltiSnips\"" >> $HOME/.sdirs
+			echo "export DIR_iwki=\"$HOME/Dropbox/vimwiki\"" >> $HOME/.sdirs
+			echo "export DIR_c=\"$HOME/current\"" >> $HOME/.sdirs
+		cd $HOME/src && s src && cd -
     fi
 
     if [[ ! -e $HOME/src/gitstats ]]; then
         echo "installing gitstats"
         mkdir -p $HOME/src
-        cd $HOME/src && git clone git://github.com/hoxu/gitstats.git && cd - 
+        cd $HOME/src && git clone git://github.com/hoxu/gitstats.git && cd -
     fi
 else
     echo "git not found! install git and rerun this script again"
