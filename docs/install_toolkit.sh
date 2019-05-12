@@ -7,6 +7,8 @@ if [[ $platform == "Darwin" ]]; then
 	 brew install tree
 
 else
+	apt-get update
+	apt-get install curl
 	# install ripgrep
 	 DEB_RIPGREP="ripgrep_0.10.0_amd64.deb"
 	 curl -LO https://github.com/BurntSushi/ripgrep/releases/download/0.10.0/${DEB_RIPGREP}

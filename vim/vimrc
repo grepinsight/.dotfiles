@@ -44,6 +44,7 @@ set hlsearch            " highlight matches
 set path+=**            " provides tab-completion for all file-related tasks
 set wildmenu            " display all matching files when we tab complete
 set noswapfile 
+set conceallevel=1
 
 nnoremap <SPACE> <Nop>
 let maplocalleader=" "
@@ -77,6 +78,7 @@ Plug 'vim-airline/vim-airline'
 Plug 'junegunn/seoul256.vim'
 Plug 'ryanoasis/vim-devicons'
 "Plug 'yuttie/comfortable-motion.vim'
+Plug 'ap/vim-css-color'
 
 " Session Management
 Plug 'tpope/vim-obsession'
@@ -1324,7 +1326,6 @@ call textobj#user#plugin('rmdmine', {
 \ })
 
 
-set conceallevel=0
 " Start interactive EasyAlign in visual mode (e.g. vipga)
 xmap ga <Plug>(EasyAlign)
 
