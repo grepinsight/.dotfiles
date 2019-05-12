@@ -33,7 +33,7 @@ else
 fi
 
 curl https://pyenv.run | bash
-SETTING_FILE_PATH="$HOME/.dotfiles/bash/local/bash_settings_local"
+SETTING_FILE_PATH="$(dirname $(dirname $0))/bash/local/bash_settings_local"
 echo "export PATH=\"~/.pyenv/bin:\$PATH\""    >> $SETTING_FILE_PATH
 echo "eval \"\$(pyenv init -)\""              >> $SETTING_FILE_PATH
 echo "eval \"\$(pyenv virtualenv-init -)\""   >> $SETTING_FILE_PATH
