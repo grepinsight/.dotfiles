@@ -87,3 +87,5 @@ fi
 
 cd $ROOT_DIR && touch tmux/tmux.conf.local
 cd $ROOT_DIR && touch git/gitconfig.local
+
+echo "source \$HOME/.dotfiles/bash/bashrc_init" >> $HOME/.bashrc
