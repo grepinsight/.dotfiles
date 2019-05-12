@@ -94,4 +94,10 @@ fi
 cd $ROOT_DIR && touch tmux/tmux.conf.local
 cd $ROOT_DIR && touch git/gitconfig.local
 
-echo "source \$HOME/.dotfiles/bash/bashrc_init" >> $HOME/.bashrc
+
+if [[ $(cat ~/.bashrc | grep bashrc_init | wc -l) == 0 ]]; then
+	echo "source \$HOME/.dotfiles/bash/bashrc_init" >> $HOME/.bashrc
+	echo "Adding the line finished"
+else
+	echo "bashrc already loaded with the dotfile setup"
+fi
