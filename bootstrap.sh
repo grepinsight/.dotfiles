@@ -76,6 +76,12 @@ if which git 2>/dev/null >&2 ; then
         mkdir -p $HOME/src
         cd $HOME/src && git clone git://github.com/hoxu/gitstats.git && cd -
     fi
+
+    if [[ ! -e $HOME/src/productivity ]]; then
+        echo "installing productivity"
+        mkdir -p $HOME/src
+        cd $HOME/src && git clone https://github.com/grepinsight/productivity.git && cd -
+    fi
 else
     echo "git not found! install git and rerun this script again"
 fi
