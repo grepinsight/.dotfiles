@@ -502,5 +502,6 @@ alias gcmd="git commend"
 alias tmuxrc="vim $HOME/.tmux.conf"
 alias fdf="fd -t f"
 alias sda="source deactivate"
+alias upp="unset PYTHONPATH"
 
 command -v rpbcopy > /dev/null && alias pbcopy="rpbcopy"
