@@ -239,6 +239,7 @@ nnoremap <LocalLeader>wq :wq <CR>
 nnoremap <LocalLeader>e :edit <C-R>=expand('%:p:h') . '/' <CR>
 nnoremap <LocalLeader>o :only<CR>
 nnoremap <LocalLeader>t :!typora %<CR>
+nnoremap <Leader>dot :!cat % \| dot -Tpng > <C-R>=expand('%:r')<CR>.png && open <C-R>=expand('%:r')<CR>.png <CR>
 nnoremap <LocalLeader>y :Goyo<CR>
 "nnoremap <LocalLeader>p :echo expand('%:p')<CR>
 nnoremap <silent> <LocalLeader>p :let @" = expand("%:p")<CR> <bar> :echo expand('%:p')<CR>
@@ -332,7 +333,6 @@ nnoremap <Leader>t :sp ~/Dropbox/vimwiki/diary/<C-R>=strftime("%Y-%m-%d")<CR>.md
 " close buffer
 nnoremap BB :bd<CR>
 nnoremap QQ :q<CR>
-nnoremap <F4> :bd<CR>
 
 " reopen the closed buffer
 nnoremap <c-s-t> :b#<CR>:e<CR>
@@ -804,6 +804,8 @@ let g:go_version_warning = 0
 
 nnoremap <F3> :call fzf#run(fzf#wrap({'source': 'fd $FD_OPTS . $HOME', 'sink': 'edit'}))<CR>
 inoremap <F3> :call fzf#run(fzf#wrap({'source': 'fd $FD_OPTS . $HOME', 'sink': 'edit'}))<CR>
+nnoremap <F4> :call fzf#run(fzf#wrap({'source': 'fd --no-ignore $FD_OPTS .', 'sink': 'edit'}))<CR>
+inoremap <F4> :call fzf#run(fzf#wrap({'source': 'fd --no-ignore $FD_OPTS .', 'sink': 'edit'}))<CR>
 nnoremap <Leader>pv :call fzf#vim#gitfiles('', fzf#vim#with_preview('right'))<CR>
 
 " ----------------------------------------------------------------------------
@@ -875,6 +877,7 @@ let g:UltiSnipsJumpBackwardTrigger="<c-k>"
 let g:UltiSnipsEditSplit="vertical"
 let g:UltiSnipsNoPythonWarning = 1
 let g:UltiSnipsSnippetsDir="~/.vim/plugged/mysnippets/UltiSnips/"
+UltiSnipsAddFiletypes Rmd.R
 
 noremap <silent> <Leader>ult :UltiSnipsEdit<CR>
 vmap <F9> :call UltiSnips#SaveLastVisualSelection()<CR>gvs
@@ -1331,3 +1334,5 @@ xmap ga <Plug>(EasyAlign)
 
 " Start interactive EasyAlign for a motion/text object (e.g. gaip)
 nmap ga <Plug>(EasyAlign)
+
+inoremap <Leader>fix <c-g>u<Esc>[s1z=`]a<c-g>u
