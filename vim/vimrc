@@ -411,7 +411,7 @@ function! SpellToggle()
     endif
 endfunction
 
-nnoremap <Leader>sp :call SpellToggle()<CR>
+"nnoremap <Leader>sp :call SpellToggle()<CR>
 nnoremap <Leader>nsp :set nospell<CR>
 nnoremap <Leader>ssp :set spell<CR>
 inoremap <Leader>sp <Esc>:call SpellToggle()<CR>
@@ -1336,3 +1336,4 @@ xmap ga <Plug>(EasyAlign)
 nmap ga <Plug>(EasyAlign)
 
 inoremap <Leader>fix <c-g>u<Esc>[s1z=`]a<c-g>u
+inoremap <Leader>sp <c-g>u<Esc>[s1z=`]a<c-g>u
