@@ -91,6 +91,7 @@ Plug 'vim-scripts/BufOnly.vim'
 Plug 'francoiscabrol/ranger.vim'
 "Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'tpope/vim-eunuch'
+Plug 'wincent/vcs-jump'
 
 " Search files
 Plug 'ctrlpvim/ctrlp.vim'
