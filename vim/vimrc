@@ -786,6 +786,7 @@ let g:sneak#s_next = 1
 nnoremap ]d :VimwikiDiaryNextDay<CR>
 nnoremap [d :VimwikiDiaryPrevDay<CR>
 nnoremap <Leader>toc :VimwikiTOC<CR>
+nnoremap <LocalLeader>toc :VimwikiTOC<CR>
 let g:vimwiki_list = [{'path': '~/Dropbox/vimwiki/',
 				   \ 'syntax': 'markdown', 'ext': '.md'}]
 let g:auto_tags = 1
@@ -1344,3 +1345,8 @@ nmap ga <Plug>(EasyAlign)
 
 inoremap <Leader>fix <c-g>u<Esc>[s1z=`]a<c-g>u
 inoremap <Leader>sp <c-g>u<Esc>[s1z=`]a<c-g>u
+
+nmap <Leader>ha <Plug>GitGutterStageHunk
+nmap <Leader>hr <Plug>GitGutterUndoHunk
+nnoremap <Leader>vpn :!connect_vpn <CR>
+
