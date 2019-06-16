@@ -15,6 +15,9 @@ set-environment -g PATH "/usr/local/bin:/bin:/usr/bin:$HOME/src/productivity"
 # Use screen key binding
 set-option -g prefix C-a
 
+# make clipboard work well in tmux with osc52
+set -g set-clipboard on
+
 # 1-based numbering
 set -g base-index 1
 
