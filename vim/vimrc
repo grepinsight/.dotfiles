@@ -142,6 +142,7 @@ Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-rhubarb'
 " Plug 'junegunn/gv.vim'
+Plug 'fcpg/vim-osc52'
 
 " Testing
 Plug 'metakirby5/codi.vim'
@@ -646,7 +647,8 @@ nnoremap <leader>ss :ToggleGStatus<CR>
 nnoremap <leader><leader>s :ToggleGStatus<CR>
 
 " Copy and Paste : https://vi.stackexchange.com/questions/84/how-can-i-copy-text-to-the-system-clipboard-from-vim
-noremap <Leader>y "*y
+"noremap <Leader>y "*y
+noremap <Leader> y:call SendViaOSC52(getreg('"'))<cr>
 noremap <Leader>Y "+y
 noremap <Leader>p "*p
 noremap <Leader>P "+p
@@ -833,7 +835,7 @@ let g:calendar_google_task = 1
 " ----------------------------------------------------------------------------
 
 "Taglist Toggle
-nnoremap <silent> <F7> :TlistToggle<CR>
+"nnoremap <silent> <F7> :TlistToggle<CR>
 
 " ----------------------------------------------------------------------------
 " Projectionist
