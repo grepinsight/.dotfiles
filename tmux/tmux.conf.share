@@ -17,6 +17,9 @@ set-environment -g PATH "/usr/local/bin:/bin:/usr/bin:$HOME/src/productivity"
 # Use screen key binding
 set-option -g prefix C-a
 
+# make clipboard work well in tmux with osc52
+set -g set-clipboard on
+
 # 1-based numbering
 set -g base-index 1
 
@@ -47,6 +50,7 @@ bind T set -g status-right "#[fg=red]#(todo_today) #[fg=white]:: Batt: #{battery
 # Shortcut
 
 bind-key C-a last-window
+bind-key e switch-client -l
 
 # Swapping Window
 bind-key -n S-Left swap-window -t -1

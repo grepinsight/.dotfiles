@@ -91,6 +91,7 @@ Plug 'vim-scripts/BufOnly.vim'
 Plug 'francoiscabrol/ranger.vim'
 "Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'tpope/vim-eunuch'
+Plug 'wincent/vcs-jump'
 
 " Search files
 Plug 'ctrlpvim/ctrlp.vim'
@@ -128,7 +129,7 @@ Plug 'terryma/vim-multiple-cursors'
 Plug 'junegunn/vim-after-object'
 Plug 'sjl/gundo.vim'
 Plug 'tpope/vim-commentary'
-"Plug 'tommcdo/vim-exchange'
+Plug 'tommcdo/vim-exchange'
 "Plug 'jiangmiao/auto-pairs'
 Plug 'Yggdroot/indentLine'
 Plug 'bronson/vim-trailing-whitespace'
@@ -240,6 +241,7 @@ nnoremap <LocalLeader>wq :wq <CR>
 nnoremap <LocalLeader>e :edit <C-R>=expand('%:p:h') . '/' <CR>
 nnoremap <LocalLeader>o :only<CR>
 nnoremap <LocalLeader>t :!typora %<CR>
+nnoremap <Leader>dot :!cat % \| dot -Tpng > <C-R>=expand('%:r')<CR>.png && open <C-R>=expand('%:r')<CR>.png <CR>
 nnoremap <LocalLeader>y :Goyo<CR>
 "nnoremap <LocalLeader>p :echo expand('%:p')<CR>
 nnoremap <silent> <LocalLeader>p :let @" = expand("%:p")<CR> <bar> :echo expand('%:p')<CR>
@@ -333,7 +335,6 @@ nnoremap <Leader>t :sp ~/Dropbox/vimwiki/diary/<C-R>=strftime("%Y-%m-%d")<CR>.md
 " close buffer
 nnoremap BB :bd<CR>
 nnoremap QQ :q<CR>
-nnoremap <F4> :bd<CR>
 
 " reopen the closed buffer
 nnoremap <c-s-t> :b#<CR>:e<CR>
@@ -412,7 +413,7 @@ function! SpellToggle()
     endif
 endfunction
 
-nnoremap <Leader>sp :call SpellToggle()<CR>
+"nnoremap <Leader>sp :call SpellToggle()<CR>
 nnoremap <Leader>nsp :set nospell<CR>
 nnoremap <Leader>ssp :set spell<CR>
 inoremap <Leader>sp <Esc>:call SpellToggle()<CR>
@@ -626,6 +627,9 @@ nmap <F8> :TagbarToggle<CR>
 "  - blame
 nnoremap <leader>b :Gblame<CR>
 nnoremap <leader>gcv :Gcommit -v <CR>
+nnoremap <leader>gw :Gwrite<CR>
+nnoremap <leader>vd :Gvdiff<CR>
+nnoremap <leader>gvd :Gvdiff<CR>
 nnoremap <leader>gau :Git add -u<CR><CR>
 
 "  - diff
@@ -784,6 +788,7 @@ let g:sneak#s_next = 1
 nnoremap ]d :VimwikiDiaryNextDay<CR>
 nnoremap [d :VimwikiDiaryPrevDay<CR>
 nnoremap <Leader>toc :VimwikiTOC<CR>
+nnoremap <LocalLeader>toc :VimwikiTOC<CR>
 let g:vimwiki_list = [{'path': '~/Dropbox/vimwiki/',
 				   \ 'syntax': 'markdown', 'ext': '.md'}]
 let g:auto_tags = 1
@@ -806,6 +811,8 @@ let g:go_version_warning = 0
 
 nnoremap <F3> :call fzf#run(fzf#wrap({'source': 'fd $FD_OPTS . $HOME', 'sink': 'edit'}))<CR>
 inoremap <F3> :call fzf#run(fzf#wrap({'source': 'fd $FD_OPTS . $HOME', 'sink': 'edit'}))<CR>
+nnoremap <F4> :call fzf#run(fzf#wrap({'source': 'fd --no-ignore $FD_OPTS .', 'sink': 'edit'}))<CR>
+inoremap <F4> :call fzf#run(fzf#wrap({'source': 'fd --no-ignore $FD_OPTS .', 'sink': 'edit'}))<CR>
 nnoremap <Leader>pv :call fzf#vim#gitfiles('', fzf#vim#with_preview('right'))<CR>
 
 " ----------------------------------------------------------------------------
@@ -870,13 +877,17 @@ let g:ycm_key_list_previous_completion=[]
 " ----------------------------------------------------------------------------
 
 "let g:UltiSnipsExpandTrigger="<S-tab>"
-let g:UltiSnipsJumpForwardTrigger="<c-j>"
-let g:UltiSnipsJumpBackwardTrigger="<c-k>"
-"
+"let g:UltiSnipsJumpForwardTrigger="<c-j>"
+"let g:UltiSnipsJumpBackwardTrigger="<c-k>"
+let g:UltiSnipsExpandTrigger = '<tab>'
+let g:UltiSnipsJumpForwardTrigger = '<tab>'
+let g:UltiSnipsJumpBackwardTrigger = '<s-tab>'
+
 " " If you want :UltiSnipsEdit to split your window.
 let g:UltiSnipsEditSplit="vertical"
 let g:UltiSnipsNoPythonWarning = 1
 let g:UltiSnipsSnippetsDir="~/.vim/plugged/mysnippets/UltiSnips/"
+UltiSnipsAddFiletypes Rmd.R
 
 noremap <silent> <Leader>ult :UltiSnipsEdit<CR>
 vmap <F9> :call UltiSnips#SaveLastVisualSelection()<CR>gvs
@@ -1333,3 +1344,11 @@ xmap ga <Plug>(EasyAlign)
 
 " Start interactive EasyAlign for a motion/text object (e.g. gaip)
 nmap ga <Plug>(EasyAlign)
+
+inoremap <Leader>fix <c-g>u<Esc>[s1z=`]a<c-g>u
+inoremap <Leader>sp <c-g>u<Esc>[s1z=`]a<c-g>u
+
+nmap <Leader>ha <Plug>GitGutterStageHunk
+nmap <Leader>hr <Plug>GitGutterUndoHunk
+nnoremap <Leader>vpn :!connect_vpn <CR>
+

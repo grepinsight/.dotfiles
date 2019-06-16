@@ -62,7 +62,7 @@ EX="ex=$BG"       # +x file
 AR="$BR"
 ARCHIVE="*.tar=$AR:*.tgz=$AR:*.arj=$AR:*.taz=$AR:*.lzh=$AR:*.lzma=$AR:*.tlz=$AR:*.txz=$AR:*.zip=$AR:*.z=$AR:*.Z=$AR:*.dz=$AR:*.gz=$AR:*.lz=$AR:*.xz=$AR:*.bz2=$AR:*.bz=$AR:*.tbz=$AR:*.tbz2=$AR:*.tz=$AR:*.deb=$AR:*.rpm=$AR:*.jar=$AR:*.war=$AR:*.ear=$AR:*.sar=$AR:*.rar=$AR:*.ace=$AR:*.zoo=$AR:*.cpio=$AR:*.7z=$AR:*.rz=$AR"
 
-IMG="$BL;$BGGR"
+IMG="$G"
 IMAGE="*.jpg=$IMG:*.jpeg=$IMG:*.gif=$IMG:*.bmp=$IMG:*.pbm=$IMG:*.pgm=$IMG:*.ppm=$IMG:*.tga=$IMG:*.xbm=$IMG:*.xpm=$IMG:*.tif=$IMG:*.tiff=$IMG:*.png=$IMG:*.svg=$IMG:*.svgz=$IMG:*.mng=$IMG:*.pcx=$IMG"
 
 MOV="$M"
