@@ -43,7 +43,7 @@ set incsearch           " search as characters are entered
 set hlsearch            " highlight matches
 set path+=**            " provides tab-completion for all file-related tasks
 set wildmenu            " display all matching files when we tab complete
-set noswapfile 
+set noswapfile
 set conceallevel=1
 
 nnoremap <SPACE> <Nop>
@@ -142,7 +142,8 @@ Plug 'junegunn/vim-easy-align'
 Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-rhubarb'
-" Plug 'junegunn/gv.vim'
+Plug 'jreybert/vimagit'
+Plug 'junegunn/gv.vim'
 
 " Testing
 Plug 'metakirby5/codi.vim'
