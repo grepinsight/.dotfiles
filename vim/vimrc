@@ -329,7 +329,8 @@ nnoremap aa pkj
 
 
 nnoremap <Leader>c :ccl<CR>
-nnoremap <Leader>t :sp ~/Dropbox/vimwiki/diary/<C-R>=strftime("%Y-%m-%d")<CR>.md<CR>
+nnoremap <Leader>di :sp ~/Dropbox/vimwiki/diary/<C-R>=strftime("%Y-%m-%d")<CR>.md<CR>
+command! Today :sp ~/Dropbox/vimwiki/diary/<C-R>=strftime("%Y-%m-%d")<CR>.md<CR>
 
 " Buffers {{{
 " close buffer
@@ -886,7 +887,6 @@ let g:UltiSnipsJumpBackwardTrigger = '<s-tab>'
 let g:UltiSnipsEditSplit="vertical"
 let g:UltiSnipsNoPythonWarning = 1
 let g:UltiSnipsSnippetsDir="~/.vim/plugged/mysnippets/UltiSnips/"
-UltiSnipsAddFiletypes Rmd.R
 
 noremap <silent> <Leader>ult :UltiSnipsEdit<CR>
 vmap <F9> :call UltiSnips#SaveLastVisualSelection()<CR>gvs
@@ -1074,9 +1074,9 @@ inoremap \date <C-R>=strftime("%Y-%m-%d")<CR>
 inoremap \dow <C-R>=strftime("%A")<CR>
 inoremap \time <C-R>=strftime("%Y-%m-%dT%H:%M:%S")<CR>
 inoremap \iso <C-R>=strftime("%FT%T%z")<CR>
-inoremap \todo [ ] 
-inoremap \td [ ] 
-inoremap \qtd [ ] :question: 
+inoremap \todo [ ]
+inoremap \td [ ]
+inoremap \qtd [ ] :question:
 nnoremap \nosym :e <C-R>=resolve(expand("%"))<CR>
 noremap <silent> <Leader>tme :TableModeEnable<CR>
 noremap <silent> <Leader>one :e $MY_ONE_ON_ONE<CR>
@@ -1094,7 +1094,7 @@ nnoremap <Leader>h2 yypVr-
 nnoremap TT :wall<CR>: !tmux kill-pane<CR>
 nnoremap <Leader>def :e $HOME/vimwiki/Definitions.wiki<CR>
 nnoremap <Leader>k :VimwikiToggleListItem<CR>
-nnoremap <Leader>tag :!tmsu tag % 
+nnoremap <Leader>tag :!tmsu tag %
 nnoremap <Leader>rmd :!Rscript -e "rmarkdown::render('%')" && open %:r.html <CR>
 
 
@@ -1260,7 +1260,7 @@ function! s:ZoomToggle() abort
         resize
         vertical resize
         let t:zoomed = 1
-		"execute 'silent ' . '!tmux resize-pane -Z' 
+		"execute 'silent ' . '!tmux resize-pane -Z'
 
     endif
 endfunction
@@ -1351,3 +1351,11 @@ nmap <Leader>ha <Plug>GitGutterStageHunk
 nmap <Leader>hr <Plug>GitGutterUndoHunk
 nnoremap <Leader>vpn :!connect_vpn <CR>
 
+
+nmap <Leader>ju <Plug>(VcsJump)
+
+
+nnoremap <Leader>pyan :!~/src/pyan/pyan.py % --dot -c \| dot -Tpng > <C-R>=expand('%:r')<CR>.png && open <C-R>=expand('%:r')<CR>.png <CR>
+
+source ~/.vimrc_work
+"UltiSnipsAddFiletypes Rmd.R

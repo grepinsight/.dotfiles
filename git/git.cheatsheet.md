@@ -120,6 +120,8 @@ When you want remove a file that has been committed
 # How to find things
 
 
+https://stackoverflow.com/questions/2928584/how-to-grep-search-committed-code-in-the-git-history
+
 Search commit *message* :
 
 ```
@@ -135,6 +137,6 @@ git log -G REGEX -p
 Search commit *contents* : (if a REGEX is added or not)
 
 ```
--S<regex> --pickaxe-regex -p
+git log -S<regex> --pickaxe-regex -p
 ```
 
