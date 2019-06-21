@@ -107,7 +107,7 @@ https://stackoverflow.com/questions/6217156/break-a-previous-commit-into-multipl
 
 # Git Rm
 
-When you want remove a file that has been committed
+When you want remove / forget a file that has been committed
 
     git rm --cached /path/to/file
 
