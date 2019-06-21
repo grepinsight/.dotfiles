@@ -630,7 +630,7 @@ nmap <F8> :TagbarToggle<CR>
 "  - blame
 nnoremap <leader>b :Gblame<CR>
 nnoremap <leader>gcv :Gcommit -v <CR>
-nnoremap <leader>gw :Gwrite<CR>
+nnoremap <leader>gw :Gwrite <CR>:Gcommit -v<CR>
 nnoremap <leader>vd :Gvdiff<CR>
 nnoremap <leader>gvd :Gvdiff<CR>
 nnoremap <leader>gau :Git add -u<CR><CR>
