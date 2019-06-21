@@ -11,6 +11,9 @@
 #
 set -g set-clipboard on
 
+# Set titles
+set-option -g set-titles on
+
 ### Default Behavior
 set-environment -g PATH "/usr/local/bin:/bin:/usr/bin:$HOME/src/productivity"
 
