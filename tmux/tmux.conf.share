@@ -59,6 +59,9 @@ bind-key e switch-client -l
 bind-key -n S-Left swap-window -t -1
 bind-key -n S-Right swap-window -t +1
 
+bind-key v select-layout even-horizontal
+bind-key h select-layout even-vertical
+
 
 # Selection act like a vim from http://superuser.com/a/413766/125768
 # Vim mode
