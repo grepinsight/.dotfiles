@@ -68,6 +68,7 @@ endif
 call plug#begin('~/.vim/plugged')
 
 Plug 'ajmwagar/vim-deus'
+Plug 'dracula/vim', { 'as': 'dracula' }
 
 " Basic setup
 "Plug 'tpope/vim-sensible'
@@ -710,7 +711,8 @@ let g:tagbar_type_markdown = {
 
 "colorscheme Tomorrow-Night
 "colorscheme seoul256
-colorscheme deus
+colorscheme dracula
+"colorscheme deus
 
 " Mapping selecting mappings
 nmap <leader><tab> <plug>(fzf-maps-n)
