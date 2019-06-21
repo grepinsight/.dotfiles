@@ -1357,3 +1357,13 @@ nnoremap <Leader>pyan :!~/src/pyan/pyan.py % --dot -c \| dot -Tpng > <C-R>=expan
 
 source ~/.vimrc_work
 "UltiSnipsAddFiletypes Rmd.R
+"
+"
+
+function! GitRootFromDir(myarg)
+	let cmd ='cd '. a:myarg .' && '. 'git rev-parse --show-toplevel '
+	let root = substitute(system(cmd), '\n', '', 'g')
+	return root
+endfunction
+
+nnoremap <Leader>ma :make -C <C-R>=GitRootFromDir(expand('%:p:h'))<CR>
