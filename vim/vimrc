@@ -44,7 +44,7 @@ set hlsearch            " highlight matches
 set path+=**            " provides tab-completion for all file-related tasks
 set wildmenu            " display all matching files when we tab complete
 set noswapfile
-set conceallevel=1
+set conceallevel=0
 
 nnoremap <SPACE> <Nop>
 let maplocalleader=" "
@@ -798,6 +798,7 @@ let g:vimwiki_list = [{'path': '~/Dropbox/vimwiki/',
 				   \ 'syntax': 'markdown', 'ext': '.md'}]
 let g:auto_tags = 1
 let g:vimwiki_table_mappings = 0
+let g:vimwiki_conceallevel = 1
 
 noremap <LocalLeader>x :VimwikiToggleListItem<CR>
 
@@ -1367,3 +1368,13 @@ function! GitRootFromDir(myarg)
 endfunction
 
 nnoremap <Leader>ma :make -C <C-R>=GitRootFromDir(expand('%:p:h'))<CR>
+
+function! SyntaxToggle()
+	if :set
+endfunction
+
+nnoremap =ot :if exists("g:syntax_on") <Bar>
+	\   syntax off <Bar>
+	\ else <Bar>
+	\   syntax enable <Bar>
+	\ endif <CR>
