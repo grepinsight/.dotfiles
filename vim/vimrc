@@ -243,7 +243,7 @@ nnoremap <LocalLeader>wq :wq <CR>
 nnoremap <LocalLeader>e :edit <C-R>=expand('%:p:h') . '/' <CR>
 nnoremap <LocalLeader>o :only<CR>
 nnoremap <LocalLeader>t :!typora "%"<CR>
-nnoremap <Leader>dot :!cat % \| dot -Tpng > <C-R>=expand('%:r')<CR>.png && open <C-R>=expand('%:r')<CR>.png <CR>
+nnoremap <Leader>dot :silent !cat % \| dot -Tpng > <C-R>=expand('%:r')<CR>.png && open <C-R>=expand('%:r')<CR>.png<CR> :redraw!<CR>
 nnoremap <LocalLeader>y :Goyo<CR>
 "nnoremap <LocalLeader>p :echo expand('%:p')<CR>
 nnoremap <silent> <LocalLeader>p :let @" = expand("%:p")<CR> <bar> :echo expand('%:p')<CR>
