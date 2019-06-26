@@ -37,3 +37,5 @@ Icon
 
 .envrc
 _cache_and_figs
+
+*egg-info
