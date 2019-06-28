@@ -26,6 +26,7 @@ set autowrite
 set nocompatible        " enable modern vim features
 set cursorline          " highlight current line
 set lazyredraw          " redraw only when we need to.
+set regexpengine=1
 set showmatch           " highlight matching [{()}]
 set foldenable          " enable folding
 set foldlevelstart=10   " open most folds by default
@@ -121,6 +122,7 @@ Plug 'majutsushi/tagbar'
 Plug 'tpope/vim-projectionist'
 Plug 'tpope/vim-unimpaired'
 Plug 'christoomey/vim-tmux-navigator'
+Plug 'tmhedberg/SimpylFold'
 "Plug 'MattesGroeger/vim-bookmarks'
 
 " Editing
@@ -290,6 +292,7 @@ inoremap <Leader>fn <C-R>=expand("%:t")<CR>
 nnoremap zs zMzvzz
 nnoremap <Leader>fmi :set foldmethod=indent<CR>
 nnoremap <Leader>fms :set foldmethod=syntax<CR>
+nnoremap <Leader>fmm :set foldmethod=marker<CR>
 
 " Make movement more visual oriented
 nnoremap j gj
@@ -1372,7 +1375,7 @@ nnoremap <Leader>vpn :!connect_vpn <CR>
 nmap <Leader>ju <Plug>(VcsJump)
 
 
-nnoremap <Leader>pyan :!~/src/pyan/pyan.py % --dot -c \| dot -Tpng > <C-R>=expand('%:r')<CR>.png && open <C-R>=expand('%:r')<CR>.png <CR>
+nnoremap <Leader>pyan :!~/src/pyan/pyan.py % --dot -c -e \| dot -Tpng > <C-R>=expand('%:r')<CR>.png && open <C-R>=expand('%:r')<CR>.png <CR>
 
 source ~/.vimrc_work
 "UltiSnipsAddFiletypes Rmd.R
@@ -1396,3 +1399,32 @@ nnoremap =ot :if exists("g:syntax_on") <Bar>
 	\ else <Bar>
 	\   syntax enable <Bar>
 	\ endif <CR>
+
+
+au FileWritePost * :redraw!
+au TermResponse * :redraw!
+au TextChanged * :redraw!
+au QuickFixCmdPre * :redraw!
+au QuickFixCmdPost * :redraw!
+
+
+nnoremap <silent> <leader>zj :call NextClosedFold('j')<cr>
+nnoremap <silent> <leader>zk :call NextClosedFold('k')<cr>
+function! NextClosedFold(dir)
+    let cmd = 'norm!z' . a:dir
+    let view = winsaveview()
+    let [l0, l, open] = [0, view.lnum, 1]
+    while l != l0 && open
+        exe cmd
+        let [l0, l] = [l, line('.')]
+        let open = foldclosed(l) < 0
+    endwhile
+    if open
+        call winrestview(view)
+    endif
+endfunction
+
+
+let g:SimpylFold_fold_import = 1
+
+set autoindent
