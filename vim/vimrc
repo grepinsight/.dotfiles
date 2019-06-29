@@ -1394,10 +1394,16 @@ function! SyntaxToggle()
 	if :set
 endfunction
 
-nnoremap =ot :if exists("g:syntax_on") <Bar>
+nnoremap yot :if exists("g:syntax_on") <Bar>
 	\   syntax off <Bar>
 	\ else <Bar>
 	\   syntax enable <Bar>
+	\ endif <CR>
+
+nnoremap yoo :if &conceallevel==2<Bar>
+	\   set conceallevel=0<Bar>
+	\ else <Bar>
+	\   set conceallevel=2<Bar>
 	\ endif <CR>
 
 
