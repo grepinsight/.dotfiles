@@ -3,6 +3,7 @@
     graph = log --all --graph --pretty=format:'%C(auto)%h%C(auto)%d %s %C(dim white)(%aN, %ar)'
 	please = push --force-with-lease
 	commend = commit --amend --no-edit
+	delete-local = branch -d
 
     # Shortcuts
     st = status -sb
@@ -20,13 +21,17 @@
     addf = add --force
     diffs = diff --staged
     ls = ls-tree --full-tree -r HEAD
+	aliases = !git config --get-regexp ^alias\\. | sed -e s/^alias.// -e s/\\ /\\ $(printf \"\\043\")--\\>\\ / | column -t -s $(printf \"\\043\") | sort -k 1
 
     # From Jeff
     undo = reset --soft HEAD^
     su = !git branch --set-upstream-to=origin/$(git rev-parse --abbrev-ref HEAD) $(git rev-parse --abbrev-ref HEAD)
+    pbme = !git push $(whoami) $(git rev-parse --abbrev-ref HEAD)
     pb = !git push origin $(git rev-parse --abbrev-ref HEAD)
+    pblee = !git push allee $(git rev-parse --abbrev-ref HEAD)
     plb = !git pull origin $(git rev-parse --abbrev-ref HEAD)
     lol = log --graph --decorate --pretty=oneline --abbrev-commit
+    bhist = ! git reflog | egrep -io 'moving from ([^[:space:]]+)' | awk '{ print $3 }' | head
 
     brmr = push origin --delete
     brm = branch -d
@@ -52,3 +57,5 @@
 	old = red bold
 	new = green bold
 	whitespace = red reverse
+[commit]
+	verbose = true
