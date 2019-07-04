@@ -184,6 +184,7 @@ Plug 'coachshea/vim-textobj-markdown'
 Plug 'tpope/vim-abolish'
 Plug 'junegunn/goyo.vim'
 Plug 'junegunn/limelight.vim'
+Plug 'ron89/thesaurus_query.vim' "thesaurus
 "Plug 'beloglazov/vim-online-thesaurus'
 Plug 'vimwiki/vimwiki'
 Plug 'lervag/vimtex'
@@ -936,6 +937,11 @@ let g:wordy#ring = [
   \ 'adjectives',
   \ 'adverbs',
   \ ]
+
+" ----------------------------------------------------------------------------
+" Thesaurus
+" ----------------------------------------------------------------------------
+let g:tq_enabled_backends=["mthesaur_txt"]
 
 " }}}
 " ============================================================================
