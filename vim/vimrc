@@ -154,12 +154,14 @@ Plug 'metakirby5/codi.vim'
 Plug 'janko-m/vim-test'
 Plug 'tpope/vim-dispatch'
 
-" Python/Go
+" Python/Go/Other Languages
 Plug 'davidhalter/jedi-vim'
 Plug 'fatih/vim-go'
 Plug 'michaeljsmith/vim-indent-object'
 Plug 'kana/vim-textobj-user'
 Plug 'jeetsukumaran/vim-pythonsense'
+Plug 'vim-pandoc/vim-pandoc'
+Plug 'vim-pandoc/vim-pandoc-syntax'
 
 " Lint
 Plug 'w0rp/ale'
