@@ -68,6 +68,7 @@ endif
 
 call plug#begin('~/.vim/plugged')
 
+" Colorschemes
 Plug 'ajmwagar/vim-deus'
 Plug 'dracula/vim', { 'as': 'dracula' }
 
@@ -75,6 +76,8 @@ Plug 'dracula/vim', { 'as': 'dracula' }
 "Plug 'tpope/vim-sensible'
 
 " Looks / Status
+" Start page
+Plug 'mhinz/vim-startify'
 Plug 'flazz/vim-colorschemes'
 Plug 'vim-airline/vim-airline'
 Plug 'junegunn/seoul256.vim'
@@ -89,7 +92,7 @@ Plug 'tpope/vim-obsession'
 Plug 'vim-scripts/BufOnly.vim'
 
 " Files related
-"Plug 'scrooloose/nerdtree'
+Plug 'scrooloose/nerdtree'
 Plug 'francoiscabrol/ranger.vim'
 "Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'tpope/vim-eunuch'
@@ -162,6 +165,10 @@ Plug 'kana/vim-textobj-user'
 Plug 'jeetsukumaran/vim-pythonsense'
 Plug 'vim-pandoc/vim-pandoc'
 Plug 'vim-pandoc/vim-pandoc-syntax'
+Plug 'autozimu/LanguageClient-neovim', {
+    \ 'branch': 'next',
+    \ 'do': 'bash install.sh',
+    \ }
 
 " Lint
 Plug 'w0rp/ale'
@@ -248,7 +255,7 @@ nnoremap <LocalLeader>wq :wq <CR>
 nnoremap <LocalLeader>e :edit <C-R>=expand('%:p:h') . '/' <CR>
 nnoremap <LocalLeader>o :only<CR>
 nnoremap <LocalLeader>t :!typora "%"<CR>
-nnoremap <Leader>dot :silent !cat % \| dot -Tpng > <C-R>=expand('%:r')<CR>.png && open <C-R>=expand('%:r')<CR>.png<CR> :redraw!<CR>
+nnoremap <Leader>dot :!cat % \| dot -Tpng > <C-R>=expand('%:r')<CR>.png && open <C-R>=expand('%:r')<CR>.png<CR>
 nnoremap <LocalLeader>y :Goyo<CR>
 "nnoremap <LocalLeader>p :echo expand('%:p')<CR>
 nnoremap <silent> <LocalLeader>p :let @" = expand("%:p")<CR> <bar> :echo expand('%:p')<CR>
@@ -1058,7 +1065,9 @@ autocmd BufReadPost * call MyFollowSymlink(expand('<afile>'))
 
 
 let g:slime_target = "tmux"
-let g:slime_default_config = {"socket_name": split($TMUX, ",")[0], "target_pane": ":.2"}
+"let g:slime_default_config = {"socket_name": split($TMUX, ",")[0], "target_pane": ":.2"}
+let g:slime_default_config = {"socket_name": get(split($TMUX, ","), 0), "target_pane": ":.2"}
+"let g:slime_default_config = {"socket_name": "default", "target_pane": "{right-of}"}
 
 let vim_markdown_preview_hotkey='<C-m>'
 let vim_markdown_preview_github=1
@@ -1444,3 +1453,10 @@ endfunction
 let g:SimpylFold_fold_import = 1
 
 set autoindent
+let g:LanguageClient_serverCommands = {
+    \ 'r': ['R', '--slave', '-e', 'languageserver::run()'],
+    \ 'rmd': ['R', '--slave', '-e', 'languageserver::run()'],
+    \ }
+
+nnoremap <Leader>rg :Rg <C-R><C-W><CR>
+let g:signify_vcs_list = [ 'git', 'hg' ]
