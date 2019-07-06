@@ -42,7 +42,8 @@ PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND ; }"'echo $$ $USER $(date "+%Y
 				"@ $(pwd -P) | " \
                "$(history 1)" >> ~/.bash_eternal_history'
 #PROMT & LS
-# PS1='\e[0;32m[\#] \u@\[\033]0;\h:\W\007\]\h:\W] \e[m'
+# default prompt
+PS1="\$(git-radar --bash --fetch)|\e[1;36m[\!][\d,\@] \u@\[\033]0;\h:\W\007\]\h: \w] (py:\$(pyenv-python-version)) \e[m\n \[\e]1;ibm\a\] ===> "
 #LS_COLORS="*notes=01;35:$LS_COLORS:di=00;33"
 
 
