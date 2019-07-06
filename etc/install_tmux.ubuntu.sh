@@ -4,6 +4,8 @@ sudo apt update
 
 sudo apt install -y git
 
+sudo apt install -y bison
+sudo apt install -y flex
 sudo apt install -y automake
 sudo apt install -y build-essential
 sudo apt install -y pkg-config
