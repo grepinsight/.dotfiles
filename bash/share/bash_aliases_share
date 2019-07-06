@@ -445,11 +445,14 @@ datediff() {
 alias crontab="VIM_CRONTAB=true crontab"
 
 alias sbal="source ${HOME}/.dotfiles/bash/local/bash_aliases_local"
-alias sbas="source ${HOME}/.dotfiles/bash/share/bash_aliases_share"
-alias sbss="source ${HOME}/.dotfiles/bash/share/bash_settings_share"
 alias sbsl="source ${HOME}/.dotfiles/bash/local/bash_settings_local"
 alias sbfl="source ${HOME}/.dotfiles/bash/local/bash_functions_local"
+alias sbpl="source ${HOME}/.dotfiles/bash/local/bash_paths_local"
+
+alias sbas="source ${HOME}/.dotfiles/bash/share/bash_aliases_share"
+alias sbss="source ${HOME}/.dotfiles/bash/share/bash_settings_share"
 alias sbfs="source ${HOME}/.dotfiles/bash/share/bash_functions_share"
+alias sbps="source ${HOME}/.dotfiles/bash/share/bash_paths_share"
 
 function vnote() {
     TODAY=$(date "+%Y-%m-%d")
