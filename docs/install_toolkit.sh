@@ -24,6 +24,9 @@ else
 
 	 sudo apt-get install tree
 
+	# install tmux
+	bash ./etc/install_tmux.ubuntu.sh
+
 
 	 # pyenv related prereques
 	 sudo apt-get install -y make build-essential libssl-dev zlib1g-dev libbz2-dev \
