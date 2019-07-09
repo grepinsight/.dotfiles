@@ -90,15 +90,9 @@ fi
 [ -f ~/.fzf.bash ] && source ~/.dotfiles/fzf/fzf.bash
 
 
-if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
-else
-  case $(ps -o comm= -p $PPID) in
-    sshd|*/sshd) SESSION_TYPE=remote/ssh;;
-  esac
-fi
-
-# ssh specific setting
-if [[ $SESSION_TYPE == "remote/ssh" ]]; then
+SESSION_TYPE=$(cat /proc/$PPID/status | head -1 | cut -f2)
+# tmux specific setting
+if [[ $SESSION_TYPE == "tmux" ]]; then
 	export TERM=screen-256color
 fi
 
