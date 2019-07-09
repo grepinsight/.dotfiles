@@ -89,3 +89,17 @@ fi
 
 [ -f ~/.fzf.bash ] && source ~/.dotfiles/fzf/fzf.bash
 
+
+if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
+else
+  case $(ps -o comm= -p $PPID) in
+    sshd|*/sshd) SESSION_TYPE=remote/ssh;;
+  esac
+fi
+
+# ssh specific setting
+if [[ $SESSION_TYPE == "remote/ssh" ]]; then
+	export TERM=screen-256color
+fi
+
+
