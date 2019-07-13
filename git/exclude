@@ -39,3 +39,6 @@ Icon
 _cache_and_figs
 
 *egg-info
+
+*.sublime-project
+*.sublime-workspace
