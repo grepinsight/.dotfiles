@@ -509,4 +509,6 @@ alias fdf="fd -t f"
 alias sda="source deactivate"
 alias upp="unset PYTHONPATH"
 
+
+alias p="python"
 command -v rpbcopy > /dev/null && alias pbcopy="rpbcopy"
