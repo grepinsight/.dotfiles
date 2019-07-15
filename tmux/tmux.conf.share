@@ -12,7 +12,8 @@
 set -g set-clipboard on
 
 # Set titles
-set-option -g set-titles on
+#set-option -g set-titles on
+set -g allow-rename off
 
 ### Default Behavior
 set-environment -g PATH "/usr/local/bin:/bin:/usr/bin:$HOME/src/productivity"
@@ -169,6 +170,7 @@ set -g @fingers-pattern-9 '[-0-9A-Za-z_]*.(md|txt|yaml)'
 set -g @fingers-pattern-10 'analysis-[0-9A-Za-z]*'
 set -g @fingers-pattern-11 'RD-[0-9A-Za-z]*'
 set -g @fingers-pattern-12 'workflow-[0-9A-Za-z]*'
+set -g @fingers-pattern-13 'applet-[0-9A-Za-z]*'
 set -g @fingers-copy-command 'rpbcopy'
 set -g @continuum-restore 'on'
 
