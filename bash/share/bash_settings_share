@@ -43,7 +43,8 @@ PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND ; }"'echo $$\($(tmux display-m
                "$(history 1)" >> ~/.bash_eternal_history'
 #PROMT & LS
 # default prompt
-PS1="\$(git-radar --bash --fetch)|\e[1;36m[\!][\d,\@] \u@\[\033]0;\h:\W\007\]\h: \w] (py:\$(pyenv-python-version)) \e[m\n \[\e]1;ibm\a\] ===> "
+COLOR_PS1="\e[1;36m"
+PS1="\$(git-radar --bash --fetch)|${COLOR_PS1}[\!][\d,\@] \u@\[\033]0;\h:\W\007\]\h: \w] (py:\$(pyenv-python-version)) \e[m\n \[\e]1;ibm\a\] ===> "
 #LS_COLORS="*notes=01;35:$LS_COLORS:di=00;33"
 
 
