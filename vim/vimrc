@@ -84,9 +84,12 @@ Plug 'junegunn/seoul256.vim'
 Plug 'ryanoasis/vim-devicons'
 "Plug 'yuttie/comfortable-motion.vim'
 Plug 'ap/vim-css-color'
+" Color picker
+Plug 'DougBeney/pickachu'
 
 " Session Management
 Plug 'tpope/vim-obsession'
+Plug 'airblade/vim-rooter'
 
 " Buffer Management
 Plug 'vim-scripts/BufOnly.vim'
@@ -146,6 +149,7 @@ Plug 'junegunn/vim-easy-align'
 
 " Git
 Plug 'airblade/vim-gitgutter'
+"Plug 'mhinz/vim-signify'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-rhubarb'
 Plug 'fcpg/vim-osc52'
@@ -311,13 +315,7 @@ xnoremap j gj
 xnoremap k gk
 
 
-" Make movement between windows more intuitive
-nmap gh <C-w>h
-nmap gj <C-w>j
-nmap gk <C-w>k
-nmap gl <C-w>l
-
-nmap <leader>l :setlocal number!<CR>
+nnoremap <leader>ln :Lines<CR>
 nmap \q :nohlsearch<CR>
 nmap <leader>e :NERDTreeToggle<CR>
 
@@ -624,6 +622,8 @@ nmap <Leader>L <Plug>(easymotion-overwin-line)
 " Move to word
 map  <Leader>w <Plug>(easymotion-bd-w)
 nmap <Leader>w <Plug>(easymotion-overwin-w)
+map  <Leader>w$ <Plug>(easymotion-bd-w)
+nmap <Leader>w$ <Plug>(easymotion-overwin-w)
 
 "airline support
 let g:airline#extensions#tabline#enabled = 1
@@ -644,6 +644,7 @@ endif
 
 " NERDTreee
 let NERDTreeIgnore = ['\.pyc$', 'db.sqlite3']
+let NERDTreeChDirMode=0
 
 
 " ----------------------------------------------------------------------------
@@ -887,7 +888,7 @@ nnoremap <leader>a :A <CR>
 nnoremap ]al :ALENext<CR>
 nnoremap [al :ALEPrevious<CR>
 
-let g:ale_linters={'python': ['flake8', 'mypy'], 'r': ['lintr']}
+let g:ale_linters={'python': ['flake8', 'mypy'], 'r': ['lintr'] }
 let g:ale_fixers = ['yapf']
 let g:ale_python_mypy_options="--ignore-missing-imports"
 
@@ -1267,10 +1268,10 @@ let g:switch_custom_definitions = [
 
 
 " Automatic rename of tmux window
-if exists('$TMUX') && !exists('$NORENAME')
-	au BufEnter * if empty(&buftype) | call system('tmux rename-window '.expand('%:t:S')) | endif
-	au VimLeave * call system('tmux set-window automatic-rename on')
-endif
+" if exists('$TMUX') && !exists('$NORENAME')
+" 	au BufEnter * if empty(&buftype) | call system('tmux rename-window '.expand('%:t:S')) | endif
+" 	au VimLeave * call system('tmux set-window automatic-rename on')
+" endif
 
 autocmd FileType r vnoremap af :<C-U>silent! normal! [[vt{%<CR>
 autocmd FileType r omap af :normal Vaf<CR>
@@ -1280,6 +1281,20 @@ map <leader>C :CtrlPClearCache<cr>
 command! -bang -nargs=* Rg
   \ call fzf#vim#grep(
   \   'rg -g "!*.pkl" --column --line-number --no-heading --color=always --smart-case '.shellescape(<q-args>), 1,
+  \   <bang>0 ? fzf#vim#with_preview('up:60%')
+  \           : fzf#vim#with_preview('right:50%:hidden', '?'),
+  \   <bang>0)
+
+command! -bang -nargs=* Foc
+  \ call fzf#vim#grep(
+  \   'rg -g "!*.pkl" --column --line-number -H --color=always --smart-case "^#" '.shellescape(expand('%')), 1,
+  \   <bang>0 ? fzf#vim#with_preview('up:60%')
+  \           : fzf#vim#with_preview('right:50%:hidden', '?'),
+  \   <bang>0)
+
+command! -bang -nargs=* J
+  \ call fzf#vim#grep(
+  \   'rg -g "!*.pkl" --column --line-number -H --color=always --smart-case "^\`\`\`" '.shellescape(expand('%')), 1,
   \   <bang>0 ? fzf#vim#with_preview('up:60%')
   \           : fzf#vim#with_preview('right:50%:hidden', '?'),
   \   <bang>0)
@@ -1453,10 +1468,20 @@ endfunction
 let g:SimpylFold_fold_import = 1
 
 set autoindent
+set copyindent
+
 let g:LanguageClient_serverCommands = {
     \ 'r': ['R', '--slave', '-e', 'languageserver::run()'],
     \ 'rmd': ['R', '--slave', '-e', 'languageserver::run()'],
     \ }
 
-nnoremap <Leader>rg :Rg <C-R><C-W><CR>
-let g:signify_vcs_list = [ 'git', 'hg' ]
+nnoremap <Leader>rg :Rg! <C-R><C-W><CR>
+"let g:signify_vcs_list = [ 'git', 'hg' ]
+
+
+autocmd BufEnter *.png,*.jpg,*gif exec "!open ".expand("%") | bw
+
+" Edit the macro quickly; "q<leader>m
+nnoremap <leader>m  :<c-u><c-r><c-r>='let @'. v:register .' = '. string(getreg(v:register))<cr><c-f><left>
+
+nnoremap <Leader>mg :Magit<CR>
