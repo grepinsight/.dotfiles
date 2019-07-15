@@ -256,7 +256,7 @@ alias gm="git commit -m"
 alias gcv="git commit -v"
 alias gqc="git commit -m" # git "quick commit"
 alias gd="git diff"
-alias gd2="git icdiff2"
+alias gd2="git diff2"
 
 ## Git Update
 alias gupdate='cd ~/.dotfiles && git pull && cd -'
