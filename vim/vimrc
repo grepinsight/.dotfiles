@@ -1411,7 +1411,10 @@ nmap <Leader>ju <Plug>(VcsJump)
 nnoremap <Leader>pyan :!~/src/pyan/pyan.py % --dot -c -e \| dot -Tpng > <C-R>=expand('%:r')<CR>.png && open <C-R>=expand('%:r')<CR>.png <CR>
 nnoremap <Leader>tgf :!~/src/pyan/pyan.py % --tgf -c -e  > <C-R>=expand('%:r')<CR>.tgf<CR> 
 
-source ~/.vimrc_work
+
+if filereadable(expand("~/.vimrc_work"))
+	source ~/.vimrc_work
+endif
 "UltiSnipsAddFiletypes Rmd.R
 "
 "
