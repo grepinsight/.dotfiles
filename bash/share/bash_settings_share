@@ -38,7 +38,7 @@ export PROMPT_COMMAND="history -a; history -n"
 
 # Use eternal history - https://debian-administration.org/article/543/Bash_eternal_history
 export HISTTIMEFORMAT="%s "
-PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND ; }"'echo $$\($(tmux display-message -p "#{window_name}")\) $USER $(date "+%Y-%m-%d %H:%M:%S") \
+PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND ; }"'echo $$ $USER $(date "+%Y-%m-%d %H:%M:%S") \
 				"@ $(pwd -P) | " \
                "$(history 1)" >> ~/.bash_eternal_history'
 #PROMT & LS
