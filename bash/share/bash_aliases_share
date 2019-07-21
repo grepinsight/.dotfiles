@@ -179,8 +179,19 @@ function cd_fzf() {
 	fi
 }
 
+function cd_fzf_recursive() {
+	dir_to_go_to=$(fd -t d | strip_color | fzf)
+
+	if [[ $? == 0  ]]; then
+		cd ${dir_to_go_to}
+		pwd -P
+		ls -thor
+	fi
+}
+
 export -f cd_fzf
 alias cdd="cd_fzf; "
+alias cddr="cd_fzf_recursive; "
 
 
 ##################################################
@@ -496,6 +507,8 @@ alias ip="curl https://ipinfo.io/ip"
 alias o="open"
 alias h='hsearch'
 alias hh='hsearch --here'
+alias hht='hsearch --here --today'
+alias hhy='hsearch --here --yesterday'
 alias fd2='fd -c never --no-ignore'
 alias pdf="open -a 'Adobe Acrobat Reader DC.app'"
 alias :q="exit"
