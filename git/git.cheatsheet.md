@@ -1,5 +1,4 @@
 
-
 # Git Log
 
 1. Show the entire history of the file [^1]
@@ -28,7 +27,7 @@ git diff ..master --  <FILE_NAME
 ```
 
 
-# Git Commmit
+# Git Commit
 
 How to change commit messages
 
@@ -59,7 +58,22 @@ git commit --amend
 
     git commit --allow-empty
 
-# Git
+## Cancel a commit message in Vim
+
+In a command mode,
+
+```
+:cq
+```
+
+as opposed to `:wq`
+
+```
+:cq[uit][!]		Quit Vim with an error code, so that the compiler will not compile the same file again.
+			WARNING: All changes in files are lost!  Also when the
+			[!] is not used.  It works like ":qall!" |:qall|,
+			except that Vim returns a non-zero exit code.
+```
 
 # Git Branch
 
