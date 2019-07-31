@@ -157,6 +157,8 @@ Plug 'fcpg/vim-osc52'
 Plug 'jreybert/vimagit'
 Plug 'junegunn/gv.vim'
 Plug 'junegunn/vim-github-dashboard'
+Plug 'mattn/gist-vim'
+Plug 'mattn/webapi-vim'
 
 " Testing
 Plug 'metakirby5/codi.vim'
