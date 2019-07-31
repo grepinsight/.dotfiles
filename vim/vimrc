@@ -1018,14 +1018,25 @@ nnoremap <F2> :call RenameFile()<cr>
 " }}}
 " ============================================================================
 
+" ============================================================================
+" Editing Setting {{{
+" ============================================================================
 
-
+" * Sane Line Joins
+" when joining multiple commented lines, comment symbol such as '#' will
+" be removed  seamlessly.
+if v:version > 703 || v:version == 703 && has('patch541')
+	set formatoptions+=j
+endif
+""" }}}
 
 if exists('+colorcolumn')
   " Highlight up to 255 columns (this is the current Vim max) beyond 'textwidth'
   let &l:colorcolumn='+' . join(range(0, 254), ',+')
 endif
 
+" * Whitespace Decoration
+" View white space with special characters
 set list                              " show whitespace
 set listchars=nbsp:⦸                  " CIRCLED REVERSE SOLIDUS (U+29B8, UTF-8: E2 A6 B8)
 set listchars+=tab:▷┅                 " WHITE RIGHT-POINTING TRIANGLE (U+25B7, UTF-8: E2 96 B7)
