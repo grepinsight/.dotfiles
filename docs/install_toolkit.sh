@@ -36,10 +36,9 @@ else
 fi
 
 curl https://pyenv.run | bash
-SETTING_FILE_PATH="$(dirname $(dirname $0))/bash/local/bash_settings_local"
-echo "export PATH=\"~/.pyenv/bin:\$PATH\""    >> $SETTING_FILE_PATH
-echo "eval \"\$(pyenv init -)\""              >> $SETTING_FILE_PATH
-echo "eval \"\$(pyenv virtualenv-init -)\""   >> $SETTING_FILE_PATH
+echo "export PATH=\"~/.pyenv/bin:\$PATH\""    >> $HOME/.bashrc
+echo "eval \"\$(pyenv init -)\""              >> $HOME/.bashrc
+echo "eval \"\$(pyenv virtualenv-init -)\""   >> $HOME/.bashrc
 
 #pip install csvkit
 
