@@ -98,3 +98,15 @@ if [[ $SESSION_TYPE == "tmux" ]]; then
 fi
 
 
+# FZF
+[ -f ~/.fzf.bash  ] && source ~/.fzf.bash
+export FZF_DEFAULT_COMMAND="fd . $HOME"
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_CTRL_T_COMMAND_CURRENT="fd ."
+alias fzf_all="export FZF_CTRL_T_COMMAND=\"fd . $HOME\""
+alias fa="export FZF_CTRL_T_COMMAND=\"fd . $HOME\""
+alias fzf_pwd="export FZF_CTRL_T_COMMAND=\"fd . \""
+alias fp="export FZF_CTRL_T_COMMAND=\"fd . \""
+alias fzf_all_all="export FZF_CTRL_T_COMMAND=\"fd --hidden --no-ignore . $HOME\""
+alias fzf_pwd_all="export FZF_CTRL_T_COMMAND=\"fd --hidden --no-ignore . \""
+export FZF_ALT_C_COMMAND="fd . $HOME"
