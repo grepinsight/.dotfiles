@@ -71,28 +71,29 @@ if which git 2>/dev/null >&2 ; then
 		cd $HOME/src && s src && cd -
     fi
 
+	mkdir -p $HOME/src
     if [[ ! -e $HOME/src/gitstats ]]; then
         echo "installing gitstats"
-        mkdir -p $HOME/src
         cd $HOME/src && git clone git://github.com/hoxu/gitstats.git && cd -
     fi
 
     if [[ ! -e $HOME/src/git-radar ]]; then
         echo "installing git-radar"
-        mkdir -p $HOME/src
         cd $HOME/src && git clone https://github.com/michaeldfallen/git-radar && cd -
     fi
 
     if [[ ! -e $HOME/src/productivity ]]; then
         echo "installing productivity"
-        mkdir -p $HOME/src
         cd $HOME/src && git clone https://github.com/grepinsight/productivity.git && cd -
+    fi
+
+    if [[ ! -e $HOME/src/forgit ]]; then
+        echo "installing productivity"
+    	cd $HOME/src && git clone git@github.com:grepinsight/forgit.git && cd -
     fi
 else
     echo "git not found! install git and rerun this script again"
 fi
-
-
 
 
 # Basic set up
