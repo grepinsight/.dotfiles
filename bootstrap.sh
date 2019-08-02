@@ -89,7 +89,7 @@ if which git 2>/dev/null >&2 ; then
 
     if [[ ! -e $HOME/src/forgit ]]; then
         echo "installing productivity"
-    	cd $HOME/src && git clone git@github.com:grepinsight/forgit.git && cd -
+    	cd $HOME/src && git clone https://github.com/grepinsight/forgit.git && cd -
     fi
 else
     echo "git not found! install git and rerun this script again"
