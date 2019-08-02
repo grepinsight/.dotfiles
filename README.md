@@ -19,5 +19,6 @@ cd .dotfiles &&\
 make -s bootstrap &&\
 source bash/bashrc_init &&\
 sudo bash docs/install_toolkit.sh &&\
-make -s all
+make -s all &&
+source $HOME/.bashrc
 ```
