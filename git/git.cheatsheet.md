@@ -10,7 +10,7 @@
 
 2. Show the stat of the changes between two commits(things you see when you pull)
 
-    git log COMIT..COMIT --stat
+    git log COMMIT..COMMIT --stat
 
 3. Show the last N commits
 
@@ -152,5 +152,14 @@ Search commit *contents* : (if a REGEX is added or not)
 
 ```
 git log -S<regex> --pickaxe-regex -p
+```
+
+# Git Revert
+
+Use the following command to revert `(oldest commit to revert, newest commit to revert]` (left exclusive, right inclusive boundaries)
+
+```
+# git revert --no-edit exclusive..inclusive
+git revert --no-edit dev~5..dev
 ```
 
