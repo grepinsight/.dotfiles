@@ -146,6 +146,7 @@ Plug 'tommcdo/vim-exchange'
 Plug 'Yggdroot/indentLine'
 Plug 'bronson/vim-trailing-whitespace'
 Plug 'dhruvasagar/vim-table-mode'
+Plug 'elzr/vim-json'
 Plug 'Konfekt/FastFold'
 Plug 'kalekundert/vim-coiled-snake'
 Plug 'junegunn/vim-easy-align'
@@ -199,6 +200,7 @@ Plug 'grepinsight/mysnippets'
 " Writing
 Plug 'plasticboy/vim-markdown'
 Plug 'coachshea/vim-textobj-markdown'
+Plug 'masukomi/vim-markdown-folding'
 Plug 'tpope/vim-abolish'
 Plug 'junegunn/goyo.vim'
 Plug 'junegunn/limelight.vim'
@@ -214,6 +216,7 @@ Plug 'jpalardy/vim-slime'
 
 " Reading
 "Plug 'JamshedVesuna/vim-markdown-preview'
+Plug 'roman/golden-ratio'
 
 " Misc
 "Plug 'wincent/terminus'  " Make terminal and vim play nicely. Supports auto change
@@ -366,24 +369,29 @@ nnoremap aa pkj
 
 nnoremap <Leader>c :ccl<CR>
 nnoremap <Leader>di :sp ~/Dropbox/vimwiki/diary/<C-R>=strftime("%Y-%m-%d")<CR>.md<CR>
-command! Today execute "normal! \<esc>:sp ~/Dropbox/vimwiki/diary/\<C-R>=strftime(\"%Y-%m-%d\")\<CR>.md\<CR>"
+command! Today execute "normal! \<esc>:e ~/Dropbox/vimwiki/diary/\<C-R>=strftime(\"%Y-%m-%d\")\<CR>.md\<CR>"
 command! Month execute "normal! \<esc>:e ~/Dropbox/vimwiki/diary/\<C-R>=strftime(\"%Y-%m\")\<CR>.md\<CR>"
-command! Week execute "normal! \<esc>:sp ~/Dropbox/vimwiki/diary/\<C-R>=strftime(\"%Y-week%V\")\<CR>.md\<CR>"
+command! Week execute "normal! \<esc>:e ~/Dropbox/vimwiki/diary/\<C-R>=strftime(\"%Y-week%V\")\<CR>.md\<CR>"
+command! Year execute "normal! \<esc>:e ~/Dropbox/vimwiki/diary/\<C-R>=strftime(\"%Y\")\<CR>.md\<CR>"
 command! Meeting execute "normal! \<esc>:sp ~/Dropbox/vimwiki/meeting--\<C-R>=strftime(\"%Y-%m-%d\")\<CR>.md\<CR>"
 
-" Buffers {{{
+" Buffers 
 " close buffer
 nnoremap BB :bd<CR>
 nnoremap QQ :q<CR>
 
 " reopen the closed buffer
 nnoremap <c-s-t> :b#<CR>:e<CR>
-" }}}
+" 
 
 " line find
 nnoremap <Leader>lf :Lines<CR>
+nnoremap <LocalLeader>l :Lines<CR>
+nnoremap <LocalLeader>lf :Lines<CR>
+nnoremap <LocalLeader>ll :Lines<CR>
+nnoremap <LocalLeader>ln :Lines<CR>
 
-" Bash alias shortcut {{{
+" Bash alias shortcut 
 nnoremap <Leader>bas :tabnew $HOME/.dotfiles/bash/share/bash_aliases_share<CR>
 nnoremap <Leader>bcs :tabnew $HOME/.dotfiles/bash/share/bash_colors_share<CR>
 nnoremap <Leader>bfs :tabnew $HOME/.dotfiles/bash/share/bash_functions_share<CR>
@@ -848,6 +856,11 @@ let g:auto_tags = 1
 let g:vimwiki_table_mappings = 0
 let g:vimwiki_conceallevel = 1
 
+
+autocmd FileType vimwiki let g:vim_markdown_folding_disabled = 1  " Let the vimwiki handle the folding
+autocmd FileType vimwiki let b:coc_suggest_disable = 1
+
+
 noremap <LocalLeader>x :VimwikiToggleListItem<CR>
 
 " ----------------------------------------------------------------------------
@@ -1120,9 +1133,8 @@ function! TabToSpace()
     endif
 endfunction
 
-let g:vimwiki_folding='list'
 
-"autocmd FileType python setlocal foldenable foldmethod=syntax
+let g:vimwiki_folding='expr'
 "
 " Make python <> vim-slime play well together
 let g:slime_python_ipython = 1
