@@ -14,6 +14,7 @@ let s:darwin = has('mac')
 "nnoremap <Leader>dos :e ++ff=dos<CR> | set ff=unix <CR>
 " Vim 8 defaults
 unlet! skip_defaults_vim
+autocmd FileType rst syntax off
 silent! source $VIMRUNTIME/defaults.vim
 " 'syntax on
 set encoding=UTF-8
