@@ -53,7 +53,7 @@ bind T set -g status-right "#[fg=red]#(todo_today) #[fg=white]:: Batt: #{battery
 
 # Shortcut
 
-bind-key C-a last-window
+#bind-key C-a last-window
 bind-key e switch-client -l
 
 # Swapping Window
