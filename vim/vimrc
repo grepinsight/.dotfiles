@@ -15,6 +15,7 @@ let s:darwin = has('mac')
 " Vim 8 defaults
 unlet! skip_defaults_vim
 autocmd FileType rst syntax off
+autocmd FileType json foldmethod=indent
 silent! source $VIMRUNTIME/defaults.vim
 " 'syntax on
 set encoding=UTF-8
@@ -1516,3 +1517,32 @@ nnoremap <leader>m  :<c-u><c-r><c-r>='let @'. v:register .' = '. string(getreg(v
 nnoremap <Leader>mg :Magit<CR>
 
 let g:ctrlp_working_path_mode = 0
+
+
+let g:coc_global_extensions = ['coc-emoji', 'coc-eslint', 'coc-prettier', 'coc-tsserver', 'coc-tslint', 'coc-tslint-plugin', 'coc-css', 'coc-json', 'coc-pyls', 'coc-yaml']
+
+" Remap keys for gotos
+nmap <silent> <leader>ld <Plug>(coc-definition)
+nmap <silent> <leader>lt <Plug>(coc-type-definition)
+nmap <silent> <leader>li <Plug>(coc-implementation)
+nmap <silent> <leader>lf <Plug>(coc-references)
+
+
+" Use K for show documentation in preview window
+nnoremap <silent> <leader>K :call <SID>show_documentation()<CR>
+
+function! s:show_documentation()
+  if &filetype == 'vim'
+    execute 'h '.expand('<cWORD>')
+  else
+    call CocAction('doHover')
+  endif
+endfunction
+
+" Highlight symbol under cursor on CursorHold
+autocmd CursorHold * silent call CocActionAsync('highlight')
+
+"let g:rooter_targets = 'COMMIT_EDITMSG'
+
+
+
