@@ -766,6 +766,13 @@ else
     let cs = 'seoul256-light'
 endif
 execute 'colorscheme '.cs
+
+" github theme
+" colorscheme github
+" " if you use airline / lightline
+" let g:airline_theme = "github"
+" let g:lightline = { 'colorscheme': 'github' }
+
 "colorscheme dracula
 "colorscheme deus
 
@@ -1556,4 +1563,8 @@ autocmd CursorHold * silent call CocActionAsync('highlight')
 "let g:rooter_targets = 'COMMIT_EDITMSG'
 
 
+nnoremap gs <Plug>(coc-git-chunkinfo)
+
+" nmap gs  <plug>(GrepperOperator)
+" xmap gs  <plug>(GrepperOperator)
 
