@@ -121,9 +121,6 @@ let g:grepper.jump = 1
 let g:grepper.stop = 500
 noremap <leader>gr :GrepperRg<Space>
 
-nmap gs  <plug>(GrepperOperator)
-xmap gs  <plug>(GrepperOperator)
-
 " Navigation
 Plug 'Lokaltog/vim-easymotion'
 Plug 'justinmk/vim-sneak'
