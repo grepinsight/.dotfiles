@@ -73,6 +73,7 @@ call plug#begin('~/.vim/plugged')
 " Colorschemes
 Plug 'ajmwagar/vim-deus'
 Plug 'dracula/vim', { 'as': 'dracula' }
+Plug 'cormacrelf/vim-colors-github'
 
 " Basic setup
 "Plug 'tpope/vim-sensible'
@@ -110,6 +111,7 @@ Plug 'junegunn/fzf.vim'
 Plug 'junegunn/vim-peekaboo'
 Plug 'mileszs/ack.vim'
 Plug 'google/vim-searchindex'
+Plug 'bronson/vim-visual-star-search'
 
 "Plug 'mhinz/vim-grepper'
 let g:grepper = {}
