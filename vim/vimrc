@@ -15,7 +15,7 @@ let s:darwin = has('mac')
 " Vim 8 defaults
 unlet! skip_defaults_vim
 autocmd FileType rst syntax off
-autocmd FileType json foldmethod=indent
+autocmd FileType json set foldmethod=indent
 silent! source $VIMRUNTIME/defaults.vim
 " 'syntax on
 set encoding=UTF-8
