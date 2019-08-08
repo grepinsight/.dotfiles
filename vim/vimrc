@@ -677,6 +677,7 @@ nmap <F8> :TagbarToggle<CR>
 nnoremap <leader>b :Gblame<CR>
 nnoremap <leader>gcv :Gcommit -v <CR>
 nnoremap <leader>gw :Gwrite <CR>:Gcommit -v<CR>
+nnoremap <leader>gf :GitGutterFold<CR>
 nnoremap <leader>vd :Gvdiff<CR>
 nnoremap <localleader>d :Gvdiff<CR>
 nnoremap <leader>gvd :Gvdiff<CR>
