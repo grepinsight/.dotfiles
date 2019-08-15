@@ -1579,3 +1579,46 @@ nnoremap gs <Plug>(coc-git-chunkinfo)
 " nmap gs  <plug>(GrepperOperator)
 " xmap gs  <plug>(GrepperOperator)
 
+
+" NVim R
+" press -- to have Nvim-R insert the assignment operator: <-
+let R_assign_map = "--"
+
+" set a minimum source editor width
+let R_min_editor_width = 80
+
+" make sure the console is at the bottom by making it really wide
+let R_rconsole_width = 1000
+
+" show arguments for functions during omnicompletion
+let R_show_args = 1
+
+" Don't expand a dataframe to show columns by default
+let R_objbr_opendf = 0
+
+" Press the space bar to send lines and selection to R console
+"nmap <Space> <Plug>RDSendParagraph
+
+autocmd FileType r nmap <Space> :call SendParagraphToR("echo", "down")<CR>
+autocmd FileType r vmap <Space> <Plug>RDSendSelection
+
+
+" Mac iTerm: custom map control-enter to something unique. Maltese cross in this case.
+autocmd FileType r nnoremap <silent> ✠ :call SendLineToR("stay")<CR><Esc><Home><Down>
+autocmd FileType r nnoremap <silent> œ :call SendParagraphToR("echo", "stay")<CR>
+autocmd FileType r inoremap <silent> ✠ <Esc>:call SendLineToR("stay")<CR><Esc>A<DOWN>
+autocmd FileType r inoremap <silent> œ <Esc>:call SendParagraphToR("echo", "stay")<CR>A
+autocmd FileType r vnoremap ✠ <Plug>RDSendSelection<Esc><Esc>
+
+
+
+let g:golden_ratio_autocommand = 0
+autocmd FileType r let g:golden_ratio_autocommand = 0
+autocmd FileType rbrowser let g:golden_ratio_autocommand = 0
+
+
+let R_assign = 0
+tnoremap <C-k> <C-w>k
+tmap <C-j> <C-w>N:TmuxNavigateDown<cr>
+
+let g:rainbow_active = 1
