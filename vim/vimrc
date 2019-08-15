@@ -48,6 +48,7 @@ set path+=**            " provides tab-completion for all file-related tasks
 set wildmenu            " display all matching files when we tab complete
 set noswapfile
 set conceallevel=0
+set splitbelow          " put the horizontal split below
 
 nnoremap <SPACE> <Nop>
 let maplocalleader=" "
@@ -89,6 +90,7 @@ Plug 'ryanoasis/vim-devicons'
 Plug 'ap/vim-css-color'
 " Color picker
 Plug 'DougBeney/pickachu'
+Plug 'luochen1990/rainbow'
 
 " Session Management
 Plug 'tpope/vim-obsession'
@@ -167,7 +169,16 @@ Plug 'metakirby5/codi.vim'
 Plug 'janko-m/vim-test'
 Plug 'tpope/vim-dispatch'
 
+" Rlang
+Plug 'ncm2/ncm2'
+Plug 'roxma/nvim-yarp'
+Plug 'jalvesaq/Nvim-R'
+Plug 'gaalcaras/ncm-R'
+Plug 'ncm2/ncm2-bufword'
+Plug 'ncm2/ncm2-path'
+
 " Python/Go/Other Languages
+Plug 'psf/black'
 Plug 'davidhalter/jedi-vim'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'fatih/vim-go'
@@ -264,7 +275,6 @@ endif
 " First line
 nnoremap <LocalLeader>q :quit <CR>
 nnoremap <LocalLeader>w :write <CR>
-nnoremap <LocalLeader>g :Google <CR>
 nnoremap <LocalLeader>wq :wq <CR>
 nnoremap <LocalLeader>e :edit <C-R>=expand('%:p:h') . '/' <CR>
 nnoremap <LocalLeader>o :only<CR>
@@ -317,6 +327,7 @@ nnoremap zs zMzvzz
 nnoremap <Leader>fmi :set foldmethod=indent<CR>
 nnoremap <Leader>fms :set foldmethod=syntax<CR>
 nnoremap <Leader>fmm :set foldmethod=marker<CR>
+nnoremap <Leader>fme :set foldmethod=expr<CR>
 
 " Make movement more visual oriented
 nnoremap j gj
@@ -496,8 +507,8 @@ endfunction
 " ----------------------------------------------------------------------------
 "  Mouse Related {{{
 " Allow mouse for easy resizing
-" set mouse=a
-" set ttymouse=xterm2
+set ttymouse=xterm2
+set mouse=a
 " set mouse+=a
 " if &term =~ '^screen'
 "     " tmux knows the extended mouse mode
@@ -510,6 +521,7 @@ endfunction
 " Ctags Tricks
 map <Leader>] :tab split<CR>:exec("tag ".expand("<cword>"))<CR>
 map <Leader>v :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
+map <Leader>h :sp <CR>:exec("tag ".expand("<cword>"))<CR>
 "}}}
 " ============================================================================
 " Auto settings {{{
@@ -685,7 +697,7 @@ nnoremap <leader>gau :Git add -u<CR><CR>
 
 "  - diff
 command! Greview :Git! diff --staged
-nnoremap <leader>r :Greview<cr>
+"nnoremap <leader>r :Greview<cr>
 
 "  - status
 " Obtained from https://gist.github.com/actionshrimp/6493611
@@ -1172,7 +1184,6 @@ nnoremap <Leader>fs :!fs<CR>
 " paste FIX
 nnoremap <Leader>pf :%s/<F2[23]>//g <CR>
 nnoremap <Leader>vf :%s/ / /g <CR>
-nnoremap <Leader>h yypVr=
 nnoremap <Leader>h1 yypVr=
 nnoremap <Leader>h2 yypVr-
 nnoremap TT :wall<CR>: !tmux kill-pane<CR>
@@ -1200,8 +1211,8 @@ inoremap <expr> <c-x><c-k> fzf#complete('cat /usr/share/dict/words $HOME/.dotfil
 " set winheight=999
 
 " resize panes
-nnoremap <silent> <Left> :vertical resize +5<cr>
-nnoremap <silent> <Right> :vertical resize -5<cr>
+nnoremap <silent> <Right> :vertical resize +5<cr>
+nnoremap <silent> <Left> :vertical resize -5<cr>
 nnoremap <silent> <Up> :resize +5<cr>
 nnoremap <silent> <Down> :resize -5<cr>
 " automatically rebalance windows on vim resize
