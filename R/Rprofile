@@ -6,3 +6,12 @@ utils::assignInNamespace(
   },
   "base"
 )
+options(nvimcom.verbose = 1)
+
+
+
+# hard code the US repo for CRAN
+r <- getOption("repos")
+r["CRAN"] <- "http://cran.us.r-project.org"
+options(repos = r)
+rm(r)
