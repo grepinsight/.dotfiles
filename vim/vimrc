@@ -87,7 +87,7 @@ Plug 'vim-airline/vim-airline'
 Plug 'junegunn/seoul256.vim'
 Plug 'ryanoasis/vim-devicons'
 "Plug 'yuttie/comfortable-motion.vim'
-Plug 'ap/vim-css-color'
+"Plug 'ap/vim-css-color'
 " Color picker
 Plug 'DougBeney/pickachu'
 Plug 'luochen1990/rainbow'
@@ -1610,6 +1610,14 @@ autocmd FileType r inoremap <silent> ✠ <Esc>:call SendLineToR("stay")<CR><Esc>
 autocmd FileType r inoremap <silent> œ <Esc>:call SendParagraphToR("echo", "stay")<CR>A
 autocmd FileType r vnoremap ✠ <Plug>RDSendSelection<Esc><Esc>
 
+autocmd FileType rmd nmap <Space> :call SendParagraphToR("echo", "down")<CR>
+autocmd FileType rmd vmap <Space> <Plug>RDSendSelection
+autocmd FileType rmd nnoremap <silent> ✠ :call SendLineToR("stay")<CR><Esc><Home><Down>
+autocmd FileType rmd nnoremap <silent> œ :call SendParagraphToR("echo", "stay")<CR>
+autocmd FileType rmd inoremap <silent> ✠ <Esc>:call SendLineToR("stay")<CR><Esc>A<DOWN>
+autocmd FileType rmd inoremap <silent> œ <Esc>:call SendParagraphToR("echo", "stay")<CR>A
+autocmd FileType rmd vnoremap ✠ <Plug>RDSendSelection<Esc><Esc>
+
 
 
 let g:golden_ratio_autocommand = 0
@@ -1621,4 +1629,4 @@ let R_assign = 0
 tnoremap <C-k> <C-w>k
 tmap <C-j> <C-w>N:TmuxNavigateDown<cr>
 
-let g:rainbow_active = 1
+let g:rainbow_active = 0
