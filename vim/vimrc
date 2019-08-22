@@ -1646,7 +1646,5 @@ function! CocSuggestionToggle()
     endif
 endfunction
 
-b:coc_suggest_disable
-
 
 nnoremap yococ :call CocSuggestionToggle()<CR>
