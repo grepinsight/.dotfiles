@@ -235,6 +235,7 @@ Plug 'szw/vim-g'
 Plug 'tomtom/tlib_vim'
 Plug 'itchyny/calendar.vim'
 Plug 'sgur/vim-editorconfig'
+Plug 'chrisbra/csv.vim'
 
 
 " Syntax Highlighting
@@ -1539,6 +1540,7 @@ nnoremap <Leader>rg :Rg! <C-R><C-W><CR>
 
 
 autocmd BufEnter *.png,*.jpg,*gif exec "!open ".expand("%") | bw
+autocmd BufEnter *.pdf exec "!open -a 'PDF Expert' "."\"".expand("%")."\"" | bw
 
 " Edit the macro quickly; "q<leader>m
 nnoremap <leader>m  :<c-u><c-r><c-r>='let @'. v:register .' = '. string(getreg(v:register))<cr><c-f><left>
