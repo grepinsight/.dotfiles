@@ -198,7 +198,7 @@ Plug 'w0rp/ale'
 " Completions and snippets
 " if v:version >= 800
 "     try
-" 		Plug 'Valloric/YouCompleteMe'
+"         Plug 'Valloric/YouCompleteMe'
 "     catch
 "     endtry
 " endif
@@ -250,9 +250,9 @@ set t_Co=256
 
 
 if has('termguicolors')
-	set termguicolors
-	let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
-	let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+    set termguicolors
+    let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+    let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
 endif
 
 set background=dark " Setting dark mode
@@ -870,7 +870,7 @@ nnoremap [d :VimwikiDiaryPrevDay<CR>
 nnoremap <Leader>toc :VimwikiTOC<CR>
 nnoremap <LocalLeader>toc :VimwikiTOC<CR>
 let g:vimwiki_list = [{'path': '~/Dropbox/vimwiki/',
-				   \ 'syntax': 'markdown', 'ext': '.md'}]
+                   \ 'syntax': 'markdown', 'ext': '.md'}]
 let g:auto_tags = 1
 let g:vimwiki_table_mappings = 0
 let g:vimwiki_conceallevel = 1
@@ -1062,7 +1062,7 @@ nnoremap <F2> :call RenameFile()<cr>
 " when joining multiple commented lines, comment symbol such as '#' will
 " be removed  seamlessly.
 if v:version > 703 || v:version == 703 && has('patch541')
-	set formatoptions+=j
+    set formatoptions+=j
 endif
 """ }}}
 
@@ -1089,7 +1089,7 @@ nnoremap <Leader>fw :FixWhitespace<CR>
 "   autocmd BufEnter,FocusGained,VimEnter,WinEnter * if wincent#autocmds#should_colorcolumn() | set winhighlight= | endif
 "   autocmd FocusLost,WinLeave * if wincent#autocmds#should_colorcolumn() | set winhighlight=CursorLineNr:LineNr,IncSearch:ColorColumn,Normal:ColorColumn,NormalNC:ColorColumn,SignColumn:ColorColumn | endif
 "   if exists('+colorcolumn')
-" 	autocmd BufEnter,FocusGained,VimEnter,WinEnter * if wincent#autocmds#should_colorcolumn() | let &l:colorcolumn='+' . join(range(0, 254), ',+') | endif
+"     autocmd BufEnter,FocusGained,VimEnter,WinEnter * if wincent#autocmds#should_colorcolumn() | let &l:colorcolumn='+' . join(range(0, 254), ',+') | endif
 "   endif
 " elseif exists('+colorcolumn')
 "   autocmd BufEnter,FocusGained,VimEnter,WinEnter * if wincent#autocmds#should_colorcolumn() | let &l:colorcolumn='+' . join(range(0, 254), ',+') | endif
@@ -1326,8 +1326,8 @@ let g:switch_custom_definitions = [
 
 " Automatic rename of tmux window
 " if exists('$TMUX') && !exists('$NORENAME')
-" 	au BufEnter * if empty(&buftype) | call system('tmux rename-window '.expand('%:t:S')) | endif
-" 	au VimLeave * call system('tmux set-window automatic-rename on')
+"     au BufEnter * if empty(&buftype) | call system('tmux rename-window '.expand('%:t:S')) | endif
+"     au VimLeave * call system('tmux set-window automatic-rename on')
 " endif
 
 autocmd FileType r vnoremap af :<C-U>silent! normal! [[vt{%<CR>
@@ -1360,17 +1360,17 @@ command! -bang -nargs=* J
 " Zoom / Restore window.
 function! s:ZoomToggle() abort
     if exists('t:zoomed') && t:zoomed
-		call system("tmux resize-pane -Z")
+        call system("tmux resize-pane -Z")
         execute t:zoom_winrestcmd
         let t:zoomed = 0
-		"execute 'silent ' . '!tmux resize-pane -Z'
+        "execute 'silent ' . '!tmux resize-pane -Z'
     else
         let t:zoom_winrestcmd = winrestcmd()
-		call system("tmux resize-pane -Z")
+        call system("tmux resize-pane -Z")
         resize
         vertical resize
         let t:zoomed = 1
-		"execute 'silent ' . '!tmux resize-pane -Z'
+        "execute 'silent ' . '!tmux resize-pane -Z'
 
     endif
 endfunction
@@ -1378,14 +1378,14 @@ command! ZoomToggle call s:ZoomToggle()
 nnoremap <silent> <LocalLeader>z :ZoomToggle<CR>
 
 let g:tagbar_type_vimwiki = {
-			\   'ctagstype':'vimwiki'
-			\ , 'kinds':['h:header']
-			\ , 'sro':'&&&'
-			\ , 'kind2scope':{'h':'header'}
-			\ , 'sort':0
-			\ , 'ctagsbin':"$HOME/src/productivity/tagbar_vimwiki.py"
-			\ , 'ctagsargs': 'markdown'
-			\ }
+            \   'ctagstype':'vimwiki'
+            \ , 'kinds':['h:header']
+            \ , 'sro':'&&&'
+            \ , 'kind2scope':{'h':'header'}
+            \ , 'sort':0
+            \ , 'ctagsbin':"$HOME/src/productivity/tagbar_vimwiki.py"
+            \ , 'ctagsargs': 'markdown'
+            \ }
 
 let g:tagbar_type_rmd = {
           \   'ctagstype':'rmd'
@@ -1470,35 +1470,35 @@ nnoremap <Leader>tgf :!~/src/pyan/pyan.py % --tgf -c -e  > <C-R>=expand('%:r')<C
 
 
 if filereadable(expand("~/.vimrc_work"))
-	source ~/.vimrc_work
+    source ~/.vimrc_work
 endif
 "UltiSnipsAddFiletypes Rmd.R
 "
 "
 
 function! GitRootFromDir(myarg)
-	let cmd ='cd '. a:myarg .' && '. 'git rev-parse --show-toplevel '
-	let root = substitute(system(cmd), '\n', '', 'g')
-	return root
+    let cmd ='cd '. a:myarg .' && '. 'git rev-parse --show-toplevel '
+    let root = substitute(system(cmd), '\n', '', 'g')
+    return root
 endfunction
 
 nnoremap <Leader>ma :make -C <C-R>=GitRootFromDir(expand('%:p:h'))<CR>
 
 function! SyntaxToggle()
-	if :set
+    if :set
 endfunction
 
 nnoremap yot :if exists("g:syntax_on") <Bar>
-	\   syntax off <Bar>
-	\ else <Bar>
-	\   syntax enable <Bar>
-	\ endif <CR>
+    \   syntax off <Bar>
+    \ else <Bar>
+    \   syntax enable <Bar>
+    \ endif <CR>
 
 nnoremap yoo :if &conceallevel==2<Bar>
-	\   set conceallevel=0<Bar>
-	\ else <Bar>
-	\   set conceallevel=2<Bar>
-	\ endif <CR>
+    \   set conceallevel=0<Bar>
+    \ else <Bar>
+    \   set conceallevel=2<Bar>
+    \ endif <CR>
 
 
 au FileWritePost * :redraw!
@@ -1632,3 +1632,21 @@ tnoremap <C-k> <C-w>k
 tmap <C-j> <C-w>N:TmuxNavigateDown<cr>
 
 let g:rainbow_active = 0
+
+function! CocSuggestionToggle()
+    if !exists("b:coc_suggest_disable")
+        let b:coc_suggest_disable = 1
+        echo("Coc Suggestion Disabled!")
+    elseif b:coc_suggest_disable
+        let b:coc_suggest_disable = 0
+        echo("Coc Suggestion Enabled!")
+    else
+        let b:coc_suggest_disable = 1
+        echo("Coc Suggestion Disabled!")
+    endif
+endfunction
+
+b:coc_suggest_disable
+
+
+nnoremap yococ :call CocSuggestionToggle()<CR>
