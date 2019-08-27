@@ -936,7 +936,7 @@ nnoremap <leader>a :A <CR>
 nnoremap ]al :ALENext<CR>
 nnoremap [al :ALEPrevious<CR>
 
-let g:ale_linters={'python': ['flake8', 'mypy'], 'r': ['lintr'] }
+let g:ale_linters={'python': ['mypy', 'flake8'], 'r': ['lintr'] }
 let g:ale_fixers = ['yapf']
 let g:ale_python_mypy_options="--ignore-missing-imports"
 
