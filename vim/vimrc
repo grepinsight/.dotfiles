@@ -1648,3 +1648,11 @@ endfunction
 
 
 nnoremap yococ :call CocSuggestionToggle()<CR>
+
+" Spanish
+
+iabbrev ma_s más
+iabbrev fri_os fríos
+iabbrev waht what
+
+
