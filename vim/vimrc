@@ -31,7 +31,7 @@ set lazyredraw          " redraw only when we need to.
 set regexpengine=1
 set showmatch           " highlight matching [{()}]
 set foldenable          " enable folding
-set foldlevelstart=10   " open most folds by default
+set foldlevelstart=0   " open most folds by default
 set foldmethod=indent   " fold based on indent level
 set splitright          " split navigation
 set hidden              " allow modified/unsaved buffers in the background.
@@ -101,6 +101,7 @@ Plug 'vim-scripts/BufOnly.vim'
 
 " Files related
 Plug 'scrooloose/nerdtree'
+Plug 'tpope/vim-vinegar'
 Plug 'francoiscabrol/ranger.vim'
 "Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'tpope/vim-eunuch'
@@ -388,7 +389,7 @@ command! Meeting execute "normal! \<esc>:sp ~/Dropbox/vimwiki/meeting--\<C-R>=st
 
 " Buffers 
 " close buffer
-nnoremap BB :bd<CR>
+nnoremap BB :bp\|bd #<CR>
 nnoremap QQ :q<CR>
 
 " reopen the closed buffer
@@ -1601,6 +1602,8 @@ let R_objbr_opendf = 0
 " Press the space bar to send lines and selection to R console
 "nmap <Space> <Plug>RDSendParagraph
 
+
+" Filetype specific
 autocmd FileType r nmap <Space> :call SendParagraphToR("echo", "down")<CR>
 autocmd FileType r vmap <Space> <Plug>RDSendSelection
 
@@ -1620,6 +1623,11 @@ autocmd FileType rmd inoremap <silent> ✠ <Esc>:call SendLineToR("stay")<CR><Es
 autocmd FileType rmd inoremap <silent> œ <Esc>:call SendParagraphToR("echo", "stay")<CR>A
 autocmd FileType rmd vnoremap ✠ <Plug>RDSendSelection<Esc><Esc>
 
+autocmd FileType gitcommit set foldlevelstart=10 "open's all folds
+autocmd FileType gitcommit set foldlevel=10 "open's all folds
+
+autocmd FileType make set foldlevelstart=1 "open's all folds
+autocmd FileType make set foldlevel=1 "open's all folds
 
 
 let g:golden_ratio_autocommand = 0
@@ -1654,5 +1662,7 @@ nnoremap yococ :call CocSuggestionToggle()<CR>
 iabbrev ma_s más
 iabbrev fri_os fríos
 iabbrev waht what
+iabbrev que_ qué
+iabbrev dejo_ dejó
 
 

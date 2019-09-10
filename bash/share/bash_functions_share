@@ -437,12 +437,17 @@ vs(){
 
     # use Session.vim if no param given
     if [ "$#" -ne 1 ]; then
-        SESSION_NAME=session
+        SESSION_NAME=Session.vim
     else
         SESSION_NAME=$1
     fi
 
-    SESSION_PATH=${vim_sessions}/$SESSION_NAME
+
+    SESSION_PATH=$PWD/$SESSION_NAME
+
+    if [[ ! -e $SESSION_PATH ]]; then
+		SESSION_PATH=${vim_sessions}/$SESSION_NAME
+    fi
 
     if [[ ! -f $SESSION_PATH ]]; then
         # make session file if it does not exist
