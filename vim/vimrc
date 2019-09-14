@@ -1665,4 +1665,5 @@ iabbrev waht what
 iabbrev que_ qué
 iabbrev dejo_ dejó
 
-
+"
+command! BlackAuto autocmd BufWritePre *.py execute ':Black'
