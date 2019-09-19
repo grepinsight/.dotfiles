@@ -1459,7 +1459,7 @@ nmap ga <Plug>(EasyAlign)
 inoremap <Leader>fix <c-g>u<Esc>[s1z=`]a<c-g>u
 inoremap <Leader>sp <c-g>u<Esc>[s1z=`]a<c-g>u
 
-nmap <Leader>ha <Plug>GitGutterStageHunk
+nmap <Leader>ha <Plug>GitGutterStageHunk :w<CR> :e<CR>
 nmap <Leader>hr <Plug>GitGutterUndoHunk
 nnoremap <Leader>vpn :!connect_vpn <CR>
 
