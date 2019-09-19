@@ -49,6 +49,7 @@ set wildmenu            " display all matching files when we tab complete
 set noswapfile
 set conceallevel=0
 set splitbelow          " put the horizontal split below
+set scrolloff=2
 
 nnoremap <SPACE> <Nop>
 let maplocalleader=" "
@@ -835,7 +836,7 @@ function! s:goyo_leave()
   silent !tmux list-panes -F '\#F' | grep -q Z && tmux resize-pane -Z
   set showmode
   set showcmd
-  set scrolloff=5
+  set scrolloff=2
   set spell
   set relativenumber
   Limelight!
@@ -1667,3 +1668,9 @@ iabbrev dejo_ dejó
 
 "
 command! BlackAuto autocmd BufWritePre *.py execute ':Black'
+
+autocmd FileType python nmap <Space> <Plug>SlimeParagraphSend
+autocmd FileType python vmap <Space> <Plug>SlimeRegionSend
+
+command! Focus execute "normal! zMzvzz"
+command! Focus2 execute "normal! zMzOzz"

@@ -118,6 +118,7 @@ fi
 ### llf - ll, files only
 alias llf='ls -lh -F | grep -v /'
 alias ls2="ls -Xlhp --group-directories-first"
+alias cls="command ls"
 
 ### lld - ll, directories only
 alias lld='ls -l -d */'
