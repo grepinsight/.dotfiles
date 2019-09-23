@@ -389,7 +389,7 @@ alias find_dir2='find . -maxdepth 2 -type d -name "$@"'
 alias find_dir3='find . -maxdepth 3 -type d -name "$@"'
 
 
-alias lsdir='find . -type d'
+alias lsdir='find . -type d | egrep -v ".git|.Rproj.user|.mypy" | sort'
 alias lsdir1='find . -maxdepth 1 -type d -name "$@"'
 alias lsdir2='find . -maxdepth 2 -type d -name "$@"'
 alias lsdir3='find . -maxdepth 3 -type d -name "$@"'
