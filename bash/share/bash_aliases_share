@@ -256,6 +256,8 @@ alias grh="git reset HEAD"
 ## Git Log
 alias gl="git log"
 alias glo="git log --oneline"
+alias glo2='git log --oneline --date=relative --pretty=format:"%C(yellow)%h %Cblue%>(12)%ad %Cgreen%<(7)%aN%Cred%d %Creset%s"'
+alias glo3='git log --oneline --date=relative --pretty=format:"%C(auto,yellow)%h%C(auto,magenta)% G? %C(auto,blue)%>(12,trunc)%ad %C(auto,green)%<(7,trunc)%aN%C(auto,reset)%s%C(auto,red)% gD% D"'
 alias gg="git log --oneline --decorate --graph --all"
 alias ggcb="git log --oneline --decorate --graph" # git current branch
 alias ggb="git log --oneline --decorate --graph master.." # current branch only

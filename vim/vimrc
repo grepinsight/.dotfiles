@@ -1675,3 +1675,5 @@ autocmd FileType python vmap <Space> <Plug>SlimeRegionSend
 
 command! Focus execute "normal! zMzvzz"
 command! Focus2 execute "normal! zMzOzz"
+let R_args = ['--no-save', '--quiet']
+
