@@ -10,6 +10,13 @@ function get_platform
 export -f get_platform
 # Administrative
 
+
+if [[ $(get_platform) == mac ]]; then
+	alias rdlk="greadlink -m"
+else
+	alias rdlk="readlink -m"
+fi
+
 alias reload="source $HOME/.dotfiles/bash/bashrc_init"
 alias reload_alias_share="source $HOME/.dotfiles/bash/share/bash_aliases_share"
 alias reload_alias_local="source $HOME/.dotfiles/bash/local/bash_aliases_local"
