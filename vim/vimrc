@@ -278,6 +278,7 @@ endif
 
 " First line
 nnoremap <LocalLeader>q :quit <CR>
+nnoremap <LocalLeader>h :History<CR>
 nnoremap <LocalLeader>w :write <CR>
 nnoremap <LocalLeader>wq :wq <CR>
 nnoremap <LocalLeader>e :edit <C-R>=expand('%:p:h') . '/' <CR>
@@ -1710,3 +1711,9 @@ function! GotoJump()
 endfunction
 
 command! Jump :call GotoJump()
+
+noremap <silent> <LocalLeader>cj :wincmd j<CR>:close<CR>
+noremap <silent> <LocalLeader>ck :wincmd k<CR>:close<CR>
+noremap <silent> <LocalLeader>ch :wincmd h<CR>:close<CR>
+noremap <silent> <LocalLeader>cl :wincmd l<CR>:close<CR>
+
