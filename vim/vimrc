@@ -391,7 +391,18 @@ command! Meeting execute "normal! \<esc>:sp ~/Dropbox/vimwiki/meeting--\<C-R>=st
 
 " Buffers 
 " close buffer
-nnoremap BB :bp\|bd #<CR>
+function! BufferSmartDelete()
+	let num_buf = len(filter(range(1, bufnr('$')), 'buflisted(v:val)'))
+	if num_buf == 1
+		bd
+	else
+		bp
+		bd #
+	endif
+endfunction
+
+command! BufferSmartDelete :call BufferSmartDelete()
+nnoremap BB :call BufferSmartDelete()<CR>
 nnoremap QQ :q<CR>
 
 " reopen the closed buffer
