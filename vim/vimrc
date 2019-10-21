@@ -1206,7 +1206,7 @@ nnoremap TT :wall<CR>: !tmux kill-pane<CR>
 nnoremap <Leader>def :e $HOME/vimwiki/Definitions.wiki<CR>
 nnoremap <Leader>k :VimwikiToggleListItem<CR>
 nnoremap <Leader>tag :!tmsu tag %
-nnoremap <Leader>rmd :!Rscript -e "rmarkdown::render('%')" && open %:r.html <CR>
+nnoremap <Leader>rmd :!Rscript -e "setwd(Sys.getenv('PWD')); rmarkdown::render('%')" && open %:r.html <CR>
 
 
 nnoremap ㅏ k
@@ -1619,7 +1619,7 @@ let R_objbr_opendf = 0
 
 " Filetype specific
 autocmd FileType r nmap <Space> :call SendParagraphToR("echo", "down")<CR>
-autocmd FileType r vmap <Space> <Plug>RDSendSelection
+autocmd FileType r vmap <Space> :call SendSelectionToR("echo", "stay", "normal")<CR>
 
 
 " Mac iTerm: custom map control-enter to something unique. Maltese cross in this case.
@@ -1627,15 +1627,15 @@ autocmd FileType r nnoremap <silent> ✠ :call SendLineToR("stay")<CR><Esc><Home
 autocmd FileType r nnoremap <silent> œ :call SendParagraphToR("echo", "stay")<CR>
 autocmd FileType r inoremap <silent> ✠ <Esc>:call SendLineToR("stay")<CR><Esc>A<DOWN>
 autocmd FileType r inoremap <silent> œ <Esc>:call SendParagraphToR("echo", "stay")<CR>A
-autocmd FileType r vnoremap ✠ <Plug>RDSendSelection<Esc><Esc>
+autocmd FileType r vnoremap ✠ :call SendSelectionToR("echo", "stay", "normal")<CR>
 
 autocmd FileType rmd nmap <Space> :call SendParagraphToR("echo", "down")<CR>
-autocmd FileType rmd vmap <Space> <Plug>RDSendSelection
+autocmd FileType rmd vmap <Space> :call SendSelectionToR("echo", "stay", "normal")<CR>
 autocmd FileType rmd nnoremap <silent> ✠ :call SendLineToR("stay")<CR><Esc><Home><Down>
 autocmd FileType rmd nnoremap <silent> œ :call SendParagraphToR("echo", "stay")<CR>
 autocmd FileType rmd inoremap <silent> ✠ <Esc>:call SendLineToR("stay")<CR><Esc>A<DOWN>
 autocmd FileType rmd inoremap <silent> œ <Esc>:call SendParagraphToR("echo", "stay")<CR>A
-autocmd FileType rmd vnoremap ✠ <Plug>RDSendSelection<Esc><Esc>
+"autocmd FileType rmd vnoremap ✠ :call SendSelectionToR("echo", "stay", "normal")<CR>
 
 autocmd FileType gitcommit set foldlevelstart=10 "open's all folds
 autocmd FileType gitcommit set foldlevel=10 "open's all folds
@@ -1716,4 +1716,25 @@ noremap <silent> <LocalLeader>cj :wincmd j<CR>:close<CR>
 noremap <silent> <LocalLeader>ck :wincmd k<CR>:close<CR>
 noremap <silent> <LocalLeader>ch :wincmd h<CR>:close<CR>
 noremap <silent> <LocalLeader>cl :wincmd l<CR>:close<CR>
+
+function! JumpToLastEdit()
+
+    echom expand('%:p')
+    let last_two_commits = systemlist("git log -n 2 --oneline -- " .  expand('%:p'))
+    echom last_two_commits
+
+    let hash1= split(last_two_commits[0], ' ' )[0]
+    let hash2= split(last_two_commits[1], ' ' )[0]
+
+    echom hash1
+    echom hash2
+
+	let cmd="VcsJump diff " . hash2 . ".." . hash1
+	echom cmd
+
+	execute cmd
+endfunction
+command! JumpToLastEdit :call JumpToLastEdit()
+
+
 
