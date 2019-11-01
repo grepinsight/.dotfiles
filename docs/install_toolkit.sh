@@ -8,7 +8,9 @@ if [[ $platform == "Darwin" ]]; then
 
 else
 	apt-get update
-	apt-get install curl
+	apt-get --yes install curl
+	apt-get --yes install graphviz
+
 	# install ripgrep
 	 DEB_RIPGREP="ripgrep_0.10.0_amd64.deb"
 	 curl -LO https://github.com/BurntSushi/ripgrep/releases/download/0.10.0/${DEB_RIPGREP}
