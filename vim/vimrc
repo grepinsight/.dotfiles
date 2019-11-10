@@ -1739,4 +1739,3 @@ endfunction
 command! JumpToLastEdit :call JumpToLastEdit()
 
 
-

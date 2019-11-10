@@ -47,9 +47,10 @@ set -g status-right-length 180
 set -g status-left-length 20
 set -g status-interval 10
 set -g status-left '#[fg=yellow,bold] ❐ #S - '
-set -g status-right "#[fg=white]:: Batt: #{battery_icon} #{battery_percentage} #{battery_remain} | t: #(/Users/allee/src/productivity/toggl-tmux) | #[fg=green]#(date '+%Y-%m-%d (wk-%V)') %l:%M %p"
-bind t set -g status-right "#[fg=white]:: Batt: #{battery_icon} #{battery_percentage} #{battery_remain} | #(toggl-tmux) | #[fg=green]#(date '+%Y-%m-%d (wk-%V)') %l:%M %p"; display "no todo!"
-bind T set -g status-right "#[fg=red]#(todo_today) #[fg=white]:: Batt: #{battery_icon} #{battery_percentage} #{battery_remain} | #(toggl-tmux) | #[fg=green]#(date '+%Y-%m-%d (wk-%V)') %l:%M %p"
+set -g status-right "#[fg=white]:: #(toggl-tmux) | #[fg=green]#(date '+%Y-%m-%d (wk-%V)') %l:%M %p"
+#set -g status-right "#[fg=white]:: #{toggl-tmux} Batt: #{battery_icon} #{battery_percentage} #{battery_remain} | t: #(toggl-tmux) | #[fg=green]#(date '+%Y-%m-%d (wk-%V)') %l:%M %p"
+#bind t set -g status-right "#[fg=white]:: Batt: #{battery_icon} #{battery_percentage} #{battery_remain} | #(toggl-tmux) | #[fg=green]#(date '+%Y-%m-%d (wk-%V)') %l:%M %p"; display "no todo!"
+#bind T set -g status-right "#[fg=red]#(todo_today) #[fg=white]:: Batt: #{battery_icon} #{battery_percentage} #{battery_remain} | #(toggl-tmux) | #[fg=green]#(date '+%Y-%m-%d (wk-%V)') %l:%M %p"
 
 # Shortcut
 
