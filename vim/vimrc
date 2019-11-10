@@ -952,7 +952,9 @@ nnoremap ]al :ALENext<CR>
 nnoremap [al :ALEPrevious<CR>
 
 let g:ale_linters={'python': ['mypy', 'flake8'], 'r': ['lintr'] }
-let g:ale_fixers = ['yapf']
+let g:ale_fixers = {'python': ['yapf'], 'r': ['styler']}
+
+autocmd FileType r let g:ale_fix_on_save = 1
 let g:ale_python_mypy_options="--ignore-missing-imports"
 
 
