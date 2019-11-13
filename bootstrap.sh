@@ -3,9 +3,7 @@
 set -x
 ROOT_DIR="$HOME/.dotfiles"
 
-### bashrc
-
-
+### BASHRC setup
 echo "--- Setting up bashrc ---"
 if [[ -f $HOME/.bash_profile ]]; then
     echo "$HOME/.bash_profile already exists!"
@@ -22,7 +20,7 @@ else
 fi
 
 
-### vimrc
+### Vim setup
 echo "--- Setting up vimrc ---"
 if [[ -f $HOME/.vimrc ]]; then
     echo "$HOME/.vimrc already exists!"
@@ -32,8 +30,13 @@ else
     ln -s .dotfiles/vim/vimrc ../.vimrc
 fi
 
-### Tools
+if [[ ! -d $HOME/.vim/ftplugin ]]; then
+    echo "Installing vim ftplugin"
+	mkdir -p $HOME/.vim/
+	git clone git@github.com:grepinsight/ftplugin.git $HOME/.vim/ftplugin
+fi
 
+### Tools
 echo "--- Downloading useful tools ---"
 if which git 2>/dev/null >&2 ; then
     if [[ ! -e $HOME/src/bashmarks ]]; then
@@ -95,6 +98,12 @@ else
     echo "git not found! install git and rerun this script again"
 fi
 
+
+#### Ctags Setup
+
+# for universal-ctags
+mkdir -p $HOME/.ctags.d/
+cp $HOME/.dotfiles/ctags/markdown.ctags $HOME/.ctags.d/
 
 # Basic set up
 
