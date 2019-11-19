@@ -1,14 +1,4 @@
-utils::assignInNamespace(
-  "q",
-  function(save = "no", status = 0, runLast = TRUE)
-  {
-    .Internal(quit(save, status, runLast))
-  },
-  "base"
-)
 options(nvimcom.verbose = 1)
-
-
 
 # hard code the US repo for CRAN
 r <- getOption("repos")

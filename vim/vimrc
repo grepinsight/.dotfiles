@@ -357,6 +357,7 @@ nnoremap vv ^vg_
 
 " Make execute able
 nnoremap <Leader>x :!chmod 750 %<CR>
+command! ReadOnlyfy execute "normal! \<esc>:!chmod 440 %<CR>"
 
 " space open/closes folds
 nnoremap <space> za
@@ -1855,4 +1856,4 @@ function! s:SortUnfolded( bang, startLnum, endLnum, sortArgs )
 endfunction
 command! -bang -range=% -nargs=* SortUnfolded call setline(<line1>, getline(<line1>)) | call s:SortUnfolded('<bang>', <line1>, <line2>, <q-args>)
 
-nnoremap ,r :CtrlPBufTag<CR>
+nnoremap ,r :BTags<CR>
