@@ -531,3 +531,5 @@ alias upp="unset PYTHONPATH"
 
 alias p="python"
 command -v rpbcopy > /dev/null && alias pbcopy="rpbcopy"
+
+alias chr="open -a 'Google Chrome'"
