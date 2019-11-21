@@ -7,6 +7,8 @@ if $(which apt-get); then
   sudo apt-get --yes install make                     # install make
   sudo apt-get --yes install libcurl4-openssl-dev # Install curl
   sudo apt-get --yes install libxml2-dev          # Instal xml
+  sudo apt-get --yes install libcairo2-dev
+
 
   sudo apt install silversearcher-ag         # Install ag
 fi
