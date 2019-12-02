@@ -418,7 +418,6 @@ nnoremap <c-s-t> :b#<CR>:e<CR>
 
 " line find
 nnoremap <Leader>lf :Lines<CR>
-nnoremap <LocalLeader>l :Lines<CR>
 nnoremap <LocalLeader>lf :Lines<CR>
 nnoremap <LocalLeader>ll :Lines<CR>
 nnoremap <LocalLeader>ln :Lines<CR>
