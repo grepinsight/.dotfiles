@@ -1858,7 +1858,21 @@ function! s:SortUnfolded( bang, startLnum, endLnum, sortArgs )
 endfunction
 command! -bang -range=% -nargs=* SortUnfolded call setline(<line1>, getline(<line1>)) | call s:SortUnfolded('<bang>', <line1>, <line2>, <q-args>)
 
-nnoremap ,r :BTags<CR>
 
 
 nnoremap <LocalLeader>tog :!toggl-start <C-R>=expand('<cWORD>')<CR>
+command! -bang BTags2
+  \ call fzf#vim#buffer_tags('', {
+  \     'down': '40%',
+  \     'options': '--with-nth 1
+  \                 --reverse
+  \                 --prompt "> "
+  \                 --preview-window="40%"
+  \                 --preview "bat {2} |
+  \                     tail -n +\$(echo {3} | tr -d \";\\\"\") |
+  \                     head -n 16" '
+  \ })
+
+
+nnoremap ,r :BTags<CR>
+nnoremap ,t :BTags2<CR>
