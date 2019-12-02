@@ -8,6 +8,12 @@
 .Rhistory
 .Rproj.user
 .Ruserdata
+*_cache/*
+*_files/*
+*/*_cache/*
+*/*_files/*
+*/*/*_cache/*
+*/*/*_files/*
 
 # Jupyter
 .ipynb_checkpoints
