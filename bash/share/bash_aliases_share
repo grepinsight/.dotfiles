@@ -513,6 +513,7 @@ alias ip="curl https://ipinfo.io/ip"
 alias o="open"
 alias h='hsearch'
 alias hh='hsearch --here'
+alias ht='hsearch --today'
 alias hht='hsearch --here --today'
 alias hhy='hsearch --here --yesterday'
 alias fd2='fd -c never --no-ignore'
