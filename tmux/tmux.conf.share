@@ -172,6 +172,7 @@ set -g @fingers-pattern-10 'analysis-[0-9A-Za-z]*'
 set -g @fingers-pattern-11 'RD-[0-9A-Za-z]*'
 set -g @fingers-pattern-12 'workflow-[0-9A-Za-z]*'
 set -g @fingers-pattern-13 'applet-[0-9A-Za-z]*'
+set -g @fingers-pattern-14 'H[A-Z]*_[0-9]*_[A-Z0-9]*'
 set -g @fingers-copy-command 'rpbcopy'
 set -g @continuum-restore 'on'
 
