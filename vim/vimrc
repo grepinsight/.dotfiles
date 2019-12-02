@@ -1861,6 +1861,9 @@ command! -bang -range=% -nargs=* SortUnfolded call setline(<line1>, getline(<lin
 
 
 nnoremap <LocalLeader>tog :!toggl-start <C-R>=expand('<cWORD>')<CR>
+
+let b:coc_suggest_disable = 1
+
 command! -bang BTags2
   \ call fzf#vim#buffer_tags('', {
   \     'down': '40%',
