@@ -1660,7 +1660,9 @@ let R_assign = 0
 tnoremap <C-k> <C-w>k
 tnoremap <C-h> <C-w>h
 tnoremap <C-l> <C-w>l
+tnoremap b] <C-w>N:TmuxNavigateUp<cr>:bnext<CR>
 tmap <C-j> <C-w>N:TmuxNavigateDown<cr>
+tmap <C-z> <C-w>N<C-z>
 
 let g:rainbow_active = 0
 
