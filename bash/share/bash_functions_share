@@ -97,6 +97,21 @@ cd_func_decorated() {
 
 alias cd=cd_func_decorated
 
+pd() {
+  project_name="$1"
+
+  if [[ -z $project_name ]]; then
+    command cd $HOME/prj/ && cd $(command ls | fzf)
+  else
+    command cd $HOME/prj/ && cd "$project_name"
+  fi
+}
+
+export -f pd
+
+
+#alias pd=pd_run
+
 #--------------------------------------------------
 extract () {
    if [ -f $1 ] ; then
