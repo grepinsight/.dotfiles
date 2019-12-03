@@ -1876,3 +1876,8 @@ command! -bang BTags2
 
 nnoremap ,r :BTags<CR>
 nnoremap ,t :BTags2<CR>
+nnoremap ,h :History<CR>
+
+" if v:version >= 704
+" else
+" endif
