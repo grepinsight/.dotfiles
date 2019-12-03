@@ -10,14 +10,11 @@ let s:darwin = has('mac')
 " ============================================================================
 " Basic Settings {{{
 " ============================================================================
-"
-"nnoremap <Leader>dos :e ++ff=dos<CR> | set ff=unix <CR>
 " Vim 8 defaults
 unlet! skip_defaults_vim
 autocmd FileType rst syntax off
 autocmd FileType json set foldmethod=indent
 silent! source $VIMRUNTIME/defaults.vim
-" 'syntax on
 set encoding=UTF-8
 filetype plugin indent on
 runtime macros/matchit.vim
@@ -40,7 +37,6 @@ set smartcase           " if capital letter is used, then do not ignore case
 set ignorecase
 set shiftwidth=4        " size of an indent
 set softtabstop=4       " Indentation levels very four columns"
-"set expandtab           " tabs are spaces
 set tabstop=4           " size of a hard tabstop number of visual spaces per TAB
 set incsearch           " search as characters are entered
 set hlsearch            " highlight matches
