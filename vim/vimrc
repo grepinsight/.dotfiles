@@ -50,6 +50,7 @@ set noswapfile
 set conceallevel=0
 set splitbelow          " put the horizontal split below
 set scrolloff=2
+set iskeyword+=\-       " for autocompleting a word containing '-'
 
 nnoremap <SPACE> <Nop>
 let maplocalleader=" "
