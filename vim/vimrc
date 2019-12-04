@@ -1212,6 +1212,8 @@ nnoremap <Leader>k :VimwikiToggleListItem<CR>
 nnoremap <Leader>tag :!tmsu tag %
 nnoremap <Leader>rmd :!Rscript -e "setwd(Sys.getenv('PWD')); rmarkdown::render('%')" && open %:r.html <CR>
 nnoremap <Leader>rtt :!clear; Rscript -e "setwd(Sys.getenv('PWD')); devtools::load_all();testthat::test_file('%')"<CR>
+nnoremap <Leader>rll :RSend devtools::load_all()<CR>
+tnoremap <Leader>rll <C-w>N:RSend devtools::load_all()<CR>i
 
 
 nnoremap ㅏ k
