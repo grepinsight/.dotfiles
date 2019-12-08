@@ -241,6 +241,10 @@ Plug 'maverickg/stan.vim'
 Plug 'ibab/vim-snakemake'
 Plug 'broadinstitute/vim-wdl'
 
+if executable('black')
+	Plug 'psf/black', { 'on':  'Black' }
+endif
+
 
 " Deprecated
 " Plug 'szw/vim-g'
@@ -314,8 +318,8 @@ nnoremap <LocalLeader><LocalLeader> <C-^>
 
 " ----------------------------------------------------------------------------
 " R assignment {{{
-execute "set <M-->=\033-"
-execute "set <M-m>=\033m"
+" execute "set <M-->=\033-"
+" execute "set <M-m>=\033m"
 inoremap <M--> <-
 inoremap <M-m> %>%
 command! MakeTags !ctags -R .
@@ -479,7 +483,7 @@ set undoreload=10000        " number of lines to save for undo
 " ----------------------------------------------------------------------------
 "  Mouse Related {{{
 " Allow mouse for easy resizing
-set ttymouse=xterm2
+" set ttymouse=xterm2
 set mouse=a
 " set mouse+=a
 " if &term =~ '^screen'
@@ -659,7 +663,7 @@ nmap <F8> :TagbarToggle<CR>
 " ----------------------------------------------------------------------------
 "  - blame
 nnoremap <leader>b :Gblame<CR>
-nnoremap <leader>gcv :Gcommit -v <CR>
+nnoremap <silent> <leader>gcv :Gcommit -v <CR>
 nnoremap <leader>gw :Gwrite <CR>:Gcommit -v<CR>
 nnoremap <leader>gf :GitGutterFold<CR>
 nnoremap <leader>vd :Gvdiff<CR>
@@ -744,7 +748,7 @@ let g:tagbar_type_markdown = {
 "
 "" Set color scheme according to current time of day.
 let hr = str2nr(strftime('%H'))
-if hr <= 6 || hr > 18
+if hr <= 6 || hr >= 18
     let cs = 'gruvbox'
 else
     let cs = 'seoul256-light'
@@ -829,7 +833,13 @@ autocmd! User GoyoLeave nested call <SID>goyo_leave()
 " ============================================================================
 
 " ----------------------------------------------------------------------------
-" coc
+" # Rooter
+" ----------------------------------------------------------------------------
+
+let g:rooter_silent_chdir = 1
+
+" ----------------------------------------------------------------------------
+" # coc
 " ----------------------------------------------------------------------------
 
 autocmd FileType vimwiki let b:coc_suggest_disable = 1
@@ -840,6 +850,17 @@ nmap <silent> <leader>ld <Plug>(coc-definition)
 nmap <silent> <leader>lt <Plug>(coc-type-definition)
 nmap <silent> <leader>li <Plug>(coc-implementation)
 nmap <silent> <leader>lf <Plug>(coc-references)
+
+" coc.vim stuff
+
+
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+
+" Remap for rename current word
+nmap <leader>rn <Plug>(coc-rename)
 
 
 function! ShowDocumentation()
@@ -854,7 +875,13 @@ nnoremap <silent> <leader>K :call ShowDocumentation()<CR>
 
 " Highlight symbol under cursor on CursorHold
 autocmd CursorHold * silent call CocActionAsync('highlight')
-nnoremap gs <Plug>(coc-git-chunkinfo)
+nmap gs <Plug>(coc-git-chunkinfo)
+
+" Create mappings for function text object, requires document symbols feature of languageserver.
+xmap if <Plug>(coc-funcobj-i)
+xmap af <Plug>(coc-funcobj-a)
+omap if <Plug>(coc-funcobj-i)
+omap af <Plug>(coc-funcobj-a)
 
 function! CocSuggestionToggle()
     if !exists("b:coc_suggest_disable")
@@ -986,12 +1013,13 @@ let g:ycm_key_list_previous_completion=[]
 " Ultistnip
 " ----------------------------------------------------------------------------
 
-"let g:UltiSnipsExpandTrigger="<S-tab>"
-"let g:UltiSnipsJumpForwardTrigger="<c-j>"
-"let g:UltiSnipsJumpBackwardTrigger="<c-k>"
-let g:UltiSnipsExpandTrigger = '<tab>'
-let g:UltiSnipsJumpForwardTrigger = '<tab>'
-let g:UltiSnipsJumpBackwardTrigger = '<s-tab>'
+let g:UltiSnipsExpandTrigger="<S-tab>"
+let g:UltiSnipsJumpForwardTrigger="<c-j>"
+let g:UltiSnipsJumpBackwardTrigger="<c-k>"
+"
+"let g:UltiSnipsExpandTrigger = '<tab>'
+"let g:UltiSnipsJumpForwardTrigger = '<tab>'
+"let g:UltiSnipsJumpBackwardTrigger = '<s-tab>'
 
 " " If you want :UltiSnipsEdit to split your window.
 let g:UltiSnipsEditSplit="vertical"
@@ -1781,7 +1809,6 @@ command! -bang -range=% -nargs=* SortUnfolded call setline(<line1>, getline(<lin
 
 nnoremap <LocalLeader>tog :!toggl-start <C-R>=expand('<cWORD>')<CR>
 
-let b:coc_suggest_disable = 1
 
 command! -bang BTags2
   \ call fzf#vim#buffer_tags('', {
@@ -1796,11 +1823,24 @@ command! -bang BTags2
   \ })
 
 
-" # Comman Leader key
+" # Comma Leader key
+
+nnoremap <silent> ,c  :CocConfig<CR>
+
+" E as in Error
+nnoremap <silent> ,e  :<C-u>CocList diagnostics<cr>
+" O as in Only
+" Find symbol of current document
+nnoremap <silent> ,o  :only<CR>
+
+" Remap for format selected region
+xmap ,f  <Plug>(coc-format-selected)
+nmap ,f  <Plug>(coc-format-selected)
+nmap ,q  <Plug>(coc-fix-current)
+nmap ,l yor
+nnoremap ,h :History<CR>
 nnoremap ,r :BTags<CR>
 nnoremap ,t :term<CR>
-nnoremap ,h :History<CR>
-nmap ,l yor
 
 
 " # Bracket Leader keys
@@ -1858,3 +1898,6 @@ augroup CursorLineNrColorSwap
     autocmd InsertLeave * call ResetCursorLineNrColor()
     autocmd CursorHold * call ResetCursorLineNrColor()
 augroup END
+
+inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+inoremap <expr> <esc> pumvisible() ? "\<C-e>" : "\<C-g>u\<CR>"
