@@ -178,7 +178,11 @@ Plug 'ncm2/ncm2-bufword'
 Plug 'ncm2/ncm2-path'
 
 " Python/Go/Other Languages
-Plug 'psf/black'
+if executable('black')
+	Plug 'psf/black'
+endif
+
+
 Plug 'davidhalter/jedi-vim'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'fatih/vim-go'
@@ -1222,8 +1226,6 @@ nnoremap <Leader>k :VimwikiToggleListItem<CR>
 nnoremap <Leader>tag :!tmsu tag %
 nnoremap <Leader>rmd :!Rscript -e "setwd(Sys.getenv('PWD')); rmarkdown::render('%')" && open %:r.html <CR>
 nnoremap <Leader>rtt :!clear; Rscript -e "setwd(Sys.getenv('PWD')); devtools::load_all();testthat::test_file('%')"<CR>
-nnoremap <Leader>rll :RSend devtools::load_all()<CR>
-tnoremap <Leader>rll <C-w>N:RSend devtools::load_all()<CR>i
 
 
 nnoremap ㅏ k
@@ -1587,12 +1589,18 @@ autocmd FileType rbrowser let g:golden_ratio_autocommand = 0
 
 
 let R_assign = 0
-tnoremap <C-k> <C-w>k
-tnoremap <C-h> <C-w>h
-tnoremap <C-l> <C-w>l
-tnoremap b] <C-w>N:TmuxNavigateUp<cr>:bnext<CR>
-tmap <C-j> <C-w>N:TmuxNavigateDown<cr>
-tmap <C-z> <C-w>N<C-z>
+if has('terminal')
+	tnoremap <C-k> <C-w>k
+	tnoremap <C-h> <C-w>h
+	tnoremap <C-l> <C-w>l
+	tnoremap b] <C-w>N:TmuxNavigateUp<cr>:bnext<CR>
+
+	" For R package development
+	nnoremap <Leader>rll :RSend devtools::load_all()<CR>
+	tnoremap <Leader>rll <C-w>N:RSend devtools::load_all()<CR>i
+	tmap <C-j> <C-w>N:TmuxNavigateDown<cr>
+	tmap <C-z> <C-w>N<C-z>
+endif
 
 let g:rainbow_active = 0
 
