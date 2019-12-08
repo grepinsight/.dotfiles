@@ -177,7 +177,11 @@ Plug 'ncm2/ncm2-bufword'
 Plug 'ncm2/ncm2-path'
 
 " Python/Go/Other Languages
-Plug 'psf/black'
+if executable('black')
+	Plug 'psf/black'
+endif
+
+
 Plug 'davidhalter/jedi-vim'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'fatih/vim-go'
