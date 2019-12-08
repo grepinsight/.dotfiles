@@ -87,7 +87,6 @@ Plug 'ryanoasis/vim-devicons'
 "Plug 'yuttie/comfortable-motion.vim'
 "Plug 'ap/vim-css-color'
 " Color picker
-Plug 'luochen1990/rainbow'
 
 " Session Management
 Plug 'tpope/vim-obsession'
@@ -250,6 +249,7 @@ endif
 " Plug 'szw/vim-g'
 " Plug 'mattn/emmet-vim'
 " Plug 'DougBeney/pickachu'
+" Plug 'luochen1990/rainbow'  " parenthesis colors
 
 call plug#end()
 
@@ -263,8 +263,6 @@ if has('termguicolors')
 endif
 
 set background=dark " Setting dark mode
-
-
 let g:deus_termcolors=256
 
 
@@ -280,17 +278,17 @@ if exists('&belloff')
 endif
 
 
+nnoremap <Leader>dot :!cat % \| dot -Tpng > <C-R>=expand('%:r')<CR>.png && open <C-R>=expand('%:r')<CR>.png<CR>
+
 " First line
-nnoremap <LocalLeader>q :quit <CR>
+nnoremap <LocalLeader>e :edit <C-R>=expand('%:p:h') . '/' <CR>
 nnoremap <LocalLeader>h :History<CR>
+nnoremap <LocalLeader>o :only<CR>
+nnoremap <LocalLeader>q :quit <CR>
+nnoremap <LocalLeader>t :!typora "%"<CR>
 nnoremap <LocalLeader>w :write <CR>
 nnoremap <LocalLeader>wq :wq <CR>
-nnoremap <LocalLeader>e :edit <C-R>=expand('%:p:h') . '/' <CR>
-nnoremap <LocalLeader>o :only<CR>
-nnoremap <LocalLeader>t :!typora "%"<CR>
-nnoremap <Leader>dot :!cat % \| dot -Tpng > <C-R>=expand('%:r')<CR>.png && open <C-R>=expand('%:r')<CR>.png<CR>
 nnoremap <LocalLeader>y :Goyo<CR>
-"nnoremap <LocalLeader>p :echo expand('%:p')<CR>
 nnoremap <silent> <LocalLeader>p :let @" = expand("%:p")<CR> <bar> :echo expand('%:p')<CR>
 nnoremap <LocalLeader>a :A <CR>
 
@@ -435,7 +433,7 @@ nnoremap <Leader>bal :tabnew $HOME/.dotfiles/bash/local/bash_aliases_local<CR>
 nnoremap <Leader>bpl :tabnew $HOME/.dotfiles/bash/local/bash_paths_local<CR>
 nnoremap <Leader>bsl :tabnew $HOME/.dotfiles/bash/local/bash_settings_local<CR>
 " }}}
-
+" ============================================================================
 "Align Text {{{
 
 nnoremap <leader>Al :left<cr>
@@ -445,15 +443,9 @@ vnoremap <leader>Al :left<cr>
 vnoremap <leader>Ac :center<cr>
 vnoremap <leader>Ar :right<cr>
 "}}}
-"
-" Run commands
-nnoremap <Leader>pl :w<CR> :!perl %<CR>
-nnoremap <Leader>cc :w<CR> :!g++ %;./a.exe<CR>
-nnoremap <Leader>py :w<CR> :!python %<CR>
-" reverse join
-nnoremap <Leader>j kJ
-
-" PythonRelated
+" ============================================================================
+" ============================================================================
+" PythonRelated {{{
 
 function! ImportFix()
     ^cwfrom^[$F.r i import^[^
@@ -462,11 +454,17 @@ endfunction
 " TODO run it only on python file and only if yapf is available
 " setlocal equalprg=yapf
 
-nnoremap <Leader>if ^cwfrom<Esc>$F.r i import<Esc>^
+" Import fix
+nnoremap <Leader>if ^cwfrom<Esc>$F.r i import<Esc>^ 
 
 
-" Notes
+command! BlackAuto autocmd BufWritePre *.py execute ':Black'
 
+autocmd FileType python nmap <Space> <Plug>SlimeParagraphSend
+autocmd FileType python vmap <Space> <Plug>SlimeRegionSend
+
+" }}}
+" ============================================================================
 " ============================================================================
 " Advanced Settings --------------------------------------------------{{{
 "
@@ -492,13 +490,6 @@ set mouse=a
 " endif
 " set mouse=c
 "  }}}
-" ----------------------------------------------------------------------------
-
-" Ctags Tricks
-map <Leader>] :tab split<CR>:exec("tag ".expand("<cword>"))<CR>
-map <Leader>v :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
-map <Leader>h :sp <CR>:exec("tag ".expand("<cword>"))<CR>
-"}}}
 " ============================================================================
 " Auto settings {{{
 " ============================================================================
@@ -1111,7 +1102,6 @@ nnoremap <F2> :call RenameFile()<cr>
 "
 " }}}
 " ============================================================================
-
 " ============================================================================
 " Editing Setting {{{
 " ============================================================================
@@ -1123,13 +1113,12 @@ if v:version > 703 || v:version == 703 && has('patch541')
     set formatoptions+=j
 endif
 """ }}}
-
 if exists('+colorcolumn')
   " Highlight up to 255 columns (this is the current Vim max) beyond 'textwidth'
   let &l:colorcolumn='+' . join(range(0, 254), ',+')
 endif
-
-" * Whitespace Decoration
+" ============================================================================
+" Whitespace Decoration {{{
 " View white space with special characters
 set list                              " show whitespace
 set listchars=nbsp:⦸                  " CIRCLED REVERSE SOLIDUS (U+29B8, UTF-8: E2 A6 B8)
@@ -1140,30 +1129,15 @@ set listchars+=precedes:«             " LEFT-POINTING DOUBLE ANGLE QUOTATION MA
 set listchars+=trail:•                " BULLET (U+2022, UTF-8: E2 80 A2)
 set nojoinspaces                      " don't autoinsert two spaces after '.', '?', '!' for join command
 
+" }}}
+" ============================================================================
+" ============================================================================
+" Leader Keys {{{
 nnoremap <Leader>fw :FixWhitespace<CR>
-
-" if !empty(glob("/Users/alee/.vim/autoload/wincent"))
-" if exists('+winhighlight')
-"   autocmd BufEnter,FocusGained,VimEnter,WinEnter * if wincent#autocmds#should_colorcolumn() | set winhighlight= | endif
-"   autocmd FocusLost,WinLeave * if wincent#autocmds#should_colorcolumn() | set winhighlight=CursorLineNr:LineNr,IncSearch:ColorColumn,Normal:ColorColumn,NormalNC:ColorColumn,SignColumn:ColorColumn | endif
-"   if exists('+colorcolumn')
-"     autocmd BufEnter,FocusGained,VimEnter,WinEnter * if wincent#autocmds#should_colorcolumn() | let &l:colorcolumn='+' . join(range(0, 254), ',+') | endif
-"   endif
-" elseif exists('+colorcolumn')
-"   autocmd BufEnter,FocusGained,VimEnter,WinEnter * if wincent#autocmds#should_colorcolumn() | let &l:colorcolumn='+' . join(range(0, 254), ',+') | endif
-"   autocmd FocusLost,WinLeave * if wincent#autocmds#should_colorcolumn() | let &l:colorcolumn=join(range(1, 255), ',') | endif
-" endif
-" autocmd InsertLeave,VimEnter,WinEnter * if wincent#autocmds#should_cursorline() | setlocal cursorline | endif
-" autocmd InsertEnter,WinLeave * if wincent#autocmds#should_cursorline() | setlocal nocursorline | endif
-
-
-" autocmd BufEnter,FocusGained,VimEnter,WinEnter * call wincent#autocmds#focus_window()
-" autocmd FocusLost,WinLeave * call wincent#autocmds#blur_window()
-" endif
-
-
-
-" Follow symlinks when opening a file
+" }}}
+" ============================================================================
+" ============================================================================
+" Follow symlinks when opening a file  {{{
 " Sources:
 "  - https://github.com/tpope/vim-fugitive/issues/147#issuecomment-7572351
 "  - http://www.reddit.com/r/vim/comments/yhsn6/is_it_possible_to_work_around_the_symlink_bug/c5w91qw
@@ -1181,11 +1155,14 @@ command! FollowSymlink call MyFollowSymlink()
 
 autocmd BufReadPost * call MyFollowSymlink(expand('<afile>'))
 
+" }}}
+" ============================================================================
 
+" ============================================================================
+" Variable Settings {{{
+"
 let g:slime_target = "tmux"
-"let g:slime_default_config = {"socket_name": split($TMUX, ",")[0], "target_pane": ":.2"}
 let g:slime_default_config = {"socket_name": get(split($TMUX, ","), 0), "target_pane": ":.2"}
-"let g:slime_default_config = {"socket_name": "default", "target_pane": "{right-of}"}
 
 let vim_markdown_preview_hotkey='<C-m>'
 let vim_markdown_preview_github=1
@@ -1194,35 +1171,20 @@ let vim_markdown_preview_browser='Google Chrome'
 
 let g:vim_markdown_conceal = 0 "make markdown sane
 
-
-nnoremap <Leader>ml :r !make lint <CR>
-
-
-function! TabToSpace()
-        :
-        :mkspell! $HOME/.dotfiles/vim/spell/en.utf-8.add
-        :bd
-        execute g:spell_return_to_window . "wincmd w"
-    else
-        let g:spell_return_to_window = winnr()
-        :vsplit $HOME/.dotfiles/vim/spell/en.utf-8.add
-        let g:spell_is_open = 1
-    endif
-endfunction
-
-
 let g:vimwiki_folding='expr'
 "
 " Make python <> vim-slime play well together
 let g:slime_python_ipython = 1
 
-
 " Vimtex
 let g:vimtex_view_method = 'skim'
 
-
+" }}}
 " ============================================================================ "
 
+
+" ============================================================================ "
+" Leader keys {{{
 " Useful shortcuts
 "
 inoremap \date <C-R>=strftime("%Y-%m-%d")<CR>
@@ -1236,41 +1198,44 @@ nnoremap \nosym :e <C-R>=resolve(expand("%"))<CR>
 noremap <silent> <Leader>tme :TableModeEnable<CR>
 noremap <silent> <Leader>one :e $MY_ONE_ON_ONE<CR>
 
-" tab to space
-nnoremap <Leader>tts :%s/\t/    /g<CR>
+nnoremap <Leader>def :e $HOME/vimwiki/Definitions.wiki<CR>
 nnoremap <Leader>fs :!fs<CR>
-
-" paste FIX
-nnoremap <Leader>pf :%s/<F2[23]>//g <CR>
-nnoremap <Leader>vf :%s/ / /g <CR>
 nnoremap <Leader>h1 yypVr=
 nnoremap <Leader>h2 yypVr-
-nnoremap TT :wall<CR>: !tmux kill-pane<CR>
-nnoremap <Leader>def :e $HOME/vimwiki/Definitions.wiki<CR>
 nnoremap <Leader>k :VimwikiToggleListItem<CR>
-nnoremap <Leader>tag :!tmsu tag %
+nnoremap <Leader>ma :make -C <C-R>=GitRootFromDir(expand('%:p:h'))<CR>
+nnoremap <Leader>ml :r !make lint <CR>
+nnoremap <Leader>pf :%s/<F2[23]>//g <CR>
 nnoremap <Leader>rmd :!Rscript -e "setwd(Sys.getenv('PWD')); rmarkdown::render('%')" && open %:r.html <CR>
 nnoremap <Leader>rtt :!clear; Rscript -e "setwd(Sys.getenv('PWD')); devtools::load_all();testthat::test_file('%')"<CR>
+nnoremap <Leader>tag :!tmsu tag %
+nnoremap <Leader>tts :%s/\t/    /g<CR> " tab to space
+nnoremap <Leader>vf :%s/ / /g <CR>
 
+nnoremap TT :wall<CR>: !tmux kill-pane<CR>
+" }}}
+" ============================================================================
 
+" ============================================================================
+" Korean {{{
 nnoremap ㅏ k
 nnoremap ㅓ j
 nnoremap ㅑ i
 nnoremap ㅐ o
 nnoremap ㅒ O
 nnoremap ㅇㅇ dd
+" }}}
+" ============================================================================
 
-
+" ============================================================================
+" FZF!!!  {{{
 inoremap <expr> <c-x><c-k> fzf#complete('cat /usr/share/dict/words $HOME/.dotfiles/vim/spell/en.utf-8.add 2>/dev/null')
+" }}}
+" ============================================================================
 
 
-" " Auto resize Vim splits to active split
-" set winwidth=104
-" set winheight=5
-" set winminheight=5
-" set winheight=999
-
-" resize panes
+" ============================================================================
+" resize panes {{{
 nnoremap <silent> <Right> :vertical resize +5<cr>
 nnoremap <silent> <Left> :vertical resize -5<cr>
 nnoremap <silent> <Up> :resize +5<cr>
@@ -1278,11 +1243,14 @@ nnoremap <silent> <Down> :resize -5<cr>
 " automatically rebalance windows on vim resize
 autocmd VimResized * :wincmd =
 
+" }}}
+" ============================================================================
+
 " qq to record, Q to replay
 nnoremap Q @q
 
-" ----------------------------------------------------------------------------
-" tmux
+" ============================================================================
+" tmux related {{{
 " ----------------------------------------------------------------------------
 function! s:tmux_send(content, dest) range
   let dest = empty(a:dest) ? input('To which pane? ') : a:dest
@@ -1307,6 +1275,9 @@ call s:tmux_map('<leader>ty', '.top-left')
 call s:tmux_map('<leader>to', '.top-right')
 call s:tmux_map('<leader>tn', '.bottom-left')
 call s:tmux_map('<leader>t.', '.bottom-right')
+
+" }}}
+" ============================================================================
 
 " ----------------------------------------------------------------------------
 " #!! | Shebang
@@ -1380,7 +1351,6 @@ let g:switch_mapping = '-'
 let g:switch_custom_definitions = [
 \   ['MON', 'TUE', 'WED', 'THU', 'FRI']
 \ ]
-
 
 
 " Automatic rename of tmux window
@@ -1485,12 +1455,9 @@ function! GitRootFromDir(myarg)
     return root
 endfunction
 
-nnoremap <Leader>ma :make -C <C-R>=GitRootFromDir(expand('%:p:h'))<CR>
 
-function! SyntaxToggle()
-    if :set
-endfunction
-
+" ============================================================================
+" YOT YOO {{{
 nnoremap yot :if exists("g:syntax_on") <Bar>
     \   syntax off <Bar>
     \ else <Bar>
@@ -1502,6 +1469,8 @@ nnoremap yoo :if &conceallevel==2<Bar>
     \ else <Bar>
     \   set conceallevel=2<Bar>
     \ endif <CR>
+" }}}
+" ============================================================================
 
 
 au FileWritePost * :redraw!
@@ -1511,6 +1480,8 @@ au QuickFixCmdPre * :redraw!
 au QuickFixCmdPost * :redraw!
 
 
+" ============================================================================
+" Next fold {{{
 nnoremap <silent> <leader>zj :call NextClosedFold('j')<cr>
 nnoremap <silent> <leader>zk :call NextClosedFold('k')<cr>
 function! NextClosedFold(dir)
@@ -1526,6 +1497,9 @@ function! NextClosedFold(dir)
         call winrestview(view)
     endif
 endfunction
+" }}}
+" ============================================================================
+
 
 
 let g:SimpylFold_fold_import = 1
@@ -1553,15 +1527,11 @@ nnoremap <Leader>mg :Magit<CR>
 let g:ctrlp_working_path_mode = 0
 
 
-"let g:rooter_targets = 'COMMIT_EDITMSG'
+" ============================================================================
+" NVim R {{{
 
+let R_args = ['--no-save', '--quiet']
 
-
-" nmap gs  <plug>(GrepperOperator)
-" xmap gs  <plug>(GrepperOperator)
-
-
-" NVim R
 " press -- to have Nvim-R insert the assignment operator: <-
 let R_assign_map = "--"
 
@@ -1601,18 +1571,6 @@ autocmd FileType rmd inoremap <silent> ✠ <Esc>:call SendLineToR("stay")<CR><Es
 autocmd FileType rmd inoremap <silent> œ <Esc>:call SendParagraphToR("echo", "stay")<CR>A
 "autocmd FileType rmd vnoremap ✠ :call SendSelectionToR("echo", "stay", "normal")<CR>
 
-autocmd FileType gitcommit set foldlevelstart=10 "open's all folds
-autocmd FileType gitcommit set foldlevel=10 "open's all folds
-
-autocmd FileType make set foldlevelstart=1 "open's all folds
-autocmd FileType make set foldlevel=1 "open's all folds
-
-
-let g:golden_ratio_autocommand = 0
-autocmd FileType r let g:golden_ratio_autocommand = 0
-autocmd FileType rbrowser let g:golden_ratio_autocommand = 0
-
-
 let R_assign = 0
 if has('terminal')
 	tnoremap <C-k> <C-w>k
@@ -1627,9 +1585,27 @@ if has('terminal')
 	tmap <C-z> <C-w>N<C-z>
 endif
 
-let g:rainbow_active = 0
+" }}}
+" ============================================================================
+" ============================================================================
+" Autocmd FileType {{{
+autocmd FileType gitcommit set foldlevelstart=10 "open's all folds
+autocmd FileType gitcommit set foldlevel=10 "open's all folds
 
-" Spanish
+autocmd FileType make set foldlevelstart=1 "open's all folds
+autocmd FileType make set foldlevel=1 "open's all folds
+
+
+let g:golden_ratio_autocommand = 0
+autocmd FileType r let g:golden_ratio_autocommand = 0
+autocmd FileType rbrowser let g:golden_ratio_autocommand = 0
+
+" }}}
+" ============================================================================
+
+
+" ============================================================================
+" Spanish {{{
 
 iabbrev ma_s más
 iabbrev fri_os fríos
@@ -1637,15 +1613,17 @@ iabbrev waht what
 iabbrev que_ qué
 iabbrev dejo_ dejó
 
-"
-command! BlackAuto autocmd BufWritePre *.py execute ':Black'
 
-autocmd FileType python nmap <Space> <Plug>SlimeParagraphSend
-autocmd FileType python vmap <Space> <Plug>SlimeRegionSend
+" }}}j
+" ============================================================================
 
+" ============================================================================
+" Custom commands {{{
 command! Focus execute "normal! zMzvzz"
 command! Focus2 execute "normal! zMzOzz"
-let R_args = ['--no-save', '--quiet']
+" }}}
+" ============================================================================
+
 
 function! MoveLibrary()
 	silent! let @a=''
@@ -1694,8 +1672,8 @@ function! JumpToLastEdit()
 endfunction
 command! JumpToLastEdit :call JumpToLastEdit()
 
-
-
+" ============================================================================
+" # SortUnfold {{{
 
 ":[range]SortUnfolded[!] [i][u][r][n][x][o] [/{pattern}/]
 "			Sort visible lines in [range]. Lines inside closed folds
@@ -1806,27 +1784,15 @@ endfunction
 command! -bang -range=% -nargs=* SortUnfolded call setline(<line1>, getline(<line1>)) | call s:SortUnfolded('<bang>', <line1>, <line2>, <q-args>)
 
 
-
 nnoremap <LocalLeader>tog :!toggl-start <C-R>=expand('<cWORD>')<CR>
 
-
-command! -bang BTags2
-  \ call fzf#vim#buffer_tags('', {
-  \     'down': '40%',
-  \     'options': '--with-nth 1
-  \                 --reverse
-  \                 --prompt "> "
-  \                 --preview-window="40%"
-  \                 --preview "bat {2} |
-  \                     tail -n +\$(echo {3} | tr -d \";\\\"\") |
-  \                     head -n 16" '
-  \ })
-
-
-" # Comma Leader key
+" }}}
+" ============================================================================
+" ============================================================================
+" # Comma Leader key {{{
+"
 
 nnoremap <silent> ,c  :CocConfig<CR>
-
 " E as in Error
 nnoremap <silent> ,e  :<C-u>CocList diagnostics<cr>
 " O as in Only
@@ -1850,6 +1816,10 @@ nnoremap <silent> [j :call NextClosedFold('k')<cr>
 " else
 " endif
 
+" }}}
+" ============================================================================
+" ============================================================================
+" # Dynamic Numbering {{{
 
 " Dynamic numbering + Colorize line numbers in insert and visual modes
 " From https://stackoverflow.com/a/15587011/1058663
@@ -1891,7 +1861,6 @@ nnoremap <silent> <script> v :call SetCursorLineNrColorVisual()<CR>v
 nnoremap <silent> <script> V :call SetCursorLineNrColorVisual()<CR>V
 nnoremap <silent> <script> <C-v> :call SetCursorLineNrColorVisual()<CR><C-v>
 
-
 augroup CursorLineNrColorSwap
     autocmd!
     autocmd InsertEnter * call SetCursorLineNrColorInsert(v:insertmode)
@@ -1899,5 +1868,8 @@ augroup CursorLineNrColorSwap
     autocmd CursorHold * call ResetCursorLineNrColor()
 augroup END
 
+
+" }}}
+" ============================================================================
+"
 inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
-inoremap <expr> <esc> pumvisible() ? "\<C-e>" : "\<C-g>u\<CR>"
