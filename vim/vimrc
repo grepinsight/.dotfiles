@@ -8,7 +8,7 @@ let vimrplugin_assign = 0 " Stop annoying vimRplugin reassignment
 let s:darwin = has('mac')
 " }}}
 " ============================================================================
-" Basic Settings {{{
+" # Basic Settings {{{
 " ============================================================================
 " Vim 8 defaults
 unlet! skip_defaults_vim
@@ -54,7 +54,7 @@ let maplocalleader=" "
 
 " }}}
 " ============================================================================
-" VIM_PLUGIN BLOCK {{{
+" # Plugin Setup VIM_PLUGIN BLOCK {{{
 " ============================================================================
 " ----------------------------------------------------------------------------
 " Automatically install Vim Plug {{{
@@ -134,14 +134,16 @@ Plug 'tmhedberg/SimpylFold'
 "Plug 'MattesGroeger/vim-bookmarks'
 
 " Editing
-Plug 'tpope/vim-surround'
+Plug 'tpope/vim-surround'              " surround text objects with whatever
+Plug 'junegunn/vim-easy-align'         " perform alignment easier
+Plug 'tommcdo/vim-exchange'            " swap two text objects
+Plug 'michaeljsmith/vim-indent-object' " text object
 Plug 'AndrewRadev/splitjoin.vim'
 Plug 'tpope/vim-repeat'
 Plug 'terryma/vim-multiple-cursors'
 Plug 'junegunn/vim-after-object'
 Plug 'sjl/gundo.vim'
 Plug 'tpope/vim-commentary'
-Plug 'tommcdo/vim-exchange'
 "Plug 'jiangmiao/auto-pairs'
 Plug 'Yggdroot/indentLine'
 Plug 'bronson/vim-trailing-whitespace'
@@ -149,7 +151,6 @@ Plug 'dhruvasagar/vim-table-mode'
 Plug 'elzr/vim-json'
 Plug 'Konfekt/FastFold'
 Plug 'kalekundert/vim-coiled-snake'
-Plug 'junegunn/vim-easy-align'
 
 " Git
 Plug 'airblade/vim-gitgutter'
@@ -181,7 +182,6 @@ Plug 'psf/black'
 Plug 'davidhalter/jedi-vim'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'fatih/vim-go'
-Plug 'michaeljsmith/vim-indent-object'
 Plug 'kana/vim-textobj-user'
 Plug 'jeetsukumaran/vim-pythonsense'
 Plug 'vim-pandoc/vim-pandoc'
@@ -207,6 +207,8 @@ Plug 'ervandew/supertab'
 Plug 'grepinsight/mysnippets'
 
 " Writing
+Plug 'christoomey/vim-titlecase'
+"let g:titlecase_map_keys = 0
 Plug 'plasticboy/vim-markdown'
 Plug 'coachshea/vim-textobj-markdown'
 Plug 'masukomi/vim-markdown-folding'
@@ -430,6 +432,7 @@ nnoremap <Leader>bsl :tabnew $HOME/.dotfiles/bash/local/bash_settings_local<CR>
 " }}}
 
 "Align Text {{{
+
 nnoremap <leader>Al :left<cr>
 nnoremap <leader>Ac :center<cr>
 nnoremap <leader>Ar :right<cr>
@@ -470,58 +473,8 @@ set undodir=$HOME/.vim/undo " where to save undo histories
 set undolevels=10000         " How many undos
 set undoreload=10000        " number of lines to save for undo
 " }}}
-" ----------------------------------------------------------------------------
-" Spelling related {{{
-let g:spell_is_open = 0
-
-function! SpellToggle()
-    if g:spell_is_open
-        let g:spell_is_open = 0
-        :w
-        :mkspell! $HOME/.dotfiles/vim/spell/en.utf-8.add
-        :bd
-        execute g:spell_return_to_window . "wincmd w"
-    else
-        let g:spell_return_to_window = winnr()
-        :vsplit $HOME/.dotfiles/vim/spell/en.utf-8.add
-        let g:spell_is_open = 1
-    endif
-endfunction
-
-"nnoremap <Leader>sp :call SpellToggle()<CR>
-nnoremap <Leader>nsp :set nospell<CR>
-nnoremap <Leader>ssp :set spell<CR>
-inoremap <Leader>sp <Esc>:call SpellToggle()<CR>
 
 " }}}
-" ----------------------------------------------------------------------------
-" ----------------------------------------------------------------------------
-" Notes Related {{{
-nnoremap <Leader>nt :e $INSIGHT_NOTEPATH/<C-R>=strftime("%Y-%m-%d")<CR>.md<CR>
-nnoremap <Leader>vn :e $INSIGHT_NOTEPATH/<C-R>=strftime("%Y-%m-%d")<CR>.md<CR>
-nnoremap <Leader>no :call NoteToggle()<CR>
-inoremap <Leader>no <Esc>:call NoteToggle()<CR>
-
-"""
-
-let g:note_is_open = 0
-
-function! NoteToggle()
-    if g:note_is_open
-        let g:note_is_open = 0
-        " TODO close CMD here
-        :w
-        :bd
-        execute g:note_return_to_window . "wincmd w"
-    else
-        let g:note_return_to_window = winnr()
-        :vsplit $HOME/src/notes/scratch.md
-        let g:note_is_open = 1
-    endif
-endfunction
-
-" }}}
-" ----------------------------------------------------------------------------
 " ----------------------------------------------------------------------------
 "  Mouse Related {{{
 " Allow mouse for easy resizing
@@ -871,8 +824,66 @@ autocmd! User GoyoLeave nested call <SID>goyo_leave()
 
 " }}}
 " ============================================================================
-" Plugin Specific Settings {{{
+" # Plugin Specific Settings {{{
 " ============================================================================
+
+" ----------------------------------------------------------------------------
+" coc
+" ----------------------------------------------------------------------------
+
+autocmd FileType vimwiki let b:coc_suggest_disable = 1
+let g:coc_global_extensions = ['coc-emoji', 'coc-eslint', 'coc-prettier', 'coc-tsserver', 'coc-tslint', 'coc-tslint-plugin', 'coc-css', 'coc-json', 'coc-pyls', 'coc-yaml']
+
+" Remap keys for gotos
+nmap <silent> <leader>ld <Plug>(coc-definition)
+nmap <silent> <leader>lt <Plug>(coc-type-definition)
+nmap <silent> <leader>li <Plug>(coc-implementation)
+nmap <silent> <leader>lf <Plug>(coc-references)
+
+
+function! ShowDocumentation()
+  if &filetype == 'vim'
+    execute 'h '.expand('<cWORD>')
+  else
+    call CocAction('doHover')
+  endif
+endfunction
+" Use K for show documentation in preview window
+nnoremap <silent> <leader>K :call ShowDocumentation()<CR>
+
+" Highlight symbol under cursor on CursorHold
+autocmd CursorHold * silent call CocActionAsync('highlight')
+nnoremap gs <Plug>(coc-git-chunkinfo)
+
+function! CocSuggestionToggle()
+    if !exists("b:coc_suggest_disable")
+        let b:coc_suggest_disable = 1
+        echo("Coc Suggestion Disabled!")
+    elseif b:coc_suggest_disable
+        let b:coc_suggest_disable = 0
+        echo("Coc Suggestion Enabled!")
+    else
+        let b:coc_suggest_disable = 1
+        echo("Coc Suggestion Disabled!")
+    endif
+endfunction
+
+
+nnoremap yococ :call CocSuggestionToggle()<CR>
+
+
+" ----------------------------------------------------------------------------
+" EasyAlign
+" ----------------------------------------------------------------------------
+" Start interactive EasyAlign in visual mode (e.g. vip<Enter>)
+vmap <Enter> <Plug>(EasyAlign)
+
+" Start interactive EasyAlign in visual mode (e.g. vipga)
+xmap ga <Plug>(EasyAlign)
+
+" Start interactive EasyAlign for a motion/text object (e.g. gaip)
+nmap ga <Plug>(EasyAlign)
+
 " ----------------------------------------------------------------------------
 " Plugin - vim-sneak ----
 " ----------------------------------------------------------------------------
@@ -894,7 +905,6 @@ let g:vimwiki_conceallevel = 1
 
 
 autocmd FileType vimwiki let g:vim_markdown_folding_disabled = 1  " Let the vimwiki handle the folding
-autocmd FileType vimwiki let b:coc_suggest_disable = 1
 
 
 noremap <LocalLeader>x :VimwikiToggleListItem<CR>
@@ -1420,62 +1430,6 @@ let g:tagbar_type_rmd = {
           \ }
 
 let g:sneak#use_ic_scs = 1
-
-
-" conflicts with unimparied
-
-
-call textobj#user#plugin('rmd', {
-      \   'chunk': {
-      \     'select-a-function': 'textobj#markdown#chunk#af',
-      \     'select-a': '<buffer>af',
-      \     'select-i-function': 'textobj#markdown#chunk#if',
-      \     'select-i': '<buffer>if',
-      \     'pattern': '```\S',
-      \     'move-n': '<buffer>]f',
-      \     'move-p': '<buffer>[f',
-      \     'region-type': 'V',
-      \   },
-      \   'Btext': {
-      \     'select-a': '<buffer>aM',
-      \     'select-a-function': 'textobj#markdown#text#aM',
-      \     'select-i': '<buffer>iM',
-      \     'select-i-function': 'textobj#markdown#text#iM',
-      \     'move-n': '<buffer>]n',
-      \     'move-n-function': 'textobj#markdown#text#N',
-      \     'move-p': '<buffer>[n',
-      \     'move-p-function': 'textobj#markdown#text#P',
-      \     'region-type': 'V',
-      \   },
-      \ })
-
-" Custom text object
-call textobj#user#plugin('rmdmine', {
-\   'date': {
-\     'pattern': '\<\d\d\d\d-\d\d-\d\d\>',
-\     'select': ['ad', 'id'],
-\   },
-\   'bfunc': {
-\     'pattern': 'function\S',
-\     'move-p': '<buffer>[i',
-\   },
-\   'ffunc': {
-\     'pattern': 'function\S',
-\     'move-n': '<buffer>]i',
-\   },
-\   'FuncBlock': {
-\     'pattern': '# Funcs\S',
-\     'move-n': '<buffer>[F',
-\   },
-\ })
-
-
-" Start interactive EasyAlign in visual mode (e.g. vipga)
-xmap ga <Plug>(EasyAlign)
-
-" Start interactive EasyAlign for a motion/text object (e.g. gaip)
-nmap ga <Plug>(EasyAlign)
-
 inoremap <Leader>fix <c-g>u<Esc>[s1z=`]a<c-g>u
 inoremap <Leader>sp <c-g>u<Esc>[s1z=`]a<c-g>u
 
@@ -1552,10 +1506,10 @@ let g:SimpylFold_fold_import = 1
 set autoindent
 set copyindent
 
-let g:LanguageClient_serverCommands = {
-    \ 'r': ['R', '--slave', '-e', 'languageserver::run()'],
-    \ 'rmd': ['R', '--slave', '-e', 'languageserver::run()'],
-    \ }
+" let g:LanguageClient_serverCommands = {
+"     \ 'r': ['R', '--slave', '-e', 'languageserver::run()'],
+"     \ 'rmd': ['R', '--slave', '-e', 'languageserver::run()'],
+"     \ }
 
 nnoremap <Leader>rg :Rg! <C-R><C-W><CR>
 "let g:signify_vcs_list = [ 'git', 'hg' ]
@@ -1572,33 +1526,9 @@ nnoremap <Leader>mg :Magit<CR>
 let g:ctrlp_working_path_mode = 0
 
 
-let g:coc_global_extensions = ['coc-emoji', 'coc-eslint', 'coc-prettier', 'coc-tsserver', 'coc-tslint', 'coc-tslint-plugin', 'coc-css', 'coc-json', 'coc-pyls', 'coc-yaml']
-
-" Remap keys for gotos
-nmap <silent> <leader>ld <Plug>(coc-definition)
-nmap <silent> <leader>lt <Plug>(coc-type-definition)
-nmap <silent> <leader>li <Plug>(coc-implementation)
-nmap <silent> <leader>lf <Plug>(coc-references)
-
-
-" Use K for show documentation in preview window
-nnoremap <silent> <leader>K :call <SID>show_documentation()<CR>
-
-function! s:show_documentation()
-  if &filetype == 'vim'
-    execute 'h '.expand('<cWORD>')
-  else
-    call CocAction('doHover')
-  endif
-endfunction
-
-" Highlight symbol under cursor on CursorHold
-autocmd CursorHold * silent call CocActionAsync('highlight')
-
 "let g:rooter_targets = 'COMMIT_EDITMSG'
 
 
-nnoremap gs <Plug>(coc-git-chunkinfo)
 
 " nmap gs  <plug>(GrepperOperator)
 " xmap gs  <plug>(GrepperOperator)
@@ -1665,22 +1595,6 @@ tmap <C-j> <C-w>N:TmuxNavigateDown<cr>
 tmap <C-z> <C-w>N<C-z>
 
 let g:rainbow_active = 0
-
-function! CocSuggestionToggle()
-    if !exists("b:coc_suggest_disable")
-        let b:coc_suggest_disable = 1
-        echo("Coc Suggestion Disabled!")
-    elseif b:coc_suggest_disable
-        let b:coc_suggest_disable = 0
-        echo("Coc Suggestion Enabled!")
-    else
-        let b:coc_suggest_disable = 1
-        echo("Coc Suggestion Disabled!")
-    endif
-endfunction
-
-
-nnoremap yococ :call CocSuggestionToggle()<CR>
 
 " Spanish
 
@@ -1877,10 +1791,16 @@ command! -bang BTags2
   \ })
 
 
+" # Comman Leader key
 nnoremap ,r :BTags<CR>
-nnoremap ,t :BTags2<CR>
+nnoremap ,t :term<CR>
 nnoremap ,h :History<CR>
+nmap ,l yor
 
+
+" # Bracket Leader keys
+nnoremap <silent> ]j :call NextClosedFold('j')<cr>
+nnoremap <silent> [j :call NextClosedFold('k')<cr>
 " if v:version >= 704
 " else
 " endif
