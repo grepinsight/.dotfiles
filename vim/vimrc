@@ -87,7 +87,6 @@ Plug 'ryanoasis/vim-devicons'
 "Plug 'yuttie/comfortable-motion.vim'
 "Plug 'ap/vim-css-color'
 " Color picker
-Plug 'DougBeney/pickachu'
 Plug 'luochen1990/rainbow'
 
 " Session Management
@@ -177,11 +176,6 @@ Plug 'gaalcaras/ncm-R'
 Plug 'ncm2/ncm2-bufword'
 Plug 'ncm2/ncm2-path'
 
-" Python/Go/Other Languages
-if executable('black')
-	Plug 'psf/black'
-endif
-
 
 Plug 'davidhalter/jedi-vim'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
@@ -236,8 +230,6 @@ Plug 'roman/golden-ratio'
 " Misc
 "Plug 'wincent/terminus'  " Make terminal and vim play nicely. Supports auto change
 Plug 'dhruvasagar/vim-zoom'
-Plug 'szw/vim-g'
-" Plug 'mattn/emmet-vim'
 Plug 'tomtom/tlib_vim'
 Plug 'itchyny/calendar.vim'
 Plug 'sgur/vim-editorconfig'
@@ -249,6 +241,11 @@ Plug 'maverickg/stan.vim'
 Plug 'ibab/vim-snakemake'
 Plug 'broadinstitute/vim-wdl'
 
+
+" Deprecated
+" Plug 'szw/vim-g'
+" Plug 'mattn/emmet-vim'
+" Plug 'DougBeney/pickachu'
 
 call plug#end()
 
