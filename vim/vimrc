@@ -80,7 +80,7 @@ Plug 'cormacrelf/vim-colors-github'
 " Looks / Status
 " Start page
 Plug 'mhinz/vim-startify'
-Plug 'flazz/vim-colorschemes'
+"Plug 'flazz/vim-colorschemes'
 Plug 'vim-airline/vim-airline'
 Plug 'junegunn/seoul256.vim'
 Plug 'ryanoasis/vim-devicons'
@@ -183,10 +183,6 @@ Plug 'kana/vim-textobj-user'
 Plug 'jeetsukumaran/vim-pythonsense'
 Plug 'vim-pandoc/vim-pandoc'
 Plug 'vim-pandoc/vim-pandoc-syntax'
-Plug 'autozimu/LanguageClient-neovim', {
-    \ 'branch': 'next',
-    \ 'do': 'bash install.sh',
-    \ }
 
 " Lint
 Plug 'w0rp/ale'
@@ -245,7 +241,14 @@ if executable('black')
 endif
 
 
+" Profiling
+Plug 'tweekmonster/startuptime.vim'
+
 " Deprecated
+" Plug 'autozimu/LanguageClient-neovim', {
+"     \ 'branch': 'next',
+"     \ 'do': 'bash install.sh',
+"     \ }
 " Plug 'szw/vim-g'
 " Plug 'mattn/emmet-vim'
 " Plug 'DougBeney/pickachu'
@@ -288,7 +291,7 @@ nnoremap <LocalLeader>q :quit <CR>
 nnoremap <LocalLeader>t :!typora "%"<CR>
 nnoremap <LocalLeader>w :write <CR>
 nnoremap <LocalLeader>wq :wq <CR>
-nnoremap <LocalLeader>y :Goyo<CR>
+nnoremap <LocalLeader>y :Goyo 120<CR>
 nnoremap <silent> <LocalLeader>p :let @" = expand("%:p")<CR> <bar> :echo expand('%:p')<CR>
 nnoremap <LocalLeader>a :A <CR>
 
@@ -744,6 +747,7 @@ if hr <= 6 || hr >= 18
 else
     let cs = 'seoul256-light'
 endif
+let cs = 'deus'
 execute 'colorscheme '.cs
 
 " github theme
@@ -865,7 +869,7 @@ endfunction
 nnoremap <silent> <leader>K :call ShowDocumentation()<CR>
 
 " Highlight symbol under cursor on CursorHold
-autocmd CursorHold * silent call CocActionAsync('highlight')
+"autocmd CursorHold * silent call CocActionAsync('highlight')
 nmap gs <Plug>(coc-git-chunkinfo)
 
 " Create mappings for function text object, requires document symbols feature of languageserver.
@@ -985,7 +989,7 @@ nnoremap [al :ALEPrevious<CR>
 let g:ale_linters={'python': ['mypy'], 'r': ['lintr'] }
 let g:ale_fixers = {'python': ['yapf'], 'r': ['styler'], 'rmd': ['styler']}
 
-autocmd FileType r let g:ale_fix_on_save = 1
+"autocmd FileType r let g:ale_fix_on_save = 1
 let g:ale_python_mypy_options="--ignore-missing-imports"
 
 
@@ -1349,7 +1353,8 @@ xnoremap <leader>! "gy:call <SID>goog(@g, 1)<cr>gv
 " ----------------------------------------------------------------------------
 let g:switch_mapping = '-'
 let g:switch_custom_definitions = [
-\   ['MON', 'TUE', 'WED', 'THU', 'FRI']
+\   ['MON', 'TUE', 'WED', 'THU', 'FRI'],
+\   ['TRUE', 'FALSE']
 \ ]
 
 
@@ -1473,11 +1478,11 @@ nnoremap yoo :if &conceallevel==2<Bar>
 " ============================================================================
 
 
-au FileWritePost * :redraw!
-au TermResponse * :redraw!
-au TextChanged * :redraw!
-au QuickFixCmdPre * :redraw!
-au QuickFixCmdPost * :redraw!
+" au FileWritePost * :redraw!
+" au TermResponse * :redraw!
+" au TextChanged * :redraw!
+" au QuickFixCmdPre * :redraw!
+" au QuickFixCmdPost * :redraw!
 
 
 " ============================================================================
@@ -1873,3 +1878,6 @@ augroup END
 " ============================================================================
 "
 inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+
+let g:pandoc#modules#disabled = ['formatting']
+
