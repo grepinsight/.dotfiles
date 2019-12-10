@@ -30,7 +30,7 @@ set autoread            " automatically read changed file again
 set autowrite
 set nocompatible        " enable modern vim features
 set cursorline          " highlight current line
-set lazyredraw          " redraw only when we need to.
+"set lazyredraw          " redraw only when we need to.
 set regexpengine=1
 set showmatch           " highlight matching [{()}]
 set foldenable          " enable folding
@@ -191,7 +191,7 @@ Plug 'vim-pandoc/vim-pandoc'
 Plug 'vim-pandoc/vim-pandoc-syntax'
 
 " Lint
-Plug 'w0rp/ale'
+"Plug 'w0rp/ale'
 
 " Completions and snippets
 " if v:version >= 800
@@ -572,11 +572,10 @@ nmap <silent> <leader>pw :call DoWindowSwap()<CR>
 nnoremap <silent> <leader>A :set opfunc=<SID>AckMotion<CR>g@
 xnoremap <silent> <leader>A :<C-U>call <SID>AckMotion(visualmode())<CR>
 xnoremap <silent> <leader>A :<C-U>call <SID>AckMotion(visualmode())<CR>
-
+nmap <Leader>ack :Ack! "\b<cword>\b" <CR>
 "nnoremap <bs> :Ack! '\b<c-r><c-w>\b'<cr>
 "xnoremap <silent> <bs> :<C-U>call <SID>AckMotion(visualmode())<CR>
 
-nmap <Leader>ack :Ack! "\b<cword>\b" <CR>
 
 
 function! s:CopyMotionForType(type)
@@ -603,12 +602,12 @@ au CursorHold * checktime
 
 " Useful hotkeys
 
+nnoremap <Leader>btt :bufdo tab split<CR>
+nnoremap <Leader>gi :e ./.gitignore<CR>
 nnoremap <Leader>hh :Helptags<CR>
 nnoremap <Leader>ht :Helptags<CR>
-nnoremap <Leader>gi :e ./.gitignore<CR>
-nnoremap <Leader>btt :bufdo tab split<CR>
-nnoremap <Leader>tc :tabclose<CR>
 nnoremap <Leader>ls :ls<CR>
+vnoremap <Leader>tc :<C-U>silent! normal! gV:!titlecase<CR>
 
 " Open markdown
 nnoremap <Leader>md :w<CR> :!cygstart %<CR>
