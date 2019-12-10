@@ -147,7 +147,7 @@ set -g @plugin 'tmux-plugins/tmux-open'
 set -g @plugin 'tmux-plugins/tmux-yank'
 set -g @open-G 'https://www.google.com/search?q='
 set -g @plugin 'tmux-plugins/tmux-resurrect'
-set -g @plugin 'tmux-plugins/tmux-continuum'
+#set -g @plugin 'tmux-plugins/tmux-continuum'
 set -g @plugin 'tmux-plugins/tmux-battery'
 set -g @plugin 'jbnicolai/tmux-fpp'
 set -g @plugin 'tmux-plugins/tmux-sidebar'
@@ -155,7 +155,7 @@ set -g @plugin 'Morantron/tmux-fingers'
 set -g @plugin 'tmux-plugins/tmux-urlview'
 set -g @plugin 'robhurring/tmux-spotify'
 set -g @plugin 'tmux-plugins/tmux-sensible'
-set -g @continuum-restore 'on'
+
 
 # Finger setup
 set -g @fingers-pattern-0 '#[A-Za-z0-9][A-Za-z0-9][A-Za-z0-9][A-Za-z0-9][A-Za-z0-9][A-Za-z0-9]' # rgb code
@@ -175,7 +175,7 @@ set -g @fingers-pattern-13 'applet-[0-9A-Za-z]*'
 set -g @fingers-pattern-14 'H[A-Z]*_[0-9]*_[A-Z0-9]*'
 set -g @fingers-pattern-15 '[A-Z]{3,}-[0-9]{2,}--[A-Za-z0-9_-]*'
 set -g @fingers-copy-command 'rpbcopy'
-set -g @continuum-restore 'on'
+#set -g @continuum-restore 'on'
 
 run '~/.tmux/plugins/tpm/tpm'
 

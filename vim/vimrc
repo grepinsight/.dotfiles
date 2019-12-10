@@ -4,6 +4,12 @@
 " ============================================================================
 " Variables {{{
 " ============================================================================
+"
+if has('nvim') 
+	let g:python_host_skip_check=1 
+	let g:loaded_python3_provider=1
+endif
+
 let vimrplugin_assign = 0 " Stop annoying vimRplugin reassignment
 let s:darwin = has('mac')
 " }}}
@@ -229,6 +235,7 @@ Plug 'tomtom/tlib_vim'
 Plug 'itchyny/calendar.vim'
 Plug 'sgur/vim-editorconfig'
 Plug 'chrisbra/csv.vim'
+Plug 'liuchengxu/vim-which-key'
 
 
 " Syntax Highlighting
@@ -596,6 +603,8 @@ au CursorHold * checktime
 
 " Useful hotkeys
 
+nnoremap <Leader>hh :Helptags<CR>
+nnoremap <Leader>ht :Helptags<CR>
 nnoremap <Leader>gi :e ./.gitignore<CR>
 nnoremap <Leader>btt :bufdo tab split<CR>
 nnoremap <Leader>tc :tabclose<CR>
@@ -663,6 +672,7 @@ nnoremap <leader>gf :GitGutterFold<CR>
 nnoremap <leader>vd :Gvdiff<CR>
 nnoremap <localleader>d :Gvdiff<CR>
 nnoremap <leader>gvd :Gvdiff<CR>
+nnoremap <leader>gd :Gvdiff<CR>
 nnoremap <leader>gau :Git add -u<CR><CR>
 
 "  - diff
@@ -1881,3 +1891,7 @@ inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 
 let g:pandoc#modules#disabled = ['formatting']
 
+
+nnoremap <silent> <Leader> :<c-u>WhichKey  '\'<CR>
+nnoremap <silent> <LocalLeader> :<c-u>WhichKey  '<Space>'<CR>
+nnoremap <silent> , :<c-u>WhichKey  ','<CR>

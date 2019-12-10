@@ -36,6 +36,13 @@ if [[ ! -d $HOME/.vim/ftplugin ]]; then
 	git clone git@github.com:grepinsight/ftplugin.git $HOME/.vim/ftplugin
 fi
 
+
+### FD
+if [[ ! -f  $HOME/.fdignore ]]; then
+    echo "Adding FD ignore"
+    ln -s $HOME/.dotfiles/fd/fdignore ../.fdignore
+fi
+
 ### Tools
 echo "--- Downloading useful tools ---"
 if which git 2>/dev/null >&2 ; then
