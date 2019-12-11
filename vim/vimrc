@@ -413,12 +413,22 @@ function! BufferSmartDelete()
 
 	if num_buf == 1
 		bd
-	else
-		bp
-		bd #
-		if winnr() == 2
-			q
-		endif
+		return
+	endif
+	let diffbufnr = bufnr('^fugitive:')
+    if diffbufnr > -1 && &diff
+        diffoff | q
+        if bufnr('%') == diffbufnr
+            Gedit
+        endif
+        setlocal nocursorbind
+        return
+    endif
+
+	bp
+	bd #
+	if winnr() == 2
+		q
 	endif
 endfunction
 

@@ -8,6 +8,7 @@ trim_trailing_whitespace = false
 
 [vimrc]
 trim_trailing_whitespace = false
+indent_style = space
 
 [*.stan]
 indent_style = space
