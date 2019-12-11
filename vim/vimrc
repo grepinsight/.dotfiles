@@ -1908,3 +1908,8 @@ nnoremap <silent> <LocalLeader> :<c-u>WhichKey  '<Space>'<CR>
 nnoremap <silent> , :<c-u>WhichKey  ','<CR>
 
 let g:cmdline_app = {'python':  'ipython'}
+
+let cmdline_map_send_paragraph = '<Space>'
+
+
+autocmd InsertLeave * execute 'normal! mI'
