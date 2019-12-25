@@ -2,18 +2,6 @@
 " ============================================================================
 " .vimrc of grepinsight
 " ============================================================================
-" Variables {{{
-" ============================================================================
-"
-if has('nvim') 
-    let g:python_host_skip_check=1 
-    let g:loaded_python3_provider=1
-endif
-
-let vimrplugin_assign = 0 " Stop annoying vimRplugin reassignment
-let s:darwin = has('mac')
-" }}}
-" ============================================================================
 " # Basic Settings {{{
 " ============================================================================
 " Vim 8 defaults
@@ -34,13 +22,13 @@ set cursorline          " highlight current line
 set regexpengine=1
 set showmatch           " highlight matching [{()}]
 set foldenable          " enable folding
-set foldlevelstart=0   " open most folds by default
+set foldlevelstart=0    " open most folds by default
 set foldmethod=indent   " fold based on indent level
 set splitright          " split navigation
 set hidden              " allow modified/unsaved buffers in the background.
 set number              " set number
 set smartcase           " if capital letter is used, then do not ignore case
-set ignorecase
+set ignorecase          " If the 'ignorecase' option is on, the case of normal letters is ignored. 
 set shiftwidth=4        " size of an indent
 set softtabstop=4       " Indentation levels very four columns"
 set tabstop=4           " size of a hard tabstop number of visual spaces per TAB
@@ -51,12 +39,27 @@ set wildmenu            " display all matching files when we tab complete
 set noswapfile
 set conceallevel=0
 set splitbelow          " put the horizontal split below
-set scrolloff=2
+set scrolloff=2         " Minimal number of screen lines to keep above and below the cursor.
 set iskeyword+=\-       " for autocompleting a word containing '-'
+set background=dark     " Setting dark mode
+"set clipboard=unnamed
+" }}}
+" ============================================================================
+" # Variables {{{
+" ============================================================================
 
+" Nvim related variables
+if has('nvim') 
+    let g:python_host_skip_check=1 
+    let g:loaded_python3_provider=1
+endif
+
+let vimrplugin_assign = 0 " Stop annoying vimRplugin reassignment
+let s:darwin = has('mac')
+
+" Define maplocalleader
 nnoremap <SPACE> <Nop>
 let maplocalleader=" "
-"set clipboard=unnamed
 
 " }}}
 " ============================================================================
@@ -155,6 +158,7 @@ Plug 'dhruvasagar/vim-table-mode'
 Plug 'elzr/vim-json'
 Plug 'Konfekt/FastFold'
 Plug 'kalekundert/vim-coiled-snake'
+"Plug 'wellle/context.vim'
 
 " Git
 Plug 'airblade/vim-gitgutter'
@@ -219,6 +223,11 @@ Plug 'junegunn/limelight.vim'
 Plug 'ron89/thesaurus_query.vim' "thesaurus
 "Plug 'beloglazov/vim-online-thesaurus'
 Plug 'vimwiki/vimwiki'
+Plug 'mattn/calendar-vim'
+Plug 'jceb/vim-orgmode'
+Plug 'tpope/vim-speeddating'
+Plug 'vim-scripts/utl.vim'
+Plug 'vim-scripts/SyntaxRange'
 Plug 'lervag/vimtex'
 Plug 'reedes/vim-wordy'
 Plug 'AndrewRadev/switch.vim'
@@ -274,13 +283,12 @@ if has('termguicolors')
     let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
 endif
 
-set background=dark " Setting dark mode
 let g:deus_termcolors=256
 
 
 " }}}
 " ============================================================================
-" Productivity Aliases {{{
+" # Productivity Aliases {{{
 " ============================================================================
 
 
@@ -294,7 +302,6 @@ nnoremap <Leader>dot :!cat % \| dot -Tpng > <C-R>=expand('%:r')<CR>.png && open 
 
 " First line
 nnoremap <LocalLeader>e :edit <C-R>=expand('%:p:h') . '/' <CR>
-nnoremap <LocalLeader>h :History<CR>
 nnoremap <LocalLeader>o :only<CR>
 nnoremap <LocalLeader>q :quit <CR>
 nnoremap <LocalLeader>t :!typora "%"<CR>
@@ -855,6 +862,13 @@ autocmd! User GoyoLeave nested call <SID>goyo_leave()
 let g:rooter_silent_chdir = 1
 
 " ----------------------------------------------------------------------------
+" # OrgMode
+" ----------------------------------------------------------------------------
+
+let g:org_agenda_files=['~/Dropbox/vimwiki/*.org']
+let g:org_todo_keywords=['TODO', 'DONE', 'MEETING', 'QUESTION']
+
+" ----------------------------------------------------------------------------
 " # coc
 " ----------------------------------------------------------------------------
 
@@ -915,6 +929,21 @@ endfunction
 
 nnoremap yococ :call CocSuggestionToggle()<CR>
 
+inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+
+" ----------------------------------------------------------------------------
+" Pandoc
+" ----------------------------------------------------------------------------
+
+let g:pandoc#modules#disabled = ['formatting']
+
+" ----------------------------------------------------------------------------
+" Whichkey
+" ----------------------------------------------------------------------------
+
+nnoremap <silent> <Leader> :<c-u>WhichKey  '\'<CR>
+nnoremap <silent> <LocalLeader> :<c-u>WhichKey  '<Space>'<CR>
+nnoremap <silent> , :<c-u>WhichKey  ','<CR>
 
 " ----------------------------------------------------------------------------
 " EasyAlign
@@ -1010,7 +1039,8 @@ nnoremap [al :ALEPrevious<CR>
 let g:ale_linters={'python': ['mypy'], 'r': ['lintr'] }
 let g:ale_fixers = {'python': ['yapf'], 'r': ['styler'], 'rmd': ['styler']}
 
-"autocmd FileType r let g:ale_fix_on_save = 1
+autocmd FileType r let g:ale_fix_on_save = 1
+autocmd FileType rmd let g:ale_fix_on_save = 1
 let g:ale_python_mypy_options="--ignore-missing-imports"
 
 
@@ -1207,7 +1237,6 @@ let g:vimtex_view_method = 'skim'
 " }}}
 " ============================================================================ "
 
-
 " ============================================================================ "
 " Leader keys {{{
 " Useful shortcuts
@@ -1257,7 +1286,6 @@ nnoremap ㅇㅇ dd
 inoremap <expr> <c-x><c-k> fzf#complete('cat /usr/share/dict/words $HOME/.dotfiles/vim/spell/en.utf-8.add 2>/dev/null')
 " }}}
 " ============================================================================
-
 
 " ============================================================================
 " resize panes {{{
@@ -1898,18 +1926,39 @@ augroup END
 " }}}
 " ============================================================================
 "
-inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 
-let g:pandoc#modules#disabled = ['formatting']
-
-
-nnoremap <silent> <Leader> :<c-u>WhichKey  '\'<CR>
-nnoremap <silent> <LocalLeader> :<c-u>WhichKey  '<Space>'<CR>
-nnoremap <silent> , :<c-u>WhichKey  ','<CR>
 
 let g:cmdline_app = {'python':  'ipython'}
 
 let cmdline_map_send_paragraph = '<Space>'
 
 
+
+autocmd BufNewFile *.Rmd 0r ~/src/templates/report-template.Rmd
+
+
+function! ClearReg()
+    let regs=split('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/-"', '\zs')
+    for r in regs
+      call setreg(r, [])
+    endfor
+endfunction
+
+
+let g:detect_mod_reg_state = -1
+function! DetectRegChangeAndUpdateMark()
+    let current_small_register = getreg('"-')
+    let current_mod_register = getreg('""')
+    if g:detect_mod_reg_state != current_small_register || 
+                \ g:detect_mod_reg_state != current_mod_register
+        normal! mM
+        let g:detect_mod_reg_state = current_small_register
+    endif
+endfunction
+
+" Mark I at the position where the last Insert mode occured across the buffer
 autocmd InsertLeave * execute 'normal! mI'
+
+" Mark M at the position when any modification happened in the Normal or Insert mode
+autocmd CursorMoved * call DetectRegChangeAndUpdateMark()
+autocmd InsertLeave * execute 'normal! mM'
