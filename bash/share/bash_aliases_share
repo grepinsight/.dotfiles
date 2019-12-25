@@ -22,6 +22,7 @@ alias reload_alias_share="source $HOME/.dotfiles/bash/share/bash_aliases_share"
 alias reload_alias_local="source $HOME/.dotfiles/bash/local/bash_aliases_local"
 alias reload_bashrc="source $HOME/.bashrc"
 alias lo="exit"
+alias bd="exit" # as in  buffer delete from vim.
 
 ## Fly - will fly to the directory
 _fly() {
