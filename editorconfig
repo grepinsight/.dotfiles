@@ -60,8 +60,5 @@ indent_size = 4
 indent_style = space
 indent_size = 4
 
-[.doingrc]
-indent_style = space
-
 [*.tex]
 trim_trailing_whitespace = true

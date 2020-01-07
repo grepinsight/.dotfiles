@@ -4,7 +4,7 @@ help: ## Prints help for targets with comments
 bootstrap: ## Boostrap configuration
 	bash bootstrap.sh
 
-all: bash_setup tmux_setup git_setup editorconfig_setup## run all recipes
+all: bash_setup tmux_setup git_setup editorconfig_setup ## run all '*_setup' recipes
 
 bash_setup:
 	@echo "Setting up inputrc to give bash superpower of Vim :)"
@@ -41,7 +41,3 @@ update_brew:
 	brew list > osx/brew.list
 	brew cask list > osx/brew.cask.list
 	brew leaves > osx/brew.leaves.list
-
-doing_setup:
-	@echo "Setting up doingrc"
-	ln -sf $$HOME/.dotfiles/etc/doingrc $$HOME/.doingrc
