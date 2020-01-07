@@ -31,6 +31,8 @@ values."
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(
+     go
+     python
      csv
      markdown
      html
@@ -46,9 +48,9 @@ values."
      git
      ;; markdown
      org
-     ;; (shell :variables
-     ;;        shell-default-height 30
-     ;;        shell-default-position 'bottom)
+     (shell :variables
+             shell-default-height 30
+             shell-default-position 'bottom)
      spell-checking
      ;; syntax-checking
      ;; version-control
@@ -57,7 +59,7 @@ values."
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
-   dotspacemacs-additional-packages '()
+   dotspacemacs-additional-packages '(org-sticky-header org-recent-headings org-super-agenda)
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be installed and loaded.
@@ -262,7 +264,7 @@ values."
    ;;                       text-mode
    ;;   :size-limit-kb 1000)
    ;; (default nil)
-   dotspacemacs-line-numbers t
+   dotspacemacs-line-numbers 'relative
    ;; Code folding method. Possible values are `evil' and `origami'.
    ;; (default 'evil)
    dotspacemacs-folding-method 'evil
@@ -312,14 +314,174 @@ layers configuration.
 This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
-  (require 'org-habit)
-  (setq org-agenda-custom-commands
-        '(("c" "Simple agenda view"
-           ((tags "PRIORITY=\"A\""
-                  ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
-                   (org-agenda-overriding-header "High-priority unfinished tasks:")))
-            (agenda "")
-            (alltodo "")))))
+  (setq org-agenda-files
+    (quote
+     ("~/Dropbox/vimwiki/kanban.org_archive"
+      "~/Dropbox/vimwiki/kanban.org"
+      "~/Dropbox/vimwiki/notes.org"
+      "~/Dropbox/vimwiki/topics.org"
+      )))
+
+
+  ;; Otherwise, image is too big
+  (setq org-image-actual-width nil)
+
+  (org-super-agenda-mode)
+  (setq org-agenda-custom-commands (list(quote
+        ("c" "Super zaen view" (
+                                (agenda "" ((org-agenda-span 'day)
+                                            (org-agenda-property-list '("LOCATION" "TEACHER") )
+                                            (org-agenda-property-position 'where-it-fits)
+                                            (org-agenda-property-separator "|" )
+
+                      (org-super-agenda-groups
+                       '((:name "Today"
+                                :time-grid t
+                                :date today
+                                :todo "TODAY"
+                                :scheduled today
+                                :order 1
+                                )))))
+          (alltodo "" ((org-agenda-overriding-header "")
+                       (org-agenda-property-list '("LOCATION" "TEACHER") )
+                       (org-agenda-property-position 'where-it-fits)
+                       (org-agenda-property-separator "|" )
+
+                       (org-super-agenda-groups
+                        '((:name "Next to do"
+                                 :todo "NEXT"
+                                 :order 1)
+                          (:name "Important"
+                                 :tag "Important"
+                                 :priority "A"
+                                 :order 6)
+                          (:name "Due Today"
+                                 :deadline today
+                                 :order 2)
+                          (:name "Habit"
+                                 :and(:habit t :scheduled today)
+                                 :order 2)
+                          (:name "Due Soon"
+                                 :deadline future
+                                 :order 8)
+                          (:name "Overdue"
+                                 :deadline past
+                                 :order 7)
+                          (:name "Assignments"
+                                 :tag "assignment"
+                                 :order 10)
+                          (:name "Issues"
+                                 :tag "issue"
+                                 :order 12)
+                          (:name "Projects"
+                                 :tag "project"
+                                 :order 14)
+                          (:name "Emacs"
+                                 :tag "Emacs"
+                                 :order 13)
+                          (:name "In-Progress"
+                                 :todo "IN-PROGRESS"
+                                 :order 13)
+                          (:name "Research"
+                                 :tag "Research"
+                                 :order 15)
+                          (:name "To read"
+                                 :tag "read"
+                                 :order 30)
+
+                          (:order-multi (40 (:name "Done today"
+                                                   :and (:regexp "State \"DONE\""
+                                                                 :log t))
+                                            (:name "Clocked today"
+                                                   :log t
+                                                   )))
+                          (:name "Waiting"
+                                 :and(:todo "WAIT" :not(:tag "work"))
+                                 :order 20)
+                          (:name "Waiting/Work"
+                                 :and(:todo "WAIT" :tag "work")
+                                 :order 20)
+                          (:name "trivial"
+                                 :priority<= "C"
+                                 :tag ("trivial" "unimportant")
+                                 :todo ("MAYBE" )
+                                 :order 90)
+                          (:discard (:tag ("Chore" "Routine" "Daily")))
+                          ))
+                       )))
+         ) ; Super zaen view
+        )))
+
+
+
+
+
+  ;; Org-capture
+  (setq org-default-notes-file "~/Dropbox/vimwiki/kanban.org")
+
+  ;; Capture templates for: TODO tasks, Notes, appointments, phone calls, meetings, and org-protocol
+  (setq org-capture-templates
+        (quote (("t" "todo" entry (file "~/Dropbox/vimwiki/kanban.org")
+                "** TODO %?\n%U\n%a\n" :clock-in t :clock-resume t)
+                ("r" "respond" entry (file "~/Dropbox/vimwiki/kanban.org")
+                "** NEXT Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n" :clock-in t :clock-resume t :immediate-finish t)
+                ("n" "note" entry (file "~/Dropbox/vimwiki/kanban.org")
+                "** %? :NOTE:\n%U\n%a\n" :clock-in t :clock-resume t)
+                ("j" "Journal" entry (file+datetree "~/Dropbox/vimwiki/kanban.org")
+                "** %?\n%U\n" :clock-in t :clock-resume t)
+                ("w" "org-protocol" entry (file "~/Dropbox/vimwiki/kanban.org")
+                "** TODO Review %c\n%U\n" :immediate-finish t)
+                ("m" "Meeting" entry (file "~/Dropbox/vimwiki/kanban.org")
+                "** MEETING with %? :MEETING:\n%U" :clock-in t :clock-resume t)
+                ("p" "Phone call" entry (file "~/Dropbox/vimwiki/kanban.org")
+                "** PHONE %? :PHONE:\n%U" :clock-in t :clock-resume t)
+                ("h" "Habit" entry (file "~/Dropbox/vimwiki/kanban.org")
+                "** NEXT %?\n%U\n%a\nSCHEDULED: %(format-time-string \"%<<%Y-%m-%d %a .+1d/3d>>\")\n:PROPERTIES:\n:STYLE: habit\n:REPEAT_TO_STATE: NEXT\n:END:\n"))))
+
+  ;; Remove 0 duration clock
+  (setq org-clock-out-remove-zero-time-clocks t)
+
+  ;; Estimate effort
+  (setq org-agenda-columns-add-appointments-to-effort-sum t)
+
+  ;; Remove empty LOGBOOK drawers on clock out
+  (defun bh/remove-empty-drawer-on-clock-out ()
+    (interactive)
+    (save-excursion
+      (beginning-of-line 0)
+      (org-remove-empty-drawer-at "LOGBOOK" (point))))
+  (add-hook 'org-clock-out-hook 'bh/remove-empty-drawer-on-clock-out 'append)
+
+  ;; Habit related
+  (setq org-modules (quote (org-habit)))
+  (setq org-habit-show-habits-only-for-today nil)
+
+  ;; (setq org-agenda-custom-commands
+  ;;       '(("c" "Simple agenda view"
+  ;;          ((tags "PRIORITY=\"A\""
+  ;;                 ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+  ;;                  (org-agenda-overriding-header "High-priority unfinished tasks:")))
+  ;;           (agenda "")
+  ;;           (alltodo "")))))
+
+  ;; no lock files
+  (setq create-lockfiles nil)
+
+  ;; org crypt
+  (require 'org-crypt)
+  (org-crypt-use-before-save-magic)
+  (setq org-tags-exclude-from-inheritance (quote ("crypt")))
+  (setq org-crypt-key nil)
+  ;; GPG key to use for encryption
+  ;; Either the Key ID or set to nil to use symmetric encryption.
+  (setq auto-save-default nil)
+
+  (with-eval-after-load 'org
+    (require 'org-crypt)
+    (add-hook 'before-save-hook #'org-crypt-use-before-save-magic))
+
+  (eval-after-load 'org
+    '(org-load-modules-maybe t))
 
 
   ;; Location for celestial calculations
@@ -329,9 +491,11 @@ you should place your code here."
   (setq calendar-latitude +37.5585)
   (setq calendar-longitude -122.2711)
 
-
   ;; Show archived subtrees in agenda
   (org-agenda-skip-archived-trees nil)
+
+
+
 
   )
 
@@ -342,12 +506,9 @@ you should place your code here."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(org-agenda-files
-   (quote
-    ("~/Dropbox/vimwiki/kanban.org_archive" "/Users/allee/Dropbox/vimwiki/Definitions.org" "/Users/allee/Dropbox/vimwiki/kanban.org" "/Users/allee/Dropbox/vimwiki/statistics.org")))
  '(package-selected-packages
    (quote
-    (csv-mode flyspell-correct-helm flyspell-correct auto-dictionary mmm-mode markdown-toc markdown-mode gh-md web-mode tagedit slim-mode scss-mode sass-mode pug-mode helm-css-scss haml-mode emmet-mode smeargle orgit magit-gitflow magit-popup helm-gitignore gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link evil-magit magit transient git-commit with-editor org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download htmlize gnuplot ws-butler winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu elisp-slime-nav dumb-jump diminish define-word column-enforce-mode clean-aindent-mode auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line))))
+    (org-super-agenda ts ht org-recent-headings frecency a org-sticky-header go-guru go-eldoc go-mode yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode dash-functional helm-pydoc cython-mode anaconda-mode pythonic powerline spinner hydra lv parent-mode projectile pkg-info epl flx highlight smartparens iedit anzu evil goto-chg undo-tree f dash s bind-map bind-key packed helm avy helm-core popup async graphviz-dot-mode xterm-color shell-pop multi-term eshell-z eshell-prompt-extras esh-help csv-mode flyspell-correct-helm flyspell-correct auto-dictionary mmm-mode markdown-toc markdown-mode gh-md web-mode tagedit slim-mode scss-mode sass-mode pug-mode helm-css-scss haml-mode emmet-mode smeargle orgit magit-gitflow magit-popup helm-gitignore gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link evil-magit magit transient git-commit with-editor org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download htmlize gnuplot ws-butler winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu elisp-slime-nav dumb-jump diminish define-word column-enforce-mode clean-aindent-mode auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
