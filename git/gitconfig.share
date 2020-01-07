@@ -20,15 +20,16 @@
 	merc = merge --no-ff
     addf = add --force
     diffs = diff --staged
-    ls = ls-tree --full-tree -r HEAD
+	ls = log --pretty=format:'%C(magenta)%h%Creset %C(dim)%cr%Creset  %C(yellow)%aN%Creset %s %C(cyan)%d%Creset'
 	aliases = !git config --get-regexp ^alias\\. | sed -e s/^alias.// -e s/\\ /\\ $(printf \"\\043\")--\\>\\ / | column -t -s $(printf \"\\043\") | sort -k 1
 
     # From Jeff
     undo = reset --soft HEAD^
     su = !git branch --set-upstream-to=origin/$(git rev-parse --abbrev-ref HEAD) $(git rev-parse --abbrev-ref HEAD)
-    pbme = !git push $(whoami) $(git rev-parse --abbrev-ref HEAD)
-    pb = !git push origin $(git rev-parse --abbrev-ref HEAD)
-    pblee = !git push allee $(git rev-parse --abbrev-ref HEAD)
+    pbme = !git push -u $(whoami) $(git rev-parse --abbrev-ref HEAD)
+    pb = !git push -u origin $(git rev-parse --abbrev-ref HEAD)
+    pblee = !git push -u allee $(git rev-parse --abbrev-ref HEAD)
+    pbgrep = !git push -u grepinsight $(git rev-parse --abbrev-ref HEAD)
     plb = !git pull origin $(git rev-parse --abbrev-ref HEAD)
     lol = log --graph --decorate --pretty=oneline --abbrev-commit
     bhist = ! git reflog | egrep -io 'moving from ([^[:space:]]+)' | awk '{ print $3 }' | head
