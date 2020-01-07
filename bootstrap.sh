@@ -54,6 +54,39 @@ if [[ ! -f  $HOME/.fdignore ]]; then
     ln -s $HOME/.dotfiles/fd/fdignore ../.fdignore
 fi
 
+# Mac setup
+echo "--- Mac specific setup ---"
+if [[ $(get_platform) == mac ]]; then
+    echo "this is mac"
+    if which brew 2>/dev/null; then
+        echo "brew is installed. skpping"
+    else
+        echo "brew is not installed"
+        echo "Installing brew..."
+        /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+    fi
+
+    echo "Do you want to install software using brew from scratch? [n/Y]"
+    read varname
+
+    if [[ $varname == "Y" ]]; then
+        echo "installing"
+        if which brew 2>/dev/null; then
+            echo "brew is installed."
+            brew bundle --file=osx/Brewfile
+        fi
+    else
+        echo "not installing"
+    fi
+
+    echo " * Creating a symbolic link for .spacemacs"
+    echo " ->  ln -sf .dotfiles/emacs/spacemacs ../.spacemacs"
+    ln -sf .dotfiles/emacs/spacemacs ../.spacemacs
+else
+    echo "Not a mac. skipping"
+fi
+
+
 ### Tools
 echo "--- Downloading useful tools ---"
 if which git 2>/dev/null >&2 ; then
@@ -136,36 +169,4 @@ else
     echo "bashrc already loaded with the dotfile setup"
 fi
 
-
-# Mac setup
-echo "--- Mac specific setup ---"
-if [[ $(get_platform) == mac ]]; then
-    echo "this is mac"
-    if which brew 2>/dev/null; then
-        echo "brew is installed. skpping"
-    else
-        echo "brew is not installed"
-        echo "Installing brew..."
-        /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-    fi
-
-    echo "Do you want to install software using brew from scratch? [n/Y]"
-    read varname
-
-    if [[ $varname == "Y" ]]; then
-        echo "installing"
-        if which brew 2>/dev/null; then
-            echo "brew is installed."
-            brew bundle --file=osx/Brewfile
-        fi
-    else
-        echo "not installing"
-    fi
-
-    echo " * Creating a symbolic link for .spacemacs"
-    echo " ->  ln -sf .dotfiles/emacs/spacemacs ../.spacemacs"
-    ln -sf .dotfiles/emacs/spacemacs ../.spacemacs
-else
-    echo "Not a mac. skipping"
-fi
 
