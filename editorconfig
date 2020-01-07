@@ -62,3 +62,7 @@ indent_size = 4
 
 [*.tex]
 trim_trailing_whitespace = true
+
+[*.sh]
+indent_style = space
+indent_size = 4
