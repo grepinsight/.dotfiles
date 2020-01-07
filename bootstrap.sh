@@ -149,10 +149,18 @@ if [[ $(get_platform) == mac ]]; then
         /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
     fi
 
-    # if which brew 2>/dev/null; then
-    #     echo "brew is installed."
-    #     brew bundle --file=osx/Brewfile
-    # fi
+    echo "Do you want to install software using brew from scratch? [n/Y]"
+    read varname
+
+    if [[ $varname == "Y" ]]; then
+        echo "installing"
+        if which brew 2>/dev/null; then
+            echo "brew is installed."
+            brew bundle --file=osx/Brewfile
+        fi
+    else
+        echo "not installing"
+    fi
 
     echo " * Creating a symbolic link for .spacemacs"
     echo " ->  ln -sf .dotfiles/emacs/spacemacs ../.spacemacs"
