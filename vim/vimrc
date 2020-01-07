@@ -454,13 +454,13 @@ nnoremap <LocalLeader>ll :Lines<CR>
 nnoremap <LocalLeader>ln :Lines<CR>
 
 " Bash alias shortcut 
-nnoremap <Leader>bas :tabnew $HOME/.dotfiles/bash/share/bash_aliases_share<CR>
-nnoremap <Leader>bcs :tabnew $HOME/.dotfiles/bash/share/bash_colors_share<CR>
-nnoremap <Leader>bfs :tabnew $HOME/.dotfiles/bash/share/bash_functions_share<CR>
-nnoremap <Leader>bss :tabnew $HOME/.dotfiles/bash/share/bash_settings_share<CR>
-nnoremap <Leader>bal :tabnew $HOME/.dotfiles/bash/local/bash_aliases_local<CR>
-nnoremap <Leader>bpl :tabnew $HOME/.dotfiles/bash/local/bash_paths_local<CR>
-nnoremap <Leader>bsl :tabnew $HOME/.dotfiles/bash/local/bash_settings_local<CR>
+nnoremap <Leader>bas :e $HOME/.dotfiles/bash/share/bash_aliases_share<CR>
+nnoremap <Leader>bcs :e $HOME/.dotfiles/bash/share/bash_colors_share<CR>
+nnoremap <Leader>bfs :e $HOME/.dotfiles/bash/share/bash_functions_share<CR>
+nnoremap <Leader>bss :e $HOME/.dotfiles/bash/share/bash_settings_share<CR>
+nnoremap <Leader>bal :e $HOME/.dotfiles/bash/local/bash_aliases_local<CR>
+nnoremap <Leader>bpl :e $HOME/.dotfiles/bash/local/bash_paths_local<CR>
+nnoremap <Leader>bsl :e $HOME/.dotfiles/bash/local/bash_settings_local<CR>
 " }}}
 " ============================================================================
 "Align Text {{{
@@ -1175,6 +1175,8 @@ endif
 " ============================================================================
 " Whitespace Decoration {{{
 " View white space with special characters
+"
+" List Chars
 set list                              " show whitespace
 set listchars=nbsp:⦸                  " CIRCLED REVERSE SOLIDUS (U+29B8, UTF-8: E2 A6 B8)
 set listchars+=tab:▷┅                 " WHITE RIGHT-POINTING TRIANGLE (U+25B7, UTF-8: E2 96 B7)
