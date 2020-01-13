@@ -59,7 +59,7 @@ values."
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
-   dotspacemacs-additional-packages '(org-sticky-header org-recent-headings org-super-agenda)
+   dotspacemacs-additional-packages '(org-sticky-header org-recent-headings org-super-agenda org-ref interleave helm-org-rifle)
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be installed and loaded.
@@ -314,18 +314,62 @@ layers configuration.
 This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
+
+  ;; Org-Mode Modules
+  (setq org-modules (quote (org-habit org-crypt)))
+
+  ;; example: (define-key evil-insert-state-map (kbd "C-]") 'forward-char)
+  (define-key evil-normal-state-map (kbd "C-p") 'helm-find-files)
+  (define-key evil-normal-state-map (kbd "C-p f") 'helm-recentf)
+
+  ;; Spelling -------------------------------------------------------------------
+  (defun my-save-word ()
+    (interactive)
+    (let ((current-location (point))
+          (word (flyspell-get-word)))
+      (when (consp word)    
+        (flyspell-do-correct 'save nil (car word) current-location (cadr word) (caddr word) current-location))))
+
+  (define-key evil-normal-state-map "zg" 'my-save-word)
+  (define-key evil-normal-state-map "BB" 'evil-delete-buffer)
+
+
+  ;; Org mode -------------------------------------------------------------------
+  (setq org-catch-invisible-edits 'error)
+  ;; Languages
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((stan . t)
+     (R . t)
+     )
+   )
+
+  ;; Otherwise, image is too big
+  (setq org-image-actual-width nil)
+
+  ;; Agenda Related Things -------------------------------------------------------
+
   (setq org-agenda-files
     (quote
      ("~/Dropbox/vimwiki/kanban.org_archive"
       "~/Dropbox/vimwiki/kanban.org"
       "~/Dropbox/vimwiki/notes.org"
       "~/Dropbox/vimwiki/topics.org"
+      "~/Dropbox/vimwiki/work.org"
       )))
 
+  ;; Remove done tasks from agenda view
+  (setq org-agenda-skip-scheduled-if-done t)
 
-  ;; Otherwise, image is too big
-  (setq org-image-actual-width nil)
+  ;; Show archived subtrees in agenda
+  (setq org-agenda-skip-archived-trees nil)
 
+  ;; don't show things that are scheduled
+  (setq org-agenda-todo-ignore-scheduled 'future)
+  ;;(setq org-agenda-tags-todo-honor-ignore-options t)
+
+  ;; Super agenda mode
+  (require 'org-habit)
   (org-super-agenda-mode)
   (setq org-agenda-custom-commands (list(quote
         ("c" "Super zaen view" (
@@ -388,6 +432,9 @@ you should place your code here."
                           (:name "To read"
                                  :tag "read"
                                  :order 30)
+                          (:name "To Learn"
+                                 :tag "learn"
+                                 :order 20)
 
                           (:order-multi (40 (:name "Done today"
                                                    :and (:regexp "State \"DONE\""
@@ -413,10 +460,19 @@ you should place your code here."
         )))
 
 
+  ;; Refile  -------------------------------------------------------
+  (setq org-refile-targets
+        '((nil :maxlevel . 3)
+          (org-agenda-files :maxlevel . 3)))
 
 
+  ;; Org-Ref -------------------------------------------------------
+  (setq org-ref-bibliography-notes "~/Dropbox/vimwiki/notes.org"
+        org-ref-default-bibliography '("~/Dropbox/vimwiki/references.bib")
+        org-ref-pdf-directory "~/Dropbox/vimwiki/04_papers/")
 
-  ;; Org-capture
+
+  ;; Org-capture ------------------------------------------------------
   (setq org-default-notes-file "~/Dropbox/vimwiki/kanban.org")
 
   ;; Capture templates for: TODO tasks, Notes, appointments, phone calls, meetings, and org-protocol
@@ -453,7 +509,6 @@ you should place your code here."
   (add-hook 'org-clock-out-hook 'bh/remove-empty-drawer-on-clock-out 'append)
 
   ;; Habit related
-  (setq org-modules (quote (org-habit)))
   (setq org-habit-show-habits-only-for-today nil)
 
   ;; (setq org-agenda-custom-commands
@@ -467,6 +522,45 @@ you should place your code here."
   ;; no lock files
   (setq create-lockfiles nil)
 
+
+  ;; add web image
+  ;; from : https://emacs.stackexchange.com/questions/26613/is-it-possible-to-insert-images-from-the-web-with-its-url
+  (org-add-link-type
+   "image-url"
+   (lambda (path)
+     (let ((img (expand-file-name
+                 (concat (md5 path) "." (file-name-extension path))
+                 temporary-file-directory)))
+       (if (file-exists-p img)
+           (find-file img)
+         (url-copy-file path img)
+         (find-file img)))))
+  (defun image-url-overlays ()
+    "Put image overlays on remote image urls."
+    (interactive)
+    (loop for image-url in (org-element-map (org-element-parse-buffer) 'link
+                             (lambda (link)
+                               (when (string= "image-url" (org-element-property :type link))
+                                 link)))
+          do
+          (let* ((path (org-element-property :path image-url))
+                 (ov (make-overlay (org-element-property :begin image-url)
+                                   (org-element-property :end image-url)))
+                 (img (create-image (expand-file-name
+                                     (concat (md5 path)
+                                             "."
+                                             (file-name-extension
+                                              path))
+                                     temporary-file-directory))))
+            (overlay-put ov 'display img)
+            (overlay-put ov 'image-url t))))
+
+  (defun image-url-clear-overlays ()
+    "Reove overlays on image-urls."
+    (interactive)
+    (require 'ov)
+    (ov-clear 'image-url))
+
   ;; org crypt
   (require 'org-crypt)
   (org-crypt-use-before-save-magic)
@@ -476,23 +570,22 @@ you should place your code here."
   ;; Either the Key ID or set to nil to use symmetric encryption.
   (setq auto-save-default nil)
 
-  (with-eval-after-load 'org
-    (require 'org-crypt)
-    (add-hook 'before-save-hook #'org-crypt-use-before-save-magic))
 
-  (eval-after-load 'org
-    '(org-load-modules-maybe t))
+  ;; (with-eval-after-load 'org
+  ;;   (require 'org-crypt)
+  ;;   (add-hook 'before-save-hook #'org-crypt-use-before-save-magic))
+
+  ;; (eval-after-load 'org
+  ;;   '(org-load-modules-maybe t))
 
 
   ;; Location for celestial calculations
-  (require 'cl)
-  (require 'solar)
-  (setq calendar-location-name "Foster City, CA")
-  (setq calendar-latitude +37.5585)
-  (setq calendar-longitude -122.2711)
+  ;; (require 'cl)
+  ;; (require 'solar)
+  ;; (setq calendar-location-name "Foster City, CA")
+  ;; (setq calendar-latitude +37.5585)
+  ;; (setq calendar-longitude -122.2711)
 
-  ;; Show archived subtrees in agenda
-  (org-agenda-skip-archived-trees nil)
 
 
 
@@ -508,7 +601,7 @@ you should place your code here."
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (org-super-agenda ts ht org-recent-headings frecency a org-sticky-header go-guru go-eldoc go-mode yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode dash-functional helm-pydoc cython-mode anaconda-mode pythonic powerline spinner hydra lv parent-mode projectile pkg-info epl flx highlight smartparens iedit anzu evil goto-chg undo-tree f dash s bind-map bind-key packed helm avy helm-core popup async graphviz-dot-mode xterm-color shell-pop multi-term eshell-z eshell-prompt-extras esh-help csv-mode flyspell-correct-helm flyspell-correct auto-dictionary mmm-mode markdown-toc markdown-mode gh-md web-mode tagedit slim-mode scss-mode sass-mode pug-mode helm-css-scss haml-mode emmet-mode smeargle orgit magit-gitflow magit-popup helm-gitignore gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link evil-magit magit transient git-commit with-editor org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download htmlize gnuplot ws-butler winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu elisp-slime-nav dumb-jump diminish define-word column-enforce-mode clean-aindent-mode auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line))))
+    (helm-org-rifle interleave org-ref pdf-tools key-chord ivy helm-bibtex biblio parsebib biblio-core tablist company-stan stan-mode org-super-agenda ts ht org-recent-headings frecency a org-sticky-header go-guru go-eldoc go-mode yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode dash-functional helm-pydoc cython-mode anaconda-mode pythonic powerline spinner hydra lv parent-mode projectile pkg-info epl flx highlight smartparens iedit anzu evil goto-chg undo-tree f dash s bind-map bind-key packed helm avy helm-core popup async graphviz-dot-mode xterm-color shell-pop multi-term eshell-z eshell-prompt-extras esh-help csv-mode flyspell-correct-helm flyspell-correct auto-dictionary mmm-mode markdown-toc markdown-mode gh-md web-mode tagedit slim-mode scss-mode sass-mode pug-mode helm-css-scss haml-mode emmet-mode smeargle orgit magit-gitflow magit-popup helm-gitignore gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link evil-magit magit transient git-commit with-editor org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download htmlize gnuplot ws-butler winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu elisp-slime-nav dumb-jump diminish define-word column-enforce-mode clean-aindent-mode auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

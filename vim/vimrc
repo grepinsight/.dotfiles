@@ -1964,3 +1964,12 @@ autocmd InsertLeave * execute 'normal! mI'
 " Mark M at the position when any modification happened in the Normal or Insert mode
 autocmd CursorMoved * call DetectRegChangeAndUpdateMark()
 autocmd InsertLeave * execute 'normal! mM'
+
+
+" Spacemacs compatible
+nnoremap <localleader>pt :NERDTreeToggle<CR>
+nnoremap <localleader>ji :BTags<CR>
+nnoremap <localleader>fy :let @" = expand("%:p")<CR> <bar> :call SendViaOSC52(expand('%:p'))<cr> <bar> :echo expand('%:p')<CR> 
+nnoremap <localleader>fs :w<CR>
+
+autocmd TerminalOpen * if bufwinnr('') > 0 | setlocal nobuflisted | endif

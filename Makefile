@@ -41,3 +41,9 @@ update_brew:
 	brew list > osx/brew.list
 	brew cask list > osx/brew.cask.list
 	brew leaves > osx/brew.leaves.list
+
+migrate:  ## migrate helper
+	fd --no-ignore -t f local
+
+
+
