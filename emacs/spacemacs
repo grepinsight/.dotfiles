@@ -315,12 +315,10 @@ This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
 
-  ;; Org-Mode Modules
-  (setq org-modules (quote (org-habit org-crypt)))
 
-  ;; example: (define-key evil-insert-state-map (kbd "C-]") 'forward-char)
-  (define-key evil-normal-state-map (kbd "C-p") 'helm-find-files)
-  (define-key evil-normal-state-map (kbd "C-p f") 'helm-recentf)
+
+  (setq org-format-latex-options
+        (plist-put org-format-latex-options :scale 2))
 
   ;; Spelling -------------------------------------------------------------------
   (defun my-save-word ()
@@ -332,21 +330,6 @@ you should place your code here."
 
   (define-key evil-normal-state-map "zg" 'my-save-word)
   (define-key evil-normal-state-map "BB" 'evil-delete-buffer)
-
-
-  ;; Org mode -------------------------------------------------------------------
-  (setq org-catch-invisible-edits 'error)
-  ;; Languages
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   '((stan . t)
-     (R . t)
-     )
-   )
-
-  ;; Otherwise, image is too big
-  (setq org-image-actual-width nil)
-
   ;; Agenda Related Things -------------------------------------------------------
 
   (setq org-agenda-files
@@ -586,6 +569,27 @@ you should place your code here."
   ;; (setq calendar-latitude +37.5585)
   ;; (setq calendar-longitude -122.2711)
 
+  ;; Org-Mode Modules
+  ;; (setq org-modules (quote (org-habit org-crypt)))
+
+  ;; example: (define-key evil-insert-state-map (kbd "C-]") 'forward-char)
+  (define-key evil-normal-state-map (kbd "C-p") 'helm-find-files)
+  (define-key evil-normal-state-map (kbd "C-p f") 'helm-recentf)
+
+
+
+  ;; Org mode -------------------------------------------------------------------
+  (setq org-catch-invisible-edits 'error)
+  ;; Languages
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((stan . t)
+     (R . t)
+     )
+   )
+
+  ;; Otherwise, image is too big
+  (setq org-image-actual-width nil)
 
 
 
