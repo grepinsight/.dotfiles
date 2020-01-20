@@ -197,7 +197,7 @@ Plug 'vim-pandoc/vim-pandoc'
 Plug 'vim-pandoc/vim-pandoc-syntax'
 
 " Lint
-"Plug 'w0rp/ale'
+Plug 'w0rp/ale'
 
 " Completions and snippets
 " if v:version >= 800
@@ -1036,7 +1036,7 @@ nnoremap <leader>a :A <CR>
 nnoremap ]al :ALENext<CR>
 nnoremap [al :ALEPrevious<CR>
 
-let g:ale_linters={'python': ['mypy'], 'r': ['lintr'] }
+let g:ale_linters={'python': ['mypy'], 'r': ['lintr'], 'wdl': ['wdl-linter'] }
 let g:ale_fixers = {'python': ['yapf'], 'r': ['styler'], 'rmd': ['styler']}
 
 autocmd FileType r let g:ale_fix_on_save = 1
@@ -1971,5 +1971,9 @@ nnoremap <localleader>pt :NERDTreeToggle<CR>
 nnoremap <localleader>ji :BTags<CR>
 nnoremap <localleader>fy :let @" = expand("%:p")<CR> <bar> :call SendViaOSC52(expand('%:p'))<cr> <bar> :echo expand('%:p')<CR> 
 nnoremap <localleader>fs :w<CR>
+nnoremap <localleader>ww <C-w>w
+nnoremap <localleader>lo :lopen<CR>
+nnoremap <localleader>lc :lclose<CR>
+
 
 autocmd TerminalOpen * if bufwinnr('') > 0 | setlocal nobuflisted | endif
