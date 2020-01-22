@@ -31,6 +31,7 @@ values."
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(
+     typescript
      go
      python
      csv
@@ -336,11 +337,16 @@ you should place your code here."
     (interactive)
     (let ((current-location (point))
           (word (flyspell-get-word)))
-      (when (consp word)    
+      (when (consp word)
         (flyspell-do-correct 'save nil (car word) current-location (cadr word) (caddr word) current-location))))
 
   (define-key evil-normal-state-map "zg" 'my-save-word)
   (define-key evil-normal-state-map "BB" 'evil-delete-buffer)
+  (define-key evil-normal-state-map (kbd "C-h") #'evil-window-left)
+  (define-key evil-normal-state-map (kbd "C-j") #'evil-window-down)
+  (define-key evil-normal-state-map (kbd "C-k") #'evil-window-up)
+  (define-key evil-normal-state-map (kbd "C-l") #'evil-window-right)
+
   ;; Agenda Related Things -------------------------------------------------------
 
   (setq org-agenda-files
@@ -473,7 +479,7 @@ you should place your code here."
   (require 'org-attach)
   (setq org-link-abbrev-alist '(("att" . org-attach-expand-link)))
   (setq org-image-actual-width 600)
-  
+
   ;; Org-capture ------------------------------------------------------
   (setq org-default-notes-file "~/Dropbox/vimwiki/kanban.org")
 
@@ -484,7 +490,7 @@ you should place your code here."
                 ("r" "respond" entry (file "~/Dropbox/vimwiki/kanban.org")
                 "** NEXT Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n" :clock-in t :clock-resume t :immediate-finish t)
                 ("n" "note" entry (file "~/Dropbox/vimwiki/kanban.org")
-                "** %? :NOTE:\n%U\n%a\n" :clock-in t :clock-resume t)
+                "*** %? :note:\n%U\n%a\n" :clock-in t :clock-resume t)
                 ("j" "Journal" entry (file+datetree "~/Dropbox/vimwiki/kanban.org")
                 "** %?\n%U\n" :clock-in t :clock-resume t)
                 ("w" "org-protocol" entry (file "~/Dropbox/vimwiki/kanban.org")
@@ -493,6 +499,8 @@ you should place your code here."
                 "** MEETING with %? :MEETING:\n%U" :clock-in t :clock-resume t)
                 ("p" "Phone call" entry (file "~/Dropbox/vimwiki/kanban.org")
                 "** PHONE %? :PHONE:\n%U" :clock-in t :clock-resume t)
+
+
                 ("h" "Habit" entry (file "~/Dropbox/vimwiki/kanban.org")
                 "** NEXT %?\n%U\n%a\nSCHEDULED: %(format-time-string \"%<<%Y-%m-%d %a .+1d/3d>>\")\n:PROPERTIES:\n:STYLE: habit\n:REPEAT_TO_STATE: NEXT\n:END:\n"))))
 
