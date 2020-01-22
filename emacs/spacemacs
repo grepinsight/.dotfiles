@@ -59,6 +59,7 @@ This function should only modify configuration layer settings."
      spell-checking
      bibtex
      ;; syntax-checking
+     treemacs
      ;; version-control
      )
 
@@ -429,6 +430,7 @@ It should only modify the values of Spacemacs settings."
    ;; (default nil)
    dotspacemacs-whitespace-cleanup nil
 
+   ))
 (defun dotspacemacs/user-init ()
   "Initialization function for user code.
 It is called immediately after `dotspacemacs/init', before layer configuration
@@ -774,6 +776,6 @@ configuration.
 Put your configuration code here, except for variables that should be set
 before packages are loaded."
   )
-
+)
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
