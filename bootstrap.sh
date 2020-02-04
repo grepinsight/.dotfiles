@@ -73,6 +73,8 @@ if [[ $(get_platform) == mac ]]; then
         echo "installing"
         if which brew 2>/dev/null; then
             echo "brew is installed."
+            # need to install vim first with python3 support
+            brew install vim --with-python3
             brew bundle --file=osx/Brewfile
         fi
     else
@@ -162,11 +164,9 @@ cd $ROOT_DIR && touch tmux/tmux.conf.local
 cd $ROOT_DIR && touch git/gitconfig.local
 
 
-if [[ $(cat ~/.bashrc | grep bashrc_init | wc -l) == 0 ]]; then
+if [[ $(cat ~/.bashrc | grep bashrc_init | wc -l) -eq 0 ]]; then
     echo "source \$HOME/.dotfiles/bash/bashrc_init" >> $HOME/.bashrc
     echo "Adding the line finished"
 else
     echo "bashrc already loaded with the dotfile setup"
 fi
-
-

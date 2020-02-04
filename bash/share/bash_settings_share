@@ -110,3 +110,6 @@ alias fp="export FZF_CTRL_T_COMMAND=\"fd . \""
 alias fzf_all_all="export FZF_CTRL_T_COMMAND=\"fd --hidden --no-ignore . $HOME\""
 alias fzf_pwd_all="export FZF_CTRL_T_COMMAND=\"fd --hidden --no-ignore . \""
 export FZF_ALT_C_COMMAND="fd . $HOME"
+
+# bashmarks
+[ -f ~/.local/bin/bashmarks.sh ] && source ~/.local/bin/bashmarks.sh
