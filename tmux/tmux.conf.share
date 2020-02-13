@@ -37,7 +37,7 @@ set -g history-limit 10000
 set -g aggressive-resize on
 
 # Highlight Active Window
-set-window-option -g window-status-current-bg red
+set -g window-status-current-style bg=red
 
 # Status Bar
 set -g status-bg black
@@ -47,7 +47,7 @@ set -g status-right-length 180
 set -g status-left-length 20
 set -g status-interval 10
 set -g status-left '#[fg=yellow,bold] ❐ #S - '
-set -g status-right "#[fg=white]:: #(toggl-tmux) | #[fg=green]#(date '+%Y-%m-%d (wk-%V)') %l:%M %p"
+set -g status-right "k[fg=green]#(date '+%Y-%m-%d (wk-%V)') %l:%M %p"
 #set -g status-right "#[fg=white]:: #{toggl-tmux} Batt: #{battery_icon} #{battery_percentage} #{battery_remain} | t: #(toggl-tmux) | #[fg=green]#(date '+%Y-%m-%d (wk-%V)') %l:%M %p"
 #bind t set -g status-right "#[fg=white]:: Batt: #{battery_icon} #{battery_percentage} #{battery_remain} | #(toggl-tmux) | #[fg=green]#(date '+%Y-%m-%d (wk-%V)') %l:%M %p"; display "no todo!"
 #bind T set -g status-right "#[fg=red]#(todo_today) #[fg=white]:: Batt: #{battery_icon} #{battery_percentage} #{battery_remain} | #(toggl-tmux) | #[fg=green]#(date '+%Y-%m-%d (wk-%V)') %l:%M %p"
@@ -96,21 +96,6 @@ bind -n f12 select-pane -t :.+
 
 bind-key 0 run "tmux split-window -p 40 'bash -ci \"ftpane.sh\"'"
 
-# Smart pane switching with awareness of Vim splits.
-# See: https://github.com/christoomey/vim-tmux-navigator
-is_vim="ps -o state= -o comm= -t '#{pane_tty}' \
-    | grep -iqE '^[^TXZ ]+ +(\\S+\\/)?g?(view|n?vim?x?)(diff)?$'"
-bind-key -n C-h if-shell "$is_vim" "send-keys C-h"  "select-pane -L"
-bind-key -n C-j if-shell "$is_vim" "send-keys C-j"  "select-pane -D"
-bind-key -n C-k if-shell "$is_vim" "send-keys C-k"  "select-pane -U"
-bind-key -n C-l if-shell "$is_vim" "send-keys C-l"  "select-pane -R"
-bind-key -n C-\ if-shell "$is_vim" "send-keys C-\\" "select-pane -l"
-bind-key -T copy-mode-vi C-h select-pane -L
-bind-key -T copy-mode-vi C-j select-pane -D
-bind-key -T copy-mode-vi C-k select-pane -U
-bind-key -T copy-mode-vi C-l select-pane -R
-bind-key -T copy-mode-vi C-\ select-pane -l
-
 # Mouse mode
 set -g mouse on
 bind m set -g mouse on
@@ -155,6 +140,7 @@ set -g @plugin 'Morantron/tmux-fingers'
 set -g @plugin 'tmux-plugins/tmux-urlview'
 set -g @plugin 'robhurring/tmux-spotify'
 set -g @plugin 'tmux-plugins/tmux-sensible'
+set -g @plugin 'christoomey/vim-tmux-navigator'
 
 
 # Finger setup
