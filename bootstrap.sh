@@ -44,7 +44,7 @@ fi
 if [[ ! -d $HOME/.vim/ftplugin ]]; then
     echo "Installing vim ftplugin"
     mkdir -p $HOME/.vim/
-    git clone git@github.com:grepinsight/ftplugin.git $HOME/.vim/ftplugin
+    git clone https://github.com/grepinsight/ftplugin.git
 fi
 
 
