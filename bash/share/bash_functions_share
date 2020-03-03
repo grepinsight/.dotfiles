@@ -109,6 +109,18 @@ pd() {
 
 export -f pd
 
+srd() {
+  project_name="$1"
+
+  if [[ -z $project_name ]]; then
+    command cd $HOME/src/ && cd $(command ls | fzf)
+  else
+    command cd $HOME/src/ && cd "$project_name"
+  fi
+}
+
+export -f pd
+
 
 #alias pd=pd_run
 

@@ -48,7 +48,7 @@ This function should only modify configuration layer settings."
      ;; ----------------------------------------------------------------
      helm
      auto-completion
-     ;; better-defaults
+     better-defaults
      emacs-lisp
      git
      (ess :variables
@@ -62,16 +62,24 @@ This function should only modify configuration layer settings."
      spell-checking
      bibtex
      ipython-notebook
-     ;; syntax-checking
-     ;; treemacs
+     restructuredtext
+     syntax-checking
+     deft
+     treemacs
      ;; version-control
+     spotify
+     xkcd
+     osx
+     speed-reading
+     imenu-list
+     finance
      )
 
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
-   dotspacemacs-additional-packages '(org-sticky-header org-recent-headings org-super-agenda interleave helm-org-rifle polymode poly-R poly-noweb poly-markdown anki-editor helm-open-github ob-typescript ob-go writeroom-mode org-attach-screenshot)
+   dotspacemacs-additional-packages '(org-sticky-header org-recent-headings org-super-agenda interleave helm-org-rifle polymode poly-R poly-noweb poly-markdown anki-editor helm-open-github ob-typescript ob-go writeroom-mode org-attach-screenshot ox-reveal editorconfig magit-todos)
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
 
@@ -444,6 +452,28 @@ before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
   )
 
+(defun dotspacemacs/user-env ()
+  "Environment variables setup.
+This function defines the environment variables for your Emacs session. By
+default it calls `spacemacs/load-spacemacs-env' which loads the environment
+variables declared in `~/.spacemacs.env' or `~/.spacemacs.d/.spacemacs.env'.
+See the header of this file for more information."
+  (spacemacs/load-spacemacs-env))
+
+(defun dotspacemacs/user-init ()
+  "Initialization for user code:
+This function is called immediately after `dotspacemacs/init', before layer
+configuration.
+It is mostly for variables that should be set before packages are loaded.
+If you are unsure, try setting them in `dotspacemacs/user-config' first."
+  )
+
+(defun dotspacemacs/user-load ()
+  "Library to load while dumping.
+This function is called only while dumping Spacemacs configuration. You can
+`require' or `load' the libraries of your choice that will be included in the
+dump."
+  )
 (defun dotspacemacs/user-config ()
   "Configuration function for user code.
 This function is called at the very end of Spacemacs initialization after
@@ -452,6 +482,10 @@ This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
 
+
+  ;; Save All buffer when focus is lo st ------------------------------------------
+  ;; (add-hook 'focus-out-hook (lambda () (save-some-buffers t)))
+  (add-hook 'focus-out-hook 'save-buffer)
 
 
   (defun rmd-mode ()
@@ -462,8 +496,8 @@ you should place your code here."
     (poly-markdown+r-mode))
 
 
-  ;; (setq org-format-latex-options
-  ;;       (plist-put org-format-latex-options :scale 2))
+  ;;(setq org-format-latex-options
+  ;;      (plist-put org-format-latex-options :scale 2))
 
   ;; Spelling -------------------------------------------------------------------
   (defun my-save-word ()
@@ -487,6 +521,7 @@ you should place your code here."
       "~/Dropbox/vimwiki/notes.org"
       "~/Dropbox/vimwiki/topics.org"
       "~/Dropbox/vimwiki/work.org"
+      "~/Dropbox/vimwiki/books.org"
       )))
 
   ;; Remove done tasks from agenda view
@@ -618,26 +653,41 @@ you should place your code here."
 
   ;; Capture templates for: TODO tasks, Notes, appointments, phone calls, meetings, and org-protocol
   (setq org-capture-templates
-        (quote (("t" "todo" entry (file "~/Dropbox/vimwiki/kanban.org")
-                "** TODO %?\n%U\n%a\n" :clock-in t :clock-resume t)
-                ("r" "respond" entry (file "~/Dropbox/vimwiki/kanban.org")
-                "** NEXT Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n" :clock-in t :clock-resume t :immediate-finish t)
+        (quote (
+                ("t" "todo" entry (file "~/Dropbox/vimwiki/kanban.org")
+                "** TODO %?\n%U\n%a\n")
                 ("n" "note" entry (file "~/Dropbox/vimwiki/kanban.org")
-                "*** %? :note:\n%U\n%a\n" :clock-in t :clock-resume t)
-                ("k" "Journal" entry (file+datetree "~/Dropbox/vimwiki/kanban.org")
-                 "** %?\n%U\n" :clock-in t :clock-resume t)
-                ("z" "WorkJournal" entry (file+datetree "~/Dropbox/vimwiki/work.org")
-                 "** %?\n%U\n" :clock-in t :clock-resume t)
-                ("w" "org-protocol" entry (file "~/Dropbox/vimwiki/kanban.org")
+                "*** %? :note:\n%U\n%a\n")
+                ("k" "knowledge" entry (file "~/Dropbox/vimwiki/topics.org")
+                 "*** %? \n%U\n%a\n")
+                ("j" "Journal" entry (file+datetree "~/Dropbox/vimwiki/kanban.org")
+                 "** %?\n%U\n")
+                ("w" "WorkJournal" entry (file+datetree "~/Dropbox/vimwiki/work.org")
+                 "** %?\n%U\n")
+                ("c" "clipboard" entry (file+datetree "~/Dropbox/vimwiki/kanban.org")
+                 "** %?\n%U\n%x")
+                ("t" "org-protocol" entry (file "~/Dropbox/vimwiki/kanban.org")
                 "** TODO Review %c\n%U\n" :immediate-finish t)
-                ("m" "Meeting" entry (file "~/Dropbox/vimwiki/kanban.org")
-                "** MEETING with %? :MEETING:\n%U" :clock-in t :clock-resume t)
+                ("m" "Meeting" entry (file "~/Dropbox/vimwiki/work.org")
+                "** MEETING with %? :meeting:\n%U" )
                 ("p" "Phone call" entry (file "~/Dropbox/vimwiki/kanban.org")
-                "** PHONE %? :PHONE:\n%U" :clock-in t :clock-resume t)
-
-
+                 "** PHONE %? :PHONE:\n%U\n%^{Tidbit type|quote|zinger|one-liner|textlet}\n%^{Name}")
+                ("d" "Definitions" entry (file "~/Dropbox/vimwiki/Definitions.org")
+                 "**  %?\n")
                 ("h" "Habit" entry (file "~/Dropbox/vimwiki/kanban.org")
                 "** NEXT %?\n%U\n%a\nSCHEDULED: %(format-time-string \"%<<%Y-%m-%d %a .+1d/3d>>\")\n:PROPERTIES:\n:STYLE: habit\n:REPEAT_TO_STATE: NEXT\n:END:\n"))))
+
+  ;; Org Brain
+  (setq org-brain-path "~/Dropbox/vimwiki/brain")
+  (setq org-id-track-globally t)
+  (push '("b" "Brain" plain (function org-brain-goto-end)
+          "* %i%?" :empty-lines 1)
+        org-capture-templates)
+  (setq org-brain-visualize-default-choices 'all)
+  (setq org-brain-title-max-length 12)
+  (setq org-brain-include-file-entries nil
+        org-brain-file-entries-use-title nil)
+
 
   ;; Remove 0 duration clock
   (setq org-clock-out-remove-zero-time-clocks t)
@@ -738,8 +788,8 @@ you should place your code here."
   ;; (setq org-modules (quote (org-habit org-crypt)))
 
   ;; example: (define-key evil-insert-state-map (kbd "C-]") 'forward-char)
-  (define-key evil-normal-state-map (kbd "C-p") 'helm-find-files)
-  (define-key evil-normal-state-map (kbd "C-p f") 'helm-recentf)
+  ;; (define-key evil-normal-state-map (kbd "C-p") 'helm-find-files)
+  ;; (define-key evil-normal-state-map (kbd "C-p f") 'helm-recentf)
 
 
   ;; Org mode -------------------------------------------------------------------
@@ -756,40 +806,31 @@ you should place your code here."
      (emacs-lisp . t)
      (python . t)
      ))
+  ;; Skip confirming
+  (setq org-confirm-babel-evaluate nil)
+  (setq org-src-preserve-indentation t)
 
+  (setq alb-wow nil)
   ;; Otherwise, image is too big
   (setq org-image-actual-width nil)
 
-(defun dotspacemacs/user-env ()
-  "Environment variables setup.
-This function defines the environment variables for your Emacs session. By
-default it calls `spacemacs/load-spacemacs-env' which loads the environment
-variables declared in `~/.spacemacs.env' or `~/.spacemacs.d/.spacemacs.env'.
-See the header of this file for more information."
-  (spacemacs/load-spacemacs-env))
+  ;; Deft
+  (setq deft-directory "~/Dropbox/vimwiki")
+  (setq counsel-spotify-client-id (getenv "SPOTIFY_CLIENT_ID"))
+  (setq counsel-spotify-client-secret (getenv "SPOTIFY_CLIENT_SECRET"))
 
-(defun dotspacemacs/user-init ()
-  "Initialization for user code:
-This function is called immediately after `dotspacemacs/init', before layer
-configuration.
-It is mostly for variables that should be set before packages are loaded.
-If you are unsure, try setting them in `dotspacemacs/user-config' first."
-  )
 
-(defun dotspacemacs/user-load ()
-  "Library to load while dumping.
-This function is called only while dumping Spacemacs configuration. You can
-`require' or `load' the libraries of your choice that will be included in the
-dump."
-  )
+  ;; Custom Binding
+  (spacemacs/declare-prefix "o" "custom")
+  (spacemacs/set-leader-keys "os" 'spotify-play)
+  (spacemacs/set-leader-keys "op" 'spotify-pause)
 
-(defun dotspacemacs/user-config ()
-  "Configuration for user code:
-This function is called at the very end of Spacemacs startup, after layer
-configuration.
-Put your configuration code here, except for variables that should be set
-before packages are loaded."
-  )
+  ;; Custom packages
+  (load-file "~/.emacs.d/private/local/org-roam.el")
+  (setq org-roam-directory "~/Dropbox/vimwiki")
+
+  (load-file "~/.emacs.d/private/local/org-graph-view.el")
+
 )
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
@@ -803,9 +844,17 @@ This function is called at the very end of Spacemacs initialization."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(ledger-reports
+   (quote
+    ((nil "ledger ")
+     (nil "ledger ")
+     ("bal" "%(binary) -f %(ledger-file) bal")
+     ("reg" "%(binary) -f %(ledger-file) reg")
+     ("payee" "%(binary) -f %(ledger-file) reg @%(payee)")
+     ("account" "%(binary) -f %(ledger-file) reg %(account)"))))
  '(package-selected-packages
    (quote
-    (org-attach-screenshot request-deferred ob-ipython ein websocket ob-go ob-typescript mmm-mode markdown-toc gh-md marshal logito pcache yasnippet-snippets lsp-ui lsp-python-ms helm-lsp helm-company helm-c-yasnippet fuzzy flycheck-pos-tip pos-tip dap-mode lsp-treemacs bui company-web web-completion-data company-tern company-statistics company-lsp lsp-mode company-go company-anaconda company auto-yasnippet ac-ispell auto-complete yapfify xterm-color web-mode web-beautify vterm treemacs-magit tide typescript-mode tern terminal-here tagedit smeargle slim-mode shell-pop scss-mode sass-mode pytest pyenv-mode py-isort pug-mode prettier-js poly-R poly-noweb poly-markdown markdown-mode polymode pippel pipenv pyvenv pip-requirements orgit org-ref pdf-tools key-chord ivy tablist org-recent-headings frecency a org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download org-cliplink org-brain org-ql peg ov org-super-agenda dash-functional ts nodejs-repl multi-term magit-svn magit-gitflow magit-popup livid-mode skewer-mode live-py-mode json-navigator hierarchy json-mode json-snatcher json-reformat js2-refactor yasnippet multiple-cursors js2-mode js-doc interleave importmagic epc concurrent deferred impatient-mode simple-httpd htmlize helm-pydoc helm-org-rifle helm-org helm-gitignore helm-git-grep helm-css-scss helm-bibtex parsebib haml-mode godoctor go-tag go-rename go-impl go-guru go-gen-test go-fill-struct go-eldoc go-mode gnuplot gitignore-templates gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link flyspell-correct-helm flyspell-correct evil-org evil-magit magit git-commit with-editor transient ess-R-data-view ctable ess julia-mode eshell-z eshell-prompt-extras esh-help emmet-mode cython-mode csv-mode blacken biblio biblio-core auto-dictionary anki-editor anaconda-mode pythonic ws-butler writeroom-mode winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package treemacs-projectile treemacs-persp treemacs-evil toc-org symon symbol-overlay string-inflection spaceline-all-the-icons restart-emacs request rainbow-delimiters popwin pcre2el password-generator paradox overseer org-plus-contrib org-bullets open-junk-file nameless move-text macrostep lorem-ipsum link-hint indent-guide hybrid-mode hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-purpose helm-projectile helm-mode-manager helm-make helm-ls-git helm-flx helm-descbinds helm-ag google-translate golden-ratio font-lock+ flycheck-package flycheck-elsa flx-ido fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-textobj-line evil-surround evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu elisp-slime-nav editorconfig dumb-jump dotenv-mode doom-modeline diminish devdocs define-word column-enforce-mode clean-aindent-mode centered-cursor-mode auto-highlight-symbol auto-compile aggressive-indent ace-link ace-jump-helm-line))))
+    (magit-todos atomic-chrome yapfify xterm-color ws-butler writeroom-mode visual-fill-column winum which-key web-mode volatile-highlights vi-tilde-fringe uuidgen use-package toc-org tide typescript-mode flycheck tagedit spaceline powerline smeargle slim-mode shell-pop scss-mode sass-mode restart-emacs rainbow-delimiters pyvenv pytest pyenv-mode py-isort pug-mode popwin poly-R poly-noweb poly-markdown pip-requirements persp-mode pcre2el paradox spinner orgit org-super-agenda ts org-sticky-header org-ref pdf-tools key-chord ivy tablist org-recent-headings frecency a org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download org-bullets org-attach-screenshot open-junk-file ob-typescript ob-go neotree multi-term move-text mmm-mode markdown-toc magit-gitflow magit-popup macrostep lorem-ipsum live-py-mode linum-relative link-hint interleave indent-guide hydra lv hy-mode dash-functional hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation helm-themes helm-swoop helm-pydoc helm-projectile projectile pkg-info epl helm-org-rifle helm-open-github gh marshal logito pcache ht helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-bibtex parsebib helm-ag haml-mode google-translate golden-ratio go-guru go-eldoc gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md fuzzy flyspell-correct-helm flyspell-correct flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist highlight evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit magit git-commit with-editor transient evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu ess-smart-equals ess-R-data-view ctable ess julia-mode eshell-z eshell-prompt-extras esh-help emmet-mode elisp-slime-nav ein skewer-mode markdown-mode polymode deferred websocket js2-mode simple-httpd dumb-jump diminish define-word cython-mode csv-mode company-web web-completion-data company-statistics company-go go-mode company-anaconda company column-enforce-mode clean-aindent-mode bind-map bind-key biblio biblio-core auto-yasnippet yasnippet auto-highlight-symbol auto-dictionary auto-compile packed anki-editor request anaconda-mode pythonic f dash s aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core async ac-ispell auto-complete popup))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -820,7 +869,7 @@ This function is called at the very end of Spacemacs initialization."
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (yapfify xterm-color ws-butler writeroom-mode visual-fill-column winum which-key web-mode volatile-highlights vi-tilde-fringe uuidgen use-package toc-org tide typescript-mode flycheck tagedit spaceline powerline smeargle slim-mode shell-pop scss-mode sass-mode restart-emacs rainbow-delimiters pyvenv pytest pyenv-mode py-isort pug-mode popwin poly-R poly-noweb poly-markdown pip-requirements persp-mode pcre2el paradox spinner orgit org-super-agenda ts org-sticky-header org-ref pdf-tools key-chord ivy tablist org-recent-headings frecency a org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download org-bullets org-attach-screenshot open-junk-file ob-typescript ob-go neotree multi-term move-text mmm-mode markdown-toc magit-gitflow magit-popup macrostep lorem-ipsum live-py-mode linum-relative link-hint interleave indent-guide hydra lv hy-mode dash-functional hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation helm-themes helm-swoop helm-pydoc helm-projectile projectile pkg-info epl helm-org-rifle helm-open-github gh marshal logito pcache ht helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-bibtex parsebib helm-ag haml-mode google-translate golden-ratio go-guru go-eldoc gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md fuzzy flyspell-correct-helm flyspell-correct flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist highlight evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit magit git-commit with-editor transient evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu ess-smart-equals ess-R-data-view ctable ess julia-mode eshell-z eshell-prompt-extras esh-help emmet-mode elisp-slime-nav ein skewer-mode markdown-mode polymode deferred websocket js2-mode simple-httpd dumb-jump diminish define-word cython-mode csv-mode company-web web-completion-data company-statistics company-go go-mode company-anaconda company column-enforce-mode clean-aindent-mode bind-map bind-key biblio biblio-core auto-yasnippet yasnippet auto-highlight-symbol auto-dictionary auto-compile packed anki-editor request anaconda-mode pythonic f dash s aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core async ac-ispell auto-complete popup))))
+    (atomic-chrome yapfify xterm-color ws-butler writeroom-mode visual-fill-column winum which-key web-mode volatile-highlights vi-tilde-fringe uuidgen use-package toc-org tide typescript-mode flycheck tagedit spaceline powerline smeargle slim-mode shell-pop scss-mode sass-mode restart-emacs rainbow-delimiters pyvenv pytest pyenv-mode py-isort pug-mode popwin poly-R poly-noweb poly-markdown pip-requirements persp-mode pcre2el paradox spinner orgit org-super-agenda ts org-sticky-header org-ref pdf-tools key-chord ivy tablist org-recent-headings frecency a org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download org-bullets org-attach-screenshot open-junk-file ob-typescript ob-go neotree multi-term move-text mmm-mode markdown-toc magit-gitflow magit-popup macrostep lorem-ipsum live-py-mode linum-relative link-hint interleave indent-guide hydra lv hy-mode dash-functional hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation helm-themes helm-swoop helm-pydoc helm-projectile projectile pkg-info epl helm-org-rifle helm-open-github gh marshal logito pcache ht helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-bibtex parsebib helm-ag haml-mode google-translate golden-ratio go-guru go-eldoc gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md fuzzy flyspell-correct-helm flyspell-correct flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist highlight evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit magit git-commit with-editor transient evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu ess-smart-equals ess-R-data-view ctable ess julia-mode eshell-z eshell-prompt-extras esh-help emmet-mode elisp-slime-nav ein skewer-mode markdown-mode polymode deferred websocket js2-mode simple-httpd dumb-jump diminish define-word cython-mode csv-mode company-web web-completion-data company-statistics company-go go-mode company-anaconda company column-enforce-mode clean-aindent-mode bind-map bind-key biblio biblio-core auto-yasnippet yasnippet auto-highlight-symbol auto-dictionary auto-compile packed anki-editor request anaconda-mode pythonic f dash s aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core async ac-ispell auto-complete popup))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
