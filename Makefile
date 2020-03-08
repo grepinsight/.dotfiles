@@ -4,7 +4,7 @@ help: ## Prints help for targets with comments
 bootstrap: ## Boostrap configuration
 	bash bootstrap.sh
 
-all: tmux_setup git_setup symlinks ## run all '*_setup' recipes
+all: tmux_setup git_setup symlinks run_scripts ## run all '*_setup' recipes
 
 tmux_setup: ## setup tmux
 	ln -sf $$HOME/.dotfiles/tmux/tmux.conf.share $$HOME/.tmux.conf
@@ -39,3 +39,6 @@ symlinks:
 	ln -sf $$HOME/.dotfiles/ctags/ctags.share $$HOME/.ctags
 	ln -sf $$HOME/.dotfiles/editorconfig $$HOME/.editorconfig
 
+.PHONY: run_scripts
+run_scripts:
+	bash scripts/link-rstudio-snippets.sh # link rstudio scripts
