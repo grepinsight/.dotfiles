@@ -655,9 +655,9 @@ you should place your code here."
   (setq org-capture-templates
         (quote (
                 ("t" "todo" entry (file "~/Dropbox/vimwiki/kanban.org")
-                "** TODO %?\n%U\n%a\n")
+                "** TODO  %?\n%U\n")
                 ("n" "note" entry (file "~/Dropbox/vimwiki/kanban.org")
-                "*** %? :note:\n%U\n%a\n")
+                "*** %? :note:\n%U\n")
                 ("k" "knowledge" entry (file "~/Dropbox/vimwiki/topics.org")
                  "*** %? \n%U\n%a\n")
                 ("j" "Journal" entry (file+datetree "~/Dropbox/vimwiki/kanban.org")
@@ -803,6 +803,7 @@ you should place your code here."
    '((typescript . t)
      (stan . t)
      (R . t)
+     (dot . t)
      (emacs-lisp . t)
      (python . t)
      ))

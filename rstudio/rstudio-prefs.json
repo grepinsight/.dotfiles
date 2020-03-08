@@ -1,0 +1,13 @@
+{
+    "show_margin": false,
+    "editor_keybindings": "vim",
+    "font_size_points": 14,
+    "editor_theme": "Dracula",
+    "default_project_location": "~",
+    "pdf_previewer": "rstudio",
+    "restore_source_documents": false,
+    "wrap_tab_navigation": false,
+    "save_workspace": "never",
+    "always_save_history": false,
+    "reuse_sessions_for_project_links": true
+}

@@ -4,11 +4,7 @@ help: ## Prints help for targets with comments
 bootstrap: ## Boostrap configuration
 	bash bootstrap.sh
 
-all: bash_setup tmux_setup git_setup editorconfig_setup ## run all '*_setup' recipes
-
-bash_setup:
-	@echo "Setting up inputrc to give bash superpower of Vim :)"
-	ln -sf $$HOME/.dotfiles/bash/share/bash_inputrc $$HOME/.inputrc
+all: tmux_setup git_setup symlinks ## run all '*_setup' recipes
 
 tmux_setup: ## setup tmux
 	ln -sf $$HOME/.dotfiles/tmux/tmux.conf.share $$HOME/.tmux.conf
@@ -27,15 +23,6 @@ git/gitconfig.combined: git/gitconfig.share git/gitconfig.local
 git/gitconfig.local:
 	touch $@
 
-editorconfig_setup:
-	ln -sf $$HOME/.dotfiles/editorconfig $$HOME/.editorconfig
-
-ctags_setup: ctags/ctags.share  ## ctags setup
-	ln -sf $$HOME/.dotfiles/ctags/ctags.share $$HOME/.ctags
-
-vim_setup: vim/vimrc ## vim setup
-	bash vim/vim_module_setup.sh
-
 update_brew:
 	brew bundle dump --force && mv Brewfile osx
 	brew list > osx/brew.list
@@ -45,5 +32,10 @@ update_brew:
 migrate:  ## migrate helper
 	fd --no-ignore -t f local
 
-
+.PHONY: symlinks
+symlinks:
+	ln -sf $$HOME/.dotfiles/bash/share/bash_inputrc $$HOME/.inputrc
+	ln -sf $$HOME/.dotfiles/rstudio/rstudio-prefs.json $$HOME/.config/rstudio/rstudio-prefs.json
+	ln -sf $$HOME/.dotfiles/ctags/ctags.share $$HOME/.ctags
+	ln -sf $$HOME/.dotfiles/editorconfig $$HOME/.editorconfig
 
