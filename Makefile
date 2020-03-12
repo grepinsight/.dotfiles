@@ -41,4 +41,4 @@ symlinks:
 
 .PHONY: run_scripts
 run_scripts:
-	bash scripts/link-rstudio-snippets.sh # link rstudio scripts
+	bash scripts/link-rstudio-snippets-and-bindings.sh # link rstudio scripts

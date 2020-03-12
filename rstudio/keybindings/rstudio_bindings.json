@@ -1,0 +1,8 @@
+{
+    "activateTerminal": "Ctrl+3",
+    "newTerminal": "Shift+Cmd+R",
+    "jumpTo": "Cmd+J",
+    "jumpToMatching": "",
+    "goToFileFunction": "Ctrl+P",
+    "notebookClearOutput": "Shift+Cmd+L"
+}
