@@ -2,6 +2,7 @@
 
 set -x
 
+mkdir -p $HOME/.config/rstudio
 for snippet in rstudio/snippets/*; do
     snippet_name="$(basename $snippet)"
     ln -sf $HOME/.dotfiles/rstudio/snippets/"$snippet_name"\
