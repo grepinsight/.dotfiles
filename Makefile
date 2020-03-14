@@ -40,5 +40,5 @@ symlinks:
 	ln -sf $$HOME/.dotfiles/editorconfig $$HOME/.editorconfig
 
 .PHONY: run_scripts
-run_scripts:
+run_scripts:  ## link rstudio
 	bash scripts/link-rstudio-snippets-and-bindings.sh # link rstudio scripts
