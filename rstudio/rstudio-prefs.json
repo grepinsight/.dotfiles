@@ -2,11 +2,10 @@
     "show_margin": false,
     "editor_keybindings": "vim",
     "font_size_points": 14,
-    "editor_theme": "Dracula",
+    "editor_theme": "Solarized Light",
     "default_project_location": "~",
     "pdf_previewer": "rstudio",
     "restore_source_documents": false,
-    "wrap_tab_navigation": false,
     "save_workspace": "never",
     "always_save_history": false,
     "reuse_sessions_for_project_links": true,
@@ -36,5 +35,6 @@
         "console_left_on_top": false,
         "console_right_on_top": true
     },
-    "posix_terminal_shell": "bash"
+    "posix_terminal_shell": "bash",
+    "source_with_echo": true
 }

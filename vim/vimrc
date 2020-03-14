@@ -189,7 +189,7 @@ Plug 'ncm2/ncm2-path'
 Plug 'jalvesaq/vimcmdline' "sort of like slim
 
 Plug 'davidhalter/jedi-vim'
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
+"Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'fatih/vim-go'
 Plug 'kana/vim-textobj-user'
 Plug 'jeetsukumaran/vim-pythonsense'
@@ -884,7 +884,7 @@ nmap <silent> <leader>lf <Plug>(coc-references)
 " coc.vim stuff
 
 
-nmap <silent> gd <Plug>(coc-definition)
+"nmap <silent> gd <Plug>(coc-definition)
 nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
@@ -1070,7 +1070,7 @@ let g:UltiSnipsJumpBackwardTrigger="<S-Tab>"
 " " If you want :UltiSnipsEdit to split your window.
 let g:UltiSnipsEditSplit="vertical"
 let g:UltiSnipsNoPythonWarning = 1
-let g:UltiSnipsSnippetsDir="~/.vim/plugged/mysnippets/UltiSnips/"
+let g:UltiSnipsSnippetDirectories=["UltiSnips", "mysnippets"]
 
 noremap <silent> <Leader>ult :UltiSnipsEdit<CR>
 vmap <F9> :call UltiSnips#SaveLastVisualSelection()<CR>gvs

@@ -4,5 +4,7 @@
     "jumpTo": "Cmd+J",
     "jumpToMatching": "",
     "goToFileFunction": "Ctrl+P",
-    "notebookClearOutput": "Shift+Cmd+L"
+    "notebookClearOutput": "Shift+Cmd+L",
+    "goToNextChunk": "Ctrl+Shift+Cmd+N",
+    "goToPrevChunk": "Ctrl+Shift+Cmd+P"
 }

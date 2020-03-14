@@ -123,3 +123,25 @@ snippet ppp
 snippet reload
 	devtools::reload(devtools::inst("${1}"))
 	
+snippet lib2
+	options(rlang_trace_top_env = rlang::current_env())
+	options(error = function() { 
+		sink()
+		print(rlang::trace_back(bottom = sys.frame(-1)), simplify = "none")
+	})
+	library <- function(...) {
+		suppressPackageStartupMessages(base::library(...))
+		
+	}
+	library(tidyverse)
+	library(glue)
+	library(here)
+	library(fs)
+	library(usethis)
+	library(janitor)
+	library(vroom)
+	library(data.table)
+	library(tictoc)
+# Dplyr related ---------------------------------------	
+snippet summ
+	summarize(${1})

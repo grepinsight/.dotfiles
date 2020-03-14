@@ -2,8 +2,10 @@
 
 set -x
 
-for snippet in rstudio/snippets/*; do
-    snippet_name="$(basename $snippet)"
-    ln -sf $HOME/.dotfiles/rstudio/snippets/"$snippet_name"\
-        $HOME/.config/rstudio/snippets/"$snippet_name"
+for item in snippets keybindings; do
+    for snippet in rstudio/$item/*; do
+        item_name="$(basename $snippet)"
+        ln -sf $HOME/.dotfiles/rstudio/$item/"$item_name"\
+            $HOME/.config/rstudio/$item/"$item_name"
+    done
 done
