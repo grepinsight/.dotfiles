@@ -658,6 +658,8 @@ you should place your code here."
                 "** TODO  %?\n%U\n")
                 ("n" "note" entry (file "~/Dropbox/vimwiki/kanban.org")
                 "*** %? :note:\n%U\n")
+                ("o" "topic" entry (file "~/Dropbox/vimwiki/topic.org")
+                 "*** %? \n%U\n")
                 ("k" "knowledge" entry (file "~/Dropbox/vimwiki/topics.org")
                  "*** %? \n%U\n%a\n")
                 ("j" "Journal" entry (file+datetree "~/Dropbox/vimwiki/kanban.org")
