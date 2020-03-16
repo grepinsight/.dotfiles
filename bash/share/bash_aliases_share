@@ -535,6 +535,7 @@ alias tmuxrc="vim $HOME/.tmux.conf"
 alias fdf="fd -t f"
 alias sda="source deactivate"
 alias upp="unset PYTHONPATH"
+alias em="emacs"
 
 
 alias p="python"
