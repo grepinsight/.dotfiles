@@ -79,7 +79,7 @@ This function should only modify configuration layer settings."
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
-   dotspacemacs-additional-packages '(org-sticky-header org-recent-headings org-super-agenda interleave helm-org-rifle polymode poly-R poly-noweb poly-markdown anki-editor helm-open-github ob-typescript ob-go writeroom-mode org-attach-screenshot ox-reveal editorconfig magit-todos)
+   dotspacemacs-additional-packages '(org-sticky-header org-recent-headings org-super-agenda interleave helm-org-rifle polymode poly-R poly-noweb poly-markdown anki-editor helm-open-github ob-typescript ob-go writeroom-mode org-attach-screenshot ox-reveal editorconfig magit-todos fzf)
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
 
@@ -496,7 +496,7 @@ you should place your code here."
     (poly-markdown+r-mode))
 
 
-  ;;(setq org-format-latex-options
+  ;; (setq org-format-latex-options
   ;;      (plist-put org-format-latex-options :scale 2))
 
   ;; Spelling -------------------------------------------------------------------
@@ -514,16 +514,17 @@ you should place your code here."
         '((sequence "TODO(t)" "WAIT(w)" "|" "DONE(d)" "CANCELED(c)")))
 
 
-  (setq org-agenda-files
-    (quote
-     ("~/Dropbox/vimwiki/kanban.org_archive"
-      "~/Dropbox/vimwiki/kanban.org"
-      "~/Dropbox/vimwiki/notes.org"
-      "~/Dropbox/vimwiki/topics.org"
-      "~/Dropbox/vimwiki/work.org"
-      "~/Dropbox/vimwiki/books.org"
-      )))
+  ;; (setq org-agenda-files
+  ;;   (quote
+  ;;    ("~/Dropbox/vimwiki/kanban.org_archive"
+  ;;     "~/Dropbox/vimwiki/kanban.org"
+  ;;     "~/Dropbox/vimwiki/notes.org"
+  ;;     "~/Dropbox/vimwiki/topics.org"
+  ;;     "~/Dropbox/vimwiki/work.org"
+  ;;     "~/Dropbox/vimwiki/books.org"
+  ;;     )))
 
+  (setq org-agenda-files '("~/Dropbox/vimwiki"))
   ;; Remove done tasks from agenda view
   (setq org-agenda-skip-scheduled-if-done t)
 
@@ -827,12 +828,18 @@ you should place your code here."
   (spacemacs/declare-prefix "o" "custom")
   (spacemacs/set-leader-keys "os" 'spotify-play)
   (spacemacs/set-leader-keys "op" 'spotify-pause)
+    (spacemacs/set-leader-keys "of" 'fzf)
 
   ;; Custom packages
   (load-file "~/.emacs.d/private/local/org-roam.el")
   (setq org-roam-directory "~/Dropbox/vimwiki")
 
   (load-file "~/.emacs.d/private/local/org-graph-view.el")
+
+    ;; Add yas-snippets to autocompletion
+  (setq-default dotspacemacs-configuration-layers
+      '((auto-completion :variables
+              auto-completion-enable-snippets-in-popup t)))
 
 )
 ;; Do not write anything past this comment. This is where Emacs will
@@ -847,17 +854,21 @@ This function is called at the very end of Spacemacs initialization."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(ledger-reports
-   (quote
-    ((nil "ledger ")
-     (nil "ledger ")
-     ("bal" "%(binary) -f %(ledger-file) bal")
-     ("reg" "%(binary) -f %(ledger-file) reg")
-     ("payee" "%(binary) -f %(ledger-file) reg @%(payee)")
-     ("account" "%(binary) -f %(ledger-file) reg %(account)"))))
- '(package-selected-packages
-   (quote
-    (magit-todos atomic-chrome yapfify xterm-color ws-butler writeroom-mode visual-fill-column winum which-key web-mode volatile-highlights vi-tilde-fringe uuidgen use-package toc-org tide typescript-mode flycheck tagedit spaceline powerline smeargle slim-mode shell-pop scss-mode sass-mode restart-emacs rainbow-delimiters pyvenv pytest pyenv-mode py-isort pug-mode popwin poly-R poly-noweb poly-markdown pip-requirements persp-mode pcre2el paradox spinner orgit org-super-agenda ts org-sticky-header org-ref pdf-tools key-chord ivy tablist org-recent-headings frecency a org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download org-bullets org-attach-screenshot open-junk-file ob-typescript ob-go neotree multi-term move-text mmm-mode markdown-toc magit-gitflow magit-popup macrostep lorem-ipsum live-py-mode linum-relative link-hint interleave indent-guide hydra lv hy-mode dash-functional hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation helm-themes helm-swoop helm-pydoc helm-projectile projectile pkg-info epl helm-org-rifle helm-open-github gh marshal logito pcache ht helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-bibtex parsebib helm-ag haml-mode google-translate golden-ratio go-guru go-eldoc gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md fuzzy flyspell-correct-helm flyspell-correct flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist highlight evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit magit git-commit with-editor transient evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu ess-smart-equals ess-R-data-view ctable ess julia-mode eshell-z eshell-prompt-extras esh-help emmet-mode elisp-slime-nav ein skewer-mode markdown-mode polymode deferred websocket js2-mode simple-httpd dumb-jump diminish define-word cython-mode csv-mode company-web web-completion-data company-statistics company-go go-mode company-anaconda company column-enforce-mode clean-aindent-mode bind-map bind-key biblio biblio-core auto-yasnippet yasnippet auto-highlight-symbol auto-dictionary auto-compile packed anki-editor request anaconda-mode pythonic f dash s aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core async ac-ispell auto-complete popup))))
+    '(ledger-reports
+         (quote
+             ((nil "ledger ")
+                 (nil "ledger ")
+                 ("bal" "%(binary) -f %(ledger-file) bal")
+                 ("reg" "%(binary) -f %(ledger-file) reg")
+                 ("payee" "%(binary) -f %(ledger-file) reg @%(payee)")
+                 ("account" "%(binary) -f %(ledger-file) reg %(account)"))))
+    '(org-format-latex-options
+         (quote
+             (:foreground default :background default :scale 3 :html-foreground "Black" :html-background "Transparent" :html-scale 1.0 :matchers
+                 ("begin" "$1" "$" "$$" "\\(" "\\["))))
+    '(package-selected-packages
+         (quote
+             (fzf atomic-chrome yapfify xterm-color ws-butler writeroom-mode visual-fill-column winum which-key web-mode volatile-highlights vi-tilde-fringe uuidgen use-package toc-org tide typescript-mode flycheck tagedit spaceline powerline smeargle slim-mode shell-pop scss-mode sass-mode restart-emacs rainbow-delimiters pyvenv pytest pyenv-mode py-isort pug-mode popwin poly-R poly-noweb poly-markdown pip-requirements persp-mode pcre2el paradox spinner orgit org-super-agenda ts org-sticky-header org-ref pdf-tools key-chord ivy tablist org-recent-headings frecency a org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download org-bullets org-attach-screenshot open-junk-file ob-typescript ob-go neotree multi-term move-text mmm-mode markdown-toc magit-gitflow magit-popup macrostep lorem-ipsum live-py-mode linum-relative link-hint interleave indent-guide hydra lv hy-mode dash-functional hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation helm-themes helm-swoop helm-pydoc helm-projectile projectile pkg-info epl helm-org-rifle helm-open-github gh marshal logito pcache ht helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-bibtex parsebib helm-ag haml-mode google-translate golden-ratio go-guru go-eldoc gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md fuzzy flyspell-correct-helm flyspell-correct flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist highlight evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit magit git-commit with-editor transient evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu ess-smart-equals ess-R-data-view ctable ess julia-mode eshell-z eshell-prompt-extras esh-help emmet-mode elisp-slime-nav ein skewer-mode markdown-mode polymode deferred websocket js2-mode simple-httpd dumb-jump diminish define-word cython-mode csv-mode company-web web-completion-data company-statistics company-go go-mode company-anaconda company column-enforce-mode clean-aindent-mode bind-map bind-key biblio biblio-core auto-yasnippet yasnippet auto-highlight-symbol auto-dictionary auto-compile packed anki-editor request anaconda-mode pythonic f dash s aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core async ac-ispell auto-complete popup))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
