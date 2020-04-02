@@ -35,6 +35,7 @@ migrate:  ## migrate helper
 .PHONY: symlinks
 symlinks:
 	ln -sf $$HOME/.dotfiles/bash/share/bash_inputrc $$HOME/.inputrc
+	mkdir -p $$HOME/.config/rstudio/
 	ln -sf $$HOME/.dotfiles/rstudio/rstudio-prefs.json $$HOME/.config/rstudio/rstudio-prefs.json
 	ln -sf $$HOME/.dotfiles/ctags/ctags.share $$HOME/.ctags
 	ln -sf $$HOME/.dotfiles/editorconfig $$HOME/.editorconfig
