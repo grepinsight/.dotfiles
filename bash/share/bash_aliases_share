@@ -542,3 +542,5 @@ alias p="python"
 command -v rpbcopy > /dev/null && alias pbcopy="rpbcopy"
 
 alias chr="open -a 'Google Chrome'"
+
+command -v hub 2> /dev/null && alias git="hub"
