@@ -190,6 +190,7 @@ Plug 'jalvesaq/vimcmdline' "sort of like slim
 
 Plug 'davidhalter/jedi-vim'
 "Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'rust-lang/rust.vim'
 Plug 'fatih/vim-go'
 Plug 'kana/vim-textobj-user'
 Plug 'jeetsukumaran/vim-pythonsense'
@@ -1980,3 +1981,5 @@ nnoremap <localleader>lc :lclose<CR>
 autocmd TerminalOpen * if bufwinnr('') > 0 | setlocal nobuflisted | endif
 
 
+" Rust
+let g:rustfmt_autosave = 1

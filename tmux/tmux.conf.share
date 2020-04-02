@@ -144,6 +144,7 @@ set -g @plugin 'tmux-plugins/tmux-sensible'
 set -g @plugin 'christoomey/vim-tmux-navigator'
 
 set -g @thumbs-key F
+set -g @thumbs-key space
 set -g @thumbs-command 'echo -n {} | pbcopy'
 
 # Finger setup

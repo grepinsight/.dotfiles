@@ -2,6 +2,7 @@
 
 set -x
 
+mkdir -p $HOME/.config/rstudio
 for item in snippets keybindings; do
     for snippet in rstudio/$item/*; do
         item_name="$(basename $snippet)"
