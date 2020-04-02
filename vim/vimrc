@@ -777,8 +777,11 @@ if hr <= 6 || hr >= 18
 else
     let cs = 'seoul256-light'
 endif
-let cs = 'deus'
-execute 'colorscheme '.cs
+try
+    let cs = 'deus'
+    execute 'colorscheme '.cs
+catch
+endtry
 
 " github theme
 " colorscheme github
