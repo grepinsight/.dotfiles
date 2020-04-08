@@ -119,6 +119,8 @@ srd() {
   fi
 }
 
+export -f srd
+alias sd="srd"
 export -f pd
 
 

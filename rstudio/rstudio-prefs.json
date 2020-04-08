@@ -2,7 +2,7 @@
     "show_margin": false,
     "editor_keybindings": "vim",
     "font_size_points": 14,
-    "editor_theme": "Solarized Light",
+    "editor_theme": "Tomorrow Night 80s",
     "default_project_location": "~",
     "pdf_previewer": "rstudio",
     "restore_source_documents": false,
