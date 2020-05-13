@@ -189,7 +189,7 @@ Plug 'ncm2/ncm2-path'
 Plug 'jalvesaq/vimcmdline' "sort of like slim
 
 Plug 'davidhalter/jedi-vim'
-"Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'rust-lang/rust.vim'
 Plug 'fatih/vim-go'
 Plug 'kana/vim-textobj-user'
@@ -207,7 +207,7 @@ Plug 'w0rp/ale'
 "     catch
 "     endtry
 " endif
-Plug 'SirVer/ultisnips'
+"Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 Plug 'ervandew/supertab'
 Plug 'grepinsight/mysnippets'
@@ -882,6 +882,7 @@ let g:coc_global_extensions = ['coc-emoji', 'coc-eslint', 'coc-prettier', 'coc-t
 
 " Remap keys for gotos
 nmap <silent> <leader>ld <Plug>(coc-definition)
+nmap <silent> <F12> <Plug>(coc-definition)
 nmap <silent> <leader>lt <Plug>(coc-type-definition)
 nmap <silent> <leader>li <Plug>(coc-implementation)
 nmap <silent> <leader>lf <Plug>(coc-references)

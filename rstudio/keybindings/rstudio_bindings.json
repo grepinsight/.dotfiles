@@ -10,5 +10,7 @@
     "maximizeConsole": "Ctrl+Shift+# Ctrl+Shift+#",
     "notebookCollapseAllOutput": "",
     "notebookToggleExpansion": "Ctrl+-",
-    "layoutZoomCurrentPane": "Ctrl+="
+    "layoutZoomCurrentPane": "Ctrl+=",
+    "goToNextSection": "Ctrl+J",
+    "goToPrevSection": "Ctrl+K"
 }

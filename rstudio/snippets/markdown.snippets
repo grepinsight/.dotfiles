@@ -60,4 +60,16 @@ snippet exp
   
   ### Appendix
 
+snippet conflr
+	---
+	title: "${1}"
+	author: "Albert Lee"
+	date: "`r Sys.Date()`"
+	output:
+	  conflr::confluence_document:
+	    space_key: "~alee"
+	    update: true
+	    toc: true
+	    use_original_size: true
+---
 	

@@ -311,6 +311,7 @@ alias grm="git rebase master"
 alias vr="vim README*"
 alias v="vim"
 alias e="emacs -nw"
+alias b="TERM=xterm-24bit emacsclient -nw"
 alias vn="vim --noplugin"
 alias vimu="vim --noplugin"
 # alias vimm="vim --noplugin" # comment it out in favor of vimm prog
@@ -510,7 +511,7 @@ alias qs="qstat"
 alias rgi="rg -i"
 
 
-alias b="bat"
+#alias b="bat"
 alias hedit="vim $HOME/.bash_eternal_history"
 
 alias opr="open $(find . -maxdepth 1 -type f -name '*Rproj')"
@@ -544,3 +545,4 @@ command -v rpbcopy > /dev/null && alias pbcopy="rpbcopy"
 alias chr="open -a 'Google Chrome'"
 
 command -v hub 2> /dev/null && alias git="hub"
+alias code="/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code"

@@ -121,6 +121,7 @@ srd() {
 
 export -f srd
 alias sd="srd"
+alias ss="srd"
 export -f pd
 
 

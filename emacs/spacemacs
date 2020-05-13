@@ -32,8 +32,9 @@ This function should only modify configuration layer settings."
 
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(
-     typescript
+      '(yaml
+           ruby
+           typescript
      go
      python
      ;; pdf
@@ -80,7 +81,8 @@ This function should only modify configuration layer settings."
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
-   dotspacemacs-additional-packages '(org-sticky-header org-recent-headings org-super-agenda interleave helm-org-rifle polymode poly-R poly-noweb poly-markdown anki-editor helm-open-github ob-typescript ob-go writeroom-mode org-attach-screenshot ox-reveal editorconfig magit-todos fzf)
+      dotspacemacs-additional-packages '(org-sticky-header org-recent-headings org-super-agenda interleave helm-org-rifle polymode poly-R poly-noweb poly-markdown anki-editor helm-open-github ob-typescript ob-go writeroom-mode org-attach-screenshot ox-reveal editorconfig magit-todos fzf wdl-mode poly-wdl)
+
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
 
@@ -220,8 +222,8 @@ It should only modify the values of Spacemacs settings."
    ;; (default t)
    dotspacemacs-colorize-cursor-according-to-state t
 
-   ;; Default font or prioritized list of fonts.
-   dotspacemacs-default-font '("Source Code Pro"
+   ;; Default font or prioritized lifst of fonts.
+   dotspacemacs-default-font '("Menlo"
                                :size 13
                                :weight normal
                                :width normal
@@ -484,6 +486,20 @@ explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
 
 
+
+    ;; https://stackoverflow.com/questions/23576163/how-to-map-j-and-k-to-gj-and-gk-in-emacs-evil-mode
+    ;; Map gj/gk to j/k
+    (define-key evil-normal-state-map (kbd "j") 'evil-next-visual-line)
+    (define-key evil-normal-state-map (kbd "k") 'evil-previous-visual-line)
+
+    (load-file "~/.emacs.d/customs/org-re-reveal.el")
+    ;; dnanexus path
+    (org-link-set-parameters "dx"
+     :follow (lambda (path) (message "You clicked me."))
+        )
+
+
+
   ;; Save All buffer when focus is lo st ------------------------------------------
   ;; (add-hook 'focus-out-hook (lambda () (save-some-buffers t)))
   (add-hook 'focus-out-hook 'save-buffer)
@@ -511,9 +527,12 @@ you should place your code here."
   ;; (define-key evil-normal-state-map "zg" 'my-save-word)
   ;; (define-key evil-normal-state-map "BB" 'evil-delete-buffer)
 ;; Agenda Related Things -------------------------------------------------------
-  (setq org-todo-keywords
-        '((sequence "TODO(t)" "WAIT(w)" "|" "DONE(d)" "CANCELED(c)")))
+  ;; (setq org-todo-keywords
+  ;;       '((sequence "TODO(t)" "WAIT(w)" "|" "DONE(d)" "CANCELED(c)")))
 
+    (setq org-todo-keywords
+        '((sequence "TODO(t)" "NEXT(n)" "IN-PROGRESS(p)" "WAIT(w)" "MAYBE(b)" "HABIT(h)" "QUESTION(q)" "|" "DONE(d)" "MIGRATED(m)" "CANCELLED(c)" "ANSWERED(a)")
+             ))
 
   ;; (setq org-agenda-files
   ;;   (quote
@@ -525,7 +544,13 @@ you should place your code here."
   ;;     "~/Dropbox/vimwiki/books.org"
   ;;     )))
 
-  (setq org-agenda-files '("~/Dropbox/vimwiki"))
+  ;; (setq org-agenda-files '("~/Dropbox/vimwiki" "~/prj"))
+    (setq org-agenda-files (apply 'append
+                                (mapcar
+                                    (lambda (directory)
+                                        (directory-files-recursively
+                                            directory org-agenda-file-regexp))
+                                    '("~/Dropbox/vimwiki" "~/prj"))))
   ;; Remove done tasks from agenda view
   (setq org-agenda-skip-scheduled-if-done t)
 
@@ -592,8 +617,11 @@ you should place your code here."
                                  :tag "Emacs"
                                  :order 13)
                           (:name "In-Progress"
-                                 :todo "IN-PROGRESS"
+                                 :and(:todo "IN-PROGRESS" :not(:tag "ARCHIVE"))
                                  :order 13)
+                          (:name "QUESTION"
+                              :and(:todo "QUESTION" :not(:tag "ARCHIVE"))
+                              :order 13)
                           (:name "Research"
                                  :tag "Research"
                                  :order 15)
@@ -660,7 +688,7 @@ you should place your code here."
                 "** TODO  %?\n%U\n")
                 ("n" "note" entry (file "~/Dropbox/vimwiki/kanban.org")
                 "*** %? :note:\n%U\n")
-                ("o" "topic" entry (file "~/Dropbox/vimwiki/topic.org")
+                ("o" "topic" entry (file "~/Dropbox/vimwiki/topics.org")
                  "*** %? \n%U\n")
                 ("k" "knowledge" entry (file "~/Dropbox/vimwiki/topics.org")
                  "*** %? \n%U\n%a\n")
@@ -829,7 +857,34 @@ you should place your code here."
   (spacemacs/declare-prefix "o" "custom")
   (spacemacs/set-leader-keys "os" 'spotify-play)
   (spacemacs/set-leader-keys "op" 'spotify-pause)
-    (spacemacs/set-leader-keys "of" 'fzf)
+  (spacemacs/set-leader-keys "of" 'fzf)
+  (spacemacs/set-leader-keys "ob" 'helm-org-rifle-current-buffer)
+  (spacemacs/set-leader-keys "oh" 'helm-org-parent-headings)
+
+  ;; datetree jump
+  (defun al/goto-today-diary()
+      (interactive)
+      (goto-char (org-find-exact-headline-in-buffer (format-time-string "%Y-%m-%d %A") (find-file "~/Dropbox/vimwiki/kanban.org")))
+      (org-show-entry)
+      (outline-show-subtree)
+      )
+
+  (spacemacs/set-leader-keys "od" 'al/goto-today-diary)
+
+    ;; Work datetree jump
+    (defun al/goto-today-diary-work()
+        (interactive)
+        (goto-char (org-find-exact-headline-in-buffer (format-time-string "%Y-%m-%d %A") (find-file "~/Dropbox/vimwiki/work.org")))
+        (org-show-entry)
+        (outline-show-subtree)
+        )
+
+    (spacemacs/set-leader-keys "ow" 'al/goto-today-diary-work)
+    (defun al/topic-search()
+        (interactive)
+        (helm-org-rifle-files "~/Dropbox/vimwiki/topics.org")
+     )
+    (spacemacs/set-leader-keys "ot" 'al/topic-search)
 
   ;; Custom packages
   (load-file "~/.emacs.d/private/local/org-roam.el")
@@ -841,6 +896,9 @@ you should place your code here."
   (setq-default dotspacemacs-configuration-layers
       '((auto-completion :variables
               auto-completion-enable-snippets-in-popup t)))
+
+
+
 
 )
 ;; Do not write anything past this comment. This is where Emacs will
@@ -855,6 +913,11 @@ This function is called at the very end of Spacemacs initialization."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+    '(custom-safe-themes
+         (quote
+             ("fa2b58bb98b62c3b8cf3b6f02f058ef7827a8e497125de0254f56e373abee088" default)))
+ '(evil-want-Y-yank-to-eol nil)
+ '(helm-completion-style (quote emacs))
     '(ledger-reports
          (quote
              ((nil "ledger ")
@@ -863,13 +926,16 @@ This function is called at the very end of Spacemacs initialization."
                  ("reg" "%(binary) -f %(ledger-file) reg")
                  ("payee" "%(binary) -f %(ledger-file) reg @%(payee)")
                  ("account" "%(binary) -f %(ledger-file) reg %(account)"))))
+    '(org-agenda-files
+         (quote
+             ("/Users/allee/Dropbox/vimwiki/brain/index.org" "/Users/allee/Dropbox/vimwiki/brain/psychology.org" "/Users/allee/Dropbox/vimwiki/brain/thing.org" "/Users/allee/Dropbox/vimwiki/compsci/algorithms_and_data_structures.org" "/Users/allee/Dropbox/vimwiki/2020-03-24.org" "/Users/allee/Dropbox/vimwiki/Definitions.org" "/Users/allee/Dropbox/vimwiki/books.org" "/Users/allee/Dropbox/vimwiki/books.org.org" "/Users/allee/Dropbox/vimwiki/english.org" "/Users/allee/Dropbox/vimwiki/inbox.org" "/Users/allee/Dropbox/vimwiki/kanban.org" "/Users/allee/Dropbox/vimwiki/notes.org" "/Users/allee/Dropbox/vimwiki/scratch-2020-01-17.org" "/Users/allee/Dropbox/vimwiki/spanish.org" "/Users/allee/Dropbox/vimwiki/statistics.org" "/Users/allee/Dropbox/vimwiki/topics.org" "/Users/allee/Dropbox/vimwiki/work.org" "/Users/allee/prj/BIOINF-2483--novaseq-index-hopping/README.org" "/Users/allee/prj/BIOINF-2483--novaseq-index-hopping/tmp.org" "/Users/allee/prj/SIDE-064--master-emacs/my_first_note.org" "/Users/allee/prj/README.org")))
     '(org-format-latex-options
          (quote
              (:foreground default :background default :scale 3 :html-foreground "Black" :html-background "Transparent" :html-scale 1.0 :matchers
                  ("begin" "$1" "$" "$$" "\\(" "\\["))))
     '(package-selected-packages
          (quote
-             (toml-mode racer flycheck-rust cargo rust-mode atomic-chrome yapfify xterm-color ws-butler writeroom-mode visual-fill-column winum which-key web-mode volatile-highlights vi-tilde-fringe uuidgen use-package toc-org tide typescript-mode flycheck tagedit spaceline powerline smeargle slim-mode shell-pop scss-mode sass-mode restart-emacs rainbow-delimiters pyvenv pytest pyenv-mode py-isort pug-mode popwin poly-R poly-noweb poly-markdown pip-requirements persp-mode pcre2el paradox spinner orgit org-super-agenda ts org-sticky-header org-ref pdf-tools key-chord ivy tablist org-recent-headings frecency a org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download org-bullets org-attach-screenshot open-junk-file ob-typescript ob-go neotree multi-term move-text mmm-mode markdown-toc magit-gitflow magit-popup macrostep lorem-ipsum live-py-mode linum-relative link-hint interleave indent-guide hydra lv hy-mode dash-functional hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation helm-themes helm-swoop helm-pydoc helm-projectile projectile pkg-info epl helm-org-rifle helm-open-github gh marshal logito pcache ht helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-bibtex parsebib helm-ag haml-mode google-translate golden-ratio go-guru go-eldoc gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md fuzzy flyspell-correct-helm flyspell-correct flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist highlight evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit magit git-commit with-editor transient evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu ess-smart-equals ess-R-data-view ctable ess julia-mode eshell-z eshell-prompt-extras esh-help emmet-mode elisp-slime-nav ein skewer-mode markdown-mode polymode deferred websocket js2-mode simple-httpd dumb-jump diminish define-word cython-mode csv-mode company-web web-completion-data company-statistics company-go go-mode company-anaconda company column-enforce-mode clean-aindent-mode bind-map bind-key biblio biblio-core auto-yasnippet yasnippet auto-highlight-symbol auto-dictionary auto-compile packed anki-editor request anaconda-mode pythonic f dash s aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core async ac-ispell auto-complete popup))))
+             (ox-reveal atomic-chrome yapfify xterm-color ws-butler writeroom-mode visual-fill-column winum which-key web-mode volatile-highlights vi-tilde-fringe uuidgen use-package toc-org tide typescript-mode flycheck tagedit spaceline powerline smeargle slim-mode shell-pop scss-mode sass-mode restart-emacs rainbow-delimiters pyvenv pytest pyenv-mode py-isort pug-mode popwin poly-R poly-noweb poly-markdown pip-requirements persp-mode pcre2el paradox spinner orgit org-super-agenda ts org-sticky-header org-ref pdf-tools key-chord ivy tablist org-recent-headings frecency a org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download org-bullets org-attach-screenshot open-junk-file ob-typescript ob-go neotree multi-term move-text mmm-mode markdown-toc magit-gitflow magit-popup macrostep lorem-ipsum live-py-mode linum-relative link-hint interleave indent-guide hydra lv hy-mode dash-functional hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation helm-themes helm-swoop helm-pydoc helm-projectile projectile pkg-info epl helm-org-rifle helm-open-github gh marshal logito pcache ht helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-bibtex parsebib helm-ag haml-mode google-translate golden-ratio go-guru go-eldoc gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md fuzzy flyspell-correct-helm flyspell-correct flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist highlight evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit magit git-commit with-editor transient evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu ess-smart-equals ess-R-data-view ctable ess julia-mode eshell-z eshell-prompt-extras esh-help emmet-mode elisp-slime-nav ein skewer-mode markdown-mode polymode deferred websocket js2-mode simple-httpd dumb-jump diminish define-word cython-mode csv-mode company-web web-completion-data company-statistics company-go go-mode company-anaconda company column-enforce-mode clean-aindent-mode bind-map bind-key biblio biblio-core auto-yasnippet yasnippet auto-highlight-symbol auto-dictionary auto-compile packed anki-editor request anaconda-mode pythonic f dash s aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core async ac-ispell auto-complete popup))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
