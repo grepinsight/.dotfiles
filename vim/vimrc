@@ -1531,6 +1531,15 @@ nnoremap yoo :if &conceallevel==2<Bar>
     \ else <Bar>
     \   set conceallevel=2<Bar>
     \ endif <CR>
+
+
+nnoremap yof :if &foldlevelstart==0<Bar>
+    \   set foldlevel=10<Bar>
+    \   set foldlevelstart=10<Bar>
+    \ elseif &foldlevelstart==10<Bar>
+    \   set foldlevel=0<Bar>
+    \   set foldlevelstart=0<Bar>
+    \ endif <CR><CR>
 " }}}
 " ============================================================================
 
