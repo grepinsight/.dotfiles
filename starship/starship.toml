@@ -36,3 +36,8 @@ utc_time_offset = "-5"
 [jobs]
 symbol = "+ "
 threshold = 0
+
+[character]
+symbol = "➜"
+error_symbol = "✗"
+use_symbol_for_status = true
