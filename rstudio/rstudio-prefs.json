@@ -38,5 +38,5 @@
     "posix_terminal_shell": "bash",
     "source_with_echo": true,
     "jobs_tab_visibility": "shown",
-    "rmd_preferred_template_path": "/Library/Frameworks/R.framework/Versions/3.6/Resources/library/learnr/rmarkdown/templates/tutorial"
+    "rmd_preferred_template_path": "/Library/Frameworks/R.framework/Versions/3.6/Resources/library/mwhat/rmarkdown/templates/mwh_analysis_basic"
 }
