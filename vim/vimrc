@@ -105,7 +105,9 @@ Plug 'airblade/vim-rooter'
 Plug 'vim-scripts/BufOnly.vim'
 
 " Files related
-Plug 'scrooloose/nerdtree'
+"Plug 'scrooloose/nerdtree'
+Plug 'Shougo/junkfile.vim'
+Plug 'justinmk/vim-dirvish'
 Plug 'tpope/vim-vinegar'
 Plug 'francoiscabrol/ranger.vim'
 "Plug 'Xuyuanp/nerdtree-git-plugin'
@@ -159,6 +161,7 @@ Plug 'elzr/vim-json'
 Plug 'Konfekt/FastFold'
 Plug 'kalekundert/vim-coiled-snake'
 "Plug 'wellle/context.vim'
+Plug 'glacambre/firenvim', { 'do': { _ -> firenvim#install(0) } }
 
 " Git
 Plug 'airblade/vim-gitgutter'
@@ -366,7 +369,8 @@ xnoremap k gk
 
 nnoremap <leader>ln :Lines<CR>
 nmap \q :nohlsearch<CR>
-nmap <leader>e :NERDTreeToggle<CR>
+"nmap <leader>e :NERDTreeToggle<CR>
+nmap <leader>e :Dirvish<CR>
 
 " Use sane regexes.
 nnoremap / /\v
@@ -1991,7 +1995,13 @@ nnoremap <localleader>lo :lopen<CR>
 nnoremap <localleader>lc :lclose<CR>
 
 
-autocmd TerminalOpen * if bufwinnr('') > 0 | setlocal nobuflisted | endif
+if has('nvim')
+    inoremap <D-v> <C-r>+
+    nnoremap <D-v> "+p
+    vnoremap <D-v> "+p
+else
+    autocmd TerminalOpen * if bufwinnr('') > 0 | setlocal nobuflisted | endif
+endif
 
 
 " Rust
