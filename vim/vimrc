@@ -161,7 +161,9 @@ Plug 'elzr/vim-json'
 Plug 'Konfekt/FastFold'
 Plug 'kalekundert/vim-coiled-snake'
 "Plug 'wellle/context.vim'
-Plug 'glacambre/firenvim', { 'do': { _ -> firenvim#install(0) } }
+if has('nvim')
+    Plug 'glacambre/firenvim', { 'do': { _ -> firenvim#install(0) } }
+endif
 
 " Git
 Plug 'airblade/vim-gitgutter'
@@ -2006,3 +2008,6 @@ endif
 
 " Rust
 let g:rustfmt_autosave = 1
+
+" Make sure background doesn't break
+set t_ut=
