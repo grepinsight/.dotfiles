@@ -546,3 +546,4 @@ alias chr="open -a 'Google Chrome'"
 
 command -v hub 2> /dev/null && alias git="hub"
 alias code="/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code"
+alias ipython="ipython --TerminalInteractiveShell.editing_mode=vi"
