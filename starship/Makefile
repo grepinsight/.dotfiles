@@ -3,3 +3,6 @@ configure:
 
 install_mac:
 	brew install starship
+
+install_genenral:
+	curl -fsSL https://starship.rs/install.sh | bash
