@@ -212,7 +212,7 @@ Plug 'w0rp/ale'
 "     catch
 "     endtry
 " endif
-"Plug 'SirVer/ultisnips'
+Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 Plug 'ervandew/supertab'
 Plug 'grepinsight/mysnippets'
