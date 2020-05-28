@@ -27,6 +27,12 @@ command = "cat ~/.dnanexus_config/environment.json  | jq -r '.DX_PROJECT_CONTEXT
 when = """ test 1 """
 prefix = " 🧬 "
 
+[custom.gituser]
+command = "git config --get user.email"
+when = """ test 1 """
+prefix = " gituser: "
+style = "yellow"
+
 [time]
 disabled = false
 format = " 🕙 [ %T ]"
