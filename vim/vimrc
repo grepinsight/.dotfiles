@@ -253,6 +253,7 @@ Plug 'itchyny/calendar.vim'
 Plug 'sgur/vim-editorconfig'
 Plug 'chrisbra/csv.vim'
 Plug 'liuchengxu/vim-which-key'
+Plug 'machakann/vim-highlightedyank'
 
 
 " Syntax Highlighting / FileType
@@ -1082,7 +1083,7 @@ let g:UltiSnipsJumpBackwardTrigger="<S-Tab>"
 " " If you want :UltiSnipsEdit to split your window.
 let g:UltiSnipsEditSplit="vertical"
 let g:UltiSnipsNoPythonWarning = 1
-let g:UltiSnipsSnippetDirectories=["UltiSnips", "mysnippets"]
+let g:UltiSnipsSnippetDirectories=["mysnippets"]
 
 noremap <silent> <Leader>ult :UltiSnipsEdit<CR>
 vmap <F9> :call UltiSnips#SaveLastVisualSelection()<CR>gvs
@@ -2012,3 +2013,6 @@ let g:rustfmt_autosave = 1
 " Make sure background doesn't break
 set t_ut=
 
+
+" vim-highlightedyank: duration
+let g:highlightedyank_highlight_duration = 200
