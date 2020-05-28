@@ -22,16 +22,15 @@ full_symbol = "🔋"
 charging_symbol = "⚡️"
 discharging_symbol = "💀"
 
-
 [custom.dx]
 command = "cat ~/.dnanexus_config/environment.json  | jq -r '.DX_PROJECT_CONTEXT_NAME'"
-when = """ test "$HOME" == "$PWD" """
-prefix = " transcending "
+when = """ test 1 """
+prefix = " 🧬 "
 
 [time]
 disabled = false
-format = "🕙[ %T ]"
-utc_time_offset = "-5"
+format = " 🕙 [ %T ]"
+utc_time_offset = "-7"
 
 
 [jobs]
