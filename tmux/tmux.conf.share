@@ -36,6 +36,12 @@ set -g history-limit 10000
 # Aggressive window
 set -g aggressive-resize on
 
+# pane resizing
+bind -r H resize-pane -L 2
+bind -r J resize-pane -D 2
+bind -r K resize-pane -U 2
+bind -r L resize-pane -R 2
+
 # Highlight Active Window
 set -g window-status-current-style bg=red
 
@@ -45,8 +51,9 @@ set -g status-fg white
 set -g status-position bottom
 set -g status-right-length 180
 set -g status-left-length 20
-set -g status-interval 10
+set -g status-interval 60
 set -g status-left '#[fg=yellow,bold] ❐ #S - '
+
 set -g status-right "#[fg=green]#(date '+%Y-%m-%d (wk-%V)') %l:%M %p"
 #set -g status-right "#[fg=white]:: #{toggl-tmux} Batt: #{battery_icon} #{battery_percentage} #{battery_remain} | t: #(toggl-tmux) | #[fg=green]#(date '+%Y-%m-%d (wk-%V)') %l:%M %p"
 #bind t set -g status-right "#[fg=white]:: Batt: #{battery_icon} #{battery_percentage} #{battery_remain} | #(toggl-tmux) | #[fg=green]#(date '+%Y-%m-%d (wk-%V)') %l:%M %p"; display "no todo!"
@@ -57,9 +64,14 @@ set -g status-right "#[fg=green]#(date '+%Y-%m-%d (wk-%V)') %l:%M %p"
 #bind-key C-a last-window
 bind-key e switch-client -l
 
-# Swapping Window
+# Swap windows
 bind-key -n S-Left swap-window -t -1
 bind-key -n S-Right swap-window -t +1
+
+# Swap pane
+bind-key '>' swap-pane -D       # swap current pane with the next one
+bind-key '<' swap-pane -U       # swap current pane with the previous one
+
 
 bind-key v select-layout even-horizontal
 bind-key h select-layout even-vertical
@@ -101,10 +113,6 @@ set -g mouse on
 bind m set -g mouse on
 bind M set -g mouse off
 
-# Pane managements
-bind > swap-pane -D       # swap current pane with the next one
-bind < swap-pane -U       # swap current pane with the previous one
-
 ## Pane maximize
 # Tmux window size ( http://superuser.com/questions/238702/maximizing-a-pane-in-tmux )
 unbind +
@@ -114,11 +122,6 @@ bind - last-window \; swap-pane -s tmux-zoom.0 \; kill-window -t tmux-zoom
 
 bind + run 'cut -c3- ~/src/.tmux/.tmux.conf | sh -s _maximize_pane "#{session_name}" #D'
 
-# pane resizing
-bind -r H resize-pane -L 2
-bind -r J resize-pane -D 2
-bind -r K resize-pane -U 2
-bind -r L resize-pane -R 2
 
 # remap trigger + L to b  for switch sessions
 bind -r b switch-client -l
