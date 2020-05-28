@@ -48,3 +48,4 @@ _cache_and_figs
 
 *.sublime-project
 *.sublime-workspace
+*.nc
