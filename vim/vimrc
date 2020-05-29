@@ -2009,7 +2009,7 @@ nnoremap <LocalLeader>lf :Lines<CR>
 nnoremap <LocalLeader>ll :Lines<CR>
 nnoremap <LocalLeader>ln :Lines<CR>
 nnoremap <LocalLeader>lo :lopen<CR>
-nnoremap <LocalLeader>o :only<CR>
+nnoremap <LocalLeader>o :BufOnly<CR>
 nnoremap <LocalLeader>pro :e ~/src/productivity/
 nnoremap <LocalLeader>pt :NERDTreeToggle<CR>
 nnoremap <LocalLeader>q :quit <CR>
