@@ -2006,6 +2006,7 @@ nnoremap <LocalLeader>lf :Lines<CR>
 nnoremap <LocalLeader>ll :Lines<CR>
 nnoremap <LocalLeader>ln :Lines<CR>
 nnoremap <LocalLeader>o :only<CR>
+nnoremap <LocalLeader>v :Vista<CR>
 nnoremap <LocalLeader>q :quit <CR>
 nnoremap <LocalLeader>t :!typora "%"<CR>
 nnoremap <LocalLeader>toc :VimwikiTOC<CR>
