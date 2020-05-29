@@ -1996,6 +1996,7 @@ nnoremap <localleader>fs :w<CR>
 nnoremap <localleader>ww <C-w>w
 nnoremap <localleader>lo :lopen<CR>
 nnoremap <localleader>lc :lclose<CR>
+nnoremap <localleader>pro :e ~/src/productivity/
 
 
 if has('nvim')
