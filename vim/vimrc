@@ -4,6 +4,13 @@
 " ============================================================================
 " # Basic Settings {{{
 " ============================================================================
+" Neovim setup
+if has('nvim')
+    let g:python_host_prog="/usr/local/bin/python"
+    let g:python2_host_prog="/usr/local/bin/python"
+    let g:python3_host_prog="/usr/local/bin/python3"
+endif
+
 " Vim 8 defaults
 unlet! skip_defaults_vim
 autocmd FileType rst syntax off
@@ -48,11 +55,6 @@ set background=dark     " Setting dark mode
 " # Variables {{{
 " ============================================================================
 
-" Nvim related variables
-if has('nvim') 
-    let g:python_host_skip_check=1 
-    let g:loaded_python3_provider=1
-endif
 
 let vimrplugin_assign = 0 " Stop annoying vimRplugin reassignment
 let s:darwin = has('mac')
@@ -2031,4 +2033,7 @@ nnoremap ,h :History<CR>
 nnoremap ,r :BTags<CR>
 nnoremap ,t :term<CR>
 
-let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6 } }
+if v:version >= 802 && has('popupwin') || has('nvim')
+    let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6 } }
+endif
+
