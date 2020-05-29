@@ -2005,6 +2005,7 @@ nnoremap <LocalLeader>d :Gvdiff<CR>
 nnoremap <LocalLeader>e :edit <C-R>=expand('%:p:h') . '/' <CR>
 nnoremap <LocalLeader>fs :w<CR>
 nnoremap <LocalLeader>fy :let @" = expand("%:p")<CR> <bar> :call SendViaOSC52(expand('%:p'))<cr> <bar> :echo expand('%:p')<CR> 
+nnoremap <LocalLeader>g :GV<CR>
 nnoremap <LocalLeader>ji :BTags<CR>
 nnoremap <LocalLeader>lc :lclose<CR>
 nnoremap <LocalLeader>lf :Lines<CR>
