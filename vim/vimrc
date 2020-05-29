@@ -442,7 +442,7 @@ nnoremap <c-s-t> :b#<CR>:e<CR>
 " 
 
 " line find
-nnoremap <Leader>lf :Lines<CR>
+nnoremap <Leader>lf :BLines<CR>
 
 " Bash alias shortcut 
 nnoremap <Leader>bas :e $HOME/.dotfiles/bash/share/bash_aliases_share<CR>
@@ -2005,9 +2005,7 @@ nnoremap <LocalLeader>fy :let @" = expand("%:p")<CR> <bar> :call SendViaOSC52(ex
 nnoremap <LocalLeader>g :GV<CR>
 nnoremap <LocalLeader>ji :BTags<CR>
 nnoremap <LocalLeader>lc :lclose<CR>
-nnoremap <LocalLeader>lf :Lines<CR>
-nnoremap <LocalLeader>ll :Lines<CR>
-nnoremap <LocalLeader>ln :Lines<CR>
+nnoremap <LocalLeader>lf :BLines<CR>
 nnoremap <LocalLeader>lo :lopen<CR>
 nnoremap <LocalLeader>o :BufOnly<CR>
 nnoremap <LocalLeader>pro :e ~/src/productivity/
