@@ -44,11 +44,7 @@ symlinks:
 run_scripts:  ## link rstudio
 	bash scripts/link-rstudio-snippets-and-bindings.sh # link rstudio scripts
 
-
-SUBDIRS := $(wildcard */.)
-
-all_make: $(SUBDIRS)
-$(SUBDIRS):
-	$(MAKE) -C $@
-
-.PHONY: all_make $(SUBDIRS)
+reload:
+	cd nvim && make
+	cd starship && make
+	cd vim && make
