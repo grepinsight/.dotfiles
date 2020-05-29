@@ -196,7 +196,6 @@ Plug 'fatih/vim-go'
 Plug 'kana/vim-textobj-user'
 Plug 'davidhalter/jedi-vim'                            " python intellisense
 Plug 'jeetsukumaran/vim-pythonsense'                   " text object for python
-Plug 'numirias/semshi', {'do': ':UpdateRemotePlugins'} " syntax highlight for python
 Plug 'vim-pandoc/vim-pandoc'
 Plug 'vim-pandoc/vim-pandoc-syntax'
 
