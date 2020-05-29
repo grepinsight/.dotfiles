@@ -1996,7 +1996,7 @@ endif
 
 
 "nnoremap <LocalLeader>c :ccl<CR>
-nmap <LocalLeader>b :Buffers<CR>
+nnoremap <LocalLeader>b :Buffers<CR>
 nnoremap <LocalLeader><LocalLeader> <C-^>
 nnoremap <LocalLeader>a :A <CR>
 nnoremap <LocalLeader>c :call ToggleQuickFix()<CR>
