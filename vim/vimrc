@@ -441,9 +441,6 @@ nnoremap QQ :q<CR>
 nnoremap <c-s-t> :b#<CR>:e<CR>
 " 
 
-" line find
-nnoremap <Leader>lf :BLines<CR>
-
 " Bash alias shortcut 
 nnoremap <Leader>bas :e $HOME/.dotfiles/bash/share/bash_aliases_share<CR>
 nnoremap <Leader>bcs :e $HOME/.dotfiles/bash/share/bash_colors_share<CR>
