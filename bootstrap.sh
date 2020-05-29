@@ -112,6 +112,7 @@ if which git 2>/dev/null >&2 ; then
             echo "export DIR_dt=\"$HOME/Desktop\"" >> $HOME/.sdirs
             echo "export DIR_ssh=\"$HOME/.ssh\"" >> $HOME/.sdirs
             echo "export DIR_prj=\"$HOME/prj\"" >> $HOME/.sdirs
+            echo "export DIR_vim=\"$HOME/.vim\"" >> $HOME/.sdirs
             echo "export DIR_p=\"$HOME/prj\"" >> $HOME/.sdirs
             echo "export DIR_md=\"$HOME/Documents\"" >> $HOME/.sdirs
             echo "export DIR_bin=\"$HOME/bin\"" >> $HOME/.sdirs
