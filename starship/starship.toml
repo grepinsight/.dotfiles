@@ -25,12 +25,12 @@ discharging_symbol = "💀"
 [custom.dx]
 command = "cat ~/.dnanexus_config/environment.json  | jq -r '.DX_PROJECT_CONTEXT_NAME'"
 when = """ test 1 """
-prefix = " 🧬 "
+prefix = " on 🧬 "
 
 [custom.gituser]
 command = "git config --get user.email"
 when = """ test 1 """
-prefix = " gituser: "
+prefix = "as gituser: "
 style = "yellow"
 
 [time]
@@ -47,3 +47,7 @@ threshold = 0
 symbol = "➜"
 error_symbol = "✗"
 use_symbol_for_status = true
+
+[username]
+disabled = false
+show_always = true
