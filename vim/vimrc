@@ -161,9 +161,6 @@ Plug 'elzr/vim-json'
 Plug 'Konfekt/FastFold'
 Plug 'kalekundert/vim-coiled-snake'
 "Plug 'wellle/context.vim'
-if has('nvim')
-    Plug 'glacambre/firenvim', { 'do': { _ -> firenvim#install(0) } }
-endif
 
 " Git
 Plug 'airblade/vim-gitgutter'
