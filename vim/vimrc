@@ -2018,6 +2018,6 @@ set t_ut=
 let g:highlightedyank_highlight_duration = 200
 
 " Use bash rather than sh
-if &shell = 'sh'
-    set shell="bash"
+if &shell == 'sh'
+    set shell=bash
 endif
