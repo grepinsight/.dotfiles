@@ -1854,9 +1854,6 @@ xmap ,f  <Plug>(coc-format-selected)
 nmap ,f  <Plug>(coc-format-selected)
 nmap ,q  <Plug>(coc-fix-current)
 nmap ,l yor
-nnoremap ,h :History<CR>
-nnoremap ,r :BTags<CR>
-nnoremap ,t :term<CR>
 
 
 " # Bracket Leader keys
@@ -2032,3 +2029,8 @@ noremap <silent> <LocalLeader>ch :wincmd h<CR>:close<CR>
 noremap <silent> <LocalLeader>cj :wincmd j<CR>:close<CR>
 noremap <silent> <LocalLeader>ck :wincmd k<CR>:close<CR>
 noremap <silent> <LocalLeader>cl :wincmd l<CR>:close<CR>
+
+" Tertiary leaderkey
+nnoremap ,h :History<CR>
+nnoremap ,r :BTags<CR>
+nnoremap ,t :term<CR>
