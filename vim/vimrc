@@ -2026,3 +2026,7 @@ endfunction
 command! OpenFileTypeSetting :call OpenFileTypeSetting()
 nnoremap <Leader>ft :call OpenFileTypeSetting()<CR>
 
+" Use bash rather than sh
+if &shell = 'sh'
+    set shell="bash"
+endif
