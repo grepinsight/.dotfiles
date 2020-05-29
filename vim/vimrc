@@ -2017,3 +2017,12 @@ set t_ut=
 
 " vim-highlightedyank: duration
 let g:highlightedyank_highlight_duration = 200
+
+function! OpenFileTypeSetting()
+    let my_ft_file = "$HOME/.vim/ftplugin/" . &filetype . ".vim"
+    execute ":edit ". my_ft_file
+endfunction
+
+command! OpenFileTypeSetting :call OpenFileTypeSetting()
+nnoremap <Leader>ft :call OpenFileTypeSetting()<CR>
+
