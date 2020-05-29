@@ -44,7 +44,8 @@ symlinks:
 run_scripts:  ## link rstudio
 	bash scripts/link-rstudio-snippets-and-bindings.sh # link rstudio scripts
 
-reload:
+reload:  ## Reload configs
 	cd nvim && make
 	cd starship && make
 	cd vim && make
+	cd ctags && make
