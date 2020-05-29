@@ -761,7 +761,7 @@ let g:tagbar_type_markdown = {
 "" Set color scheme according to current time of day.
 let hr = str2nr(strftime('%H'))
 if hr <= 6 || hr >= 18
-    let cs = 'gruvbox'
+    let cs = 'dracula'
 else
     let cs = 'seoul256-light'
 endif
