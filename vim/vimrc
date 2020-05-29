@@ -2016,3 +2016,8 @@ set t_ut=
 
 " vim-highlightedyank: duration
 let g:highlightedyank_highlight_duration = 200
+
+" Use bash rather than sh
+if &shell = 'sh'
+    set shell="bash"
+endif
