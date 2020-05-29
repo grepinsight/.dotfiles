@@ -2031,6 +2031,7 @@ noremap <silent> <LocalLeader>ck :wincmd k<CR>:close<CR>
 noremap <silent> <LocalLeader>cl :wincmd l<CR>:close<CR>
 
 " Tertiary leaderkey
+nnoremap ,c :Colors<CR>
 nnoremap ,h :History<CR>
 nnoremap ,r :BTags<CR>
 nnoremap ,t :term<CR>
