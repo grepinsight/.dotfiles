@@ -191,14 +191,15 @@ Plug 'ncm2/ncm2-bufword'
 Plug 'ncm2/ncm2-path'
 
 
-Plug 'jalvesaq/vimcmdline' "sort of like slim
+Plug 'jalvesaq/vimcmdline'                             " sort of like slim
 
-Plug 'davidhalter/jedi-vim'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'rust-lang/rust.vim'
 Plug 'fatih/vim-go'
 Plug 'kana/vim-textobj-user'
-Plug 'jeetsukumaran/vim-pythonsense'
+Plug 'davidhalter/jedi-vim'                            " python intellisense
+Plug 'jeetsukumaran/vim-pythonsense'                   " text object for python
+Plug 'numirias/semshi', {'do': ':UpdateRemotePlugins'} " syntax highlight for python
 Plug 'vim-pandoc/vim-pandoc'
 Plug 'vim-pandoc/vim-pandoc-syntax'
 
