@@ -1997,32 +1997,32 @@ endif
 
 
 "nnoremap <LocalLeader>c :ccl<CR>
-nnoremap <LocalLeader>b :Buffers<CR>
 nnoremap <LocalLeader><LocalLeader> <C-^>
 nnoremap <LocalLeader>a :A <CR>
+nnoremap <LocalLeader>b :Buffers<CR>
 nnoremap <LocalLeader>c :call ToggleQuickFix()<CR>
-nnoremap <LocalLeader>e :edit <C-R>=expand('%:p:h') . '/' <CR>
-nnoremap <LocalLeader>lf :Lines<CR>
-nnoremap <LocalLeader>ll :Lines<CR>
-nnoremap <LocalLeader>ln :Lines<CR>
-nnoremap <LocalLeader>o :only<CR>
-nnoremap <LocalLeader>v :Vista<CR>
-nnoremap <LocalLeader>q :quit <CR>
-nnoremap <LocalLeader>t :!typora "%"<CR>
-nnoremap <LocalLeader>toc :VimwikiTOC<CR>
-nnoremap <LocalLeader>tog :!toggl-start <C-R>=expand('<cWORD>')<CR>
-nnoremap <LocalLeader>w :write <CR>
-nnoremap <LocalLeader>wq :wq <CR>
-nnoremap <LocalLeader>y :Goyo 120<CR>
 nnoremap <LocalLeader>d :Gvdiff<CR>
+nnoremap <LocalLeader>e :edit <C-R>=expand('%:p:h') . '/' <CR>
 nnoremap <LocalLeader>fs :w<CR>
 nnoremap <LocalLeader>fy :let @" = expand("%:p")<CR> <bar> :call SendViaOSC52(expand('%:p'))<cr> <bar> :echo expand('%:p')<CR> 
 nnoremap <LocalLeader>ji :BTags<CR>
 nnoremap <LocalLeader>lc :lclose<CR>
+nnoremap <LocalLeader>lf :Lines<CR>
+nnoremap <LocalLeader>ll :Lines<CR>
+nnoremap <LocalLeader>ln :Lines<CR>
 nnoremap <LocalLeader>lo :lopen<CR>
+nnoremap <LocalLeader>o :only<CR>
 nnoremap <LocalLeader>pro :e ~/src/productivity/
 nnoremap <LocalLeader>pt :NERDTreeToggle<CR>
+nnoremap <LocalLeader>q :quit <CR>
+nnoremap <LocalLeader>t :!typora "%"<CR>
+nnoremap <LocalLeader>toc :VimwikiTOC<CR>
+nnoremap <LocalLeader>tog :!toggl-start <C-R>=expand('<cWORD>')<CR>
+nnoremap <LocalLeader>v :Vista<CR>
+nnoremap <LocalLeader>w :write <CR>
+nnoremap <LocalLeader>wq :wq <CR>
 nnoremap <LocalLeader>ww <C-w>w
+nnoremap <LocalLeader>y :Goyo 120<CR>
 nnoremap <silent> <LocalLeader> :<c-u>WhichKey  '<Space>'<CR>
 nnoremap <silent> <LocalLeader>p :let @" = expand("%:p")<CR> <bar> :echo expand('%:p')<CR>
 nnoremap <silent> <LocalLeader>z :ZoomToggle<CR>
