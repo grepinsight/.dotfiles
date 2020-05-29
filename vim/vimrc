@@ -766,7 +766,7 @@ else
     let cs = 'seoul256-light'
 endif
 try
-    let cs = 'deus'
+    let cs = 'dracula'
     execute 'colorscheme '.cs
 catch
 endtry
