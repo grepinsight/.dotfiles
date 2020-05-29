@@ -201,7 +201,7 @@ Plug 'vim-pandoc/vim-pandoc'
 Plug 'vim-pandoc/vim-pandoc-syntax'
 
 " Lint
-Plug 'w0rp/ale'
+"Plug 'w0rp/ale'
 
 " Completions and snippets
 " if v:version >= 800
@@ -307,18 +307,8 @@ endif
 nnoremap <Leader>dot :!cat % \| dot -Tpng > <C-R>=expand('%:r')<CR>.png && open <C-R>=expand('%:r')<CR>.png<CR>
 
 " First line
-nnoremap <LocalLeader>e :edit <C-R>=expand('%:p:h') . '/' <CR>
-nnoremap <LocalLeader>o :only<CR>
-nnoremap <LocalLeader>q :quit <CR>
-nnoremap <LocalLeader>t :!typora "%"<CR>
-nnoremap <LocalLeader>w :write <CR>
-nnoremap <LocalLeader>wq :wq <CR>
-nnoremap <LocalLeader>y :Goyo 120<CR>
-nnoremap <silent> <LocalLeader>p :let @" = expand("%:p")<CR> <bar> :echo expand('%:p')<CR>
-nnoremap <LocalLeader>a :A <CR>
 
 " 3rd line
-"nnoremap <LocalLeader>c :ccl<CR>
 function! ToggleQuickFix()
   if exists("g:qwindow")
     lclose
@@ -333,11 +323,8 @@ function! ToggleQuickFix()
   endif
 endfunction
 
-nnoremap <LocalLeader>c :call ToggleQuickFix()<CR>
-nmap <LocalLeader>b :Buffers<CR>
 
 " Switch between the last two files
-nnoremap <LocalLeader><LocalLeader> <C-^>
 
 " ----------------------------------------------------------------------------
 " R assignment {{{
@@ -456,9 +443,6 @@ nnoremap <c-s-t> :b#<CR>:e<CR>
 
 " line find
 nnoremap <Leader>lf :Lines<CR>
-nnoremap <LocalLeader>lf :Lines<CR>
-nnoremap <LocalLeader>ll :Lines<CR>
-nnoremap <LocalLeader>ln :Lines<CR>
 
 " Bash alias shortcut 
 nnoremap <Leader>bas :e $HOME/.dotfiles/bash/share/bash_aliases_share<CR>
@@ -695,7 +679,6 @@ nnoremap <silent> <leader>gcv :Gcommit -v <CR>
 nnoremap <leader>gw :Gwrite <CR>:Gcommit -v<CR>
 nnoremap <leader>gf :GitGutterFold<CR>
 nnoremap <leader>vd :Gvdiff<CR>
-nnoremap <localleader>d :Gvdiff<CR>
 nnoremap <leader>gvd :Gvdiff<CR>
 nnoremap <leader>gd :Gvdiff<CR>
 nnoremap <leader>gau :Git add -u<CR><CR>
@@ -953,7 +936,6 @@ let g:pandoc#modules#disabled = ['formatting']
 " ----------------------------------------------------------------------------
 
 nnoremap <silent> <Leader> :<c-u>WhichKey  '\'<CR>
-nnoremap <silent> <LocalLeader> :<c-u>WhichKey  '<Space>'<CR>
 nnoremap <silent> , :<c-u>WhichKey  ','<CR>
 
 " ----------------------------------------------------------------------------
@@ -980,7 +962,6 @@ let g:sneak#s_next = 1
 nnoremap ]d :VimwikiDiaryNextDay<CR>
 nnoremap [d :VimwikiDiaryPrevDay<CR>
 nnoremap <Leader>toc :VimwikiTOC<CR>
-nnoremap <LocalLeader>toc :VimwikiTOC<CR>
 let g:vimwiki_list = [{'path': '~/Dropbox/vimwiki/',
                    \ 'syntax': 'markdown', 'ext': '.md'}]
 let g:auto_tags = 1
@@ -991,7 +972,6 @@ let g:vimwiki_conceallevel = 1
 autocmd FileType vimwiki let g:vim_markdown_folding_disabled = 1  " Let the vimwiki handle the folding
 
 
-noremap <LocalLeader>x :VimwikiToggleListItem<CR>
 
 " ----------------------------------------------------------------------------
 " Plugin - vim-surround ----
@@ -1471,7 +1451,6 @@ function! s:ZoomToggle() abort
     endif
 endfunction
 command! ZoomToggle call s:ZoomToggle()
-nnoremap <silent> <LocalLeader>z :ZoomToggle<CR>
 
 let g:tagbar_type_vimwiki = {
             \   'ctagstype':'vimwiki'
@@ -1724,10 +1703,6 @@ endfunction
 
 command! Jump :call GotoJump()
 
-noremap <silent> <LocalLeader>cj :wincmd j<CR>:close<CR>
-noremap <silent> <LocalLeader>ck :wincmd k<CR>:close<CR>
-noremap <silent> <LocalLeader>ch :wincmd h<CR>:close<CR>
-noremap <silent> <LocalLeader>cl :wincmd l<CR>:close<CR>
 
 function! JumpToLastEdit()
 
@@ -1860,7 +1835,6 @@ endfunction
 command! -bang -range=% -nargs=* SortUnfolded call setline(<line1>, getline(<line1>)) | call s:SortUnfolded('<bang>', <line1>, <line2>, <q-args>)
 
 
-nnoremap <LocalLeader>tog :!toggl-start <C-R>=expand('<cWORD>')<CR>
 
 " }}}
 " ============================================================================
@@ -1987,14 +1961,6 @@ autocmd InsertLeave * execute 'normal! mM'
 
 
 " Spacemacs compatible
-nnoremap <localleader>pt :NERDTreeToggle<CR>
-nnoremap <localleader>ji :BTags<CR>
-nnoremap <localleader>fy :let @" = expand("%:p")<CR> <bar> :call SendViaOSC52(expand('%:p'))<cr> <bar> :echo expand('%:p')<CR> 
-nnoremap <localleader>fs :w<CR>
-nnoremap <localleader>ww <C-w>w
-nnoremap <localleader>lo :lopen<CR>
-nnoremap <localleader>lc :lclose<CR>
-nnoremap <localleader>pro :e ~/src/productivity/
 
 
 if has('nvim')
@@ -2028,3 +1994,39 @@ nnoremap <Leader>ft :call OpenFileTypeSetting()<CR>
 if &shell == 'sh'
     set shell=bash
 endif
+
+
+"nnoremap <LocalLeader>c :ccl<CR>
+nnoremap <LocalLeader>b :Buffers<CR>
+nnoremap <LocalLeader><LocalLeader> <C-^>
+nnoremap <LocalLeader>a :A <CR>
+nnoremap <LocalLeader>c :call ToggleQuickFix()<CR>
+nnoremap <LocalLeader>e :edit <C-R>=expand('%:p:h') . '/' <CR>
+nnoremap <LocalLeader>lf :Lines<CR>
+nnoremap <LocalLeader>ll :Lines<CR>
+nnoremap <LocalLeader>ln :Lines<CR>
+nnoremap <LocalLeader>o :only<CR>
+nnoremap <LocalLeader>q :quit <CR>
+nnoremap <LocalLeader>t :!typora "%"<CR>
+nnoremap <LocalLeader>toc :VimwikiTOC<CR>
+nnoremap <LocalLeader>tog :!toggl-start <C-R>=expand('<cWORD>')<CR>
+nnoremap <LocalLeader>w :write <CR>
+nnoremap <LocalLeader>wq :wq <CR>
+nnoremap <LocalLeader>y :Goyo 120<CR>
+nnoremap <LocalLeader>d :Gvdiff<CR>
+nnoremap <LocalLeader>fs :w<CR>
+nnoremap <LocalLeader>fy :let @" = expand("%:p")<CR> <bar> :call SendViaOSC52(expand('%:p'))<cr> <bar> :echo expand('%:p')<CR> 
+nnoremap <LocalLeader>ji :BTags<CR>
+nnoremap <LocalLeader>lc :lclose<CR>
+nnoremap <LocalLeader>lo :lopen<CR>
+nnoremap <LocalLeader>pro :e ~/src/productivity/
+nnoremap <LocalLeader>pt :NERDTreeToggle<CR>
+nnoremap <LocalLeader>ww <C-w>w
+nnoremap <silent> <LocalLeader> :<c-u>WhichKey  '<Space>'<CR>
+nnoremap <silent> <LocalLeader>p :let @" = expand("%:p")<CR> <bar> :echo expand('%:p')<CR>
+nnoremap <silent> <LocalLeader>z :ZoomToggle<CR>
+noremap <LocalLeader>x :VimwikiToggleListItem<CR>
+noremap <silent> <LocalLeader>ch :wincmd h<CR>:close<CR>
+noremap <silent> <LocalLeader>cj :wincmd j<CR>:close<CR>
+noremap <silent> <LocalLeader>ck :wincmd k<CR>:close<CR>
+noremap <silent> <LocalLeader>cl :wincmd l<CR>:close<CR>
