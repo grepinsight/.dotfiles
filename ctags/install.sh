@@ -11,6 +11,6 @@ fi
 
 IS_UBUNTU=$(uname -a | grep -i Ubuntu)
 
-if $IS_MAC; then
+if $IS_UBUNTU; then
     sudo apt-get install -y universal-ctags
 fi
