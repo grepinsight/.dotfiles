@@ -322,7 +322,7 @@ alias vimu="vim --noplugin"
 alias js="jobs"
 alias j="jobs"
 alias f="fg"
-alias vimrc="vim $HOME/.dotfiles/vim/vimrc"
+alias vimrc="$EDITOR $HOME/.dotfiles/vim/vimrc"
 #alias vs="if [[ -e './Session.vim' ]]; then vim -S ./Session.vim; else vim ; fi"
 
 ##################################################
