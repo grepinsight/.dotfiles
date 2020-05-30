@@ -2006,6 +2006,7 @@ nnoremap <LocalLeader>ji :BTags<CR>
 nnoremap <LocalLeader>lc :lclose<CR>
 nnoremap <LocalLeader>lf :BLines<CR>
 nnoremap <LocalLeader>lo :lopen<CR>
+nnoremap <LocalLeader>m :Magit<CR>
 nnoremap <LocalLeader>o :BufOnly<CR> <bar> :only<CR>
 nnoremap <LocalLeader>pro :e ~/src/productivity/
 nnoremap <LocalLeader>pt :NERDTreeToggle<CR>
