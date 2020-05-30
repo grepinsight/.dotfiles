@@ -309,7 +309,11 @@ alias grm="git rebase master"
 # Vim related
 
 alias vr="vim README*"
-alias v="vim"
+if command -v nvim > /dev/null; then
+    alias v="nvim"
+else
+    alias v="vim"
+fi
 alias e="emacs -nw"
 alias b="TERM=xterm-24bit emacsclient -nw"
 alias vn="vim --noplugin"
