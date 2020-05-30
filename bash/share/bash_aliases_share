@@ -310,7 +310,12 @@ alias grm="git rebase master"
 
 alias vr="vim README*"
 if command -v nvim > /dev/null; then
-    alias v="nvim"
+    if [[ -z $NVIM_LISTEN_ADDRESS ]]; then
+      alias v="NVIM_LISTEN_ADDRESS=/tmp/nvimsocket nvim"
+    else
+      alias v="nvr"
+    fi
+
 else
     alias v="vim"
 fi
