@@ -65,12 +65,15 @@ set -g status-right "#[fg=green]#(date '+%Y-%m-%d (wk-%V)') %l:%M %p"
 bind-key e switch-client -l
 
 # Swap windows
-bind-key -n S-Left swap-window -t -1
-bind-key -n S-Right swap-window -t +1
+# bind-key -n S-Left swap-window -t -1
+# bind-key -n S-Right swap-window -t +1
+bind-key '<' swap-window -d -t '{previous}' # Move window left.
+bind-key '>' swap-window -d -t '{next}' # Move window right.
 
 # Swap pane
-bind-key '>' swap-pane -D       # swap current pane with the next one
-bind-key '<' swap-pane -U       # swap current pane with the previous one
+# bind-key '>' swap-pane -D       # swap current pane with the next one
+# bind-key '<' swap-pane -U       # swap current pane with the previous one
+
 
 
 bind-key v select-layout even-horizontal
