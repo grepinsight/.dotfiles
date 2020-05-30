@@ -47,6 +47,6 @@ run_scripts:  ## link rstudio
 reload:  ## Reload configs
 	cd nvim && make
 	cd starship && make
+	cd nvim && make  # nvim has to come before vim
 	cd vim && make
-	cd nvim && make
 	cd ctags && make

@@ -1,4 +1,3 @@
 all:
-	# install mysnippet
-	@cd $$HOME/.vim && ls mysnippets > /dev/null || git clone git@github.com:grepinsight/mysnippets.git
-	@cd $$HOME/.vim && ls ftplugin   > /dev/null || git clone git@github.com:grepinsight/ftplugin.git
+	@cd $$HOME/.vim && ls mysnippets > /dev/null || ln -sf $$HOME/.config/nvim/mysnippets $$HOME/.vim/mysnippets
+	@cd $$HOME/.vim && ls ftplugin   > /dev/null || ln -sf $$HOME/.config/nvim/ftplugin $$HOME/.vim/ftplugin
