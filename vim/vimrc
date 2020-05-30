@@ -9,6 +9,7 @@ if has('nvim')
     " let g:python_host_prog="/usr/local/bin/python"
     " let g:python2_host_prog="/usr/local/bin/python"
     " let g:python3_host_prog="/usr/local/bin/python3"
+    autocmd CmdwinEnter * let b:coc_suggest_disable = 1
 endif
 
 " Vim 8 defaults
@@ -1980,7 +1981,7 @@ set t_ut=
 let g:highlightedyank_highlight_duration = 200
 
 function! OpenFileTypeSetting()
-    let my_ft_file = "$HOME/.vim/ftplugin/" . &filetype . ".vim"
+    let my_ft_file = "$HOME/.config/nvim/ftplugin/" . &filetype . ".vim"
     execute ":edit ". my_ft_file
 endfunction
 

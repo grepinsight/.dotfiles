@@ -1,6 +1,10 @@
 configure:
+	# Assume neovim is a default editor
+	mkdir -p $$HOME/config/nvim
 	# install nvim if not ready
-	command -v nvim > /dev/null || bash install.sh
+	ln -sf $$HOME/.dotfiles/vim/ftplugin $$HOME/.config/nvim/ftplugin
+	ln -sf $$HOME/.dotfiles/vim/mysnippets $$HOME/.config/nvim/mysnippets
+	# command -v nvim > /dev/null || bash install.sh
 
 	# link vimrc
 	mkdir -p $$HOME/.config/nvim/

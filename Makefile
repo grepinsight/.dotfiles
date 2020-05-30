@@ -48,5 +48,5 @@ reload:  ## Reload configs
 	cd nvim && make
 	cd starship && make
 	cd vim && make
-	cd ctags && make
 	cd nvim && make
+	cd ctags && make
