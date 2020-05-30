@@ -1,0 +1,19 @@
+snippet usage "Description" b
+usageQuit() {
+    cat << "EOF" >&2
+rerun
+
+Run the Free Bayes variant caller
+
+USAGE:"
+    rerun
+OPTIONS:"
+    -r                                specify region
+    -h, --help                        Print this help message.
+EOF
+    exit 1
+}
+endsnippet
+snippet ! "Bang!" b
+#!/usr/bin/env bash
+endsnippet

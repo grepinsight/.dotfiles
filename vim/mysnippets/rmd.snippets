@@ -1,0 +1,544 @@
+snippet meta
+---
+title: "${1:}"
+author: "${2:Albert Lee}"
+date: "\`r Sys.Date()\`"
+output:
+  rmdformats::readthedown:
+    code_folding: hide
+    lightbox: true
+    gallery: true
+    fig_caption: true
+    fig_width: 14
+    fig_height: 8
+    df_print: kable
+    number_sections: true
+params:
+  data: "NO_INPUT"
+---
+
+# Meta
+
+**Author**: Albert Lee (alee@counsyl.com) <br/>
+**Date Created**: `date +%Y-%m-%d` <br/>
+**Date Updated**: \`r Sys.Date()\` </br>
+**Tags**: #has_tag </br>
+**TLDR**: </br>
+**Environment** : </br>
+
+* __Report Root Directory__: \`r getwd()\`
+
+\`\`\`{r setup, include=FALSE}
+REPORT_OUTPUT_DIR <- getwd()
+if(exists("params")) {
+ if(!is.null(params$report_outputdir)) {
+    REPORT_OUTPUT_DIR <- params$report_outputdir
+  }
+}
+PROJECT_ROOT_DIR <- rprojroot::find_rstudio_root_file()
+knitr::opts_knit\$set(root.dir = PROJECT_ROOT_DIR)
+knitr::opts_chunk\$set(fig.align='center')
+
+cache_fig_dir <- glue::glue("{REPORT_OUTPUT_DIR}/_cache_and_figs/")
+dir.create(cache_fig_dir, showWarnings=FALSE)
+knitr::opts_chunk\$set(fig.path=cache_fig_dir)
+knitr::opts_chunk\$set(cache.path=cache_fig_dir)
+knitr::opts_chunk\$set(cache = TRUE)
+
+options(rlang_trace_top_env = rlang::current_env())
+options(error = function() {
+  sink()
+  print(rlang::trace_back(bottom = sys.frame(-1)), simplify = "none")
+})
+\`\`\`
+
+\`\`\`{r result='asis', echo=FALSE, include=FALSE, cache=FALSE}
+git_repo <- "NOT_GIT_REPO"
+git_hash <- "NA"
+
+res <- suppressWarnings(system("[ -d .git ] || git rev-parse --git-dir > /dev/null 2>&1", intern=TRUE))
+if(is.null(attr(res, "status"))) {
+  git_repo <- basename(system("git rev-parse --show-toplevel", intern = TRUE))
+  git_hash <- system("git rev-parse --short HEAD", intern = TRUE)
+}
+\`\`\`
+
+
+* __Execution Root Directory__: \`r getwd()\`
+
+* __Git__: \`r git_repo\` (\`r git_hash\`)
+
+\`\`\`{r echo=FALSE, results='asis'}
+cat("**Input(s) / Output(s)**: \n\n")
+for(i in seq_along(params)) {
+  if(length(params[[i]]) == 1) {
+    cat(paste0("* __", names(params)[[i]], "__ : ", params[[i]] , "(", class(params[[i]]) ,")", "\n"))
+  } else {
+    collapsed_values <- paste0(params[[i]], collapse=", ")
+    cat(paste0("* __", names(params)[[i]], "__ : ", collapsed_values, " (", class(params[[i]]) ,")", "\n"))
+  }
+}
+\`\`\`
+
+endsnippet
+
+snippet supp "suppressPackageStartupMessages" b
+suppressPackageStartupMessages(${VISUAL})
+endsnippet
+
+snippet libt
+library(tidyverse)
+library(glue)
+endsnippet
+
+snippet lib
+
+\`\`\`\{r libs, cache=FALSE, echo=FALSE\}
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(glue))
+suppressPackageStartupMessages(library(kableExtra))
+suppressPackageStartupMessages(library(prequel))
+suppressPackageStartupMessages(library(nexusr))
+suppressPackageStartupMessages(library(here))
+library(tictoc)
+library(counsylthemes)
+theme_set(theme_counsyl())
+COLORS <- counsylthemes::get_colors()
+
+if(file.exists("src/shared.R")) {
+  shared <- new.env()
+  source("src/shared.R", local=shared)
+}
+
+
+
+library(tictoc)
+tic("Knitting the document")
+\`\`\`
+
+\`\`\`\{r funcs\}
+display_graphics <- function(path) {
+	knitr::include_graphics(normalizePath(path))
+}
+
+display_text <- function(raw_text) {
+  text <- glue::glue(raw_text)
+  cat(text, sep="\n")
+}
+\`\`\`
+
+# Introduction
+
+## Data {#data}
+
+\`\`\`\{r data\}
+df <- read_csv("${1}")
+\`\`\`
+
+
+# Conclusion
+
+# Session Information
+
+\`\`\`\{r session_info, echo=FALSE\}
+sessionInfo()
+\`\`\`
+
+# Time to Knit
+
+\`\`\`\{r time_to_knit, echo=FALSE, cache=FALSE\}
+toc()
+\`\`\`
+
+
+\`\`\`{css echo=FALSE}
+#main .nav-pills > li.active > a,
+#main .nav-pills > li.active > a:hover,
+#main .nav-pills > li.active > a:focus {
+   background-color: #084B85;
+}
+
+#main .nav-pills > li > a:hover {
+   background-color: #084B85;
+}
+
+h1,h2,h3,h4,h5,h6,legend{
+    color: #084B85;
+}
+
+
+#nav-top span.glyphicon {
+	color: #084B85;
+}
+
+#table-of-contents header{
+	color: #084B85;
+}
+
+#table-of-contents h2{
+    background-color: #084B85
+}
+
+#main a {
+    background-image: linear-gradient(180deg,#E0833B,#E0833B);
+    color: #E0833B;
+}
+
+a:hover{
+    color:#3d1308
+}
+
+a:visited{
+    color:#3d1308
+}
+\`\`\`
+endsnippet
+
+
+
+snippet ccc
+\`\`\`\{r ${1}\}
+${0}
+\`\`\`
+endsnippet
+
+snippet ppp "split chunk"
+\`\`\`
+
+\`\`\`\{r ${1}\}
+endsnippet
+
+snippet "```" "chunk" rbA
+\`\`\`\{r ${1}${2:, dependson=c(-1)}\}
+${3}
+\`\`\`
+endsnippet
+
+snippet info
+
+# Session Information
+
+\`\`\`\{r session_info\}
+sessionInfo()
+\`\`\`
+
+endsnippet
+
+snippet doc "add roxygen2 snippet" b
+#' ${1:Title}
+#'
+#' @param env
+#'
+#' @return
+#' @export
+endsnippet
+snippet docopt
+"usage: ${1:SCRIPT_NAME} [ --input-df INPUT_DF]
+
+options:
+--input-df INPUT_DF  ${2:input csv file}]
+" -> doc
+
+library(methods)
+library(docopt)
+opts <- docopt(doc)
+endsnippet
+
+
+snippet f "function"
+function() {
+  ${1}
+}
+endsnippet
+
+snippet func "func"
+function() {
+  ${1}
+}
+endsnippet
+
+snippet function "function"
+function() {
+  ${1}
+}
+endsnippet
+
+snippet eq
+
+\$\$
+\begin{aligned}
+
+${0:x = }
+
+\end{aligned}
+\$\$
+endsnippet
+
+
+snippet "\\frac" "latex_frac" rA
+\frac{$1}{$2}
+endsnippet
+
+snippet "file\." "file_path" rA
+file.path(${2:REPORT_OUTPUT_DIR}, "${1}")
+endsnippet
+
+
+snippet gbox "boxplot"
+ggplot(aes(x=$1, y=$2)) +
+  geom_boxplot() +
+  labs(title=glue("${3:untitled}"))
+endsnippet
+
+snippet gscat "scatter plot"
+ggplot(aes(x=$1, y=$2)) +
+  geom_point() +
+  labs(title=glue("${3:untitled}"))
+endsnippet
+
+snippet memoise "Description" b
+suppressPackageStartupMessages(library(memoise))
+memcache <- memoise::cache_filesystem("~/.r.cache")
+endsnippet
+
+
+snippet minimal "Minimal Yaml Template" b
+---
+title: "Check if a pickle is Lasso or Ridge"
+author: "Albert Lee"
+date: "`r Sys.Date()`"
+---
+
+```{r setup, include=FALSE}
+PROJECT_ROOT_DIR <- rprojroot::find_rstudio_root_file()
+knitr::opts_knit$set(root.dir = PROJECT_ROOT_DIR)
+```
+endsnippet
+
+snippet !vig "Vignette Analysis" b
+---
+title: "${1:Untitled}"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{blog}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+params:
+  data: "hi"
+---
+
+\`\`\`{r, include = FALSE}
+knitr::opts_chunk\$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+knitr::opts_chunk\$set(cache = TRUE)
+\`\`\`
+
+\`\`\`{r setup}
+library(tidyverse)
+library(glue)
+library(tidylog, warn.conflicts = FALSE)
+
+library(tictoc)
+library(counsylthemes)
+theme_set(theme_counsyl())
+
+library(testpac)
+library(nexusr)
+\`\`\`
+endsnippet
+
+
+snippet !debug "Description" b
+options(rlang_trace_top_env = rlang::current_env())
+options(error = function() {
+  sink()
+  print(rlang::trace_back(bottom = sys.frame(-1)), simplify = "none")
+})
+endsnippet
+
+snippet !debug2 "Description" b
+# run this in a interactive mode
+options(error = function() {
+  sink()
+  recover()
+})
+endsnippet
+
+snippet geom_his "Description"
+geom_histogram($1)
+endsnippet
+snippet geom_hist "Description"
+geom_histogram($1)
+endsnippet
+
+snippet !reload "Reload a library" b
+devtools::reload(devtools::inst("$1"))
+endsnippet
+
+
+snippet !vector "Description" b
+$0 <- `!p
+x = snip.v.text
+x = x.strip("\n")
+x = x.split("\n")
+x = ['"' + i + '"' for i in x if x is not "\n"]
+snip.rv = "c(" + ",".join(x) + ")"
+`
+endsnippet
+
+
+snippet !lib "Basic libraries" b
+library <- function(...) {
+  suppressPackageStartupMessages(base::library(...))
+}
+library(tidyverse)
+library(glue)
+library(here)
+library(prequel)
+library(nexusr)
+library(fs)
+library(usethis)
+library(counsylthemes)
+theme_set(theme_counsyl())
+endsnippet
+
+
+snippet !cache "Description" b
+knitr::opts_chunk\$set(cache = TRUE)
+endsnippet
+
+
+snippet !p3 "Param to list"
+`!p
+x = snip.v.text
+x = x.replace("params:", "params = list(")
+x = x.replace(":", "=")
+x = x + ")"
+snip.rv = x`
+endsnippet
+
+snippet p4 "Description"
+hi
+endsnippet
+
+
+snippet labt "lab title" b
+labs(title="$1") ${0:+}
+endsnippet
+
+snippet labx "lab title" b
+labs(x="$1") ${0:+}
+endsnippet
+
+
+snippet meta2 "Description" b
+---
+title: "${1:}"
+author: "${2:Albert Lee}"
+date: "\`r Sys.Date()\`"
+output:
+  rmdformats::readthedown:
+    code_folding: hide
+    lightbox: true
+    gallery: true
+    fig_caption: true
+    fig_width: 14
+    fig_height: 8
+params:
+  data: "NO_INPUT"
+---
+\`\`\`{r setup, include=FALSE}
+REPORT_OUTPUT_DIR <- getwd()
+if(exists("params")) {
+ if(!is.null(params$report_outputdir)) {
+    REPORT_OUTPUT_DIR <- params$report_outputdir
+  }
+}
+PROJECT_ROOT_DIR <- rprojroot::find_rstudio_root_file()
+knitr::opts_knit\$set(root.dir = PROJECT_ROOT_DIR)
+knitr::opts_chunk\$set(fig.align='center')
+
+cache_fig_dir <- glue::glue("{REPORT_OUTPUT_DIR}/_cache_and_figs/")
+dir.create(cache_fig_dir, showWarnings=FALSE)
+knitr::opts_chunk\$set(fig.path=cache_fig_dir)
+knitr::opts_chunk\$set(cache.path=cache_fig_dir)
+knitr::opts_chunk\$set(cache = TRUE)
+
+options(rlang_trace_top_env = rlang::current_env())
+options(error = function() {
+  sink()
+  print(rlang::trace_back(bottom = sys.frame(-1)), simplify = "none")
+})
+knitr::opts_chunk$set(warning = FALSE)
+knitr::opts_chunk$set(message = FALSE)
+\`\`\`
+endsnippet
+
+snippet !!sep "Description" b
+`!p
+SEP_DEFAULT_SIZE = 70
+x = snip.v.text
+x = x.strip()
+text_len = len(x)
+if text_len > 0:
+   remainder = SEP_DEFAULT_SIZE - (text_len + 2)
+   sep = "-" * remainder
+   snip.rv = f"# {x} {sep}"
+`
+endsnippet
+
+
+snippet !exec "Executive summary" b
+# Executive Summary
+
+<style>
+div.blue { background-color:#e6f0ff; border-radius: 5px; padding: 20px;}
+</style>
+<div class = "blue">
+
+- First conclusion
+- Second conclusion
+
+</div>
+
+endsnippet
+
+
+snippet meta3 "Description" b
+---
+title: "${1:}"
+author: "${2:Albert Lee}"
+date: "\`r Sys.Date()\`"
+output:
+  rmdformats::readthedown:
+    code_folding: hide
+    lightbox: true
+    gallery: true
+    fig_caption: true
+    fig_width: 14
+    fig_height: 8
+    df_print: kable
+    number_sections: true
+params:
+  data: "NO_INPUT"
+---
+
+<!--
+
+# Settings {.exclude}
+
+-->
+$0
+endsnippet
+
+
+snippet !opt "Description" b
+\`\`\`{r include=FALSE}
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(cache = TRUE)
+knitr::opts_chunk$set(message = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+\`\`\`
+endsnippet

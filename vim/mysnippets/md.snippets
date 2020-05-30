@@ -1,0 +1,25 @@
+snippet meta
+---
+title: "${1:}"
+author: "${2:Albert Lee}"
+output:
+  html_document:
+    number_sections: yes
+    toc: yes
+    code_folding: hide
+    toc_float: yes
+  html_notebook:
+    number_sections: yes
+    toc: yes
+    code_folding: hide
+    toc_float: yes
+---
+
+**Author**: alee@counsyl.com <br/>
+**Date Created**: `date +%Y-%m-%d` <br/>
+**Date Updated**: \`r Sys.Date()\` </br>
+**Tags**: #has_tag </br>
+**TLDR**: </br>
+
+${0: # right your contents here}
+endsnippet

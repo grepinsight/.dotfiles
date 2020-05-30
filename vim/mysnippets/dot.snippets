@@ -1,0 +1,29 @@
+snippet digraph "Basic structure" b
+digraph ${1:title} \{
+
+\}
+endsnippet
+
+snippet done "Basic structure" w
+[style=filled, fillcolor=palegreen3]
+endsnippet
+
+snippet inprog "Description" w
+[style=filled, fillcolor="wheat"]
+endsnippet
+
+snippet key "Description" b
+node [style=filled height=0.55 fontname="Verdana" fontsize=10];
+subgraph cluster_key {
+	label="Key";
+	progress [fillcolor="wheat" label="In progress"];
+	todo [fillcolor="white", label="To do"];
+	done [fillcolor=palegreen3 label="Done"];
+	progress -> done [style=invis];
+	todo -> progress [style=invis];
+}
+endsnippet
+
+snippet _dia "diamond" b
+[shape=Mdiamond]
+endsnippet

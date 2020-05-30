@@ -1,0 +1,54 @@
+snippet # "shebang" b
+#!/usr/bin/env ${1:bash}
+
+${0}
+endsnippet
+
+snippet JOB
+. ~/titan_setup.sh scratch
+echo [Name] ${1:$0}
+echo [Directory] \`pwd\`
+echo [Machine] \`uname -n\`
+echo [Start] \`date\`
+echo [args] $*
+echo $* | tr ' ' '\n' | perl -ne 'BEGIN{$i=1};print "\$$i: $_";$i++'
+time1=$( date "+%s" )
+timestamp=$( date "+%m_%d_%I%p" )
+
+${2:}
+
+time2=$( date "+%s" )
+echo [deltat] $(( $time2 - $time1 ))
+echo [End] \`date\`
+endsnippet
+
+snippet snip_usage
+if [[ $# == 0 || "$1" == "h" || "$1" == "-h" ]]; then
+cat <<EOF
+
+  USAGE: bowtie_build.sh <REF_FASTA> <PREFIX>
+
+EOF
+exit
+fi
+endsnippet
+
+snippet np
+import numpy as np
+endsnippet
+snippet plt
+import matplotlib.pyplot as plt
+endsnippet
+
+snippet pymc
+import pymc3 as pm
+endsnippet
+
+snippet eq
+$$
+
+$$
+endsnippet
+
+
+

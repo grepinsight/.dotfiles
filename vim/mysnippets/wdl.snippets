@@ -1,0 +1,228 @@
+# Version
+snippet ver "version"
+version 1.0
+endsnippet
+
+# Types
+snippet S "String"
+String $1
+endsnippet
+
+snippet F "Float"
+Float $1
+endsnippet
+
+snippet Fl "Float"
+Float $1
+endsnippet
+
+snippet Flo "Float"
+Float $1
+endsnippet
+
+# Extra
+snippet rscript "Description" b
+cd runfolder && \
+mkdir -p ~{output_dir} && \
+Rscript -e "rmarkdown::render(
+  input = 'rmd_source.Rmd',
+  params=list(),
+  # output_file='~{output_file}',
+  # output_dir='~{output_dir}'
+)
+endsnippet
+
+snippet scatter "Scatter job" b
+scatter (elem in list ) {
+  call task {
+    input: task_input = elem
+  }
+}
+endsnippet
+
+snippet A "Array" b
+Array[${1:File}] ${2:name_of_array} ${3:=${0: }}
+endsnippet
+
+snippet t "task template" b
+task task_name {
+    input {
+    }
+    command <<<
+        command
+    >>>
+    runtime {
+    }
+    output {
+
+    }
+
+}
+endsnippet
+
+snippet runtime "Block: Runtime" b
+runtime {
+  docker: "quay.io/myriadtest01/bioinf-2403--ffe-ff-inferred-retraining-nonpregnant-main:manual_bioinf_2403"
+  dx_instance_type: "mem3_ssd1_v2_x16"
+}
+endsnippet
+
+snippet read_s "read string" b
+read_string($1)
+endsnippet
+
+snippet std "standard output"
+stdout()
+endsnippet
+
+snippet basic "Description" b
+workflow myworkflow {
+  File df_in
+  File? row_filter_in
+  File? col_filter_in
+  String? col_whitelist_index_in
+  String? output_name
+  call parse_and_filter {
+      input: infile=df_in,
+             row_filter=row_filter_in,
+             col_filter=col_filter_in,
+             col_whitelist_index=col_whitelist_index_in,
+             output_name=output_name
+  }
+}
+
+task parse_and_filter {
+  File infile
+  File? row_filter
+  File? col_filter
+  String? col_whitelist_index
+  String? output_name
+  String prefix = basename(infile, ".csv")
+  String outfile = select_first([output_name, "${prefix}_out.csv"])
+
+  command <<<
+    set -e -x -o pipefail
+    mkdir input_folder
+
+    set +x
+    for file in ${sep=' ' infiles}; do
+        mv "$file" input_folder/
+    done
+
+    python /code/shrink_data_frame.py \
+    ${"-i " + infile} \
+    ${"-o " + outfile} \
+    ${"-r " + row_filter} \
+    ${"--col-filter " + col_filter} \
+    ${"--col-whitelist-index " + col_whitelist_index}
+  >>>
+  output {
+    File response = "${outfile}"
+  }
+  runtime {
+    docker: "dx://"
+ }
+}
+endsnippet
+
+snippet wf "workflow" b
+workflow myworkflow {
+  call task_name {
+  }
+}
+
+endsnippet
+
+snippet task "task" b
+
+task task_name {
+
+   ${3}${2:`!p
+x = snip.v.text
+f = re.findall("\$\{(.*?)\}", x)
+if len(f) > 0:
+   snip.rv = "\n".join([f[0]] + [ "   " + s for s in f[1:]])
+`}
+
+	command <<<
+		${VISUAL}
+	>>>
+	runtime {
+        docker: "{{ docker_images.main }}"
+        dx_instance_type: $4`!p snip.rv = complete(t[4], INSTANCE_TYEPS)`
+	}
+	output {
+
+	}
+
+}
+endsnippet
+
+
+snippet move_things_around "move_things_around" b
+
+command <<<
+set -e -x -o pipefail
+mkdir input_folder
+
+set +x
+for file in ${sep=' ' infiles}; do
+	mv "$file" batch_stats/
+done
+
+endsnippet
+
+global !p
+import os
+import re
+from vimsnippets import complete
+
+FIELD_TYPES = [
+'File',
+'String',
+'Boolean',
+'Array',
+]
+
+INSTANCE_TYEPS = [
+"mem1_ssd1_x4",
+"mem1_ssd1_x36",
+]
+endglobal
+
+snippet in "Test type on variable" w
+$1`!p snip.rv = complete(t[1], FIELD_TYPES)` $2${VISUAL}
+endsnippet
+
+snippet cmd "Description" b
+command <<<
+	set -e -x -o pipefail
+
+	${1:python} \
+>>>
+
+endsnippet
+
+snippet out "Description" b
+output {
+    File ${1:blah} = "${2:blah.csv}"
+	${0}
+}
+endsnippet
+
+
+snippet Fi "File" b
+File ${1:unname}
+endsnippet
+
+snippet St "String" b
+String ${1:unname}
+endsnippet
+
+
+snippet meta "meta block" b
+meta {
+	type: "native"
+	id: "applet-${1}"
+}
+endsnippet

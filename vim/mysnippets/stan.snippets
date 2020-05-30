@@ -1,0 +1,69 @@
+snippet tpl "basic template" b
+data {
+
+}
+
+parameters {
+
+}
+
+model {
+
+}
+endsnippet
+
+snippet fun "functions block" b
+functions {
+
+}
+endsnippet
+
+snippet func "functions block" b
+functions {
+
+}
+endsnippet
+
+snippet int "Integer" b
+int<lower=$1> ${2:N};
+endsnippet
+
+snippet real "Real number, scalar" b
+real${2:<lower=$3, upper=$4>} ${1:x};
+endsnippet
+
+snippet reala "Real number, vector" b
+real ${1:x}[${2:N}];
+endsnippet
+
+snippet areal "Real number, vector" b
+real ${1:x}[${2:N}];
+endsnippet
+
+snippet normal "Normal Distribution" b
+${1:x} ~ normal(${2:mu}, ${3:sigma});
+endsnippet
+
+snippet normallp "Normal Distribution PDF" b
+normal_lpdf(${1:y} | ${2:mu}, ${3:sigma});
+endsnippet
+
+snippet vec "Description" b
+vector[${1:N}] ${2:x};
+endsnippet
+
+snippet arr "Description" b
+${1:dtype} ${2:varname}[${3:size}];
+endsnippet
+
+
+snippet normalr "Normal Distriubiton Random" b
+normal_rng(${1:mu}, ${2:sigma});
+endsnippet
+
+snippet bernr "Bernoulli Random" b
+bernoulli_rng(${1:theta});
+endsnippet
+
+
+

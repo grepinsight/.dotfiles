@@ -1,0 +1,226 @@
+snippet meta
+---
+title: "${1:}"
+author: "${2:Albert Lee}"
+output:
+  html_document:
+    number_sections: yes
+    toc: yes
+    code_folding: hide
+    toc_float: yes
+  html_notebook:
+    number_sections: yes
+    toc: yes
+    code_folding: hide
+    toc_float: yes
+---
+
+**Author**: alee@counsyl.com <br/>
+**Date Created**: `date +%Y-%m-%d` <br/>
+**Date Updated**: \`r Sys.Date()\` </br>
+**Tags**: #has_tag </br>
+**TLDR**: </br>
+
+${0: # right your contents here}
+endsnippet
+
+snippet eq
+
+\$\$
+\begin{aligned}
+
+${0:x = }
+
+\end{aligned}
+\$\$
+endsnippet
+
+
+snippet tmpl_wk
+# inbox
+
+* [ ]
+* [ ]
+* [ ]
+
+# Mon
+# Tue
+# Wed
+# Thu
+# Fri
+endsnippet
+
+
+snippet !jira "Jira " b
+
+## jira `date +%Y-%m-%d`
+
+`jira asked`
+
+
+endsnippet
+
+snippet agenda "Description" b
+
+# `date +%Y-%m-%d`
+
+`gcalcli-agenda-today | strip_color`
+
+
+# TODO (todoist)
+
+`todoist-work | cut -f1 --complement -d" " | grep -v ':'`
+
+endsnippet
+
+
+snippet gitsum "Description" b
+
+`git summaries | strip_color`
+
+endsnippet
+
+
+snippet sign "signature" b
+Best,
+
+Albert Lee, PhD
+endsnippet
+
+
+
+snippet box "Box"
+`!p snip.rv = '┌' + '─' * (len(t[1]) + 2) + '┐'`
+│ $1 │
+`!p snip.rv = '└' + '─' * (len(t[1]) + 2) + '┘'`
+$0
+endsnippet
+
+
+# snippet mk "Math" wA
+# $${1}$`!p
+# if t[2] and t[2][0] not in [',', '.', '?', '-', ' ']:
+#     snip.rv = ' '
+# else:
+#     snip.rv = ''
+# `$2
+# endsnippet
+
+
+snippet dm "Math" wA
+\[
+$1
+.\] $0
+endsnippet
+
+
+# snippet // "Fraction" iA
+# \\frac{$1}{$2}$0
+# endsnippet
+
+
+# snippet '((\d+)|(\d*)(\\)?([A-Za-z]+)((\^|_)(\{\d+\}|\d))*)/' "Fraction" wrA
+# \\frac{`!p snip.rv = match.group(1)`}{$1}$0
+# endsnippet
+
+# priority 1000
+# snippet '^.*\)/' "() Fraction" wrA
+# `!p
+# stripped = match.string[:-1]
+# depth = 0
+# i = len(stripped) - 1
+# while True:
+# 	if stripped[i] == ')': depth += 1
+# 	if stripped[i] == '(': depth -= 1
+# 	if depth == 0: break;
+# 	i -= 1
+# snip.rv = stripped[0:i] + "\\frac{" + stripped[i+1:-1] + "}"
+# `{$1}$0
+# endsnippet
+
+
+# snippet / "Fraction" iA
+# \\frac{${VISUAL}}{$1}$0
+# endsnippet
+
+snippet fun "Description"
+f: \R \to \R
+endsnippet
+
+snippet lim "limit" w
+\lim_{${1:n} \to ${2:\infty}}
+endsnippet
+
+snippet limsup "limsup" w
+\limsup_{${1:n} \to ${2:\infty}}
+endsnippet
+
+snippet !meeting "meeting template" b
+# Contents
+    - [Title](#Title)
+    - [Goals](#Goals)
+    - [Discussed](#Discussed)
+    - [Action Items](#Action Items)
+
+# Title
+
+# Goals
+
+<!-- goal of the meeting -->
+1.
+
+# Discussed
+
+# Action Items
+
+1.
+
+endsnippet
+
+
+snippet !qq "questions"
+* what
+* why
+* how
+* where
+* when
+* who
+endsnippet
+
+snippet !issue "Issue" b
+
+# Issue - ${1:ISSUE_TITLE}
+
+## problem
+
+${2}
+
+## solution(s)
+
+${3}
+
+endsnippet
+
+snippet !today "Description" b
+
+# In Progress
+
+${1}
+
+# Logs
+
+${2}
+
+endsnippet
+
+
+snippet ``` "Code"
+\`\`\`
+${VISUAL}
+\`\`\`
+endsnippet
+
+
+snippet !lk "link"
+[$1]($1$2)
+endsnippet

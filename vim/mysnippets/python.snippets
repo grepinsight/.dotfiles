@@ -1,0 +1,91 @@
+snippet pickle "Description" b
+with open("${2}.pkl", "wb") as fp:
+    pickle.dump(${1}, fp)
+${0}
+endsnippet
+snippet pd "Description" b
+with open("${2}.pkl", "wb") as fp:
+    pickle.dump(${1}, fp)
+${0}
+endsnippet
+
+snippet pl "Description" b
+with open("${1}.pkl", "wb") as fp:
+    pickle.load(fp)
+${0}
+endsnippet
+snippet main
+if __name__ == '__main__':
+	defopt.run(main)
+endsnippet
+
+snippet pdb
+import pdb; pdb.set_trace()
+endsnippet
+
+snippet ipdb
+import ipdb; ipdb.set_trace()
+endsnippet
+
+snippet make_parser
+def make_parser():
+    from argparse import ArgumentParser
+    parser = ArgumentParser()
+    parser.add_argument("--input-dir",
+                        dest="input_dir",
+                        help="Input Directory")
+    parser.add_argument("--output-path",
+                        dest="output_path",
+                        help="Output Path")
+    parser.add_argument("--variable",
+                        dest="variable",
+                        help="variable to compute trace",
+                        default=r'.*?-\w{6}\.trace\.csv')
+
+if __name__ == "__main__":
+    parser = make_parser()
+    args = parser.parse_args()
+endsnippet
+
+
+snippet pymc3
+import pymc3 as pm
+import pymc3.diagnostics as pm_diag
+import pymc3.distributions as pm_dist
+import numpy as np
+
+import matplotlib
+matplotlib.use('TkAgg')
+import matplotlib.pyplot as plt
+
+# data
+
+# model
+with pm.Model() as model:
+    theta = pm.Beta('theta', alpha=1, beta=1)
+    coin = pm.Bernoulli('coin', p=theta, observed=coin_flips)
+
+    trace = pm.sample(100)
+
+pm.summary(trace)
+pm.traceplot(trace)
+endsnippet
+
+
+snippet skip "Description" b
+@pytest.mark.skip(reason="$1")
+endsnippet
+
+snippet docg "Glossary"
+    .. glossary::
+
+        ${1:term}
+            ${2: description}
+
+endsnippet
+
+snippet !sci "Science Stack" b
+import numpy as np
+import pandas as pd
+import scipy.stats as stats
+endsnippet

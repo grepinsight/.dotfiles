@@ -1,0 +1,409 @@
+snippet ! "Shebang" b
+#!/usr/bin/env Rscript
+endsnippet
+
+snippet !lib "Basic libraries" b
+library <- function(...) {
+  suppressPackageStartupMessages(base::library(...))
+}
+library(tidyverse)
+library(counsylthemes)
+library(glue)
+library(here)
+library(prequel)
+library(nexusr)
+library(fs)
+library(usethis)
+theme_set(theme_counsyl())
+endsnippet
+
+snippet !reload "Reload a library" b
+devtools::reload(devtools::inst("$1"))
+endsnippet
+
+snippet !sb "Sandbox" b
+## -- sandbox starts --
+${1}
+## -- sandbox ends --
+endsnippet
+
+snippet !shared "shared" b
+shared <- new.env()
+source("src/shared.R", local=shared)
+endsnippet
+
+snippet !vector "Description" b
+$0 <- `!p
+x = snip.v.text
+x = x.strip("\n")
+x = x.split("\n")
+x = ['"' + i + '"' for i in x if x is not "\n"]
+snip.rv = "c(" + ",".join(x) + ")"
+`
+endsnippet
+
+snippet analysis "analysis script template" b
+
+"usage: `!p snip.rv=snip.fn` [--inputdir INPUTDIR] [--outputdir OUTPUTDIR]
+
+options:
+--inputdir INPUTDIR    input directory [default: models/basic_model.stan]
+--outputdir OUTPUTDIR  output directory [default: ./results/noname_hashvalue]
+
+" -> doc
+
+opts <- docopt::docopt(doc)
+docoptutils::print_defined(as.environment(opts))
+
+
+ housekeeping ----
+runtempdir <- tempdir()
+runfolder  <- file.path(runtempdir, unique_dirname)
+
+ libs ----
+
+ main ----
+
+write_in_runfolder(res, "test.rds")
+
+ results transfer ----
+dir.create(opts$OUTPUTDIR, recursive = TRUE, showWarnings=FALSE)
+file.copy(runfolder, OUTPUTDIR, recursive=TRUE)
+file.copy(sink_log, file.path(unique_dirname, "runtime.output.log"))
+
+endsnippet
+
+snippet doc "add roxygen2 snippet" b
+#' ${1:Title}
+#'
+#' @param env
+#'
+#' @return
+#' @export
+endsnippet
+
+snippet docopt
+"usage: ${1:SCRIPT_NAME} [ --input-df INPUT_DF]
+
+options:
+--input-df INPUT_DF  ${2:input csv file}
+" -> doc
+
+library(methods)
+library(docopt)
+opts <- docopt(doc)
+endsnippet
+
+snippet memoise "Description" b
+suppressPackageStartupMessages(library(memoise))
+memcache <- memoise::cache_filesystem("~/.r.cache")
+endsnippet
+
+snippet uuid "UUID" !b
+`!p import uuid
+if not snip.c:
+    snip.rv = uuid.uuid4().hex`
+endsnippet
+
+snippet !importFrom "Description" b
+#' @importFrom purrr map
+#' @importFrom dplyr bind_rows filter mutate
+#' @importFrom magrittr %>%
+endsnippet
+
+snippet !func "Description"
+funcname <- function() {
+}
+endsnippet
+
+
+snippet !sep "Separator" b
+# -----------------------------------------------------------------
+endsnippet
+
+
+snippet !!sep "Description" b
+`!p
+SEP_DEFAULT_SIZE = 70
+x = snip.v.text
+x = x.strip()
+text_len = len(x)
+if text_len > 0:
+   remainder = SEP_DEFAULT_SIZE - (text_len + 2)
+   sep = "-" * remainder
+   snip.rv = f"# {x} {sep}"
+`
+endsnippet
+
+snippet meta "Description" b
+#' ---
+#' title: "$1"
+#' author: "Albert Lee"
+#' date: "\`r Sys.Date()\`"
+#' output:
+#'   rmdformats::readthedown:
+#'     code_folding: hide
+#'     lightbox: true
+#'     gallery: true
+#'     fig_caption: true
+#'     fig_width: 14
+#'     fig_height: 8
+#'     df_print: kable
+#'     number_sections: true
+#' ---
+
+#+ include=FALSE
+knitr::opts_chunk$set(eval = FALSE)
+
+display_graphics <- function(path) {
+	knitr::include_graphics(normalizePath(path))
+}
+
+library <- function(...) {
+  suppressPackageStartupMessages(base::library(...))
+}
+
+endsnippet
+
+
+snippet !s "Description" b
+#'
+#' ---
+#'
+endsnippet
+
+snippet !h1 "Description" b
+
+
+#'
+#' ---
+#'
+#' # ${1: Title}
+
+${0}
+endsnippet
+
+snippet !h2 "Description" b
+
+
+#'
+#' ---
+#'
+#' ## ${1: Title}
+
+${0}
+endsnippet
+
+
+snippet !m "Description" b
+${VISUAL:inside text/^/#' /mg}
+endsnippet
+
+snippet !c "Description" b
+${VISUAL:inside text/^#('|\+) //mg}
+endsnippet
+
+
+snippet !titlecase "Title transformation"
+${1:a text}
+${1/\w+\s*/\u$0/g:test}
+endsnippet
+
+
+snippet !test "Description" b
+test_that("${1:Name your test}", {
+
+	${0}
+
+})
+endsnippet
+
+global !p
+import os
+from vimsnippets import complete
+
+FIELD_TYPES = [
+'character',
+'data.frame',
+'integer',
+'list',
+'logical',
+'matrix',
+'numeric',
+'vector']
+endglobal
+
+snippet #! "#!/usr/bin/env Rscript" b
+#!/usr/bin/env Rscript
+$0
+endsnippet
+
+snippet setwd "Set workingdir" b
+setwd("${1:`!p snip.rv = os.getcwd()`}")
+endsnippet
+
+snippet as "Apply type on variable" w
+as.$1`!p snip.rv = complete(t[1], FIELD_TYPES)`($2${VISUAL})
+endsnippet
+
+snippet is "Test type on variable" w
+is.$1`!p snip.rv = complete(t[1], FIELD_TYPES)`($2${VISUAL})
+endsnippet
+
+snippet dl "Download and install a package" b
+download.file("${1:${VISUAL:url to package}}", destfile = "${2:${1/.*\/(\S*)$/(?1:$1)/ga}}")
+install.packages("$2", type = "source", repos = NULL)
+library("${3:${2/^(\w+)_.*$/(?1:$1)/ga}}")
+endsnippet
+
+snippet lib "Import a library"
+library('${0:${VISUAL:package}}')
+endsnippet
+
+snippet req "Require a file"
+require('${0:${VISUAL:package}}')
+endsnippet
+
+snippet source "Source a file"
+source('${0:${VISUAL:file}}')
+endsnippet
+
+snippet if "If statement"
+if ($1) {
+	${0:${VISUAL}}
+}
+endsnippet
+
+snippet eif "Else-If statement"
+else if ($1) {
+	${0:${VISUAL}}
+}
+endsnippet
+
+snippet el "Else statement"
+else {
+	${0:${VISUAL}}
+}
+endsnippet
+
+snippet ife "if .. else"
+if ($1) {
+	${2:${VISUAL}}
+} else {
+	$0
+}
+endsnippet
+
+snippet wh "while loop"
+while($1) {
+	${0:${VISUAL}}
+}
+endsnippet
+
+snippet for "for loop"
+for (${1:item} in ${2:list}) {
+	${0:${VISUAL}}
+}
+endsnippet
+
+snippet fun "Function definition"
+${1:name} <- function ($2) {
+	${0:${VISUAL}}
+}
+endsnippet
+
+snippet ret "Return call"
+return(${0:${VISUAL}})
+endsnippet
+
+snippet df "Data frame"
+${1:name}[${2:rows}, ${0:cols}]
+endsnippet
+
+snippet c "c function"
+c(${0:${VISUAL:items}})
+endsnippet
+
+snippet li "list function"
+list(${0:${VISUAL:items}})
+endsnippet
+
+snippet mat "matrix function"
+matrix(${1:${VISUAL:data}}, nrow = ${2:rows}, ncol = ${0:cols})
+endsnippet
+
+snippet apply "apply function"
+apply(${1:${VISUAL:array}}, ${2:margin}, ${0:function})
+endsnippet
+
+snippet lapply "lapply function"
+lapply(${1:${VISUAL:list}}, ${0:function})
+endsnippet
+
+snippet sapply "sapply function"
+sapply(${1:${VISUAL:list}}, ${0:function})
+endsnippet
+
+snippet vapply "vapply function"
+vapply(${1:${VISUAL:list}}, ${2:function}, ${0:type})
+endsnippet
+
+snippet mapply "mapply function"
+mapply(${1:${VISUAL:function}}, ${0:...})
+endsnippet
+
+snippet tapply "tapply function"
+tapply(${1:${VISUAL:vector}}, ${2:index}, ${0:function})
+endsnippet
+
+snippet rapply "rapply function"
+rapply(${1:${VISUAL:list}}, ${0:function})
+endsnippet
+
+snippet pl "Plot function"
+plot(${1:${VISUAL:x}}, ${0:y})
+endsnippet
+
+snippet ggp "ggplot2 plot"
+ggplot(${1:${VISUAL:data}}, aes(${0:aesthetics}))
+endsnippet
+
+snippet fis "Fisher test"
+fisher.test(${1:x}, ${0:y})
+endsnippet
+
+snippet chi "Chi Squared test"
+chisq.test(${1:x}, ${0:y})
+endsnippet
+
+snippet tt "t-test"
+t.test(${1:x}, ${0:y})
+endsnippet
+
+snippet wil "Wilcox test"
+wilcox.test(${1:x}, ${0:y})
+endsnippet
+
+snippet cor "Correlation test"
+cor.test(${1:x}, ${0:y})
+endsnippet
+
+snippet fte "FTE test"
+var.test(${1:x}, ${0:y})
+endsnippet
+
+snippet kvt "KV test"
+kv.test(${1:x}, ${0:y})
+endsnippet
+
+#################################
+#  easily create string vector  #
+#################################
+# Given individual words separated by spaces
+# Select words (e.g. shift-v for whole line (such as the line above)
+# then press <Tab> then type "vec", press <Tab> again to get this:
+# var <- c("#","Given","individual","words","separated","by","spaces")
+# var <- c("#","type","out","individual","words","separated","by","spaces")
+snippet vec
+${1:var} <- c("${0:${VISUAL:/ /","/g}}")
+endsnippet

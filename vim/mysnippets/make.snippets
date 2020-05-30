@@ -1,0 +1,18 @@
+snippet help2
+help: ## Prints help for targets with comments
+	@grep -E '^[$$/0-9)(. a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $\$1, $\$2}'
+
+map_makefile: ## make makefile map
+	mkdir -p figures
+	python2 ~/src/makefile2dot/makefile2dot.py < Makefile | dot -Tpng > figures/map_makefile.png
+
+${0}
+endsnippet
+
+
+snippet r_makefile "Description" b
+.PHONY: docs
+docs:
+	Rscript -e 'if(!file.exists("R/testpac-package.R")){usethis::use_package_doc()}'
+	Rscript -e 'pkgdown::build_site()'
+endsnippet
