@@ -167,6 +167,7 @@ Plug 'kalekundert/vim-coiled-snake'
 
 " Git
 Plug 'airblade/vim-gitgutter'
+Plug 'kshenoy/vim-signature'
 "Plug 'mhinz/vim-signify'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-rhubarb'
