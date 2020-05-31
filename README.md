@@ -18,7 +18,7 @@ git clone https://github.com/grepinsight/.dotfiles.git &&\
 cd .dotfiles &&\
 make -s bootstrap &&\
 source bash/bashrc_init &&\
-sudo bash docs/install_toolkit.sh &&\
+bash docs/install_toolkit.sh &&\
 make -s all &&
 source $HOME/.bashrc &&
 make -s reload

@@ -7,33 +7,43 @@ if [[ $platform == "Darwin" ]]; then
 	 brew install tree
 
 else
-	apt-get update
-	apt-get --yes install curl
-	apt-get --yes install graphviz
+	sudo apt-get update
+	sudo apt-get --yes install curl
+	sudo apt-get --yes install graphviz
 
 	# install ripgrep
-	 DEB_RIPGREP="ripgrep_0.10.0_amd64.deb"
-	 curl -LO https://github.com/BurntSushi/ripgrep/releases/download/0.10.0/${DEB_RIPGREP}
-	 dpkg -i ${DEB_RIPGREP}
-	 apt-get install ripgrep
-	 rm -rf ${DEB_RIPGREP}
+	command -v rg || \
+     DEB_RIPGREP="ripgrep_0.10.0_amd64.deb" && \
+     curl -LO https://github.com/BurntSushi/ripgrep/releases/download/0.10.0/${DEB_RIPGREP} && \
+     sudo dpkg -i ${DEB_RIPGREP} && \
+     sudo apt-get install ripgrep && \
+     sudo rm -rf ${DEB_RIPGREP}
 
-	 DEB_FD="fd_7.3.0_amd64.deb"
-	 curl -LO https://github.com/sharkdp/fd/releases/download/v7.3.0/${DEB_FD}
-	 dpkg -i ${DEB_FD}
-	 apt-get install fd
-	 rm -rf ${DEB_FD}
 
-	 sudo apt-get install tree
+    command -v fd || \
+	 DEB_FD="fd_7.3.0_amd64.deb" && \
+	 curl -LO https://github.com/sharkdp/fd/releases/download/v7.3.0/${DEB_FD} && \
+	 sudo dpkg -i ${DEB_FD} && \
+	 sudo apt-get install fd && \
+	 sudo rm -rf ${DEB_FD}
+
+	sudo apt-get install tree
 
 	# install tmux
-	bash ./etc/install_tmux.ubuntu.sh
+	command -v tmux || bash ./etc/install_tmux.ubuntu.sh
 
 
 	 # pyenv related prereques
 	 sudo apt-get install -y make build-essential libssl-dev zlib1g-dev libbz2-dev \
 	 libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev \
 	 xz-utils tk-dev libffi-dev liblzma-dev python-openssl
+
+    command -v lpass || \
+      git clone https://github.com/lastpass/lastpass-cli.git && \
+      cd lastpass-cli && \
+      make && \
+      make install
+
 
 fi
 
@@ -43,7 +53,6 @@ echo "eval \"\$(pyenv init -)\""              >> $HOME/.bashrc
 echo "eval \"\$(pyenv virtualenv-init -)\""   >> $HOME/.bashrc
 
 #pip install csvkit
-
 
 mkdir $HOME/bin
 
