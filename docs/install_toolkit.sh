@@ -1,4 +1,8 @@
+#!/usr/bin/env bash
+
 # if mac
+
+set -eux
 platform=`uname`
 if [[ $platform == "Darwin" ]]; then
 	#statements
