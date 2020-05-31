@@ -43,6 +43,8 @@ else
 	 libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev \
 	 xz-utils tk-dev libffi-dev liblzma-dev python-openssl
 
+    # required for lpass
+     sudo apt-get install -y cmake
     command -v lpass || \
       cd $HOME/src && git clone https://github.com/lastpass/lastpass-cli.git && \
       cd lastpass-cli && \
