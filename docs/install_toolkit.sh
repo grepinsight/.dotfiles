@@ -44,7 +44,20 @@ else
 	 xz-utils tk-dev libffi-dev liblzma-dev python-openssl
 
     # required for lpass
-     sudo apt-get install -y cmake
+     sudo apt-get --no-install-recommends -yqq install \
+      bash-completion \
+      build-essential \
+      cmake \
+      libcurl4  \
+      libcurl4-openssl-dev  \
+      libssl-dev  \
+      libxml2 \
+      libxml2-dev  \
+      libssl1.1 \
+      pkg-config \
+      ca-certificates \
+      xclip
+
     command -v lpass || \
       cd $HOME/src && git clone https://github.com/lastpass/lastpass-cli.git && \
       cd lastpass-cli && \
