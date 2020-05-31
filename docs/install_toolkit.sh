@@ -11,9 +11,10 @@ if [[ $platform == "Darwin" ]]; then
 	 brew install tree
 
 else
+
 	sudo apt-get update
-	sudo apt-get --yes install curl
-	sudo apt-get --yes install graphviz
+	command -v curl || sudo apt-get --yes install curl
+	command -v graphviz || sudo apt-get --yes install graphviz
 
 	# install ripgrep
 	command -v rg || \
