@@ -12,7 +12,7 @@ if has('nvim')
     autocmd CmdwinEnter * let b:coc_suggest_disable = 1
 
     " system clipboard
-    set clipboard+=unnamedplus
+    " set clipboard+=unnamedplus
 endif
 
 " Vim 8 defaults
