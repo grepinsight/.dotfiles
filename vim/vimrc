@@ -10,6 +10,9 @@ if has('nvim')
     " let g:python2_host_prog="/usr/local/bin/python"
     " let g:python3_host_prog="/usr/local/bin/python3"
     autocmd CmdwinEnter * let b:coc_suggest_disable = 1
+
+    " system clipboard
+    set clipboard+=unnamedplus
 endif
 
 " Vim 8 defaults
