@@ -62,7 +62,7 @@ else
       cd $HOME/src && git clone https://github.com/lastpass/lastpass-cli.git && \
       cd lastpass-cli && \
       make && \
-      make install  &&
+      sudo make install  &&
       cd -
 fi
 
