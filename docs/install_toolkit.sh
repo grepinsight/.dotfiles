@@ -44,12 +44,11 @@ else
 	 xz-utils tk-dev libffi-dev liblzma-dev python-openssl
 
     command -v lpass || \
-      git clone https://github.com/lastpass/lastpass-cli.git && \
+      cd $HOME/src && git clone https://github.com/lastpass/lastpass-cli.git && \
       cd lastpass-cli && \
       make && \
-      make install
-
-
+      make install  &&
+      cd -
 fi
 
 curl https://pyenv.run | bash
