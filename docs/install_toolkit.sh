@@ -2,7 +2,7 @@
 
 # if mac
 
-set -eux
+set -x
 platform=`uname`
 if [[ $platform == "Darwin" ]]; then
 	#statements
@@ -17,7 +17,7 @@ else
 	command -v graphviz || sudo apt-get --yes install graphviz
 
 	# install ripgrep
-	command -v rg || \
+	 command -v rg || \
      DEB_RIPGREP="ripgrep_0.10.0_amd64.deb" && \
      curl -LO https://github.com/BurntSushi/ripgrep/releases/download/0.10.0/${DEB_RIPGREP} && \
      sudo dpkg -i ${DEB_RIPGREP} && \
