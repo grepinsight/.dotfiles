@@ -2038,6 +2038,7 @@ nnoremap ,c :Colors<CR>
 nnoremap ,h :History<CR>
 nnoremap ,r :BTags<CR>
 nnoremap ,t :term<CR>
+nnoremap ,z :Focus2<CR>
 
 if v:version >= 802 && has('popupwin') || has('nvim')
     let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6 } }
