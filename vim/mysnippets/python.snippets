@@ -1,3 +1,7 @@
+snippet main_defopt "main_defopt" b
+def main(argv: List[str] = sys.argv[1:]) -> None:
+    defopt.run(funcs=[cloud_plot], argv=argv)
+endsnippet
 snippet pickle "Description" b
 with open("${2}.pkl", "wb") as fp:
     pickle.dump(${1}, fp)
