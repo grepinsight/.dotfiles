@@ -13,6 +13,11 @@ if has('nvim')
 
     " system clipboard
     " set clipboard+=unnamedplus
+    
+
+    " terminal split
+    command! -nargs=* T split | terminal <args>
+    command! -nargs=* VT vsplit | terminal <args>
 endif
 
 " Vim 8 defaults
