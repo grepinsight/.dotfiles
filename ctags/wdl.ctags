@@ -1,0 +1,5 @@
+--langdef=wdl
+--langmap=wdl:.wdl
+--regex-wdl=/^workflow[ \t ]+([A-Za-z0-9_]*)/\1 \2/w,workflow,Workflow/
+--regex-wdl=/^task[ \t ]+([A-Za-z0-9_]*)/\1 \2/t,task,Task/
+--regex-wdl=/(scatter)\s*(.*)/\1 \2/s,scatter,Scatter/
