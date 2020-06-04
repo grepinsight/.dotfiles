@@ -1684,7 +1684,7 @@ iabbrev dejo_ dejó
 " ============================================================================
 " Custom commands {{{
 command! Focus execute "normal! zMzvzz"
-command! Focus2 execute "normal! zMzOzz"
+command! Focus2 execute "normal! zMzOzt"
 " }}}
 " ============================================================================
 
@@ -2044,6 +2044,8 @@ nnoremap ,h :History<CR>
 nnoremap ,r :BTags<CR>
 nnoremap ,t :term<CR>
 nnoremap ,z :Focus2<CR>
+nnoremap ,g :GV<CR>
+nnoremap ,m :Magit<CR>
 
 if v:version >= 802 && has('popupwin') || has('nvim')
     let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6 } }
