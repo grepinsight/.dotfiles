@@ -42,7 +42,7 @@ set foldlevelstart=0    " open most folds by default
 set foldmethod=indent   " fold based on indent level
 set splitright          " split navigation
 set hidden              " allow modified/unsaved buffers in the background.
-set number              " set number
+set relativenumber              " set number
 set smartcase           " if capital letter is used, then do not ignore case
 set ignorecase          " If the 'ignorecase' option is on, the case of normal letters is ignored. 
 set shiftwidth=4        " size of an indent
@@ -537,20 +537,6 @@ augroup END
 
 au CursorHold * checktime
 
-function! NumberToggle()
-    if(&relativenumber == 1)
-        set norelativenumber
-        set number
-    else
-        set relativenumber
-    endif
-endfunc
-
-nnoremap <Leader>rel :call NumberToggle()<cr>
-"set relativenumber
-
-"au FocusLost * :set number
-"au FocusGained * :set relativenumber
 
 " }}}
 " ============================================================================
@@ -1910,19 +1896,20 @@ function! ResetCursorLineNrColor()
 endfunction
 
 
-vnoremap <silent> <expr> <SID>SetCursorLineNrColorVisual SetCursorLineNrColorVisual()
+" " Toggle relative number / absolute number based on visual mode or normal mode
+" vnoremap <silent> <expr> <SID>SetCursorLineNrColorVisual SetCursorLineNrColorVisual()
 
-" Need to set this in order to make SetCursorLineNrColorVisual work
-nnoremap <silent> <script> v :call SetCursorLineNrColorVisual()<CR>v
-nnoremap <silent> <script> V :call SetCursorLineNrColorVisual()<CR>V
-nnoremap <silent> <script> <C-v> :call SetCursorLineNrColorVisual()<CR><C-v>
+" " Need to set this in order to make SetCursorLineNrColorVisual work
+" nnoremap <silent> <script> v :call SetCursorLineNrColorVisual()<CR>v
+" nnoremap <silent> <script> V :call SetCursorLineNrColorVisual()<CR>V
+" nnoremap <silent> <script> <C-v> :call SetCursorLineNrColorVisual()<CR><C-v>
 
-augroup CursorLineNrColorSwap
-    autocmd!
-    autocmd InsertEnter * call SetCursorLineNrColorInsert(v:insertmode)
-    autocmd InsertLeave * call ResetCursorLineNrColor()
-    autocmd CursorHold * call ResetCursorLineNrColor()
-augroup END
+" augroup CursorLineNrColorSwap
+"     autocmd!
+"     autocmd InsertEnter * call SetCursorLineNrColorInsert(v:insertmode)
+"     autocmd InsertLeave * call ResetCursorLineNrColor()
+"     autocmd CursorHold * call ResetCursorLineNrColor()
+" augroup END
 
 
 " }}}
