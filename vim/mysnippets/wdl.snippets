@@ -14,6 +14,14 @@ workflow MYWORKFLOW {
 }
 endsnippet
 
+# Blocks ------------------------------
+snippet input "input block" b
+	input {
+	  $0
+	}
+endsnippet
+
+# ------------------------------
 # Types
 snippet S "String"
 String $1
@@ -30,6 +38,9 @@ endsnippet
 snippet Flo "Float"
 Float $1
 endsnippet
+
+
+# ------------------------------
 
 # Extra
 snippet rscript "Description" b

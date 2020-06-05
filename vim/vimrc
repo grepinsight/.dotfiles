@@ -1684,7 +1684,7 @@ iabbrev dejo_ dejó
 " ============================================================================
 " Custom commands {{{
 command! Focus execute "normal! zMzvzz"
-command! Focus2 execute "normal! zMzOzz"
+command! Focus2 execute "normal! zMzOzt"
 " }}}
 " ============================================================================
 
@@ -2031,7 +2031,7 @@ nnoremap <LocalLeader>ww <C-w>w
 nnoremap <LocalLeader>y :Goyo 120<CR>
 nnoremap <silent> <LocalLeader> :<c-u>WhichKey  '<Space>'<CR>
 nnoremap <silent> <LocalLeader>p :let @" = expand("%:p")<CR> <bar> :echo expand('%:p')<CR>
-nnoremap <silent> <LocalLeader>z :ZoomToggle<CR>
+nnoremap <silent> <LocalLeader>z :Focus2<CR>
 noremap <LocalLeader>x :VimwikiToggleListItem<CR>
 noremap <silent> <LocalLeader>ch :wincmd h<CR>:close<CR>
 noremap <silent> <LocalLeader>cj :wincmd j<CR>:close<CR>
@@ -2044,6 +2044,8 @@ nnoremap ,h :History<CR>
 nnoremap ,r :BTags<CR>
 nnoremap ,t :term<CR>
 nnoremap ,z :Focus2<CR>
+nnoremap ,g :GV<CR>
+nnoremap ,m :Magit<CR>
 
 if v:version >= 802 && has('popupwin') || has('nvim')
     let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6 } }

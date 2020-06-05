@@ -35,7 +35,7 @@ style = "yellow"
 
 [time]
 disabled = false
-format = " 🕙 [ %T ]"
+format = " time: [ %T ]"
 utc_time_offset = "-7"
 
 
@@ -44,10 +44,11 @@ symbol = "+ "
 threshold = 0
 
 [character]
-symbol = "➜"
+symbol = "-> "
 error_symbol = "✗"
 use_symbol_for_status = true
 
 [username]
 disabled = false
 show_always = true
+
