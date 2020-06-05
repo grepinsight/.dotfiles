@@ -24,6 +24,7 @@ Session.vim
 # Python
 .pytest_cache/
 .python-version
+*.nc # Netcdf
 
 # Etc
 ._.DS_Store
@@ -48,4 +49,6 @@ _cache_and_figs
 
 *.sublime-project
 *.sublime-workspace
-*.nc
+
+# Personal
+experiments_wdl/*
