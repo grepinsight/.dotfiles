@@ -2024,7 +2024,7 @@ nnoremap <LocalLeader>y :Goyo 120<CR>
 nnoremap <silent> <LocalLeader> :<c-u>WhichKey  '<Space>'<CR>
 nnoremap <silent> <LocalLeader>p :let @" = expand("%:p")<CR> <bar> :echo expand('%:p')<CR>
 nnoremap <silent> <LocalLeader>z :Focus2<CR>
-noremap <LocalLeader>x :VimwikiToggleListItem<CR>
+noremap <LocalLeader>x :Focus<CR>
 noremap <silent> <LocalLeader>ch :wincmd h<CR>:close<CR>
 noremap <silent> <LocalLeader>cj :wincmd j<CR>:close<CR>
 noremap <silent> <LocalLeader>ck :wincmd k<CR>:close<CR>
@@ -2036,6 +2036,7 @@ nnoremap ,h :History<CR>
 nnoremap ,r :BTags<CR>
 nnoremap ,t :term<CR>
 nnoremap ,z :Focus2<CR>
+nnoremap ,x :Focus<CR>
 nnoremap ,g :GV<CR>
 nnoremap ,m :Magit<CR>
 
