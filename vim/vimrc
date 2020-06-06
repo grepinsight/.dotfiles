@@ -168,6 +168,7 @@ Plug 'airblade/vim-gitgutter'
 Plug 'kshenoy/vim-signature'
 "Plug 'mhinz/vim-signify'
 Plug 'tpope/vim-fugitive'
+Plug 'lambdalisue/gina.vim' " TRIAL PERIOD
 Plug 'tpope/vim-rhubarb'
 Plug 'fcpg/vim-osc52'
 Plug 'jreybert/vimagit'
