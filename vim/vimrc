@@ -118,7 +118,7 @@ Plug 'vim-scripts/BufOnly.vim'
 Plug 'Shougo/junkfile.vim'
 Plug 'justinmk/vim-dirvish'
 Plug 'tpope/vim-vinegar'
-Plug 'francoiscabrol/ranger.vim'
+"Plug 'francoiscabrol/ranger.vim'
 "Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'tpope/vim-eunuch'
 Plug 'wincent/vcs-jump'
@@ -334,17 +334,6 @@ command! MakeTags !ctags -R .
 " }}}
 " ----------------------------------------------------------------------------
 
-"insert file name : \fn in insert mode
-inoremap \fn <C-R>=expand("%:t")<CR>
-inoremap <Leader>fn <C-R>=expand("%:t")<CR>
-
-"focus current fold
-nnoremap zs zMzvzz
-nnoremap <Leader>fmi :set foldmethod=indent<CR>
-nnoremap <Leader>fms :set foldmethod=syntax<CR>
-nnoremap <Leader>fmm :set foldmethod=marker<CR>
-nnoremap <Leader>fme :set foldmethod=expr<CR>
-
 " Make movement more visual oriented
 nnoremap j gj
 nnoremap k gk
@@ -397,12 +386,6 @@ nnoremap aa pkj
 
 nnoremap <Leader>c :ccl<CR>
 nnoremap <Leader>di :sp ~/Dropbox/vimwiki/diary/<C-R>=strftime("%Y-%m-%d")<CR>.md<CR>
-command! Today execute "normal! \<esc>:e ~/Dropbox/vimwiki/diary/\<C-R>=strftime(\"%Y-%m-%d\")\<CR>.md\<CR>"
-command! Kanban execute "normal! \<esc>:e ~/Dropbox/vimwiki/kanban.md\<CR>"
-command! Month execute "normal! \<esc>:e ~/Dropbox/vimwiki/diary/\<C-R>=strftime(\"%Y-%m\")\<CR>.md\<CR>"
-command! Week execute "normal! \<esc>:e ~/Dropbox/vimwiki/diary/\<C-R>=strftime(\"%Y-week%V\")\<CR>.md\<CR>"
-command! Year execute "normal! \<esc>:e ~/Dropbox/vimwiki/diary/\<C-R>=strftime(\"%Y\")\<CR>.md\<CR>"
-command! Meeting execute "normal! \<esc>:sp ~/Dropbox/vimwiki/meeting--\<C-R>=strftime(\"%Y-%m-%d\")\<CR>.md\<CR>"
 
 " Buffers 
 " close buffer
@@ -1979,6 +1962,18 @@ vnoremap <leader>Ac :center<cr>
 vnoremap <leader>Ar :right<cr>
 nnoremap <Leader>dot :!cat % \| dot -Tpng > <C-R>=expand('%:r')<CR>.png && open <C-R>=expand('%:r')<CR>.png<CR>
 
+"insert file name : \fn in insert mode
+inoremap \fn <C-R>=expand("%:t")<CR>
+inoremap <Leader>fn <C-R>=expand("%:t")<CR>
+
+"focus current fold
+nnoremap zs zMzvzz
+nnoremap <Leader>fmi :set foldmethod=indent<CR>
+nnoremap <Leader>fms :set foldmethod=syntax<CR>
+nnoremap <Leader>fmm :set foldmethod=marker<CR>
+nnoremap <Leader>fme :set foldmethod=expr<CR>
+
+
 
 "}}}
 
@@ -2028,4 +2023,13 @@ nnoremap ,t :term<CR>
 nnoremap ,x :Focus<CR>
 nnoremap ,z :Focus2<CR>
 
+" }}}
+" Custom Commands {{{
+command! Today execute "normal! \<esc>:e ~/Dropbox/vimwiki/diary/\<C-R>=strftime(\"%Y-%m-%d\")\<CR>.md\<CR>"
+command! Kanban execute "normal! \<esc>:e ~/Dropbox/vimwiki/kanban.org\<CR>"
+command! Topics execute "normal! \<esc>:e ~/Dropbox/vimwiki/topics.md\<CR>"
+command! Month execute "normal! \<esc>:e ~/Dropbox/vimwiki/diary/\<C-R>=strftime(\"%Y-%m\")\<CR>.md\<CR>"
+command! Week execute "normal! \<esc>:e ~/Dropbox/vimwiki/diary/\<C-R>=strftime(\"%Y-week%V\")\<CR>.md\<CR>"
+command! Year execute "normal! \<esc>:e ~/Dropbox/vimwiki/diary/\<C-R>=strftime(\"%Y\")\<CR>.md\<CR>"
+command! Meeting execute "normal! \<esc>:sp ~/Dropbox/vimwiki/meeting--\<C-R>=strftime(\"%Y-%m-%d\")\<CR>.md\<CR>"
 " }}}
