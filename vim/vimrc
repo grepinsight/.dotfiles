@@ -93,129 +93,126 @@ endif
 " ============================================================================
 call plug#begin('~/.vim/plugged')
 
-" Colorschemes
-Plug 'ajmwagar/vim-deus'
+" " Colorschemes
 Plug 'dracula/vim', { 'as': 'dracula' }
-Plug 'cormacrelf/vim-colors-github'
-
-" Looks / Status
-" Start page
 Plug 'mhinz/vim-startify'
-Plug 'vim-airline/vim-airline'
-Plug 'junegunn/seoul256.vim'
-Plug 'ryanoasis/vim-devicons'
+"Plug 'vim-airline/vim-airline'
+" Plug 'cormacrelf/vim-colors-github'
+
+" " Looks / Status
+" " Start page
+" Plug 'ryanoasis/vim-devicons'
 
 " Session Management
-Plug 'tpope/vim-obsession'
+" Plug 'tpope/vim-obsession'
 Plug 'airblade/vim-rooter'
 
-" Buffer Management
-Plug 'vim-scripts/BufOnly.vim'
+" " Buffer Management
+" Plug 'vim-scripts/BufOnly.vim'
 
-" Files related
-Plug 'Shougo/junkfile.vim'
+" " Files related
+" Plug 'Shougo/junkfile.vim'
 Plug 'justinmk/vim-dirvish'
-Plug 'tpope/vim-vinegar'
-Plug 'tpope/vim-eunuch'
-Plug 'wincent/vcs-jump'
+" Plug 'tpope/vim-vinegar'
+" Plug 'tpope/vim-eunuch'
+" Plug 'wincent/vcs-jump'
 
-" Search files
+" " Search files
 Plug 'grepinsight/ctrlp.vim' " my mutated version that supports vimwiki tag search
 Plug 'grepinsight/fzf', { 'dir': '~/.fzf', 'do': './install --all'  }
 Plug 'junegunn/fzf.vim'
-Plug 'junegunn/vim-peekaboo'
-Plug 'mileszs/ack.vim'
-Plug 'google/vim-searchindex'
-Plug 'bronson/vim-visual-star-search'
+" Plug 'junegunn/vim-peekaboo'
+" Plug 'mileszs/ack.vim'
+" Plug 'google/vim-searchindex'
+" Plug 'bronson/vim-visual-star-search'
 
-" Navigation
-Plug 'Lokaltog/vim-easymotion'
-Plug 'justinmk/vim-sneak'
-Plug 'liuchengxu/vista.vim'
-Plug 'tpope/vim-projectionist'
+" " Navigation
+" Plug 'Lokaltog/vim-easymotion'
+" Plug 'justinmk/vim-sneak'
+" Plug 'liuchengxu/vista.vim'
+" Plug 'tpope/vim-projectionist'
 Plug 'tpope/vim-unimpaired'
-Plug 'christoomey/vim-tmux-navigator'
-Plug 'tmhedberg/SimpylFold'
+" Plug 'christoomey/vim-tmux-navigator'
+" Plug 'tmhedberg/SimpylFold'
 
 " Editing
 Plug 'tpope/vim-surround'              " surround text objects with whatever
 Plug 'junegunn/vim-easy-align'         " perform alignment easier
-Plug 'tommcdo/vim-exchange'            " swap two text objects
-Plug 'michaeljsmith/vim-indent-object' " text object
-Plug 'AndrewRadev/splitjoin.vim'
-Plug 'tpope/vim-repeat'
-Plug 'terryma/vim-multiple-cursors'
-Plug 'junegunn/vim-after-object'
-Plug 'sjl/gundo.vim'
-Plug 'tpope/vim-commentary'
-Plug 'Yggdroot/indentLine'
-Plug 'dhruvasagar/vim-table-mode'
-Plug 'elzr/vim-json'
-Plug 'Konfekt/FastFold'
-Plug 'kalekundert/vim-coiled-snake'
+" Plug 'tommcdo/vim-exchange'            " swap two text objects
+" Plug 'michaeljsmith/vim-indent-object' " text object
+" Plug 'AndrewRadev/splitjoin.vim'
+" Plug 'tpope/vim-repeat'
+" Plug 'terryma/vim-multiple-cursors'
+" Plug 'junegunn/vim-after-object'
+" Plug 'sjl/gundo.vim'
+" Plug 'tpope/vim-commentary'
+" Plug 'Yggdroot/indentLine'
+" Plug 'dhruvasagar/vim-table-mode'
+" Plug 'elzr/vim-json'
+" Plug 'Konfekt/FastFold'
+" Plug 'kalekundert/vim-coiled-snake'
 
-" Git
-Plug 'airblade/vim-gitgutter'
-Plug 'kshenoy/vim-signature'
+" " Git
+" Plug 'airblade/vim-gitgutter'
+" Plug 'kshenoy/vim-signature'
 Plug 'tpope/vim-fugitive'
-Plug 'lambdalisue/gina.vim' " TRIAL PERIOD
+" Plug 'lambdalisue/gina.vim' " TRIAL PERIOD
 Plug 'tpope/vim-rhubarb'
-Plug 'fcpg/vim-osc52'
+" Plug 'fcpg/vim-osc52'
 Plug 'jreybert/vimagit'
 Plug 'junegunn/gv.vim'
-Plug 'junegunn/vim-github-dashboard'
-Plug 'mattn/gist-vim'
-Plug 'mattn/webapi-vim'
+" Plug 'junegunn/vim-github-dashboard'
+" Plug 'mattn/gist-vim'
+" Plug 'mattn/webapi-vim'
 
-" Testing
-Plug 'metakirby5/codi.vim'
-Plug 'janko-m/vim-test'
-Plug 'tpope/vim-dispatch'
-Plug 'puremourning/vimspector'
+" " Testing
+" Plug 'metakirby5/codi.vim'
+" Plug 'janko-m/vim-test'
+" Plug 'tpope/vim-dispatch'
+" Plug 'puremourning/vimspector'
 
-" Rlang
-Plug 'ncm2/ncm2'
-Plug 'roxma/nvim-yarp'
-Plug 'jalvesaq/Nvim-R'
-Plug 'gaalcaras/ncm-R'
-Plug 'ncm2/ncm2-bufword'
-Plug 'ncm2/ncm2-path'
+" " Rlang
+" Plug 'ncm2/ncm2'
+" Plug 'roxma/nvim-yarp'
+" Plug 'jalvesaq/Nvim-R'
+" Plug 'gaalcaras/ncm-R'
+" Plug 'ncm2/ncm2-bufword'
+" Plug 'ncm2/ncm2-path'
 
 
-Plug 'jalvesaq/vimcmdline'                             " sort of like slim
+" Plug 'jalvesaq/vimcmdline'                             " sort of like slim
 
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
-Plug 'rust-lang/rust.vim'
-Plug 'fatih/vim-go'
-Plug 'kana/vim-textobj-user'
-Plug 'davidhalter/jedi-vim'                            " python intellisense
-Plug 'jeetsukumaran/vim-pythonsense'                   " text object for python
-Plug 'vim-pandoc/vim-pandoc'
-Plug 'vim-pandoc/vim-pandoc-syntax'
+" Plug 'neoclide/coc.nvim', {'branch': 'release'}
+" Plug 'rust-lang/rust.vim'
+" Plug 'fatih/vim-go'
+" Plug 'kana/vim-textobj-user'
+" Plug 'davidhalter/jedi-vim'                            " python intellisense
+" Plug 'jeetsukumaran/vim-pythonsense'                   " text object for python
+" Plug 'vim-pandoc/vim-pandoc'
+" Plug 'vim-pandoc/vim-pandoc-syntax'
 
 
 Plug 'SirVer/ultisnips'
-Plug 'honza/vim-snippets'
-Plug 'ervandew/supertab'
-Plug 'grepinsight/mysnippets'
+" Plug 'honza/vim-snippets'
+" Plug 'ervandew/supertab'
+" Plug 'grepinsight/mysnippets'
 
-" Writing
-Plug 'christoomey/vim-titlecase'
-Plug 'plasticboy/vim-markdown'
-Plug 'coachshea/vim-textobj-markdown'
-Plug 'masukomi/vim-markdown-folding'
-Plug 'tpope/vim-abolish'
+" " Writing
+" Plug 'christoomey/vim-titlecase'
+" Plug 'plasticboy/vim-markdown'
+" Plug 'coachshea/vim-textobj-markdown'
+" Plug 'masukomi/vim-markdown-folding'
+" Plug 'tpope/vim-abolish'
 Plug 'junegunn/goyo.vim'
-Plug 'junegunn/limelight.vim'
-Plug 'ron89/thesaurus_query.vim' "thesaurus
-Plug 'vimwiki/vimwiki'
-Plug 'mattn/calendar-vim'
-Plug 'tpope/vim-speeddating'
-Plug 'vim-scripts/utl.vim'
-Plug 'vim-scripts/SyntaxRange'
-Plug 'lervag/vimtex'
-Plug 'reedes/vim-wordy'
-Plug 'AndrewRadev/switch.vim'
+" Plug 'junegunn/limelight.vim'
+" Plug 'ron89/thesaurus_query.vim' "thesaurus
+" Plug 'mattn/calendar-vim'
+" Plug 'tpope/vim-speeddating'
+" Plug 'vim-scripts/utl.vim'
+" Plug 'vim-scripts/SyntaxRange'
+" Plug 'lervag/vimtex'
+" Plug 'reedes/vim-wordy'
+" Plug 'AndrewRadev/switch.vim'
 
 " Interactive coding
 Plug 'jpalardy/vim-slime'
@@ -223,30 +220,30 @@ Plug 'jpalardy/vim-slime'
 " Reading
 Plug 'roman/golden-ratio'
 
-" Misc
-Plug 'dhruvasagar/vim-zoom'
-Plug 'tomtom/tlib_vim'
-Plug 'itchyny/calendar.vim'
-Plug 'sgur/vim-editorconfig'
-Plug 'chrisbra/csv.vim'
-Plug 'liuchengxu/vim-which-key'
-Plug 'machakann/vim-highlightedyank'
-Plug 'voldikss/vim-floaterm'
+" " Misc
+" Plug 'dhruvasagar/vim-zoom'
+" Plug 'tomtom/tlib_vim'
+" Plug 'itchyny/calendar.vim'
+" Plug 'sgur/vim-editorconfig'
+" Plug 'chrisbra/csv.vim'
+" Plug 'liuchengxu/vim-which-key'
+" Plug 'machakann/vim-highlightedyank'
+" Plug 'voldikss/vim-floaterm'
 
 
 " Syntax Highlighting / FileType
-Plug 'maverickg/stan.vim'
-Plug 'Glench/Vim-Jinja2-Syntax'
-Plug 'ibab/vim-snakemake'
+" Plug 'maverickg/stan.vim'
+" Plug 'Glench/Vim-Jinja2-Syntax'
+" Plug 'ibab/vim-snakemake'
 Plug 'broadinstitute/vim-wdl'
 
-if executable('black')
-    Plug 'psf/black', { 'on':  'Black' }
-endif
+" if executable('black')
+"     Plug 'psf/black', { 'on':  'Black' }
+" endif
 
 
-" Profiling
-Plug 'tweekmonster/startuptime.vim'
+" " Profiling
+" Plug 'tweekmonster/startuptime.vim'
 
 
 call plug#end()
@@ -709,6 +706,7 @@ autocmd! User GoyoLeave nested call <SID>goyo_leave()
 " ----------------------------------------------------------------------------
 let g:rooter_silent_chdir = 1
 let g:startify_change_to_dir = 0
+let g:rooter_change_directory_for_non_project_files = 'current'
 " }}}
 " ----------------------------------------------------------------------------
 " # OrgMode {{{
