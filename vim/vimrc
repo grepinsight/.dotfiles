@@ -113,12 +113,9 @@ Plug 'airblade/vim-rooter'
 Plug 'vim-scripts/BufOnly.vim'
 
 " Files related
-"Plug 'scrooloose/nerdtree'
 Plug 'Shougo/junkfile.vim'
 Plug 'justinmk/vim-dirvish'
 Plug 'tpope/vim-vinegar'
-"Plug 'francoiscabrol/ranger.vim'
-"Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'tpope/vim-eunuch'
 Plug 'wincent/vcs-jump'
 
@@ -134,14 +131,11 @@ Plug 'bronson/vim-visual-star-search'
 " Navigation
 Plug 'Lokaltog/vim-easymotion'
 Plug 'justinmk/vim-sneak'
-"Plug 'vim-scripts/taglist.vim'
-"Plug 'majutsushi/tagbar'
 Plug 'liuchengxu/vista.vim'
 Plug 'tpope/vim-projectionist'
 Plug 'tpope/vim-unimpaired'
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'tmhedberg/SimpylFold'
-"Plug 'MattesGroeger/vim-bookmarks'
 
 " Editing
 Plug 'tpope/vim-surround'              " surround text objects with whatever
@@ -154,19 +148,15 @@ Plug 'terryma/vim-multiple-cursors'
 Plug 'junegunn/vim-after-object'
 Plug 'sjl/gundo.vim'
 Plug 'tpope/vim-commentary'
-"Plug 'jiangmiao/auto-pairs'
 Plug 'Yggdroot/indentLine'
-"Plug 'bronson/vim-trailing-whitespace'
 Plug 'dhruvasagar/vim-table-mode'
 Plug 'elzr/vim-json'
 Plug 'Konfekt/FastFold'
 Plug 'kalekundert/vim-coiled-snake'
-"Plug 'wellle/context.vim'
 
 " Git
 Plug 'airblade/vim-gitgutter'
 Plug 'kshenoy/vim-signature'
-"Plug 'mhinz/vim-signify'
 Plug 'tpope/vim-fugitive'
 Plug 'lambdalisue/gina.vim' " TRIAL PERIOD
 Plug 'tpope/vim-rhubarb'
@@ -181,6 +171,7 @@ Plug 'mattn/webapi-vim'
 Plug 'metakirby5/codi.vim'
 Plug 'janko-m/vim-test'
 Plug 'tpope/vim-dispatch'
+Plug 'puremourning/vimspector'
 
 " Rlang
 Plug 'ncm2/ncm2'
@@ -202,16 +193,7 @@ Plug 'jeetsukumaran/vim-pythonsense'                   " text object for python
 Plug 'vim-pandoc/vim-pandoc'
 Plug 'vim-pandoc/vim-pandoc-syntax'
 
-" Lint
-"Plug 'w0rp/ale'
 
-" Completions and snippets
-" if v:version >= 800
-"     try
-"         Plug 'Valloric/YouCompleteMe'
-"     catch
-"     endtry
-" endif
 Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 Plug 'ervandew/supertab'
@@ -219,7 +201,6 @@ Plug 'grepinsight/mysnippets'
 
 " Writing
 Plug 'christoomey/vim-titlecase'
-"let g:titlecase_map_keys = 0
 Plug 'plasticboy/vim-markdown'
 Plug 'coachshea/vim-textobj-markdown'
 Plug 'masukomi/vim-markdown-folding'
@@ -227,10 +208,8 @@ Plug 'tpope/vim-abolish'
 Plug 'junegunn/goyo.vim'
 Plug 'junegunn/limelight.vim'
 Plug 'ron89/thesaurus_query.vim' "thesaurus
-"Plug 'beloglazov/vim-online-thesaurus'
 Plug 'vimwiki/vimwiki'
 Plug 'mattn/calendar-vim'
-"Plug 'jceb/vim-orgmode'
 Plug 'tpope/vim-speeddating'
 Plug 'vim-scripts/utl.vim'
 Plug 'vim-scripts/SyntaxRange'
@@ -242,11 +221,9 @@ Plug 'AndrewRadev/switch.vim'
 Plug 'jpalardy/vim-slime'
 
 " Reading
-"Plug 'JamshedVesuna/vim-markdown-preview'
 Plug 'roman/golden-ratio'
 
 " Misc
-"Plug 'wincent/terminus'  " Make terminal and vim play nicely. Supports auto change
 Plug 'dhruvasagar/vim-zoom'
 Plug 'tomtom/tlib_vim'
 Plug 'itchyny/calendar.vim'
@@ -254,6 +231,7 @@ Plug 'sgur/vim-editorconfig'
 Plug 'chrisbra/csv.vim'
 Plug 'liuchengxu/vim-which-key'
 Plug 'machakann/vim-highlightedyank'
+Plug 'voldikss/vim-floaterm'
 
 
 " Syntax Highlighting / FileType
@@ -270,15 +248,6 @@ endif
 " Profiling
 Plug 'tweekmonster/startuptime.vim'
 
-" Deprecated
-" Plug 'autozimu/LanguageClient-neovim', {
-"     \ 'branch': 'next',
-"     \ 'do': 'bash install.sh',
-"     \ }
-" Plug 'szw/vim-g'
-" Plug 'mattn/emmet-vim'
-" Plug 'DougBeney/pickachu'
-" Plug 'luochen1990/rainbow'  " parenthesis colors
 
 call plug#end()
 
@@ -441,7 +410,6 @@ autocmd FileType python vmap <Space> <Plug>SlimeRegionSend
 
 " }}}
 " ============================================================================
-" Auto settings {{{
 " ============================================================================
 " save when losing focus {{{
 au FocusLost * :silent! wall
@@ -734,7 +702,7 @@ autocmd! User GoyoLeave nested call <SID>goyo_leave()
 
 " }}}
 " ============================================================================
-" # Plugin Specific Settings {{{
+" Plugin Specific Settings {{{
 " ============================================================================
 " ----------------------------------------------------------------------------
 " # Rooter {{{
@@ -972,6 +940,12 @@ let g:wordy#ring = [
 " Thesaurus {{{
 " ----------------------------------------------------------------------------
 let g:tq_enabled_backends=["mthesaur_txt"]
+
+" }}}
+" ----------------------------------------------------------------------------
+"  Vimpector {{{
+" ----------------------------------------------------------------------------
+let g:vimspector_enable_mappings = 'VISUAL_STUDIO'
 
 " }}}
 " ============================================================================
@@ -1948,6 +1922,7 @@ nnoremap <LocalLeader>o :BufOnly<CR> <bar> :only<CR>
 nnoremap <LocalLeader>pro :e ~/src/productivity/
 nnoremap <LocalLeader>pt :NERDTreeToggle<CR>
 nnoremap <LocalLeader>q :quit <CR>
+nnoremap <LocalLeader>s :w<CR>
 nnoremap <LocalLeader>t :!typora "%"<CR>
 nnoremap <LocalLeader>toc :VimwikiTOC<CR>
 nnoremap <LocalLeader>tog :!toggl-start <C-R>=expand('<cWORD>')<CR>
@@ -1976,6 +1951,7 @@ nnoremap ,x :Focus<CR>
 nnoremap ,z :Focus2<CR>
 
 " }}}
+" ============================================================================
 " Custom Commands {{{
 command! Today execute "normal! \<esc>:e ~/Dropbox/vimwiki/diary/\<C-R>=strftime(\"%Y-%m-%d\")\<CR>.md\<CR>"
 command! Kanban execute "normal! \<esc>:e ~/Dropbox/vimwiki/kanban.org\<CR>"
@@ -1987,3 +1963,6 @@ command! Week execute "normal! \<esc>:e ~/Dropbox/vimwiki/diary/\<C-R>=strftime(
 command! Year execute "normal! \<esc>:e ~/Dropbox/vimwiki/diary/\<C-R>=strftime(\"%Y\")\<CR>.md\<CR>"
 command! Meeting execute "normal! \<esc>:sp ~/Dropbox/vimwiki/meeting--\<C-R>=strftime(\"%Y-%m-%d\")\<CR>.md\<CR>"
 " }}}
+"
+"
+let g:floaterm_gitcommit = 'floaterm'
