@@ -25,6 +25,7 @@ endif
 unlet! skip_defaults_vim
 autocmd FileType rst syntax off
 autocmd FileType json set foldmethod=indent
+autocmd BufNewFile,BufRead *.org setfiletype org
 silent! source $VIMRUNTIME/defaults.vim
 set encoding=UTF-8
 filetype plugin indent on
@@ -60,9 +61,14 @@ set scrolloff=2         " Minimal number of screen lines to keep above and below
 set iskeyword+=\-       " for autocompleting a word containing '-'
 set background=dark     " Setting dark mode
 "set clipboard=unnamed
+set undofile                " Save undos after file closes
+set undodir=$HOME/.vim/undo " where to save undo histories
+set undolevels=10000         " How many undos
+set undoreload=10000        " number of lines to save for undo
+set mouse=a
 " }}}
 " ============================================================================
-" # Variables {{{
+" Variables {{{
 " ============================================================================
 
 let vimrplugin_assign = 0 " Stop annoying vimRplugin reassignment
@@ -83,7 +89,7 @@ if empty(glob('~/.vim/autoload/plug.vim'))
 endif
 " }}}
 " ============================================================================
-" # Plugin Setup VIM_PLUGIN BLOCK {{{
+" Plugin Setup VIM_PLUGIN BLOCK {{{
 " ============================================================================
 call plug#begin('~/.vim/plugged')
 
@@ -92,19 +98,12 @@ Plug 'ajmwagar/vim-deus'
 Plug 'dracula/vim', { 'as': 'dracula' }
 Plug 'cormacrelf/vim-colors-github'
 
-" Basic setup
-"Plug 'tpope/vim-sensible'
-
 " Looks / Status
 " Start page
 Plug 'mhinz/vim-startify'
-"Plug 'flazz/vim-colorschemes'
 Plug 'vim-airline/vim-airline'
 Plug 'junegunn/seoul256.vim'
 Plug 'ryanoasis/vim-devicons'
-"Plug 'yuttie/comfortable-motion.vim'
-"Plug 'ap/vim-css-color'
-" Color picker
 
 " Session Management
 Plug 'tpope/vim-obsession'
@@ -230,7 +229,7 @@ Plug 'ron89/thesaurus_query.vim' "thesaurus
 "Plug 'beloglazov/vim-online-thesaurus'
 Plug 'vimwiki/vimwiki'
 Plug 'mattn/calendar-vim'
-Plug 'jceb/vim-orgmode'
+"Plug 'jceb/vim-orgmode'
 Plug 'tpope/vim-speeddating'
 Plug 'vim-scripts/utl.vim'
 Plug 'vim-scripts/SyntaxRange'
@@ -296,7 +295,7 @@ let g:deus_termcolors=256
 
 " }}}
 " ============================================================================
-" # Productivity Aliases {{{
+" Productivity Aliases {{{
 " ============================================================================
 " never ring a bell {{{
 if exists('&belloff')
@@ -321,9 +320,8 @@ function! ToggleQuickFix()
   endif
 endfunction
 
-
+" }}}
 " Switch between the last two files
-
 " ----------------------------------------------------------------------------
 " R assignment {{{
 " execute "set <M-->=\033-"
@@ -333,6 +331,7 @@ inoremap <M-m> %>%
 command! MakeTags !ctags -R .
 " }}}
 " ----------------------------------------------------------------------------
+" Remapping {{{
 
 " Make movement more visual oriented
 nnoremap j gj
@@ -384,10 +383,8 @@ lnoremap <F1> <ESC>
 nnoremap aa pkj
 
 
-nnoremap <Leader>c :ccl<CR>
-nnoremap <Leader>di :sp ~/Dropbox/vimwiki/diary/<C-R>=strftime("%Y-%m-%d")<CR>.md<CR>
-
-" Buffers 
+" }}}
+" Buffers  {{{
 " close buffer
 function! BufferSmartDelete()
 	let num_buf = len(filter(range(1, bufnr('$')), 'buflisted(v:val)'))
@@ -421,14 +418,6 @@ nnoremap QQ :q<CR>
 nnoremap <c-s-t> :b#<CR>:e<CR>
 " 
 
-" Bash alias shortcut 
-nnoremap <Leader>bas :e $HOME/.dotfiles/bash/share/bash_aliases_share<CR>
-nnoremap <Leader>bcs :e $HOME/.dotfiles/bash/share/bash_colors_share<CR>
-nnoremap <Leader>bfs :e $HOME/.dotfiles/bash/share/bash_functions_share<CR>
-nnoremap <Leader>bss :e $HOME/.dotfiles/bash/share/bash_settings_share<CR>
-nnoremap <Leader>bal :e $HOME/.dotfiles/bash/local/bash_aliases_local<CR>
-nnoremap <Leader>bpl :e $HOME/.dotfiles/bash/local/bash_paths_local<CR>
-nnoremap <Leader>bsl :e $HOME/.dotfiles/bash/local/bash_settings_local<CR>
 " }}}
 " ============================================================================
 " PythonRelated {{{
@@ -451,34 +440,9 @@ autocmd FileType python vmap <Space> <Plug>SlimeRegionSend
 
 " }}}
 " ============================================================================
-" Advanced Settings --------------------------------------------------{{{
-"
-" ----------------------------------------------------------------------------
-" Undo {{{
-"
-set undofile                " Save undos after file closes
-set undodir=$HOME/.vim/undo " where to save undo histories
-set undolevels=10000         " How many undos
-set undoreload=10000        " number of lines to save for undo
-" }}}
-
-" }}}
-" ============================================================================
-"  Mouse Related {{{
-" Allow mouse for easy resizing
-" set ttymouse=xterm2
-set mouse=a
-" set mouse+=a
-" if &term =~ '^screen'
-"     " tmux knows the extended mouse mode
-"     set ttymouse=xterm2
-" endif
-" set mouse=c
-"  }}}
-" ============================================================================
 " Auto settings {{{
 " ============================================================================
-"save when losing focus
+" save when losing focus {{{
 au FocusLost * :silent! wall
 au FocusLost * :wa
 
@@ -560,35 +524,6 @@ endfunction
 " check file change every 4 seconds ('CursorHold') and reload the buffer upon detecting change
 au CursorHold * checktime
 
-
-" Useful hotkeys
-
-nnoremap <Leader>btt :bufdo tab split<CR>
-nnoremap <Leader>gi :e ./.gitignore<CR>
-nnoremap <Leader>hh :Helptags<CR>
-nnoremap <Leader>ht :Helptags<CR>
-nnoremap <Leader>ls :ls<CR>
-vnoremap <Leader>tc :<C-U>silent! normal! gV:!titlecase<CR>
-
-" Open markdown
-nnoremap <Leader>md :w<CR> :!cygstart %<CR>
-
-" <Leader>f{char} to move to {char}
-map  <Leader>f <Plug>(easymotion-bd-f)
-nmap <Leader>f <Plug>(easymotion-overwin-f)
-
-" s{char}{char} to move to {char}{char}
-nmap s <Plug>(easymotion-overwin-f2)
-
-" Move to line
-map <Leader>L <Plug>(easymotion-bd-jk)
-nmap <Leader>L <Plug>(easymotion-overwin-line)
-
-" Move to word
-map  <Leader>w <Plug>(easymotion-bd-w)
-nmap <Leader>w <Plug>(easymotion-overwin-w)
-map  <Leader>w$ <Plug>(easymotion-bd-w)
-nmap <Leader>w$ <Plug>(easymotion-overwin-w)
 
 "airline support
 let g:airline#extensions#tabline#enabled = 1
@@ -768,6 +703,7 @@ function! s:goyo_enter()
   set nospell
   set norelativenumber
   Limelight
+  let b:coc_suggest_disable = 1
   " ...
 endfunction
 
@@ -780,6 +716,7 @@ function! s:goyo_leave()
   set spell
   set relativenumber
   Limelight!
+  let b:coc_suggest_disable = 0
   " ...
 endfunction
 
@@ -798,27 +735,20 @@ autocmd! User GoyoLeave nested call <SID>goyo_leave()
 " ============================================================================
 " # Plugin Specific Settings {{{
 " ============================================================================
-
-" {{{
 " ----------------------------------------------------------------------------
-" # Rooter
+" # Rooter {{{
 " ----------------------------------------------------------------------------
-
 let g:rooter_silent_chdir = 1
 let g:startify_change_to_dir = 0
-
 " }}}
-
-" {{{
 " ----------------------------------------------------------------------------
-" # OrgMode
+" # OrgMode {{{
 " ----------------------------------------------------------------------------
-
 let g:org_agenda_files=['~/Dropbox/vimwiki/*.org']
 let g:org_todo_keywords=['TODO', 'DONE', 'MEETING', 'QUESTION']
-
+" }}}
 " ----------------------------------------------------------------------------
-" # coc
+" # coc {{{
 " ----------------------------------------------------------------------------
 
 autocmd FileType vimwiki let b:coc_suggest_disable = 1
@@ -880,22 +810,20 @@ endfunction
 nnoremap yococ :call CocSuggestionToggle()<CR>
 
 inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
-
+" }}}
 " ----------------------------------------------------------------------------
-" Pandoc
+" Pandoc {{{
 " ----------------------------------------------------------------------------
-
 let g:pandoc#modules#disabled = ['formatting']
-
+" }}}
 " ----------------------------------------------------------------------------
-" Whichkey
+" Whichkey {{{
 " ----------------------------------------------------------------------------
-
 nnoremap <silent> <Leader> :<c-u>WhichKey  '\'<CR>
 nnoremap <silent> , :<c-u>WhichKey  ','<CR>
-
+" }}}
 " ----------------------------------------------------------------------------
-" EasyAlign
+" EasyAlign {{{
 " ----------------------------------------------------------------------------
 " Start interactive EasyAlign in visual mode (e.g. vip<Enter>)
 vmap <Enter> <Plug>(EasyAlign)
@@ -905,14 +833,14 @@ xmap ga <Plug>(EasyAlign)
 
 " Start interactive EasyAlign for a motion/text object (e.g. gaip)
 nmap ga <Plug>(EasyAlign)
-
+" }}}
 " ----------------------------------------------------------------------------
-" Plugin - vim-sneak ----
+" Plugin - vim-sneak {{{
 " ----------------------------------------------------------------------------
 let g:sneak#s_next = 1
-
+" }}}
 " ----------------------------------------------------------------------------
-" Plugin - vim-wiki ----
+" Plugin - vim-wiki {{{
 " ----------------------------------------------------------------------------
 " Vimwiki
 nnoremap ]d :VimwikiDiaryNextDay<CR>
@@ -926,59 +854,57 @@ let g:vimwiki_conceallevel = 1
 
 
 autocmd FileType vimwiki let g:vim_markdown_folding_disabled = 1  " Let the vimwiki handle the folding
-
-
-
+" }}}
 " ----------------------------------------------------------------------------
-" Plugin - vim-surround ----
+" Plugin - vim-surround {{{
 " ----------------------------------------------------------------------------
 let g:surround_45 = "``` \r ```"
-
+" }}}
 " ----------------------------------------------------------------------------
-" Plugin - vim-go ----
+" Plugin - vim-go {{{
 " ----------------------------------------------------------------------------
 let g:go_version_warning = 0
+" }}}
 " ----------------------------------------------------------------------------
-" Plugin - fzf ----
+" Plugin - fzf {{{
 " ----------------------------------------------------------------------------
-
 nnoremap <F3> :call fzf#run(fzf#wrap({'source': 'fd $FD_OPTS . $HOME', 'sink': 'edit'}))<CR>
 inoremap <F3> :call fzf#run(fzf#wrap({'source': 'fd $FD_OPTS . $HOME', 'sink': 'edit'}))<CR>
 nnoremap <F4> :call fzf#run(fzf#wrap({'source': 'fd --no-ignore $FD_OPTS .', 'sink': 'edit'}))<CR>
 inoremap <F4> :call fzf#run(fzf#wrap({'source': 'fd --no-ignore $FD_OPTS .', 'sink': 'edit'}))<CR>
 nnoremap <Leader>pv :call fzf#vim#gitfiles('', fzf#vim#with_preview('right'))<CR>
-
+" }}}
 " ----------------------------------------------------------------------------
-" Gundo
+" Gundo {{{
 " ----------------------------------------------------------------------------
 " toggle gundo
 nnoremap <leader>u :GundoToggle<CR>
 
 " python3 support
 let g:gundo_prefer_python3 = 1
-
+" }}}
 " ----------------------------------------------------------------------------
-" vim-after-object
+" vim-after-object {{{
 " ----------------------------------------------------------------------------
 silent! if has_key(g:plugs, 'vim-after-object')
   autocmd VimEnter * silent! call after_object#enable('=', ':', '#', ' ', '|')
 endif
-
+" }}}
 " ----------------------------------------------------------------------------
-" Plugin - Calendar
+" Plugin - Calendar {{{
 " ----------------------------------------------------------------------------
 let g:calendar_google_calendar = 1
 let g:calendar_google_task = 1
-
+" }}}
 " ----------------------------------------------------------------------------
-" Projectionist
+" Projectionist {{{
 " ----------------------------------------------------------------------------
 nnoremap <leader>aa :A <CR>
 nnoremap <leader><leader>a :A <CR>
 nnoremap <leader>a :A <CR>
-
+" }}}
 " ----------------------------------------------------------------------------
-" Ale
+" Ale {{{
 " ----------------------------------------------------------------------------
 nnoremap ]al :ALENext<CR>
 nnoremap [al :ALEPrevious<CR>
@@ -996,14 +922,9 @@ let g:ale_python_mypy_options="--ignore-missing-imports"
 " let g:ale_open_list = 1
 "nnoremap ]al <Plug>(ale_next)
 "nnoremap ]al <Plug>(ale_previous)
-
+" }}}
 " ----------------------------------------------------------------------------
-" YouCompleteMe
-" ----------------------------------------------------------------------------
-let g:ycm_key_list_select_completion=[]
-let g:ycm_key_list_previous_completion=[]
-" ----------------------------------------------------------------------------
-" Ultistnip
+" Ultistnip {{{
 " ----------------------------------------------------------------------------
 
 let g:UltiSnipsExpandTrigger="<S-tab>"
@@ -1022,9 +943,9 @@ let g:UltiSnipsSnippetDirectories=["mysnippets"]
 noremap <silent> <Leader>ult :UltiSnipsEdit<CR>
 vmap <F9> :call UltiSnips#SaveLastVisualSelection()<CR>gvs
 imap <F9> <C-R>=UltiSnips#ExpandSnippet()<CR>
-
+" }}}
 " ----------------------------------------------------------------------------
-" Wordy
+" Wordy {{{
 " ----------------------------------------------------------------------------
 noremap  <silent> <F9> :<C-u>NextWordy<cr>
 xnoremap <silent> <F9> :<C-u>NextWordy<cr>
@@ -1045,8 +966,9 @@ let g:wordy#ring = [
   \ 'adverbs',
   \ ]
 
+" }}}
 " ----------------------------------------------------------------------------
-" Thesaurus
+" Thesaurus {{{
 " ----------------------------------------------------------------------------
 let g:tq_enabled_backends=["mthesaur_txt"]
 
@@ -1614,7 +1536,6 @@ autocmd FileType rbrowser let g:golden_ratio_autocommand = 0
 " }}}
 " ============================================================================
 
-
 " ============================================================================
 " Spanish {{{
 
@@ -1968,10 +1889,40 @@ inoremap <Leader>fn <C-R>=expand("%:t")<CR>
 
 "focus current fold
 nnoremap zs zMzvzz
-nnoremap <Leader>fmi :set foldmethod=indent<CR>
-nnoremap <Leader>fms :set foldmethod=syntax<CR>
-nnoremap <Leader>fmm :set foldmethod=marker<CR>
+
+" Bash alias shortcut 
+nnoremap <Leader>bas :e $HOME/.dotfiles/bash/share/bash_aliases_share<CR>
+nnoremap <Leader>bcs :e $HOME/.dotfiles/bash/share/bash_colors_share<CR>
+nnoremap <Leader>bfs :e $HOME/.dotfiles/bash/share/bash_functions_share<CR>
+nnoremap <Leader>bss :e $HOME/.dotfiles/bash/share/bash_settings_share<CR>
+nnoremap <Leader>bal :e $HOME/.dotfiles/bash/local/bash_aliases_local<CR>
+nnoremap <Leader>bpl :e $HOME/.dotfiles/bash/local/bash_paths_local<CR>
+nnoremap <Leader>bsl :e $HOME/.dotfiles/bash/local/bash_settings_local<CR>
+
+nnoremap <Leader>btt :bufdo tab split<CR>
+nnoremap <Leader>c :ccl<CR>
+nnoremap <Leader>di :sp ~/Dropbox/vimwiki/diary/<C-R>=strftime("%Y-%m-%d")<CR>.md<CR>
 nnoremap <Leader>fme :set foldmethod=expr<CR>
+nnoremap <Leader>fmi :set foldmethod=indent<CR>
+nnoremap <Leader>fmm :set foldmethod=marker<CR>
+nnoremap <Leader>fms :set foldmethod=syntax<CR>
+nnoremap <Leader>gi :e ./.gitignore<CR>
+nnoremap <Leader>hh :Helptags<CR>
+nnoremap <Leader>ht :Helptags<CR>
+nnoremap <Leader>ls :ls<CR>
+nnoremap <Leader>md :w<CR> :!cygstart %<CR> " Open markdown
+vnoremap <Leader>tc :<C-U>silent! normal! gV:!titlecase<CR>
+map  <Leader>f <Plug>(easymotion-bd-f)
+nmap <Leader>f <Plug>(easymotion-overwin-f)
+
+" s{char}{char} to move to {char}{char}
+nmap s <Plug>(easymotion-overwin-f2)    
+map <Leader>L <Plug>(easymotion-bd-jk)
+nmap <Leader>L <Plug>(easymotion-overwin-line)
+map  <Leader>w <Plug>(easymotion-bd-w)
+nmap <Leader>w <Plug>(easymotion-overwin-w)
+map  <Leader>w$ <Plug>(easymotion-bd-w)
+nmap <Leader>w$ <Plug>(easymotion-overwin-w)
 
 
 
@@ -2027,7 +1978,9 @@ nnoremap ,z :Focus2<CR>
 " Custom Commands {{{
 command! Today execute "normal! \<esc>:e ~/Dropbox/vimwiki/diary/\<C-R>=strftime(\"%Y-%m-%d\")\<CR>.md\<CR>"
 command! Kanban execute "normal! \<esc>:e ~/Dropbox/vimwiki/kanban.org\<CR>"
-command! Topics execute "normal! \<esc>:e ~/Dropbox/vimwiki/topics.md\<CR>"
+command! Topics execute "normal! \<esc>:e ~/Dropbox/vimwiki/topics.org\<CR>"
+command! Stats execute "normal! \<esc>:e ~/Dropbox/vimwiki/statistics.org\<CR>"
+command! Work execute "normal! \<esc>:e ~/Dropbox/vimwiki/work.org\<CR>"
 command! Month execute "normal! \<esc>:e ~/Dropbox/vimwiki/diary/\<C-R>=strftime(\"%Y-%m\")\<CR>.md\<CR>"
 command! Week execute "normal! \<esc>:e ~/Dropbox/vimwiki/diary/\<C-R>=strftime(\"%Y-week%V\")\<CR>.md\<CR>"
 command! Year execute "normal! \<esc>:e ~/Dropbox/vimwiki/diary/\<C-R>=strftime(\"%Y\")\<CR>.md\<CR>"
