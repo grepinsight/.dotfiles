@@ -1,24 +1,25 @@
 " vim: set foldmethod=marker foldlevel=0 nomodeline:
 " ============================================================================
-" .vimrc of grepinsight
+" VIMRC of grepinsight
 " ============================================================================
-" # Basic Settings {{{
-" ============================================================================
-" Neovim setup
+" Neovim setup {{{
 if has('nvim')
-    " let g:python_host_prog="/usr/local/bin/python"
-    " let g:python2_host_prog="/usr/local/bin/python"
-    " let g:python3_host_prog="/usr/local/bin/python3"
     autocmd CmdwinEnter * let b:coc_suggest_disable = 1
-
     " system clipboard
     " set clipboard+=unnamedplus
     
-
     " terminal split
     command! -nargs=* T split | terminal <args>
     command! -nargs=* VT vsplit | terminal <args>
 endif
+
+if v:version >= 802 && has('popupwin') || has('nvim')
+    let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6 } }
+endif
+" }}}
+" ============================================================================
+" set - settings {{{
+" ============================================================================
 
 " Vim 8 defaults
 unlet! skip_defaults_vim
@@ -64,7 +65,6 @@ set background=dark     " Setting dark mode
 " # Variables {{{
 " ============================================================================
 
-
 let vimrplugin_assign = 0 " Stop annoying vimRplugin reassignment
 let s:darwin = has('mac')
 
@@ -74,9 +74,6 @@ let maplocalleader=" "
 
 " }}}
 " ============================================================================
-" # Plugin Setup VIM_PLUGIN BLOCK {{{
-" ============================================================================
-" ----------------------------------------------------------------------------
 " Automatically install Vim Plug {{{
 " ----------------------------------------------------------------------------
 if empty(glob('~/.vim/autoload/plug.vim'))
@@ -84,9 +81,10 @@ if empty(glob('~/.vim/autoload/plug.vim'))
     \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
   autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
-
 " }}}
-
+" ============================================================================
+" # Plugin Setup VIM_PLUGIN BLOCK {{{
+" ============================================================================
 call plug#begin('~/.vim/plugged')
 
 " Colorschemes
@@ -308,15 +306,11 @@ let g:deus_termcolors=256
 " ============================================================================
 " # Productivity Aliases {{{
 " ============================================================================
-
-
-" never ring a bell
+" never ring a bell {{{
 if exists('&belloff')
     set belloff=all
 endif
-
-
-nnoremap <Leader>dot :!cat % \| dot -Tpng > <C-R>=expand('%:r')<CR>.png && open <C-R>=expand('%:r')<CR>.png<CR>
+" }}}
 
 " First line
 
@@ -463,17 +457,6 @@ nnoremap <Leader>bpl :e $HOME/.dotfiles/bash/local/bash_paths_local<CR>
 nnoremap <Leader>bsl :e $HOME/.dotfiles/bash/local/bash_settings_local<CR>
 " }}}
 " ============================================================================
-"Align Text {{{
-
-nnoremap <leader>Al :left<cr>
-nnoremap <leader>Ac :center<cr>
-nnoremap <leader>Ar :right<cr>
-vnoremap <leader>Al :left<cr>
-vnoremap <leader>Ac :center<cr>
-vnoremap <leader>Ar :right<cr>
-"}}}
-" ============================================================================
-" ============================================================================
 " PythonRelated {{{
 
 function! ImportFix()
@@ -494,7 +477,6 @@ autocmd FileType python vmap <Space> <Plug>SlimeRegionSend
 
 " }}}
 " ============================================================================
-" ============================================================================
 " Advanced Settings --------------------------------------------------{{{
 "
 " ----------------------------------------------------------------------------
@@ -507,7 +489,7 @@ set undoreload=10000        " number of lines to save for undo
 " }}}
 
 " }}}
-" ----------------------------------------------------------------------------
+" ============================================================================
 "  Mouse Related {{{
 " Allow mouse for easy resizing
 " set ttymouse=xterm2
@@ -1992,7 +1974,22 @@ nnoremap <Leader>ft :call OpenFileTypeSetting()<CR>
 if &shell == 'sh'
     set shell=bash
 endif
+" }}}
+" ============================================================================
+" Leader Key Mappings {{{
 
+" Leader {{{
+
+nnoremap <leader>Al :left<cr>
+nnoremap <leader>Ac :center<cr>
+nnoremap <leader>Ar :right<cr>
+vnoremap <leader>Al :left<cr>
+vnoremap <leader>Ac :center<cr>
+vnoremap <leader>Ar :right<cr>
+nnoremap <Leader>dot :!cat % \| dot -Tpng > <C-R>=expand('%:r')<CR>.png && open <C-R>=expand('%:r')<CR>.png<CR>
+
+
+"}}}
 
 "nnoremap <LocalLeader>c :ccl<CR>
 nnoremap <LocalLeader><LocalLeader> <C-^>
@@ -2032,15 +2029,12 @@ noremap <silent> <LocalLeader>cl :wincmd l<CR>:close<CR>
 
 " Tertiary leaderkey
 nnoremap ,c :Colors<CR>
+nnoremap ,g :GV<CR>
 nnoremap ,h :History<CR>
+nnoremap ,m :Magit<CR>
 nnoremap ,r :BTags<CR>
 nnoremap ,t :term<CR>
-nnoremap ,z :Focus2<CR>
 nnoremap ,x :Focus<CR>
-nnoremap ,g :GV<CR>
-nnoremap ,m :Magit<CR>
+nnoremap ,z :Focus2<CR>
 
-if v:version >= 802 && has('popupwin') || has('nvim')
-    let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6 } }
-endif
-
+" }}}
