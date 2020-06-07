@@ -96,7 +96,7 @@ call plug#begin('~/.vim/plugged')
 " " Colorschemes
 Plug 'dracula/vim', { 'as': 'dracula' }
 Plug 'mhinz/vim-startify'
-"Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline'
 " Plug 'cormacrelf/vim-colors-github'
 
 " " Looks / Status
@@ -145,7 +145,7 @@ Plug 'junegunn/vim-easy-align'         " perform alignment easier
 " Plug 'terryma/vim-multiple-cursors'
 " Plug 'junegunn/vim-after-object'
 " Plug 'sjl/gundo.vim'
-" Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-commentary'
 " Plug 'Yggdroot/indentLine'
 " Plug 'dhruvasagar/vim-table-mode'
 " Plug 'elzr/vim-json'
@@ -156,11 +156,12 @@ Plug 'junegunn/vim-easy-align'         " perform alignment easier
 " Plug 'airblade/vim-gitgutter'
 " Plug 'kshenoy/vim-signature'
 Plug 'tpope/vim-fugitive'
-" Plug 'lambdalisue/gina.vim' " TRIAL PERIOD
 Plug 'tpope/vim-rhubarb'
-" Plug 'fcpg/vim-osc52'
 Plug 'jreybert/vimagit'
 Plug 'junegunn/gv.vim'
+Plug 'rhysd/git-messenger.vim'
+" Plug 'lambdalisue/gina.vim' " TRIAL PERIOD
+" Plug 'fcpg/vim-osc52'
 " Plug 'junegunn/vim-github-dashboard'
 " Plug 'mattn/gist-vim'
 " Plug 'mattn/webapi-vim'
@@ -182,7 +183,7 @@ Plug 'junegunn/gv.vim'
 
 " Plug 'jalvesaq/vimcmdline'                             " sort of like slim
 
-" Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 " Plug 'rust-lang/rust.vim'
 " Plug 'fatih/vim-go'
 " Plug 'kana/vim-textobj-user'
@@ -193,7 +194,7 @@ Plug 'junegunn/gv.vim'
 
 
 Plug 'SirVer/ultisnips'
-" Plug 'honza/vim-snippets'
+Plug 'honza/vim-snippets'
 " Plug 'ervandew/supertab'
 " Plug 'grepinsight/mysnippets'
 
@@ -204,10 +205,10 @@ Plug 'SirVer/ultisnips'
 " Plug 'masukomi/vim-markdown-folding'
 " Plug 'tpope/vim-abolish'
 Plug 'junegunn/goyo.vim'
-" Plug 'junegunn/limelight.vim'
+Plug 'junegunn/limelight.vim'
 " Plug 'ron89/thesaurus_query.vim' "thesaurus
 " Plug 'mattn/calendar-vim'
-" Plug 'tpope/vim-speeddating'
+Plug 'tpope/vim-speeddating'
 " Plug 'vim-scripts/utl.vim'
 " Plug 'vim-scripts/SyntaxRange'
 " Plug 'lervag/vimtex'
@@ -226,7 +227,7 @@ Plug 'roman/golden-ratio'
 " Plug 'itchyny/calendar.vim'
 " Plug 'sgur/vim-editorconfig'
 " Plug 'chrisbra/csv.vim'
-" Plug 'liuchengxu/vim-which-key'
+Plug 'liuchengxu/vim-which-key'
 " Plug 'machakann/vim-highlightedyank'
 " Plug 'voldikss/vim-floaterm'
 
@@ -236,6 +237,12 @@ Plug 'roman/golden-ratio'
 " Plug 'Glench/Vim-Jinja2-Syntax'
 " Plug 'ibab/vim-snakemake'
 Plug 'broadinstitute/vim-wdl'
+
+
+" VimOrganizer sutff
+Plug 'hsitz/VimOrganizer'
+Plug 'chrisbra/NrrwRgn' " like emacs narrow region
+Plug 'mattn/calendar-vim'
 
 " if executable('black')
 "     Plug 'psf/black', { 'on':  'Black' }
@@ -839,6 +846,8 @@ nnoremap <F3> :call fzf#run(fzf#wrap({'source': 'fd $FD_OPTS . $HOME', 'sink': '
 inoremap <F3> :call fzf#run(fzf#wrap({'source': 'fd $FD_OPTS . $HOME', 'sink': 'edit'}))<CR>
 nnoremap <F4> :call fzf#run(fzf#wrap({'source': 'fd --no-ignore $FD_OPTS .', 'sink': 'edit'}))<CR>
 inoremap <F4> :call fzf#run(fzf#wrap({'source': 'fd --no-ignore $FD_OPTS .', 'sink': 'edit'}))<CR>
+nnoremap <F5> :call fzf#run(fzf#wrap({'source': 'fd --no-ignore $FD_OPTS . $HOME', 'sink': 'edit'}))<CR>
+inoremap <F5> :call fzf#run(fzf#wrap({'source': 'fd --no-ignore $FD_OPTS . $HOME', 'sink': 'edit'}))<CR>
 nnoremap <Leader>pv :call fzf#vim#gitfiles('', fzf#vim#with_preview('right'))<CR>
 " }}}
 " ----------------------------------------------------------------------------
