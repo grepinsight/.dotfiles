@@ -1940,6 +1940,7 @@ noremap <silent> <LocalLeader>cl :wincmd l<CR>:close<CR>
 
 " Tertiary leaderkey
 nnoremap ,c :Colors<CR>
+nnoremap ,b :GitMessenger<CR>
 nnoremap ,g :GV<CR>
 nnoremap ,h :History<CR>
 nnoremap ,m :Magit<CR>

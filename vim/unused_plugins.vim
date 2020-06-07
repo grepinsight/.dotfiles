@@ -30,3 +30,9 @@ Plug 'mattn/emmet-vim'
 Plug 'DougBeney/pickachu'
 Plug 'luochen1990/rainbow'  " parenthesis colors
 
+Plug 'vimwiki/vimwiki'
+
+" ============================================================================
+" Themes
+" Plug 'ajmwagar/vim-deus'
+" Plug 'junegunn/seoul256.vim'
