@@ -129,7 +129,7 @@ Plug 'junegunn/fzf.vim'
 " " Navigation
 " Plug 'Lokaltog/vim-easymotion'
 " Plug 'justinmk/vim-sneak'
-" Plug 'liuchengxu/vista.vim'
+Plug 'liuchengxu/vista.vim'
 " Plug 'tpope/vim-projectionist'
 Plug 'tpope/vim-unimpaired'
 " Plug 'christoomey/vim-tmux-navigator'
@@ -168,8 +168,8 @@ Plug 'rhysd/git-messenger.vim'
 
 " " Testing
 " Plug 'metakirby5/codi.vim'
-" Plug 'janko-m/vim-test'
-" Plug 'tpope/vim-dispatch'
+Plug 'janko-m/vim-test'
+Plug 'tpope/vim-dispatch'
 " Plug 'puremourning/vimspector'
 
 " " Rlang
@@ -184,7 +184,7 @@ Plug 'rhysd/git-messenger.vim'
 " Plug 'jalvesaq/vimcmdline'                             " sort of like slim
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
-" Plug 'rust-lang/rust.vim'
+Plug 'rust-lang/rust.vim'
 " Plug 'fatih/vim-go'
 " Plug 'kana/vim-textobj-user'
 " Plug 'davidhalter/jedi-vim'                            " python intellisense
@@ -195,7 +195,7 @@ Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
-" Plug 'ervandew/supertab'
+Plug 'ervandew/supertab'
 " Plug 'grepinsight/mysnippets'
 
 " " Writing
@@ -225,7 +225,7 @@ Plug 'roman/golden-ratio'
 " Plug 'dhruvasagar/vim-zoom'
 " Plug 'tomtom/tlib_vim'
 " Plug 'itchyny/calendar.vim'
-" Plug 'sgur/vim-editorconfig'
+Plug 'sgur/vim-editorconfig'
 " Plug 'chrisbra/csv.vim'
 Plug 'liuchengxu/vim-which-key'
 " Plug 'machakann/vim-highlightedyank'
