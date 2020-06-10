@@ -245,6 +245,10 @@ Plug 'hsitz/VimOrganizer'
 Plug 'chrisbra/NrrwRgn' " like emacs narrow region
 Plug 'mattn/calendar-vim'
 
+
+" Etc 
+Plug 'ThePrimeagen/vim-be-good'
+
 " if executable('black')
 "     Plug 'psf/black', { 'on':  'Black' }
 " endif
