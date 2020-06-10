@@ -684,10 +684,6 @@ you should place your code here."
   ;; Capture templates for: TODO tasks, Notes, appointments, phone calls, meetings, and org-protocol
   (setq org-capture-templates
         (quote (
-                ("t" "todo" entry (file "~/Dropbox/vimwiki/kanban.org")
-                "** TODO  %?\n%U\n")
-                ("n" "note" entry (file "~/Dropbox/vimwiki/kanban.org")
-                "*** %? :note:\n%U\n")
                 ("o" "topic" entry (file "~/Dropbox/vimwiki/topics.org")
                  "*** %? \n%U\n")
                 ("k" "knowledge" entry (file "~/Dropbox/vimwiki/topics.org")
@@ -696,8 +692,6 @@ you should place your code here."
                  "** %?\n%U\n")
                 ("w" "WorkJournal" entry (file+datetree "~/Dropbox/vimwiki/work.org")
                  "** %?\n%U\n")
-                ("c" "clipboard" entry (file+datetree "~/Dropbox/vimwiki/kanban.org")
-                 "** %?\n%U\n%x")
                 ("t" "org-protocol" entry (file "~/Dropbox/vimwiki/kanban.org")
                 "** TODO Review %c\n%U\n" :immediate-finish t)
                 ("m" "Meeting" entry (file "~/Dropbox/vimwiki/work.org")
@@ -707,7 +701,8 @@ you should place your code here."
                 ("d" "Definitions" entry (file "~/Dropbox/vimwiki/Definitions.org")
                  "**  %?\n")
                 ("h" "Habit" entry (file "~/Dropbox/vimwiki/kanban.org")
-                "** NEXT %?\n%U\n%a\nSCHEDULED: %(format-time-string \"%<<%Y-%m-%d %a .+1d/3d>>\")\n:PROPERTIES:\n:STYLE: habit\n:REPEAT_TO_STATE: NEXT\n:END:\n"))))
+                    "** NEXT %?\n%U\n%a\nSCHEDULED: %(format-time-string \"%<<%Y-%m-%d %a .+1d/3d>>\")\n:PROPERTIES:\n:STYLE: habit\n:REPEAT_TO_STATE: NEXT\n:END:\n")
+                   )))
 
   ;; Org Brain
   (setq org-brain-path "~/Dropbox/vimwiki/brain")
@@ -885,6 +880,12 @@ you should place your code here."
         (helm-org-rifle-files "~/Dropbox/vimwiki/topics.org")
      )
     (spacemacs/set-leader-keys "ot" 'al/topic-search)
+
+    (defun al/kanban-search()
+        (interactive)
+        (helm-org-rifle-files "~/Dropbox/vimwiki/kanban.org")
+        )
+    (spacemacs/set-leader-keys "ok" 'al/kanban-search)
 
   ;; Custom packages
   (load-file "~/.emacs.d/private/local/org-roam.el")
