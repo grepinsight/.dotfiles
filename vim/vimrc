@@ -108,7 +108,7 @@ Plug 'vim-airline/vim-airline'
 Plug 'airblade/vim-rooter'
 
 " " Buffer Management
-" Plug 'vim-scripts/BufOnly.vim'
+Plug 'vim-scripts/BufOnly.vim'
 
 " " Files related
 " Plug 'Shougo/junkfile.vim'
@@ -128,7 +128,7 @@ Plug 'junegunn/fzf.vim'
 
 " " Navigation
 " Plug 'Lokaltog/vim-easymotion'
-" Plug 'justinmk/vim-sneak'
+Plug 'justinmk/vim-sneak'
 Plug 'liuchengxu/vista.vim'
 " Plug 'tpope/vim-projectionist'
 Plug 'tpope/vim-unimpaired'
@@ -141,7 +141,7 @@ Plug 'junegunn/vim-easy-align'         " perform alignment easier
 " Plug 'tommcdo/vim-exchange'            " swap two text objects
 " Plug 'michaeljsmith/vim-indent-object' " text object
 " Plug 'AndrewRadev/splitjoin.vim'
-" Plug 'tpope/vim-repeat'
+Plug 'tpope/vim-repeat'
 " Plug 'terryma/vim-multiple-cursors'
 " Plug 'junegunn/vim-after-object'
 " Plug 'sjl/gundo.vim'
@@ -175,7 +175,7 @@ Plug 'tpope/vim-dispatch'
 " " Rlang
 " Plug 'ncm2/ncm2'
 " Plug 'roxma/nvim-yarp'
-" Plug 'jalvesaq/Nvim-R'
+"Plug 'jalvesaq/Nvim-R'
 " Plug 'gaalcaras/ncm-R'
 " Plug 'ncm2/ncm2-bufword'
 " Plug 'ncm2/ncm2-path'
@@ -186,7 +186,7 @@ Plug 'tpope/vim-dispatch'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'rust-lang/rust.vim'
 " Plug 'fatih/vim-go'
-" Plug 'kana/vim-textobj-user'
+Plug 'kana/vim-textobj-user'
 " Plug 'davidhalter/jedi-vim'                            " python intellisense
 " Plug 'jeetsukumaran/vim-pythonsense'                   " text object for python
 " Plug 'vim-pandoc/vim-pandoc'
@@ -203,7 +203,7 @@ Plug 'ervandew/supertab'
 " Plug 'plasticboy/vim-markdown'
 " Plug 'coachshea/vim-textobj-markdown'
 " Plug 'masukomi/vim-markdown-folding'
-" Plug 'tpope/vim-abolish'
+Plug 'tpope/vim-abolish'
 Plug 'junegunn/goyo.vim'
 Plug 'junegunn/limelight.vim'
 " Plug 'ron89/thesaurus_query.vim' "thesaurus
@@ -211,7 +211,17 @@ Plug 'junegunn/limelight.vim'
 Plug 'tpope/vim-speeddating'
 " Plug 'vim-scripts/utl.vim'
 " Plug 'vim-scripts/SyntaxRange'
+
 Plug 'lervag/vimtex'
+" Disable overfull/underfull \hbox and all package warnings
+let g:vimtex_quickfix_latexlog = {
+      \ 'overfull' : 0,
+      \ 'underfull' : 0,
+      \ 'packages' : {
+      \   'default' : 0,
+      \ },
+      \}
+
 Plug 'matze/vim-tex-fold'
 " Plug 'reedes/vim-wordy'
 " Plug 'AndrewRadev/switch.vim'
@@ -229,7 +239,7 @@ Plug 'roman/golden-ratio'
 Plug 'sgur/vim-editorconfig'
 " Plug 'chrisbra/csv.vim'
 Plug 'liuchengxu/vim-which-key'
-" Plug 'machakann/vim-highlightedyank'
+Plug 'machakann/vim-highlightedyank'
 " Plug 'voldikss/vim-floaterm'
 
 
@@ -848,6 +858,9 @@ nmap ga <Plug>(EasyAlign)
 " Plugin - vim-sneak {{{
 " ----------------------------------------------------------------------------
 let g:sneak#s_next = 1
+nmap ,s <Plug>Sneak_s
+nmap ,S <Plug>Sneak_S
+
 " }}}
 " ----------------------------------------------------------------------------
 " Plugin - vim-wiki {{{
@@ -1996,6 +2009,7 @@ nnoremap ,y :call ChooseTerm("term-pane", 0)<CR>
 nnoremap ,x :Focus<CR>
 nnoremap ,z :Focus2<CR>
 nnoremap ,v :Vista!!<CR>
+nnoremap ,p :e <C-R>=resolve(expand("%"))<CR>
 
 " }}}
 " ============================================================================
