@@ -160,6 +160,7 @@ Plug 'tpope/vim-rhubarb'
 Plug 'jreybert/vimagit'
 Plug 'junegunn/gv.vim'
 Plug 'rhysd/git-messenger.vim'
+Plug 'junkblocker/git-time-lapse'
 " Plug 'lambdalisue/gina.vim' " TRIAL PERIOD
 " Plug 'fcpg/vim-osc52'
 " Plug 'junegunn/vim-github-dashboard'
@@ -670,6 +671,7 @@ if hr <= 6 || hr >= 18
 else
     let cs = 'seoul256-light'
 endif
+
 try
     let cs = 'dracula'
     execute 'colorscheme '.cs
