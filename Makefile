@@ -50,3 +50,4 @@ reload:  ## Reload configs
 	cd nvim && make  # nvim has to come before vim
 	cd vim && make
 	cd ctags && make
+	cd doom && make
