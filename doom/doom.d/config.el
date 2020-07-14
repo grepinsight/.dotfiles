@@ -183,6 +183,34 @@
 ; Org mode
 (after! org
 
+  (defun my/dx-describe-get (stuff type)
+    "dx describe something and extract field using jq"
+    (interactive)
+    (substring
+      (shell-command-to-string (format "dx describe %s --json | jq -r .%s" stuff type))
+      0 -1
+     )
+    )
+
+  (defun my/dx-id-to-url (stuff)
+    "convert dx-id to url"
+    (interactive)
+    (cond
+     ((string-match "^project-" stuff) (replace-regexp-in-string "project-" "projects/" stuff))
+     ((string-match "^analysis-" stuff)
+      (format "%s/monitor/%s" (my/dx-id-to-url (my/dx-describe-get stuff "project")) (replace-regexp-in-string "analysis-" "analysis/" stuff))
+      )
+     (t nil)
+          )
+    )
+  ; link abbreviations
+  (setq org-link-abbrev-alist
+        '(
+          ("google" . "http://www.google.com/search?q=")
+          ("gmap"   . "http://maps.google.com/maps?q=%s")
+          ("dx"     . "https://platform.dnanexus.com/panx/%(my/dx-id-to-url)")
+          )
+        )
 
   (setq org-columns-default-format "%TODO %7EFFORT %10TIME_SPENT{:} %PRIORITY %100ITEM 100%TAGS")
   (customize-set-value
