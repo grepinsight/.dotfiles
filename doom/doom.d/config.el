@@ -169,13 +169,11 @@
                           ))
                        )))
 
-         )
-        ("u" "Unscheduled TODO"
-         ((todo ""
+               )
+          ("u" "Unscheduled TODO"
+           ((todo ""
                 ((org-agenda-overriding-header "\nUnscheduled TODO")
-                 (org-agenda-skip-function '(org-agenda-skip-entry-if 'timestamp)))))
-         nil
-         nil)))
+                 (org-agenda-skip-function '(org-agenda-skip-entry-if 'timestamp))))) nil nil)))
   :config
   (org-super-agenda-mode)
 )
