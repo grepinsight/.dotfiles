@@ -58,6 +58,10 @@
 (package! ox-hugo) ;; export to HUGO
 (package! org-roam-bibtex
   :recipe (:host github :repo "org-roam/org-roam-bibtex"))
+(package! spray) ;; Why not flash words on the screen.
+
+(package! exec-path-from-shell) ;; make sure what's available in shell is also available on emacs
+(package! gnuplot)
 
 ;; When using org-roam via the `+roam` flag
 (unpin! org-roam company-org-roam)
