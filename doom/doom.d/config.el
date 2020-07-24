@@ -342,6 +342,9 @@
 (setq org-roam-directory "~/Dropbox/vimwiki/")
 (setq org-roam-index-file "~/Dropbox/vimwiki/index.org")
 
+(map! "C-c a" #'org-agenda)
+(map! "C-c c" #'org-capture)
+(map! "C-c l" #'org-store-link)
 (map! "C-c n i" #'org-roam-jump-to-index)
 (map! "C-c n r" #'helm-bibtex)
 (map! "C-c n g" #'counsel-google)
