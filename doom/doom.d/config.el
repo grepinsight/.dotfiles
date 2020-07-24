@@ -349,6 +349,8 @@
 (map! "C-c n r" #'helm-bibtex)
 (map! "C-c n g" #'counsel-google)
 (map! "C-c n t "(lambda() (interactive)(find-file "~/Dropbox/vimwiki/todo.org")))
+(map! :n "j" #'evil-next-visual-line
+      :n "k" #'evil-previous-visual-line)
 
 (use-package! org-roam-server
   :ensure t
