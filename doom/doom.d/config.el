@@ -462,6 +462,10 @@
   :ensure t            ;Auto-install the package from Melpa (optional)
   :after ox)
 
+;; active Babel languages
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((gnuplot . t)))
 
 (setq org-latex-pdf-process
       (quote
