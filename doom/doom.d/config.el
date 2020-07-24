@@ -296,7 +296,7 @@
         (quote (
                 ("t" "Personal todo" entry
                  (file+headline +org-capture-todo-file "Inbox")
-                 "* [ ] %?\n%i\n%a" :prepend t)
+                 "* TODO %?\n%i\n%a" :prepend t)
                 ("n" "Personal notes" entry
                  (file+headline +org-capture-notes-file "Inbox")
                  "* %u %?\n%i\n%a" :prepend t)
