@@ -365,6 +365,18 @@
 (setq org-roam-directory "~/Dropbox/vimwiki/")
 (setq org-roam-index-file "~/Dropbox/vimwiki/index.org")
 
+(map! :map evil-normal-state-map "ㅗ" 'evil-backward-char) ;; h
+(map! :map evil-normal-state-map "ㅓ" 'evil-next-line) ;; j
+(map! :map evil-normal-state-map "ㅏ" 'evil-previous-line) ;; k
+(map! :map evil-normal-state-map "ㅣ" 'evil-forward-char) ;; l
+
+(map! :map evil-org-agenda-mode-map "sd" 'org-agenda-toggle-deadlines)
+(map! :map evil-normal-state-map "ㅁ" 'evil-append)
+(map! :map evil-normal-state-map "S-ㅁ" 'evil-append-line)
+(map! :map evil-normal-state-map "ㅐ" 'evil-open-below) ;; o
+(map! :map evil-normal-state-map "ㅒ" 'evil-open-above) ;; O
+
+
 (map! "C-c a" #'org-agenda)
 (map! "C-c c" #'org-capture)
 (map! "C-c l" #'org-store-link)
