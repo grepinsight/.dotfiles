@@ -358,6 +358,9 @@
 
 )
 
+; Special Tags
+(setq org-tags-exclude-from-inheritance '("transcript"))
+
 ; Org-Roam Related
 (setq org-roam-directory "~/Dropbox/vimwiki/")
 (setq org-roam-index-file "~/Dropbox/vimwiki/index.org")
