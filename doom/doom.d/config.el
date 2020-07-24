@@ -235,10 +235,11 @@
            "HOLD(h)"  ; This task is paused/on hold because of me
            "|"
            "CANCELLED(c)"
-           "DONE(d)"  ; Task successfully completed
+           "DONE(d!)"  ; Task successfully completed
            "KILL(k)") ; Task was cancelled, aborted or is no longer applicable
           (sequence
            "MEET(m)"   ; meeting someone
+           "PLAY(P)"   ; play
            "|"
            )
           (sequence
@@ -263,6 +264,7 @@
   (setq org-todo-keyword-faces
         '(
             ("CALL" . "yellow")
+            ("PLAY" . "blue")
             ("[-]" . +org-todo-active)
             ("STRT" . +org-todo-active)
             ("[?]" . +org-todo-onhold)
