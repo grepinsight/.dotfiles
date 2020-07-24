@@ -195,18 +195,36 @@
     (interactive)
     (cond
      ((string-match "^project-" stuff) (replace-regexp-in-string "project-" "projects/" stuff))
-     ((string-match "^analysis-" stuff)
-      (format "%s/monitor/%s" (my/dx-id-to-url (my/dx-describe-get stuff "project")) (replace-regexp-in-string "analysis-" "analysis/" stuff))
-      )
+     ((string-match "^analysis-" stuff) (format "%s/monitor/%s"
+                                                (my/dx-id-to-url (my/dx-describe-get stuff "project"))
+                                                (replace-regexp-in-string "analysis-" "analysis/" stuff)))
+
+     ((string-match "^file-" stuff) (format "%s/data/?scope=project&id.values=%s"
+                                            (my/dx-id-to-url (my/dx-describe-get stuff "project"))
+                                            stuff))
      (t nil)
           )
     )
+
+  (defun my/translate-spanish (stuff)
+    "google translate"
+    (interactive)
+    (format "https://translate.google.com/#view=home&op=translate&sl=es&tl=en&text=%s" (url-encode-url stuff)))
+
+  (defun my/translate (stuff)
+    "google translate"
+    (interactive)
+    (format "http://translate.google.com/?source=osdd#auto|auto|%s" (url-encode-url stuff)))
+
   ; link abbreviations
   (setq org-link-abbrev-alist
         '(
-          ("google" . "http://www.google.com/search?q=")
-          ("gmap"   . "http://maps.google.com/maps?q=%s")
-          ("dx"     . "https://platform.dnanexus.com/panx/%(my/dx-id-to-url)")
+          ("google"  . "http://www.google.com/search?q=")
+          ("gmap"    . "http://maps.google.com/maps?q=%s")
+          ("dx"      . "https://platform.dnanexus.com/panx/%(my/dx-id-to-url)")
+          ("spanish" . "https://www.spanishdict.com/translate/%s")
+          ("gt_es"   . "%(my/translate-spanish)")
+          ("translate"   . "%(my/translate)")
           )
         )
 
