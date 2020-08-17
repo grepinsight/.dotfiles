@@ -1,11 +1,6 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; $DOOMDIR/packages.el
 
-;; To install a package with Doom you must declare them here and run 'doom sync'
-;; on the command line, then restart Emacs for the changes to take effect -- or
-;; use 'M-x doom/reload'.
-
-
 ;; To install SOME-PACKAGE from MELPA, ELPA or emacsmirror:
 ;(package! some-package)
 
@@ -55,13 +50,14 @@
 (package! org-download)
 (package! org-ref)
 (package! helm-bibtex)
-(package! ox-hugo) ;; export to HUGO
+;; (package! ox-hugo) ;; export to HUGO
 (package! org-roam-bibtex
   :recipe (:host github :repo "org-roam/org-roam-bibtex"))
 (package! spray) ;; Why not flash words on the screen.
 
 (package! exec-path-from-shell) ;; make sure what's available in shell is also available on emacs
 (package! gnuplot)
+(package! polymode)
 
 ;; When using org-roam via the `+roam` flag
 (unpin! org-roam company-org-roam)

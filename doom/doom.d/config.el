@@ -6,6 +6,7 @@
 
 ;; Some functionality uses this to identify you, e.g. GPG configuration, email
 ;; clients, file templates and snippets.
+
 (setq user-full-name "Albert Lee"
       user-mail-address "grepinsight@gmail.com")
 
@@ -25,7 +26,8 @@
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
-(setq doom-theme 'doom-one)
+;;(setq doom-theme 'doom-one)
+(setq doom-theme 'doom-gruvbox)
 
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
@@ -35,6 +37,10 @@
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
 (setq display-line-numbers-type t)
 
+
+(setq projectile-tags-file-name "MYTAGS")
+(setq projectile-tags-command
+      "rg --files | ctags -Re --links=no -f \"%s\" %s -L -")
 
 ;; Here are some additional functions/macros that could help you configure Doom:
 ;;
@@ -173,7 +179,8 @@
           ("u" "Unscheduled TODO"
            ((todo ""
                 ((org-agenda-overriding-header "\nUnscheduled TODO")
-                 (org-agenda-skip-function '(org-agenda-skip-entry-if 'timestamp))))) nil nil)))
+                 (org-agenda-skip-function '(org-agenda-skip-entry-if 'timestamp))))) nil nil)
+          ))
   :config
   (org-super-agenda-mode)
 )
@@ -206,10 +213,22 @@
           )
     )
 
-  (defun my/translate-spanish (stuff)
+  (defun my/translate-es-en (stuff)
     "google translate"
     (interactive)
-    (format "https://translate.google.com/#view=home&op=translate&sl=es&tl=en&text=%s" (url-encode-url stuff)))
+    (format
+     "https://translate.google.com/#view=home&op=translate&sl=es&tl=en&text=%s"
+     (url-encode-url stuff)
+     )
+    )
+  (defun my/translate-en-es (stuff)
+    "google translate"
+    (interactive)
+    (format
+     "https://translate.google.com/#view=home&op=translate&sl=en&tl=es&text=%s"
+     (url-encode-url stuff)
+     )
+    )
 
   (defun my/translate (stuff)
     "google translate"
@@ -223,7 +242,8 @@
           ("gmap"    . "http://maps.google.com/maps?q=%s")
           ("dx"      . "https://platform.dnanexus.com/panx/%(my/dx-id-to-url)")
           ("spanish" . "https://www.spanishdict.com/translate/%s")
-          ("gt_es"   . "%(my/translate-spanish)")
+          ("gt_es"   . "%(my/translate-es-en)")
+          ("en_es"   . "%(my/translate-en-es)")
           ("translate"   . "%(my/translate)")
           )
         )
@@ -259,6 +279,12 @@
            "MEET(m)"   ; meeting someone
            "PLAY(P)"   ; play
            "|"
+           "MET(M)"    ; met someone
+           )
+          (sequence
+           "PROPOSED(o)"   ; proposed an idea
+           "|"
+           "REJECT(R@)"   ; play
            )
           (sequence
            "CALL(C)"   ; A task that needs doing
@@ -358,6 +384,11 @@
 
 )
 
+;; Hide backlinks buffer by default.
+(after! org-roam
+  (setq +org-roam-open-buffer-on-find-file nil)
+)
+
 ; Special Tags
 (setq org-tags-exclude-from-inheritance '("transcript"))
 
@@ -375,7 +406,6 @@
 (map! :map evil-normal-state-map "S-ㅁ" 'evil-append-line)
 (map! :map evil-normal-state-map "ㅐ" 'evil-open-below) ;; o
 (map! :map evil-normal-state-map "ㅒ" 'evil-open-above) ;; O
-
 
 (map! "C-c a" #'org-agenda)
 (map! "C-c c" #'org-capture)
@@ -524,3 +554,20 @@ but `delete-file' is ignored."
   (org-defkey org-mode-map (kbd "C-c C-v +") 'org-babel-tangle-append))
 
 (add-hook 'org-mode-hook #'org-babel-tangle-append-setup)
+
+
+;; Icalendar stuff
+;; export scheduled todo items
+(setq org-icalendar-use-scheduled '(event-if-todo event-if-not-todo))
+(setq org-icalendar-use-deadline '(event-if-todo))
+
+
+(defun save-all ()
+    (interactive)
+    (save-some-buffers t))
+
+(add-hook 'focus-out-hook 'save-all)
+
+
+(add-hook 'post-command-hook #'org-roam--maybe-update-buffer nil t)
+
