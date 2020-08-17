@@ -22,11 +22,6 @@ full_symbol = "🔋"
 charging_symbol = "⚡️"
 discharging_symbol = "💀"
 
-
-[custom.emacs_vterm]
-command = "vterm_prompt_end"
-when = """ test 1 """
-
 [custom.dx]
 command = "cat ~/.dnanexus_config/environment.json  | jq -r '.DX_PROJECT_CONTEXT_NAME'"
 when = """ test 1 """
