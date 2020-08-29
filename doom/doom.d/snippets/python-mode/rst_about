@@ -1,0 +1,38 @@
+# -*- mode: snippet -*-
+# name: rst_about
+# key: /rst_about
+# --
+
+"""
+Module :py:mod:`python.module.submodule`.
+
+this module does ...
+
+HEADING1
+===========
+
+HEADING 2
+------------------------------
+
+stuff
+:file:`file/path`
+``code``
+
+.. code-block:: bash
+
+    ls
+    python
+
+:py:mod:`~python.module`
+
+HEADING 2
+------------------
+
+notes in :ref:`crossref_name`
+
+
+.. _make_a_label:
+
+.. autofunction:: function_defined_in_doc
+.. autodata:: constant
+"""

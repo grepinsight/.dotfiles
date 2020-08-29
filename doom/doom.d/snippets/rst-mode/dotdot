@@ -1,0 +1,6 @@
+# key: ..
+# name: dotdot
+# --
+.. ${1: math}::
+
+    ${2: content}
