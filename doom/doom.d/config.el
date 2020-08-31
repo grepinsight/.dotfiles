@@ -326,8 +326,10 @@
   (setq org-capture-templates
         (quote (
                 ("t" "Personal todo" entry
-                 (file+headline +org-capture-todo-file "Inbox")
-                 "* TODO %?\n%i\n%a" :prepend t)
+                 (file+datetree +org-capture-todo-file)
+                 "* TODO %?\n%i\n%a" :prepend nil :clock-in t :clock-resume t)
+                ("r" "respond" entry (file +org-capture-todo-file)
+                 "* NEXT Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n" :clock-in t :clock-resume t :immediate-finish t)
                 ("n" "Personal notes" entry
                  (file+headline +org-capture-notes-file "Inbox")
                  "* %u %?\n%i\n%a" :prepend t)
