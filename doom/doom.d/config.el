@@ -579,3 +579,13 @@ but `delete-file' is ignored."
 
 (add-hook 'post-command-hook #'org-roam--maybe-update-buffer nil t)
 
+
+;; datetree jump
+(defun al/goto-today-diary()
+    (interactive)
+    (goto-char (org-find-exact-headline-in-buffer (format-time-string "%Y-%m-%d %A") (find-file "~/Dropbox/vimwiki/todo.org")))
+    (org-show-entry)
+    (outline-show-subtree)
+    )
+(map! "C-c d" 'al/goto-today-diary)
+(setq org-agenda-clockreport-parameter-plist '(:stepskip0 t :link t :maxlevel 4 :fileskip0 t))
