@@ -272,8 +272,8 @@
            "WAIT(w)"  ; Something external is holding up this task
            "HOLD(h)"  ; This task is paused/on hold because of me
            "|"
-           "CANCELLED(c)"
            "DONE(d!)"  ; Task successfully completed
+           "CANCELLED(c)"
            "KILL(k)") ; Task was cancelled, aborted or is no longer applicable
           (sequence
            "MEET(m)"   ; meeting someone
