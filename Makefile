@@ -55,3 +55,4 @@ reload:  ## Reload configs
 	cd vim && make
 	cd ctags && make
 	cd doom && make
+	cd zsh && make
