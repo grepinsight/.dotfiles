@@ -212,7 +212,8 @@ if [[ $platform == "Darwin" ]]; then
 	 command -v ripgrep || brew install ripgrep
 	 command -v fd || brew install fd
 	 command -v tree || brew install tree
-	 command -v diff-so-fancy|| brew install diff-so-fancy
+	 command -v diff-so-fancy || brew install diff-so-fancy
+	 command -v starship || brew install starship
 
 else
 
