@@ -172,10 +172,6 @@ up(){
                                         cd $d
 }
 
-#wiki
-wiki() { dig +short txt $1.wp.dg.cx; }
-
-
  # a) function settitle
 settitle ()
  {
