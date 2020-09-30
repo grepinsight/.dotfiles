@@ -8,7 +8,7 @@ IS_MAC=$(uname -a | grep Darwin)
 
 
 if [[ -n $IS_MAC ]]; then
-    echo "Mac implementation not written yet"
+    brew install neovim
 fi
 
 IS_UBUNTU=$(uname -a | grep -i Ubuntu)

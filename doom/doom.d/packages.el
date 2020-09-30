@@ -58,6 +58,7 @@
 (package! exec-path-from-shell) ;; make sure what's available in shell is also available on emacs
 (package! gnuplot)
 (package! polymode)
+(package! rustic)
 
 ;; When using org-roam via the `+roam` flag
 (unpin! org-roam company-org-roam)

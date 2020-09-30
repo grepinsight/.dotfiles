@@ -9,6 +9,7 @@
 # set -u  un-sets,
 # set -a  appends to a current value (for strings)
 #
+
 set -g set-clipboard on
 
 # Set titles

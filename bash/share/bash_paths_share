@@ -1,3 +1,4 @@
 export PATH=$PATH:$HOME/src/productivity
 export PATH=$PATH:$HOME/src/git-radar
 export PATH=$PATH:$HOME/bin
+export PATH=$PATH:$HOME/.cargo/bin

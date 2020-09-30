@@ -119,7 +119,8 @@ Plug 'tpope/vim-eunuch'
 
 " " Search files
 Plug 'grepinsight/ctrlp.vim' " my mutated version that supports vimwiki tag search
-Plug 'grepinsight/fzf', { 'dir': '~/.fzf', 'do': './install --all'  }
+"Plug 'grepinsight/fzf', { 'dir': '~/.fzf', 'do': './install --all'  }
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all'  }
 Plug 'junegunn/fzf.vim'
 " Plug 'junegunn/vim-peekaboo'
 " Plug 'mileszs/ack.vim'
@@ -194,7 +195,7 @@ Plug 'kana/vim-textobj-user'
 " Plug 'vim-pandoc/vim-pandoc-syntax'
 
 
-Plug 'SirVer/ultisnips'
+" Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 Plug 'ervandew/supertab'
 " Plug 'grepinsight/mysnippets'
@@ -1974,6 +1975,7 @@ nnoremap <LocalLeader>g :GV<CR>
 nnoremap <LocalLeader>ji :BTags<CR>
 nnoremap <LocalLeader>lc :lclose<CR>
 nnoremap <LocalLeader>lf :BLines<CR>
+nnoremap <LocalLeader>ss :BLines<CR>
 nnoremap <LocalLeader>lo :lopen<CR>
 nnoremap <LocalLeader>m :Magit<CR>
 nnoremap <LocalLeader>o :BufOnly<CR> <bar> :only<CR>

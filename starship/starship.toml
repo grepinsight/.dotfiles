@@ -22,10 +22,6 @@ full_symbol = "🔋"
 charging_symbol = "⚡️"
 discharging_symbol = "💀"
 
-[custom.dx]
-command = "cat ~/.dnanexus_config/environment.json  | jq -r '.DX_PROJECT_CONTEXT_NAME'"
-when = """ test 1 """
-prefix = " on 🧬 "
 
 [custom.gituser]
 command = "git config --get user.email"

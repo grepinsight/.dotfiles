@@ -66,7 +66,8 @@
   (setq org-agenda-custom-commands
         '(
           ("o" "My Agenda"
-           ((todo "TODO" (
+           (
+            (todo "TODO" (
                         (org-agenda-overriding-header "\n⚡ Do Today:\n⎺⎺⎺⎺⎺⎺⎺⎺⎺")
                         (org-agenda-remove-tags t)
                         (org-agenda-prefix-format " %-2i %-15b")
@@ -86,94 +87,162 @@
                                                       (0900 1200 1500 1800 2100)
                                                       "      " "┈┈┈┈┈┈┈┈┈┈┈┈┈")))
                         ))))
+          ("A" "testyAlbert"
+           (
+
+            (agenda "" (
+                        (org-agenda-category-icon-alist nil)
+                        (org-agenda-overriding-header "⚡ Schedule:\n⎺⎺⎺⎺⎺⎺⎺⎺⎺")
+                        (org-agenda-repeating-timestamp-show-all t)
+                        (org-agenda-span 'day)
+                        (org-habit-show-habits t)
+                        (org-agenda-time-grid (quote ((daily today remove-match)
+                                                      (0900 1200 1500 1800 2100)
+                                                      "      " "┈┈┈┈┈┈┈┈┈┈┈┈┈")))
+                        )
+                    )
+            (alltodo "TODO" (
+                        ;; (org-agenda-overriding-header "\n⚡ Do Today:\n⎺⎺⎺⎺⎺⎺⎺⎺⎺")
+                        ;; (org-agenda-remove-tags nil)
+                        (org-agenda-scheduled-leaders '("Scheduled:" "Sched.%2dx:"))
+                        (org-agenda-prefix-format " %i %-12:c")
+
+                        (org-habit-graph-column 40)
+                        (+org-habit-min-width 99)
+                        (org-super-agenda-groups '(
+                                                   (:name "Today"
+                                                    :time-grid t
+                                                    :date today
+                                                    :scheduled today
+                                                    :order 1)))
+                        ))
+            )
+           )
 
           ("z" "Super zaen view"
-               ((agenda "" ((org-agenda-span 'day)
-                                            (org-agenda-property-list '("LOCATION" "TEACHER") )
-                                            (org-agenda-property-position 'where-it-fits)
-                                            (org-agenda-property-separator "|" )
-
-                      (org-super-agenda-groups
-                       '((:name "Today"
+           (
+            (agenda "" (
+                        (org-agenda-category-icon-alist nil)
+                        (org-agenda-start-day "+0d")
+                        (org-agenda-span 1)
+                        (org-agenda-start-with-log-mode t)
+                        (org-agenda-show-log t)
+                        (org-agenda-include-inactive-timestamps t)
+                        (org-super-agenda-groups
+                        `(
+                                (:name "Done"
+                                :todo "DONE"
+                                :regexp ,(concat "State \"DONE\".*" (format-time-string "%Y-%m-%d"))
+                                ;; :regexp "State \"DONE\".*"
+                                ;; :regexp ,(format-time-string "%Y-%m-%d")
+                                :transformer (--> it (propertize it 'face '(:strike-through t :foreground "grey")))
+                                :order 0
+                                )
+                                (:name "Clocked today"
+                                :log t
+                                :order 1
+                                )
+                                (:name "Important"
+                                :tag "Important"
+                                :and(:priority "A" :scheduled nil)
+                                :and(:priority "A" :scheduled today)
+                                :order 1)
+                                (:name "Today"
                                 :time-grid t
                                 :date today
-                                :todo "TODAY"
-                                :scheduled today
-                                :order 1
-                                )))))
-                (alltodo "" ((org-agenda-overriding-header "")
-                       (org-agenda-property-list '("LOCATION" "TEACHER") )
-                       (org-agenda-property-position 'where-it-fits)
-                       (org-agenda-property-separator "|" )
+                                :order 2
+                                )
+                                (:name "Scheduled"
+                                :scheduled t
+                                :order 3
+                                )
+                                (:name "Waiting"
+                                :and(:todo "WAIT" :not(:tag "work"))
+                                :order 4)
+                                (:auto-category t :order 3)
+                                ))
+                      ))
+            (todo "TODO|PLAY|WAIT|LEARN" ((org-agenda-overriding-header "")
+                ;; (org-agenda-property-list '("LOCATION" "TEACHER") )
+                ;; (org-agenda-property-position 'where-it-fits)
+                ;; (org-agenda-property-separator "|" )
 
-                       (org-super-agenda-groups
-                        '((:name "Next to do"
-                                 :todo "NEXT"
-                                 :order 1)
-                          (:name "Important"
-                                 :tag "Important"
-                                 :priority "A"
-                                 :order 6)
-                          (:name "Due Today"
-                                 :deadline today
-                                 :order 2)
-                          (:name "Habit"
-                                 :and(:habit t :scheduled today)
-                                 :order 2)
-                          (:name "Due Soon"
-                                 :deadline future
-                                 :order 8)
-                          (:name "Overdue"
-                                 :deadline past
-                                 :order 7)
-                          (:name "Assignments"
-                                 :tag "assignment"
-                                 :order 10)
-                          (:name "Issues"
-                                 :tag "issue"
-                                 :order 12)
-                          (:name "Projects"
-                                 :tag "project"
-                                 :order 14)
-                          (:name "Emacs"
-                                 :tag "Emacs"
-                                 :order 13)
-                          (:name "In-Progress"
-                                 :and(:todo "IN-PROGRESS" :not(:tag "ARCHIVE"))
-                                 :order 13)
-                          (:name "QUESTION"
-                              :and(:todo "QUESTION" :not(:tag "ARCHIVE"))
-                              :order 13)
-                          (:name "Research"
-                                 :tag "Research"
-                                 :order 15)
-                          (:name "To read"
-                                 :tag "read"
-                                 :order 30)
-                          (:name "To Learn"
-                                 :tag "learn"
-                                 :order 20)
+                (org-agenda-span 7)
+                (org-super-agenda-groups
+                `((:name "Next to do"
+                                :todo "NEXT"
+                                :order 1)
+                        (:name "Important"
+                                :tag "Important"
+                                :and(:priority "A" :scheduled nil)
+                                :and(:priority "A" :scheduled today)
+                                :order 1)
+                        (:name "Due Today"
+                                :deadline today
+                                :order 2)
+                        (:name "Habit"
+                                :and(:habit t :scheduled today)
+                                :and(:habit t :scheduled past)
+                                :order 3)
+                        (:todo "PLAY" :order 4)
+                        (:name "Due Soon"
+                                :deadline ,(org-read-date nil nil "+14")
+                                :order 8)
+                        (:name "Overdue"
+                                :deadline past
+                                :order 7)
+                        (:name "Goals"
+                                :category "goals"
+                                :order 8)
+                        (:name "Inbox"
+                                :category "inbox"
+                                :order 9)
+                        (:name "Assignments"
+                                :tag "assignment"
+                                :order 10)
+                        (:name "Projects"
+                                :tag "project"
+                                :order 14)
+                        (:name "Emacs"
+                                :tag "Emacs"
+                                :order 13)
+                        (:name "In-Progress"
+                                :and(:todo "IN-PROGRESS" :not(:tag "ARCHIVE"))
+                                :order 13)
+                        (:name "QUESTION"
+                        :and(:todo "QUESTION" :not(:tag "ARCHIVE"))
+                        :order 13)
+                        (:name "Research"
+                                :tag "Research"
+                                :order 15)
+                        (:name "To read"
+                                :tag "read"
+                                :order 30)
+                        (:name "To Learn"
+                                :tag "learn"
+                                :order 20)
 
-                          (:order-multi (40 (:name "Done today"
-                                                   :and (:regexp "State \"DONE\""
-                                                                 :log t))
-                                            (:name "Clocked today"
-                                                   :log t
-                                                   )))
-                          (:name "Waiting"
-                                 :and(:todo "WAIT" :not(:tag "work"))
-                                 :order 20)
-                          (:name "Waiting/Work"
-                                 :and(:todo "WAIT" :tag "work")
-                                 :order 20)
-                          (:name "trivial"
-                                 :priority<= "C"
-                                 :tag ("trivial" "unimportant")
-                                 :todo ("MAYBE" )
-                                 :order 90)
-                          (:discard (:tag ("Chore" "Routine" "Daily")))
-                          ))
-                       )))
+                        (:order-multi (40 (:name "Done today"
+                                                :and (:regexp "State \"DONE\""
+                                                                :log t))
+                                        (:name "Clocked today"
+                                                :log t
+                                                )))
+                        (:name "Waiting"
+                                :and(:todo "WAIT" :not(:tag "work"))
+                                :order 20)
+                        (:name "Waiting/Work"
+                                :and(:todo "WAIT" :tag "work")
+                                :order 20)
+                        (:name "trivial"
+                                :priority<= "C"
+                                :tag ("trivial" "unimportant")
+                                :todo ("MAYBE" )
+                                :order 90)
+                        (:discard (:tag ("Chore" "Routine" "Daily")))
+                        ))
+                ))
+                )
 
                )
           ("u" "Unscheduled TODO"
@@ -181,6 +250,8 @@
                 ((org-agenda-overriding-header "\nUnscheduled TODO")
                  (org-agenda-skip-function '(org-agenda-skip-entry-if 'timestamp))))) nil nil)
           ))
+
+
   :config
   (org-super-agenda-mode)
 )
@@ -302,6 +373,11 @@
            "ANSWERED(a)"
            )
           (sequence
+           "REPEAT(r)"   ; A task that needs repeating
+           "|"
+           "DONE"
+           )
+          (sequence
            "[ ](T)"   ; A task that needs doing
            "[-](S)"   ; Task is in progress
            "[?](W)"   ; Task is being held up or paused
@@ -325,9 +401,8 @@
 
   (setq org-capture-templates
         (quote (
-                ("t" "Personal todo" entry
-                 (file+datetree +org-capture-todo-file)
-                 "* TODO %?\n%i\n%a" :prepend nil :clock-in t :clock-resume t)
+                ("t" "Personal todo" entry (file+datetree +org-capture-todo-file)
+                 "* TODO %?\n%i\n" :prepend nil :clock-in t :clock-resume t)
                 ("r" "respond" entry (file +org-capture-todo-file)
                  "* NEXT Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n" :clock-in t :clock-resume t :immediate-finish t)
                 ("n" "Personal notes" entry
@@ -354,6 +429,8 @@
                  "**  %?\n")
                 ("h" "Habit" entry (file "~/Dropbox/vimwiki/kanban.org")
                  "** NEXT %?\n%U\n%a\nSCHEDULED: %(format-time-string \"%<<%Y-%m-%d %a .+1d/3d>>\")\n:PROPERTIES:\n:STYLE: habit\n:REPEAT_TO_STATE: NEXT\n:END:\n")
+                ("Pb" "(Protocol bookmark)" entry (file+datetree +org-capture-todo-file)
+                 "* %:description \nCaptured at %U\n[[%:link][%:description]]\n%?\n%:initial\n")
                 )
                )
         )
@@ -415,6 +492,7 @@
 (map! :map evil-normal-state-map "ㅒ" 'evil-open-above) ;; O
 
 (map! "C-c a" #'org-agenda)
+(map! "C-c e" #'treemacs)
 (map! "C-c c" #'org-capture)
 (map! "C-c l" #'org-store-link)
 (map! "C-c n i" #'org-roam-jump-to-index)
@@ -589,3 +667,8 @@ but `delete-file' is ignored."
     )
 (map! "C-c d" 'al/goto-today-diary)
 (setq org-agenda-clockreport-parameter-plist '(:stepskip0 t :link t :maxlevel 4 :fileskip0 t))
+
+(exec-path-from-shell-initialize)
+
+
+(setq org-ditaa-jar-path "~/src/ditaa/ditaa0_9/ditaa0_9.jar")
