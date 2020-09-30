@@ -57,15 +57,6 @@ export LESS_TERMCAP_so=$'\E[01;44;33m'
 export LESS_TERMCAP_ue=$'\E[0m'
 export LESS_TERMCAP_us=$'\E[01;32m'
 
-#Editor
-if command -v nvim >/dev/null ; then
-  export EDITOR=nvim #set up editor
-  export VISUAL=nvim #set up editor
-else
-  export EDITOR=vim #set up editor
-fi
-
-
 # When changing directory small typos can be ignored by bash. for example, cd /vr/lgo/apaache would find /var/log/apache
 shopt -s cdspell
 
@@ -77,12 +68,6 @@ PATH=$PATH:.
 
 # To make tmux color work in Vim
 export TERM="xterm-256color"
-
-
-# Global envrionments
-
-
-export INSIGHT_NOTEPATH=$HOME/src/notes/
 
 
 # custom global option for fc
