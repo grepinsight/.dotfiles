@@ -42,7 +42,6 @@ if [ -n $ZSH_VERSION ]; then
 	fi
 fi
 
-exit 1
 
 ### BASHRC setup
 echo "--- Setting up bashrc ---"
