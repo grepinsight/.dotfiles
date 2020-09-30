@@ -1,0 +1,75 @@
+SHARED_DIR="${HOME}/.dotfiles/bash" # where init is
+echo $INIT_DIR
+
+# bash welcome
+if [ -e "${SHARED_DIR}/local/bash_welcome" ]; then
+  cat ${SHARED_DIR}/local/bash_welcome
+fi
+
+#---------------SHARE-----------------------------
+# # settings share
+# if [ -e "${INIT_DIR}/share/bash_settings_share" ]; then
+#   source "${INIT_DIR}/share/bash_settings_share"
+#   echo "bash_settings_share loaded"
+# fi
+
+# aliases
+if [ -e "${SHARED_DIR}/share/bash_aliases_share" ]; then
+  source "${SHARED_DIR}/share/bash_aliases_share"
+  echo "bash_aliases_share loaded"
+else 
+	echo " not there"
+fi
+
+#functions
+if [ -f "${SHARED_DIR}/share/bash_functions_share" ]; then
+   source "${SHARED_DIR}/share/bash_functions_share"
+   echo "bash_functions_share loaded"
+fi
+
+# if [ -f "${INIT_DIR}/share/bash_paths_share" ]; then
+#    source "${INIT_DIR}/share/bash_paths_share"
+#    echo "bash_paths_share loaded"
+# fi
+
+#colors
+#
+if [ -f "${INIT_DIR}/share/bash_colors_share" ]; then
+   source "${INIT_DIR}/share/bash_colors_share"
+   echo "bash_colors_share loaded"
+fi
+
+
+#--------------------LOCAL------------------------------
+## local bashrc
+#if [ -e "${INIT_DIR}/local/bash_aliases_local" ]; then
+#  source "${INIT_DIR}/local/bash_aliases_local"
+#  echo "bash_aliases_local loaded"
+#fi
+##paths
+#if [ -f "${INIT_DIR}/local/bash_paths_local" ]; then
+#   source "${INIT_DIR}/local/bash_paths_local"
+#   echo "bash_paths_local loaded"
+#fi
+
+## settings local
+#if [ -e "${INIT_DIR}/local/bash_settings_local" ]; then
+#  source "${INIT_DIR}/local/bash_settings_local"
+#  echo "bash_settings_local loaded"
+#fi
+
+##functions
+#if [ -f "${INIT_DIR}/local/bash_functions_local" ]; then
+#   source "${INIT_DIR}/local/bash_functions_local"
+#   echo "bash_functions_local loaded"
+#fi
+
+
+##---------------Initial Run-----------------------------
+#if [ -f "${INIT_DIR}/local/bash_inirun_local" ]; then
+#   echo "-----------------------"
+#   #echo "Running ini run - local"
+#   sh ${INIT_DIR}/local/bash_inirun_local
+#   echo "-----------------------"
+#fi
+
