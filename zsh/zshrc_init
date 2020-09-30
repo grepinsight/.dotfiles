@@ -42,15 +42,15 @@ fi
 
 #--------------------LOCAL------------------------------
 ## local bashrc
-#if [ -e "${INIT_DIR}/local/bash_aliases_local" ]; then
-#  source "${INIT_DIR}/local/bash_aliases_local"
-#  echo "bash_aliases_local loaded"
-#fi
+if [ -e "${SHARED_DIR}/local/bash_aliases_local" ]; then
+  source "${SHARED_DIR}/local/bash_aliases_local"
+  echo "bash_aliases_local loaded"
+fi
 ##paths
-#if [ -f "${INIT_DIR}/local/bash_paths_local" ]; then
-#   source "${INIT_DIR}/local/bash_paths_local"
-#   echo "bash_paths_local loaded"
-#fi
+if [ -f "${SHARED_DIR}/local/bash_paths_local" ]; then
+   source "${SHARED_DIR}/local/bash_paths_local"
+   echo "bash_paths_local loaded"
+fi
 
 ## settings local
 #if [ -e "${INIT_DIR}/local/bash_settings_local" ]; then
