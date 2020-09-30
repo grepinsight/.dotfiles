@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
 
-if grep "zshrc_init" $HOME/.zshrc > /dev/null; then
-	echo "zshrc_init already in $HOME/.zshrc"
-else
+set -x
+ln -sf $HOME/.dotfiles/zsh/zshrc $HOME/.zshrc
 
-    echo '[ -f $HOME/.dotfiles/zsh/zshrc_init ] && source $HOME/.dotfiles/zsh/zshrc_init' >> $HOME/.zshrc
-fi
