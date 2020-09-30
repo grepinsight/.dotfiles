@@ -6,9 +6,9 @@ set -x
 platform=`uname`
 if [[ $platform == "Darwin" ]]; then
 	#statements
-	 brew install ripgrep
-	 brew install fd
-	 brew install tree
+	 command -v ripgrep || brew install ripgrep
+	 command -v fd || brew install fd
+	 command -v tree || brew install tree
 
 else
 

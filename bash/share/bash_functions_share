@@ -85,7 +85,7 @@ cd_func_decorated() {
 
 }
 
-alias cd=cd_func_decorated
+# alias cd=cd_func_decorated
 
 pd() {
   project_name="$1"
@@ -97,7 +97,7 @@ pd() {
   fi
 }
 
-export -f pd
+export -f pd > /dev/null
 
 srd() {
   project_name="$1"
@@ -109,10 +109,10 @@ srd() {
   fi
 }
 
-export -f srd
+export -f srd > /dev/null
 alias sd="srd"
 alias ss="srd"
-export -f pd
+export -f pd > /dev/null
 
 
 #alias pd=pd_run
@@ -374,7 +374,7 @@ fs() {
 		| cut -d':' -f1 \
 		| xargs tmux switch-client -t
 }
-export -f fs
+export -f fs > /dev/null
 
 
 # https://junegunn.kr/2015/04/browsing-chrome-history-with-fzf/

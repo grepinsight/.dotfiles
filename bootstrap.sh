@@ -1,7 +1,24 @@
 #!/usr/bin/env bash
 
-function get_platform
-{
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+NC='\033[0m'
+
+echo_red() {
+	echo -e "${RED}$@${NC}"
+}
+echo_green() {
+	echo -e "${GREEN}$@${NC}"
+}
+
+echo_install() {
+	echo -e "${GREEN}Installing ${NC}$@"
+}
+section() {
+	echo -e "==============[ ${GREEN}$@${NC} ] ================"
+}
+
+get_platform() {
     if [[ $(uname) == "Darwin" ]];then
         echo "mac"
     else
@@ -13,6 +30,19 @@ export -f get_platform
 
 #set -x
 ROOT_DIR="$HOME/.dotfiles"
+
+section "Check if $SHELL is ${RED}ZSH${NC}"
+if [ -n $ZSH_VERSION ]; then
+	# check if ohmyzsh is installed
+	echo_install "Oh My Zsh"
+	if [ -d ~/.oh-my-zsh/ ]; then
+		echo_red "Oh My Zsh already exists. Skipping"
+	else
+		sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+	fi
+fi
+
+exit 1
 
 ### BASHRC setup
 echo "--- Setting up bashrc ---"

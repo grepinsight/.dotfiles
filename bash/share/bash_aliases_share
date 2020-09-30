@@ -7,7 +7,7 @@ function get_platform
         echo "linux"
     fi
 }
-export -f get_platform
+export -f get_platform > /dev/null
 # Administrative
 
 
@@ -202,7 +202,7 @@ function cd_fzf_recursive() {
 	fi
 }
 
-export -f cd_fzf
+export -f cd_fzf > /dev/null
 alias cdd="cd_fzf; "
 alias cddr="cd_fzf_recursive; "
 

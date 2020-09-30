@@ -14,12 +14,13 @@ Installation
 
 ```shell
 cd $HOME &&\
-git clone https://github.com/grepinsight/.dotfiles.git &&\
-cd .dotfiles &&\
-make -s bootstrap &&\
-source bash/bashrc_init &&\
-bash docs/install_toolkit.sh &&\
-make -s all &&
-source $HOME/.bashrc &&
-make -s reload
+  git clone https://github.com/grepinsight/.dotfiles.git &&\
+  cd .dotfiles &&\
+  make --silent bootstrap &&\
+  source bash/bashrc_init &&\
+  bash docs/install_toolkit.sh &&\
+  make --silent all &&
+  source $HOME/.bashrc &&
+  make --silent reload
 ```
+
