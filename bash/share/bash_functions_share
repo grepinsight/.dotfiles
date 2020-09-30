@@ -1,3 +1,12 @@
+# Editor
+if command -v nvim >/dev/null ; then
+  export EDITOR=nvim #set up editor
+  export VISUAL=nvim #set up editor
+else
+  export EDITOR=vim #set up editor
+fi
+
+
 # This function is to be used in PS1
 # example:  PS1="\e[1;31m[\!][\d,\@] \u@\[\033]0;\h:\W\007\]\h: \w]  \$(parse_git_branch)\e[m\n  \[\e]0;ibm\a\] ===> "
 function parse_git_branch {
