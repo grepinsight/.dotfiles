@@ -132,13 +132,6 @@ export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
 eval "$(starship init zsh)"
 
-# bashmarks
-alias g="jump"
-alias s="bookmark"
-alias d="deletemark"
-alias p="showmarks"
-alias l="showmarks"
-
 # alias
 alias h='hsearch'
 
@@ -149,6 +142,7 @@ alias hle="$EDITOR $LEDGER_FILE"
 
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-source $HOME/.cargo/env
+
+[ -f $HOME/.cargo/env ] && source $HOME/.cargo/env
 
 [ -f $HOME/.dotfiles/zsh/zshrc_init ] && source $HOME/.dotfiles/zsh/zshrc_init
