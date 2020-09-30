@@ -31,7 +31,7 @@
 
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
-(setq org-directory "~/Dropbox/vimwiki")
+(setq org-directory "~/Dropbox/vimwiki/personal")
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
@@ -411,23 +411,23 @@
                 ("j" "Journal" entry
                  (file+olp+datetree +org-capture-journal-file)
                  "* %U %?\n%i\n%a" :prepend t)
-                ("o" "topic" entry (file "~/Dropbox/vimwiki/topics.org")
+                ("o" "topic" entry (file "~/Dropbox/vimwiki/personal/topics.org")
                  "*** %? \n%U\n")
-                ("k" "knowledge" entry (file "~/Dropbox/vimwiki/topics.org")
+                ("k" "knowledge" entry (file "~/Dropbox/vimwiki/personal/topics.org")
                  "*** %? \n%U\n%a\n")
-                ("j" "Journal" entry (file+datetree "~/Dropbox/vimwiki/kanban.org")
+                ("j" "Journal" entry (file+datetree "~/Dropbox/vimwiki/personal/kanban.org")
                  "** %?\n%U\n")
-                ("t" "Journal_todo" entry (file+datetree "~/Dropbox/vimwiki/kanban.org")
+                ("t" "Journal_todo" entry (file+datetree "~/Dropbox/vimwiki/personal/kanban.org")
                  "** TODO %?\n%U\n")
-                ("w" "WorkJournal" entry (file+datetree "~/Dropbox/vimwiki/work.org")
+                ("w" "WorkJournal" entry (file+datetree "~/Dropbox/vimwiki/personal/work.org")
                  "** %?\n%U\n")
-                ("m" "Meeting" entry (file "~/Dropbox/vimwiki/work.org")
+                ("m" "Meeting" entry (file "~/Dropbox/vimwiki/personal/work.org")
                  "** MEETING with %? :meeting:\n%U" )
-                ("p" "Phone call" entry (file "~/Dropbox/vimwiki/kanban.org")
+                ("p" "Phone call" entry (file "~/Dropbox/vimwiki/personal/kanban.org")
                  "** PHONE %? :PHONE:\n%U\n%^{Tidbit type|quote|zinger|one-liner|textlet}\n%^{Name}")
-                ("d" "Definitions" entry (file "~/Dropbox/vimwiki/Definitions.org")
+                ("d" "Definitions" entry (file "~/Dropbox/vimwiki/personal/Definitions.org")
                  "**  %?\n")
-                ("h" "Habit" entry (file "~/Dropbox/vimwiki/kanban.org")
+                ("h" "Habit" entry (file "~/Dropbox/vimwiki/personal/kanban.org")
                  "** NEXT %?\n%U\n%a\nSCHEDULED: %(format-time-string \"%<<%Y-%m-%d %a .+1d/3d>>\")\n:PROPERTIES:\n:STYLE: habit\n:REPEAT_TO_STATE: NEXT\n:END:\n")
                 ("Pb" "(Protocol bookmark)" entry (file+datetree +org-capture-todo-file)
                  "* %:description \nCaptured at %U\n[[%:link][%:description]]\n%?\n%:initial\n")
@@ -477,8 +477,8 @@
 (setq org-tags-exclude-from-inheritance '("transcript"))
 
 ; Org-Roam Related
-(setq org-roam-directory "~/Dropbox/vimwiki/")
-(setq org-roam-index-file "~/Dropbox/vimwiki/index.org")
+(setq org-roam-directory "~/Dropbox/vimwiki/personal/")
+(setq org-roam-index-file "~/Dropbox/vimwiki/personal/index.org")
 
 (map! :map evil-normal-state-map "ㅗ" 'evil-backward-char) ;; h
 (map! :map evil-normal-state-map "ㅓ" 'evil-next-line) ;; j
@@ -498,8 +498,8 @@
 (map! "C-c n i" #'org-roam-jump-to-index)
 (map! "C-c n r" #'helm-bibtex)
 (map! "C-c n g" #'counsel-google)
-(map! "C-c n t "(lambda() (interactive)(find-file "~/Dropbox/vimwiki/todo.org")))
-(map! "C-c n i"(lambda() (interactive)(find-file "~/Dropbox/vimwiki/inbox.org")))
+(map! "C-c n t "(lambda() (interactive)(find-file "~/Dropbox/vimwiki/personal/todo.org")))
+(map! "C-c n i"(lambda() (interactive)(find-file "~/Dropbox/vimwiki/personal/inbox.org")))
 (map! :n "j" #'evil-next-visual-line
       :n "k" #'evil-previous-visual-line)
 
@@ -529,10 +529,10 @@
   :custom
   (org-journal-date-prefix "#+TITLE: ")
   (org-journal-file-format "%Y-%m-%d.org")
-  (org-journal-dir "~/Dropbox/vimwiki")
+  (org-journal-dir "~/Dropbox/vimwiki/personal")
   (org-journal-date-format "%A, %d %B %Y"))
 
-(setq org-download-image-dir "~/Dropbox/vimwiki/images/")
+(setq org-download-image-dir "~/Dropbox/vimwiki/personal/images/")
 
 (use-package! org-download
   :after org
@@ -565,21 +565,21 @@
     (setq
          org-ref-completion-library 'org-ref-ivy-cite
          org-ref-get-pdf-filename-function 'org-ref-get-pdf-filename-helm-bibtex
-         org-ref-default-bibliography (list "~/Dropbox/vimwiki/references.bib")
-         org-ref-bibliography-notes "~/Dropbox/vimwiki/notes.org"
+         org-ref-default-bibliography (list "~/Dropbox/vimwiki/personal/references.bib")
+         org-ref-bibliography-notes "~/Dropbox/vimwiki/personal/notes.org"
          org-ref-note-title-format "* TODO %y - %t\n :PROPERTIES:\n  :Custom_ID: %k\n  :NOTER_DOCUMENT: %F\n :ROAM_KEY: cite:%k\n  :AUTHOR: %9a\n  :JOURNAL: %j\n  :YEAR: %y\n  :VOLUME: %v\n  :PAGES: %p\n  :DOI: %D\n  :URL: %U\n :END:\n\n"
-         org-ref-notes-directory "~/Dropbox/vimwiki"
-         org-ref-pdf-directory "~/Dropbox/vimwiki/papers"
+         org-ref-notes-directory "~/Dropbox/vimwiki/personal"
+         org-ref-pdf-directory "~/Dropbox/vimwiki/personal/papers"
          org-ref-notes-function 'orb-edit-notes
     ))
 
 
 ; bibtex completion
 (setq
- bibtex-completion-notes-path "~/Dropbox/vimwiki"
- bibtex-completion-bibliography "~/Dropbox/vimwiki/references.bib"
+ bibtex-completion-notes-path "~/Dropbox/vimwiki/personal"
+ bibtex-completion-bibliography "~/Dropbox/vimwiki/personal/references.bib"
  bibtex-completion-pdf-field "file"
- bibtex-completion-library-path "~/Dropbox/vimwiki/papers"
+ bibtex-completion-library-path "~/Dropbox/vimwiki/personal/papers"
  bibtex-completion-notes-template-multiple-files
  (concat
   "#+TITLE: ${title}\n"
@@ -606,7 +606,7 @@
   :custom
   (deft-use-filter-string-for-filename t)
   (deft-default-extension "org")
-  (deft-directory "~/Dropbox/vimwiki/"))
+  (deft-directory "~/Dropbox/vimwiki/personal/"))
 
 
 (use-package! ox-hugo
@@ -661,7 +661,7 @@ but `delete-file' is ignored."
 ;; datetree jump
 (defun al/goto-today-diary()
     (interactive)
-    (goto-char (org-find-exact-headline-in-buffer (format-time-string "%Y-%m-%d %A") (find-file "~/Dropbox/vimwiki/todo.org")))
+    (goto-char (org-find-exact-headline-in-buffer (format-time-string "%Y-%m-%d %A") (find-file "~/Dropbox/vimwiki/personal/todo.org")))
     (org-show-entry)
     (outline-show-subtree)
     )
