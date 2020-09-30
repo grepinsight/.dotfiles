@@ -207,42 +207,6 @@ function bsm {
     jid=$( echo $message | cut -f3 -d" " )
 }
 
-# vim()
-# {
-#     local STTYOPTS="$(stty --save)"
-#     stty stop '' -ixoff
-#     command vim "$@"
-#     stty "$STTYOPTS"
-# }
-
-export MARKPATH=$HOME/.marks
-function jump {
-    unjump_dir=$(pwd)
-    cd $MARKPATH/$1 2>/dev/null || echo "No such mark: $1"
-    cd $(readlink -m $(pwd))
-    ls -lh
-}
-
-function unjump {
-    if [[ -z $unjump_dir ]]; then
-	echo "There is nowhere to un'jump to!"
-    else
-	cd $unjump_dir
-	ls -lh
-    fi
-}
-function mark {
-    mkdir -p $MARKPATH; ln -sf $(pwd) $MARKPATH/$1
-}
-function unmark {
-    rm -i $MARKPATH/$1
-}
-function marks {
-    ls -l $MARKPATH | sed 's/  / /g' | cut -d' ' -f9- | sed 's/ -/\t-/g' && echo
-}
-
-
-
 colors() {
     local fgc bgc vals seq0
 
