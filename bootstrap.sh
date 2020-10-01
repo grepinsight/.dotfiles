@@ -208,12 +208,13 @@ fi
 set -x
 platform=`uname`
 if [[ $platform == "Darwin" ]]; then
-	#statements
-	 command -v rg || brew install ripgrep
-	 command -v fd || brew install fd
-	 command -v tree || brew install tree
-	 command -v diff-so-fancy || brew install diff-so-fancy
-	 command -v starship || brew install starship
+    # useful tools
+    command -v rg || brew install ripgrep
+    command -v fd || brew install fd
+    command -v tree || brew install tree
+    command -v diff-so-fancy || brew install diff-so-fancy
+    command -v starship || brew install starship
+    command -v cmake || brew install cmake
 
 else
 
