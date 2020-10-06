@@ -38,5 +38,6 @@
     "posix_terminal_shell": "bash",
     "source_with_echo": true,
     "jobs_tab_visibility": "shown",
-    "rmd_preferred_template_path": "/Library/Frameworks/R.framework/Versions/4.0/Resources/library/mwhat/rmarkdown/templates/mwh_analysis_basic"
+    "rmd_preferred_template_path": "/Library/Frameworks/R.framework/Versions/4.0/Resources/library/mwhat/rmarkdown/templates/mwh_analysis_basic",
+    "document_author": "Albert Lee"
 }
