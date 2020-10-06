@@ -6,6 +6,8 @@
 
 ;; Some functionality uses this to identify you, e.g. GPG configuration, email
 ;; clients, file templates and snippets.
+;;
+(exec-path-from-shell-initialize)
 
 (setq user-full-name "Albert Lee"
       user-mail-address "grepinsight@gmail.com")
@@ -668,7 +670,6 @@ but `delete-file' is ignored."
 (map! "C-c d" 'al/goto-today-diary)
 (setq org-agenda-clockreport-parameter-plist '(:stepskip0 t :link t :maxlevel 4 :fileskip0 t))
 
-(exec-path-from-shell-initialize)
 
 
 (setq org-ditaa-jar-path "~/src/ditaa/ditaa0_9/ditaa0_9.jar")
