@@ -401,10 +401,18 @@
           )
         )
 
+
+
+  ;; for some reason you have to pass in the function rather than (getenv "ORG_DEFAULT_NOTE") directly
+  (defun my/org-capture-todo-file ()
+        "Expand `+org-capture-todo-file' from `org-directory'.
+        If it is an absolute path return `+org-capture-todo-file' verbatim."
+        (getenv "ORG_DEFAULT_NOTE"))
+
   (setq org-capture-templates
         (quote (
-                ("t" "Personal todo" entry (file+datetree +org-capture-todo-file)
-                 "* TODO %?\n%i\n" :prepend nil :clock-in t :clock-resume t)
+                ("t" "Personal todo" entry (file+datetree my/org-capture-todo-file)
+                 "* TODO %?\n%i\n" :prepend nil)
                 ("r" "respond" entry (file +org-capture-todo-file)
                  "* NEXT Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n" :clock-in t :clock-resume t :immediate-finish t)
                 ("n" "Personal notes" entry
@@ -479,8 +487,8 @@
 (setq org-tags-exclude-from-inheritance '("transcript"))
 
 ; Org-Roam Related
-(setq org-roam-directory "~/Dropbox/vimwiki/personal/")
-(setq org-roam-index-file "~/Dropbox/vimwiki/personal/index.org")
+(setq org-roam-directory "~/Dropbox/vimwiki/")
+(setq org-roam-index-file "~/Dropbox/vimwiki/index.org")
 
 (map! :map evil-normal-state-map "ㅗ" 'evil-backward-char) ;; h
 (map! :map evil-normal-state-map "ㅓ" 'evil-next-line) ;; j
@@ -534,7 +542,7 @@
   (org-journal-dir "~/Dropbox/vimwiki/personal")
   (org-journal-date-format "%A, %d %B %Y"))
 
-(setq org-download-image-dir "~/Dropbox/vimwiki/personal/images/")
+(setq org-download-image-dir "~/Dropbox/vimwiki/shared/images/")
 
 (use-package! org-download
   :after org
@@ -567,21 +575,21 @@
     (setq
          org-ref-completion-library 'org-ref-ivy-cite
          org-ref-get-pdf-filename-function 'org-ref-get-pdf-filename-helm-bibtex
-         org-ref-default-bibliography (list "~/Dropbox/vimwiki/personal/references.bib")
-         org-ref-bibliography-notes "~/Dropbox/vimwiki/personal/notes.org"
+         org-ref-default-bibliography (list "~/Dropbox/vimwiki/shared/references.bib")
+         org-ref-bibliography-notes "~/Dropbox/vimwiki/shared/notes.org"
          org-ref-note-title-format "* TODO %y - %t\n :PROPERTIES:\n  :Custom_ID: %k\n  :NOTER_DOCUMENT: %F\n :ROAM_KEY: cite:%k\n  :AUTHOR: %9a\n  :JOURNAL: %j\n  :YEAR: %y\n  :VOLUME: %v\n  :PAGES: %p\n  :DOI: %D\n  :URL: %U\n :END:\n\n"
-         org-ref-notes-directory "~/Dropbox/vimwiki/personal"
-         org-ref-pdf-directory "~/Dropbox/vimwiki/personal/papers"
+         org-ref-notes-directory "~/Dropbox/vimwiki/shared"
+         org-ref-pdf-directory "~/Dropbox/vimwiki/shared/04_papers"
          org-ref-notes-function 'orb-edit-notes
     ))
 
 
 ; bibtex completion
 (setq
- bibtex-completion-notes-path "~/Dropbox/vimwiki/personal"
- bibtex-completion-bibliography "~/Dropbox/vimwiki/personal/references.bib"
+ bibtex-completion-notes-path "~/Dropbox/vimwiki/shared"
+ bibtex-completion-bibliography "~/Dropbox/vimwiki/shared/references.bib"
  bibtex-completion-pdf-field "file"
- bibtex-completion-library-path "~/Dropbox/vimwiki/personal/papers"
+ bibtex-completion-library-path "~/Dropbox/vimwiki/shared/04_papers"
  bibtex-completion-notes-template-multiple-files
  (concat
   "#+TITLE: ${title}\n"
@@ -608,7 +616,7 @@
   :custom
   (deft-use-filter-string-for-filename t)
   (deft-default-extension "org")
-  (deft-directory "~/Dropbox/vimwiki/personal/"))
+  (deft-directory "~/Dropbox/vimwiki/"))
 
 
 (use-package! ox-hugo
@@ -673,3 +681,5 @@ but `delete-file' is ignored."
 
 
 (setq org-ditaa-jar-path "~/src/ditaa/ditaa0_9/ditaa0_9.jar")
+
+(when (getenv "ORG_DEFAULT_NOTE") (setq org-agenda-files `(,(getenv "ORG_DEFAULT_NOTE"))))
