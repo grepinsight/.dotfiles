@@ -215,6 +215,16 @@ if [[ $platform == "Darwin" ]]; then
     command -v diff-so-fancy || brew install diff-so-fancy
     command -v starship || brew install starship
     command -v cmake || brew install cmake
+    command -v parallel || brew install parallel
+
+    echo "Do you want to install emacs-plus? [n/Y]"
+    read varname
+    if [[ $varname == "Y" ]]; then
+        echo "installing"
+        brew tap "d12frosted/emacs-plus" && brew install emacs-plus
+    else
+        echo "not installing"
+    fi
 
 else
 
