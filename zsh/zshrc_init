@@ -55,10 +55,10 @@ if [ -e "${SHARED_DIR}/local/bash_aliases_local" ]; then
 fi
 
 ## settings local
-#if [ -e "${INIT_DIR}/local/bash_settings_local" ]; then
-#  source "${INIT_DIR}/local/bash_settings_local"
-#  echo "bash_settings_local loaded"
-#fi
+if [ -e "${SHARED_DIR}/local/bash_settings_local" ]; then
+  source "${SHARED_DIR}/local/bash_settings_local"
+  echo "bash_settings_local loaded"
+fi
 
 ##functions
 #if [ -f "${INIT_DIR}/local/bash_functions_local" ]; then
