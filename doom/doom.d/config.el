@@ -683,3 +683,9 @@ but `delete-file' is ignored."
 (setq org-ditaa-jar-path "~/src/ditaa/ditaa0_9/ditaa0_9.jar")
 
 (when (getenv "ORG_DEFAULT_NOTE") (setq org-agenda-files `(,(getenv "ORG_DEFAULT_NOTE"))))
+
+(defun my/org-shared-files()
+  "Shared org Files"
+  (file-expand-wildcards "~/Dropbox/vimwiki/shared/*.org"))
+
+(setq org-id-extra-files (file-expand-wildcards "~/Dropbox/vimwiki/shared/*.org"))
