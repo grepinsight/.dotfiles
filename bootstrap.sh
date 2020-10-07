@@ -222,6 +222,11 @@ if [[ $platform == "Darwin" ]]; then
     if [[ $varname == "Y" ]]; then
         echo "installing"
         brew tap "d12frosted/emacs-plus" && brew install emacs-plus
+
+        echo "Installing doom emacs (see https://github.com/hlissner/doom-emacs)"
+        git clone --depth 1 https://github.com/hlissner/doom-emacs ~/.emacs.d
+        ~/.emacs.d/bin/doom install
+
     else
         echo "not installing"
     fi
