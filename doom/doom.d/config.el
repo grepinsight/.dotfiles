@@ -514,7 +514,6 @@
       :n "k" #'evil-previous-visual-line)
 
 (use-package! org-roam-server
-  :ensure t
   :config
   (setq org-roam-server-host "127.0.0.1"
         org-roam-server-port 8080
