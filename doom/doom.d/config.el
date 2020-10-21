@@ -308,6 +308,11 @@
     (interactive)
     (format "http://translate.google.com/?source=osdd#auto|auto|%s" (url-encode-url stuff)))
 
+  (defun my/collins (stuff)
+    "collins dictionary"
+    (interactive)
+    (format "https://www.collinsdictionary.com/us/dictionary/english/%s" (s-replace " " "-" stuff)))
+
   ; link abbreviations
   (setq org-link-abbrev-alist
         '(
@@ -315,6 +320,9 @@
           ("gmap"    . "http://maps.google.com/maps?q=%s")
           ("dx"      . "https://platform.dnanexus.com/panx/%(my/dx-id-to-url)")
           ("spanish" . "https://www.spanishdict.com/translate/%s")
+          ("gene" . "https://www.genecards.org/cgi-bin/carddisp.pl?gene=%s")
+          ("nwiki" . "https://terms.naver.com/search.nhn?query=%s")
+          ("collins" . "%(my/collins)")
           ("gt_es"   . "%(my/translate-es-en)")
           ("en_es"   . "%(my/translate-en-es)")
           ("translate"   . "%(my/translate)")
@@ -413,6 +421,8 @@
         (quote (
                 ("t" "Personal todo" entry (file+datetree my/org-capture-todo-file)
                  "* TODO %?\n%i\n" :prepend nil)
+                ("Q" "Question" entry (file+datetree my/org-capture-todo-file)
+                 "* QUESTION %?\n%i\n" :prepend nil)
                 ("r" "respond" entry (file +org-capture-todo-file)
                  "* NEXT Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n" :clock-in t :clock-resume t :immediate-finish t)
                 ("n" "Personal notes" entry
@@ -625,7 +635,10 @@
 ;; active Babel languages
 (org-babel-do-load-languages
  'org-babel-load-languages
- '((gnuplot . t)))
+ '(
+   (gnuplot . t)
+   (ipython . t)
+   ))
 
 (setq org-latex-pdf-process
       (quote
@@ -688,3 +701,16 @@ but `delete-file' is ignored."
   (file-expand-wildcards "~/Dropbox/vimwiki/shared/*.org"))
 
 (setq org-id-extra-files (file-expand-wildcards "~/Dropbox/vimwiki/shared/*.org"))
+(add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
+
+;; display time
+(display-time-mode 1)
+
+;; show date and time
+(setq display-time-day-and-date t)
+
+;; copied from https://tecosaur.github.io/emacs-config/config.html
+(setq undo-limit 80000000                         ; Raise undo-limit to 80Mb
+      evil-want-fine-undo t                       ; By default while in insert all changes are one big blob. Be more granular
+      auto-save-default t                         ; Nobody likes to loose work, I certainly don't
+      truncate-string-ellipsis "…")               ; Unicode ellispis are nicer than "...", and also save /precious/ space

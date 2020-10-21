@@ -44,7 +44,7 @@ set foldlevelstart=0    " open most folds by default
 "set foldmethod=indent   " fold based on indent level
 set splitright          " split navigation
 set hidden              " allow modified/unsaved buffers in the background.
-set relativenumber              " set number
+set number              " set number
 set smartcase           " if capital letter is used, then do not ignore case
 set ignorecase          " If the 'ignorecase' option is on, the case of normal letters is ignored. 
 set shiftwidth=4        " size of an indent
@@ -195,7 +195,7 @@ Plug 'kana/vim-textobj-user'
 " Plug 'vim-pandoc/vim-pandoc-syntax'
 
 
-" Plug 'SirVer/ultisnips'
+Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 Plug 'ervandew/supertab'
 " Plug 'grepinsight/mysnippets'
@@ -258,8 +258,9 @@ Plug 'chrisbra/NrrwRgn' " like emacs narrow region
 Plug 'mattn/calendar-vim'
 
 
-" Etc 
-Plug 'ThePrimeagen/vim-be-good'
+" Etc Plugins
+"Plug 'ThePrimeagen/vim-be-good'
+Plug 'burneyy/vim-snakemake'
 
 " if executable('black')
 "     Plug 'psf/black', { 'on':  'Black' }
@@ -269,6 +270,19 @@ Plug 'ThePrimeagen/vim-be-good'
 " " Profiling
 " Plug 'tweekmonster/startuptime.vim'
 
+
+
+" " Collection of common configurations for the Nvim LSP client
+" Plug 'neovim/nvim-lspconfig'
+
+" " Extensions to built-in LSP, for example, providing type inlay hints
+" Plug 'tjdevries/lsp_extensions.nvim'
+
+" " Autocompletion framework for built-in LSP
+" Plug 'nvim-lua/completion-nvim'
+
+" " Diagnostic navigation and settings for built-in LSP
+" Plug 'nvim-lua/diagnostic-nvim'
 
 call plug#end()
 
@@ -2008,6 +2022,7 @@ nnoremap ,h :History<CR>
 nnoremap ,m :Magit<CR>
 nnoremap ,r :BTags<CR>
 nnoremap ,t :call ChooseTerm("term-slider", 1)<CR>
+nnoremap <LocalLeader>ot :call ChooseTerm("term-slider", 1)<CR>
 tnoremap ,t <C-\><C-n>:q<CR>
 nnoremap ,y :call ChooseTerm("term-pane", 0)<CR>
 nnoremap ,x :Focus<CR>
@@ -2047,3 +2062,4 @@ let g:node_host_prog = '/usr/local/bin/neovim-node-host'
 autocmd BufEnter *.rules set filetype=hledgerrules
 
 command! Wq execute "normal! \<esc>:wq<CR>"
+let g:tex_flavor = "latex"
