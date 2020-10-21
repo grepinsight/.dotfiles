@@ -239,16 +239,20 @@ else
 
 	# install ripgrep
 	 command -v rg || \
-     DEB_RIPGREP="ripgrep_0.10.0_amd64.deb" && \
-     curl -LO https://github.com/BurntSushi/ripgrep/releases/download/0.10.0/${DEB_RIPGREP} && \
+     RIPGREP_VERSION="12.1.1"
+     DEB_RIPGREP="ripgrep_${RIPGREP_VERSION}_amd64.deb" && \
+     curl -LO https://github.com/BurntSushi/ripgrep/releases/download/${RIPGREP_VERSION}/${DEB_RIPGREP} && \
      sudo dpkg -i ${DEB_RIPGREP} && \
      sudo apt-get install ripgrep && \
      sudo rm -rf ${DEB_RIPGREP}
 
+     # sudo add-apt-repository ppa:x4121/ripgrep
+
 
     command -v fd || \
-	 DEB_FD="fd_7.3.0_amd64.deb" && \
-	 curl -LO https://github.com/sharkdp/fd/releases/download/v7.3.0/${DEB_FD} && \
+     FD_VERSION="8.1.1"
+	 DEB_FD="fd_${FD_VERSION}_amd64.deb" && \
+	 curl -LO https://github.com/sharkdp/fd/releases/download/v${FD_VERSION}/${DEB_FD} && \
 	 sudo dpkg -i ${DEB_FD} && \
 	 sudo apt-get install fd && \
 	 sudo rm -rf ${DEB_FD}
