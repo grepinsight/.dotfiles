@@ -240,7 +240,7 @@ else
 
 	# install ripgrep
 	 command -v rg || \
-     RIPGREP_VERSION="12.1.1"
+     RIPGREP_VERSION="12.1.1" && \
      DEB_RIPGREP="ripgrep_${RIPGREP_VERSION}_amd64.deb" && \
      curl -LO https://github.com/BurntSushi/ripgrep/releases/download/${RIPGREP_VERSION}/${DEB_RIPGREP} && \
      sudo dpkg -i ${DEB_RIPGREP} && \
@@ -251,7 +251,7 @@ else
 
 
     command -v fd || \
-     FD_VERSION="8.1.1"
+     FD_VERSION="8.1.1" && \
 	 DEB_FD="fd_${FD_VERSION}_amd64.deb" && \
 	 curl -LO https://github.com/sharkdp/fd/releases/download/v${FD_VERSION}/${DEB_FD} && \
 	 sudo dpkg -i ${DEB_FD} && \
@@ -259,9 +259,9 @@ else
 	 sudo rm -rf ${DEB_FD}
 
     command -v bat || \
-     BAT_VERSION="0.16.0"
+     BAT_VERSION="0.16.0" && \
 	 DEB_FD="bat_${BAT_VERSION}_amd64.deb" && \
-	 curl -LO https://github.com/sharkdp/fd/releases/download/v${BAT_VERSION}/${DEB_FD} && \
+	 curl -LO https://github.com/sharkdp/bat/releases/download/v${BAT_VERSION}/bat_${BAT_VERSION}_amd64.deb
 	 sudo dpkg -i ${DEB_FD} && \
 	 sudo apt-get install fd && \
 	 sudo rm -rf ${DEB_FD}
