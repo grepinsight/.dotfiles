@@ -88,7 +88,7 @@ fi
 # FZF
 [ -f ~/.fzf.bash  ] && source ~/.fzf.bash
 export FZF_DEFAULT_COMMAND="fd . $HOME"
-export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_CTRL_T_COMMAND="fd ."
 export FZF_CTRL_T_COMMAND_CURRENT="fd ."
 alias fzf_all="export FZF_CTRL_T_COMMAND=\"fd . $HOME\""
 alias fa="export FZF_CTRL_T_COMMAND=\"fd . $HOME\""
