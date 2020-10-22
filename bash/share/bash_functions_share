@@ -94,6 +94,10 @@ cd_func_decorated() {
 
 }
 
+if [ ! -n $ZSH_VERSION ]; then
+  alias cd=cd_func_decorated
+fi
+
 # alias cd=cd_func_decorated
 
 pd() {
