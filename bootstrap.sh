@@ -257,7 +257,15 @@ else
 	 sudo apt-get install fd && \
 	 sudo rm -rf ${DEB_FD}
 
-	sudo apt-get install tree
+    command -v bat || \
+     BAT_VERSION="0.16.0"
+	 DEB_FD="bat_${BAT_VERSION}_amd64.deb" && \
+	 curl -LO https://github.com/sharkdp/fd/releases/download/v${BAT_VERSION}/${DEB_FD} && \
+	 sudo dpkg -i ${DEB_FD} && \
+	 sudo apt-get install fd && \
+	 sudo rm -rf ${DEB_FD}
+
+	command -v tree || sudo apt-get install tree
 
 	# install tmux
 	command -v tmux || bash ./etc/install_tmux.ubuntu.sh
