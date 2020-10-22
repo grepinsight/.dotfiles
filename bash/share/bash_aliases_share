@@ -557,4 +557,4 @@ alias code="/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/co
 alias hl="hledger"
 alias hla="hledger add"
 alias hle="nvim $LEDGER_FILE"
-alias cat="bat"
+command -v bat 2> && alias cat="bat"
