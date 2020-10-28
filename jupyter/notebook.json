@@ -1,0 +1,18 @@
+{
+  "load_extensions": {
+    "vim_binding/vim_binding": true
+  },
+  "keys": {
+    "command": {
+      "unbind": [
+        "o"
+      ],
+      "bind": {
+        "b": "jupyter-notebook:insert-cell-below",
+        "a": "jupyter-notebook:insert-cell-above",
+        "o": "jupyter-notebook:insert-cell-below",
+        "ctrl-enter": "jupyter-notebook:run-cell"
+      }
+    }
+  }
+}
