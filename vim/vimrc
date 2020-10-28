@@ -185,7 +185,7 @@ Plug 'tpope/vim-dispatch'
 
 " Plug 'jalvesaq/vimcmdline'                             " sort of like slim
 
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
+" Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'rust-lang/rust.vim'
 " Plug 'fatih/vim-go'
 Plug 'kana/vim-textobj-user'
@@ -266,23 +266,25 @@ Plug 'burneyy/vim-snakemake'
 "     Plug 'psf/black', { 'on':  'Black' }
 " endif
 
+Plug 'kkoomen/vim-doge', { 'do': { -> doge#install() } }
+let g:doge_doc_standard_python = 'google'
 
 " " Profiling
 " Plug 'tweekmonster/startuptime.vim'
 
 
 
-" " Collection of common configurations for the Nvim LSP client
-" Plug 'neovim/nvim-lspconfig'
+" Collection of common configurations for the Nvim LSP client
+Plug 'neovim/nvim-lspconfig'
 
-" " Extensions to built-in LSP, for example, providing type inlay hints
-" Plug 'tjdevries/lsp_extensions.nvim'
+" Extensions to built-in LSP, for example, providing type inlay hints
+Plug 'tjdevries/lsp_extensions.nvim'
 
-" " Autocompletion framework for built-in LSP
-" Plug 'nvim-lua/completion-nvim'
+" Autocompletion framework for built-in LSP
+Plug 'nvim-lua/completion-nvim'
 
-" " Diagnostic navigation and settings for built-in LSP
-" Plug 'nvim-lua/diagnostic-nvim'
+" Diagnostic navigation and settings for built-in LSP
+Plug 'nvim-lua/diagnostic-nvim'
 
 call plug#end()
 
@@ -595,7 +597,22 @@ nmap <F8> :TagbarToggle<CR>
 " Plugin - Fugitive
 " ----------------------------------------------------------------------------
 "  - blame
-nnoremap <leader>b :Gblame<CR>
+
+function! s:BlameToggle() abort
+  let found = 0
+  for winnr in range(1, winnr('$'))
+    if getbufvar(winbufnr(winnr), '&filetype') ==# 'fugitiveblame'
+      exe winnr . 'close'
+      let found = 1
+    endif
+  endfor
+  if !found
+    Git blame
+  endif
+endfunction
+
+" nnoremap <leader>b :Gblame<CR>
+nnoremap <leader>b :call <SID>BlameToggle()<CR>
 nnoremap <silent> <leader>gcv :Gcommit -v <CR>
 nnoremap <leader>gw :Gwrite <CR>:Gcommit -v<CR>
 nnoremap <leader>gf :GitGutterFold<CR>
@@ -2063,3 +2080,58 @@ autocmd BufEnter *.rules set filetype=hledgerrules
 
 command! Wq execute "normal! \<esc>:wq<CR>"
 let g:tex_flavor = "latex"
+
+
+" Set completeopt to have a better completion experience
+" :help completeopt
+" menuone: popup even when there's only one match
+" noinsert: Do not insert text until a selection is made
+" noselect: Do not select, force user to select one from the menu
+set completeopt=menuone,noinsert,noselect
+
+" Avoid showing extra messages when using completion
+set shortmess+=c
+
+" Configure LSP
+" https://github.com/neovim/nvim-lspconfig#rust_analyzer
+lua <<EOF
+
+-- nvim_lsp object
+local nvim_lsp = require'nvim_lsp'
+
+-- function to attach completion and diagnostics
+-- when setting up lsp
+local on_attach = function(client)
+    require'completion'.on_attach(client)
+    require'diagnostic'.on_attach(client)
+end
+
+-- Enable rust_analyzer
+nvim_lsp.rust_analyzer.setup({ on_attach=on_attach })
+
+-- R Language Server
+nvim_lsp.r_language_server.setup({ on_attach=on_attach })
+
+-- Microsoft Python LSP
+nvim_lsp.pyls_ms.setup({ on_attach=on_attach,
+      interpreter = {
+        properties = {
+          InterpreterPath = "/Users/allee/.pyenv/shims/python",
+          Version = "3.7"
+        }
+      }
+})
+
+EOF
+
+
+" Trigger completion with <Tab>
+inoremap <silent><expr> <TAB>
+  \ pumvisible() ? "\<C-n>" :
+  \ <SID>check_back_space() ? "\<TAB>" :
+  \ completion#trigger_completion()
+
+function! s:check_back_space() abort
+    let col = col('.') - 1
+    return !col || getline('.')[col - 1]  =~ '\s'
+endfunction

@@ -107,16 +107,19 @@ source $ZSH/oh-my-zsh.sh
 #
 
 # ----
-export HISTTIMEFORMAT="%s "
+# export HISTTIMEFORMAT="%s "
 export ETERNAL_HISTORY_FILE="$HOME/.zsh_eternal_history"
 
 function precmd() {
     echo \
     	$$ \
-    	$USER \
-    	$(date "+%Y-%m-%d %H:%M:%S")  \
-    	"@ $(pwd -P) | " \
-    		"$(history | tail -1)" >> $ETERNAL_HISTORY_FILE
+    	"@@@" \
+    	"$(date "+%s")" \
+    	"@@@" \
+    	"\"$(pwd -P)\"" \
+    	"@@@" \
+    		"$(history | tail -1 | perl -pe 's/^\s*\d+\s*//')" >> $ETERNAL_HISTORY_FILE
+
 }
 
 calc() {

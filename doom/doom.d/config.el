@@ -512,6 +512,7 @@
 (map! :map evil-normal-state-map "ㅒ" 'evil-open-above) ;; O
 
 (map! "C-c a" #'org-agenda)
+(map! "C-c h" #'helm-org-parent-headings)
 (map! "C-c e" #'treemacs)
 (map! "C-c c" #'org-capture)
 (map! "C-c l" #'org-store-link)
