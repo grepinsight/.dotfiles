@@ -11,7 +11,7 @@ if [[ -n $IS_MAC ]]; then
     brew install neovim
 fi
 
-IS_UBUNTU=$(uname -a | grep -i Ubuntu)
+IS_UBUNTU=$(uname -a | egrep -i "Ubuntu|Linux")
 
 if [[ -n $IS_UBUNTU ]]; then
     mkdir -p $HOME/src
