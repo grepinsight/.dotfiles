@@ -111,14 +111,16 @@ source $ZSH/oh-my-zsh.sh
 export ETERNAL_HISTORY_FILE="$HOME/.zsh_eternal_history"
 
 function precmd() {
-    echo \
+
+    echo -n \
     	$$ \
     	"@@@" \
     	"$(date "+%s")" \
     	"@@@" \
     	"\"$(pwd -P)\"" \
-    	"@@@" \
-    		"$(history | tail -1 | perl -pe 's/^\s*\d+\s*//')" >> $ETERNAL_HISTORY_FILE
+    	"@@@ " >> $ETERNAL_HISTORY_FILE
+    # must do it in seperate line otherwise newline is not properly escaped
+    history | tail -1 | perl -pe 's/^\s*\d+\s*//' >> $ETERNAL_HISTORY_FILE
 
 }
 
@@ -151,3 +153,5 @@ alias hle="$EDITOR $LEDGER_FILE"
 [ -f $HOME/.cargo/env ] && source $HOME/.cargo/env
 
 [ -f $HOME/.dotfiles/zsh/zshrc_init ] && source $HOME/.dotfiles/zsh/zshrc_init
+bindkey '^G' fzf-cd-widget
+
