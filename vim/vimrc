@@ -260,9 +260,9 @@ Plug 'mattn/calendar-vim'
 "Plug 'ThePrimeagen/vim-be-good'
 Plug 'burneyy/vim-snakemake'
 
-" if executable('black')
-"     Plug 'psf/black', { 'on':  'Black' }
-" endif
+if executable('black')
+    Plug 'psf/black', { 'on':  'Black' }
+endif
 
 Plug 'kkoomen/vim-doge', { 'do': { -> doge#install() } }
 let g:doge_doc_standard_python = 'google'
@@ -1782,20 +1782,6 @@ command! -bang -range=% -nargs=* SortUnfolded call setline(<line1>, getline(<lin
 " # Comma Leader key {{{
 "
 
-nnoremap <silent> ,c  :CocConfig<CR>
-" E as in Error
-nnoremap <silent> ,e  :<C-u>CocList diagnostics<cr>
-" O as in Only
-" Find symbol of current document
-nnoremap <silent> ,o  :only<CR>
-
-" Remap for format selected region
-xmap ,f  <Plug>(coc-format-selected)
-nmap ,f  <Plug>(coc-format-selected)
-nmap ,q  <Plug>(coc-fix-current)
-nmap ,l yor
-
-
 " # Bracket Leader keys
 nnoremap <silent> ]j :call NextClosedFold('j')<cr>
 nnoremap <silent> [j :call NextClosedFold('k')<cr>
@@ -2028,22 +2014,26 @@ noremap <silent> <LocalLeader>ch :wincmd h<CR>:close<CR>
 noremap <silent> <LocalLeader>cj :wincmd j<CR>:close<CR>
 noremap <silent> <LocalLeader>ck :wincmd k<CR>:close<CR>
 noremap <silent> <LocalLeader>cl :wincmd l<CR>:close<CR>
+nnoremap <LocalLeader>ot :call ChooseTerm("term-slider", 1)<CR>
 
 " Tertiary leaderkey
-nnoremap ,c :Colors<CR>
 nnoremap ,b :GitMessenger<CR>
+nnoremap ,c :Colors<CR>
+nnoremap ,e :e <C-R>=expand("%:p:h") . "/" <CR>
 nnoremap ,g :GV<CR>
 nnoremap ,h :History<CR>
 nnoremap ,m :Magit<CR>
 nnoremap ,r :BTags<CR>
 nnoremap ,t :call ChooseTerm("term-slider", 1)<CR>
-nnoremap <LocalLeader>ot :call ChooseTerm("term-slider", 1)<CR>
+nnoremap <silent> ,o  :only<CR>
 tnoremap ,t <C-\><C-n>:q<CR>
 nnoremap ,y :call ChooseTerm("term-pane", 0)<CR>
+nmap ,l yor
 nnoremap ,x :Focus<CR>
 nnoremap ,z :Focus2<CR>
 nnoremap ,v :Vista!!<CR>
 nnoremap ,p :e <C-R>=resolve(expand("%"))<CR>
+
 
 " }}}
 " ============================================================================
