@@ -111,11 +111,8 @@ Plug 'airblade/vim-rooter'
 Plug 'vim-scripts/BufOnly.vim'
 
 " " Files related
-" Plug 'Shougo/junkfile.vim'
 Plug 'justinmk/vim-dirvish'
-" Plug 'tpope/vim-vinegar'
 Plug 'tpope/vim-eunuch'
-" Plug 'wincent/vcs-jump'
 
 " " Search files
 Plug 'grepinsight/ctrlp.vim' " my mutated version that supports vimwiki tag search
@@ -223,6 +220,7 @@ let g:vimtex_quickfix_latexlog = {
       \   'default' : 0,
       \ },
       \}
+let g:tex_flavor = "latex"
 
 Plug 'matze/vim-tex-fold'
 " Plug 'reedes/vim-wordy'
@@ -270,7 +268,7 @@ Plug 'kkoomen/vim-doge', { 'do': { -> doge#install() } }
 let g:doge_doc_standard_python = 'google'
 
 " " Profiling
-" Plug 'tweekmonster/startuptime.vim'
+Plug 'tweekmonster/startuptime.vim'
 
 
 
@@ -2079,7 +2077,6 @@ let g:node_host_prog = '/usr/local/bin/neovim-node-host'
 autocmd BufEnter *.rules set filetype=hledgerrules
 
 command! Wq execute "normal! \<esc>:wq<CR>"
-let g:tex_flavor = "latex"
 
 
 " Set completeopt to have a better completion experience
