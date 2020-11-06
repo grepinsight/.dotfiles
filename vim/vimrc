@@ -118,6 +118,7 @@ Plug 'tpope/vim-eunuch'
 
 " " Search files
 Plug 'grepinsight/ctrlp.vim' " my mutated version that supports vimwiki tag search
+Plug 'preservim/tagbar'
 "Plug 'grepinsight/fzf', { 'dir': '~/.fzf', 'do': './install --all'  }
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all'  }
 Plug 'junegunn/fzf.vim'
@@ -176,7 +177,7 @@ Plug 'tpope/vim-dispatch'
 " " Rlang
 " Plug 'ncm2/ncm2'
 " Plug 'roxma/nvim-yarp'
-"Plug 'jalvesaq/Nvim-R'
+Plug 'jalvesaq/Nvim-R'
 " Plug 'gaalcaras/ncm-R'
 " Plug 'ncm2/ncm2-bufword'
 " Plug 'ncm2/ncm2-path'
@@ -1997,6 +1998,8 @@ nnoremap <LocalLeader>lo :lopen<CR>
 nnoremap <LocalLeader>m :Magit<CR>
 nnoremap <LocalLeader>o :BufOnly<CR> <bar> :only<CR>
 nnoremap <LocalLeader>pro :e ~/src/productivity/
+nnoremap <silent> <LocalLeader>p :let @" = expand("%:p")<CR> <bar> :echo expand('%:p')<CR>
+nnoremap <silent> <LocalLeader>pzp :!echo <C-R>=expand("%:p")<CR> \| rpbcopy <CR> <bar> :echo expand('%:p')<CR>
 nnoremap <LocalLeader>pt :NERDTreeToggle<CR>
 nnoremap <LocalLeader>q :quit <CR>
 nnoremap <LocalLeader>s :w<CR>
@@ -2009,7 +2012,6 @@ nnoremap <LocalLeader>wq :wq <CR>
 nnoremap <LocalLeader>ww <C-w>w
 nnoremap <LocalLeader>y :Goyo 120<CR>
 nnoremap <silent> <LocalLeader> :<c-u>WhichKey  '<Space>'<CR>
-nnoremap <silent> <LocalLeader>p :let @" = expand("%:p")<CR> <bar> :echo expand('%:p')<CR>
 nnoremap <silent> <LocalLeader>z :Focus2<CR>
 noremap <LocalLeader>x :Focus<CR>
 noremap <silent> <LocalLeader>ch :wincmd h<CR>:close<CR>
