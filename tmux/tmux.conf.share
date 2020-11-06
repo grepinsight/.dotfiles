@@ -136,8 +136,7 @@ run '~/.tmux/plugins/tpm/tpm'
 set -s command-alias[10] s='split-window'
 set -s command-alias[10] w='split-window fs'
 
-bind C-l send-keys 'C-l' # restore clear screen
-
+bind C-l 'select-pane -R'
 bind C-j 'select-pane -D'
 bind C-k 'select-pane -U'
 bind C-h 'select-pane -L'
