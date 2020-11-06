@@ -1,0 +1,3 @@
+--langdef=rmd
+--langmap=rmd:.Rmd
+--regex-Rmd=/^(#+[ \t]+.*)/\1/h,heading,headings/
