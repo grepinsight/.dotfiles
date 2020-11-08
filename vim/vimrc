@@ -1981,7 +1981,7 @@ nmap <Leader>w$ <Plug>(easymotion-overwin-w)
 "nnoremap <LocalLeader>c :ccl<CR>
 nnoremap <LocalLeader><LocalLeader> <C-^>
 nnoremap <LocalLeader>a :A <CR>
-nnoremap <LocalLeader>b :Buffers<CR>
+nnoremap <LocalLeader>b :GitMessenger<CR>
 nnoremap <LocalLeader>c :call ToggleQuickFix()<CR>
 nnoremap <LocalLeader>d :Gvdiff<CR>
 nnoremap <LocalLeader>e :edit <C-R>=expand('%:p:h') . '/' <CR>
@@ -2022,7 +2022,7 @@ nnoremap <LocalLeader>ot :call ChooseTerm("term-slider", 1)<CR>
 " COMMA LEADER
 
 nnoremap ,a :History<CR>
-nnoremap ,b :GitMessenger<CR>
+nnoremap ,b :Buffers<CR>
 nnoremap ,c :Colors<CR>
 nnoremap ,d :DogeGenerate<CR>
 nnoremap ,e :e <C-R>=expand("%:p:h") . "/" <CR>
