@@ -2115,10 +2115,22 @@ local on_attach = function(client)
 end
 
 -- Enable rust_analyzer
-nvim_lsp.rust_analyzer.setup({ on_attach=on_attach })
+nvim_lsp.rust_analyzer.setup({ 
+    on_attach=on_attach,
+    settings = {
+          ["rust-analyzer"] = {}
+        }
+})
+
+-- Enable bash language server
+
+nvim_lsp.bashls.setup({ on_attach=on_attach })
 
 -- R Language Server
 nvim_lsp.r_language_server.setup({ on_attach=on_attach })
+
+-- Enable ccls for C++
+nvim_lsp.ccls.setup({ on_attach=on_attach })
 
 -- Microsoft Python LSP
 nvim_lsp.pyls_ms.setup({ on_attach=on_attach,
@@ -2129,6 +2141,7 @@ nvim_lsp.pyls_ms.setup({ on_attach=on_attach,
         }
       }
 })
+
 
 EOF
 
@@ -2144,6 +2157,8 @@ function! s:check_back_space() abort
     return !col || getline('.')[col - 1]  =~ '\s'
 endfunction
 
+
+" ----------
 let g:rooter_patterns = ['.git', 'Makefile', '.prjroot', '.hg']
 
 
