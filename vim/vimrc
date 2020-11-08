@@ -2007,6 +2007,7 @@ nnoremap <LocalLeader>pt :NERDTreeToggle<CR>
 nnoremap <LocalLeader>q :quit <CR>
 nnoremap <LocalLeader>s :w<CR>
 nnoremap <LocalLeader>t :!typora "%"<CR>
+nnoremap <LocalLeader>tn :TestNearest<CR>
 nnoremap <LocalLeader>toc :VimwikiTOC<CR>
 nnoremap <LocalLeader>tog :!toggl-start <C-R>=expand('<cWORD>')<CR>
 nnoremap <LocalLeader>v :Vista<CR>
@@ -2028,7 +2029,7 @@ nnoremap <LocalLeader>ot :call ChooseTerm("term-slider", 1)<CR>
 
 nnoremap ,a :CtrlPMRUFiles<CR>
 nnoremap ,b :Buffers<CR>
-nnoremap ,c :GitGutterQuickFix<CR> <bar> :copen <CR>
+nnoremap ,c :GitGutterQuickFix<CR> <bar> :copen <CR> /<C-R>=bufname(winbufnr(1))<CR><CR>
 nnoremap ,d :DogeGenerate<CR>
 nnoremap ,e :e <C-R>=expand("%:p:h") . "/" <CR>
 nnoremap ,f :Rg! <C-R><C-W><CR>
