@@ -893,8 +893,6 @@ nmap ga <Plug>(EasyAlign)
 " Plugin - vim-sneak {{{
 " ----------------------------------------------------------------------------
 let g:sneak#s_next = 1
-nmap ,s <Plug>Sneak_s
-nmap ,S <Plug>Sneak_S
 
 " }}}
 " ----------------------------------------------------------------------------
@@ -926,8 +924,8 @@ let g:go_version_warning = 0
 " ----------------------------------------------------------------------------
 " Plugin - fzf {{{
 " ----------------------------------------------------------------------------
-nnoremap <F3> :call fzf#run(fzf#wrap({'source': 'fd $FD_OPTS . $HOME', 'sink': 'edit'}))<CR>
-inoremap <F3> :call fzf#run(fzf#wrap({'source': 'fd $FD_OPTS . $HOME', 'sink': 'edit'}))<CR>
+nnoremap <F3> :call fzf#run(fzf#wrap({'source': 'fd $FD_OPTS . $HOME $HOME/.dotfiles', 'sink': 'edit'}))<CR>
+inoremap <F3> :call fzf#run(fzf#wrap({'source': 'fd $FD_OPTS . $HOME $HOME/.dotfiles', 'sink': 'edit'}))<CR>
 nnoremap <F4> :call fzf#run(fzf#wrap({'source': 'fd --no-ignore $FD_OPTS .', 'sink': 'edit'}))<CR>
 inoremap <F4> :call fzf#run(fzf#wrap({'source': 'fd --no-ignore $FD_OPTS .', 'sink': 'edit'}))<CR>
 nnoremap <F5> :call fzf#run(fzf#wrap({'source': 'fd --no-ignore $FD_OPTS . $HOME', 'sink': 'edit'}))<CR>
@@ -2021,25 +2019,31 @@ noremap <silent> <LocalLeader>cl :wincmd l<CR>:close<CR>
 nnoremap <LocalLeader>ot :call ChooseTerm("term-slider", 1)<CR>
 
 " Tertiary leaderkey
+" COMMA LEADER
+
+nnoremap ,a :History<CR>
 nnoremap ,b :GitMessenger<CR>
 nnoremap ,c :Colors<CR>
 nnoremap ,d :DogeGenerate<CR>
 nnoremap ,e :e <C-R>=expand("%:p:h") . "/" <CR>
 nnoremap ,g :GV<CR>
 nnoremap ,h :History<CR>
+nmap ,l yor
+nnoremap ,n <cmd>lua require'telescope.builtin'.live_grep{}<CR>
 nnoremap ,m :Magit<CR>
+nnoremap ,p :e <C-R>=resolve(expand("%"))<CR>
 nnoremap ,r :BTags<CR>
+nmap ,s <Plug>Sneak_s
+nmap ,S <Plug>Sneak_S
 nnoremap ,t :call ChooseTerm("term-slider", 1)<CR>
+nnoremap ,v :Vista!!<CR>
+nnoremap ,x :Focus<CR>
+nnoremap ,y :call ChooseTerm("term-pane", 0)<CR>
+nnoremap ,z :Focus2<CR>
 nnoremap <silent> ,o  :only<CR>
 tnoremap ,t <C-\><C-n>:q<CR>
 tnoremap [b <C-\><C-n>:bp<CR>
 tnoremap ]b <C-\><C-n>:bnext<CR>
-nnoremap ,y :call ChooseTerm("term-pane", 0)<CR>
-nmap ,l yor
-nnoremap ,x :Focus<CR>
-nnoremap ,z :Focus2<CR>
-nnoremap ,v :Vista!!<CR>
-nnoremap ,p :e <C-R>=resolve(expand("%"))<CR>
 
 
 " }}}
