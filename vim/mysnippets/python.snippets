@@ -102,3 +102,12 @@ import numpy as np
 import pandas as pd
 import scipy.stats as stats
 endsnippet
+
+
+snippet arg "Argument Parser" b
+parser = argparse.ArgumentParser(description='A command line interface for $1')
+
+parser.add_argument('-c', '--config',
+                    help='File containing configuration settings.',
+                    type=str)
+endsnippet
