@@ -942,11 +942,6 @@ nnoremap <F5> :call fzf#run(fzf#wrap({'source': 'fd --no-ignore $FD_OPTS . $HOME
 inoremap <F5> :call fzf#run(fzf#wrap({'source': 'fd --no-ignore $FD_OPTS . $HOME', 'sink': 'edit'}))<CR>
 nnoremap <Leader>pv :call fzf#vim#gitfiles('', fzf#vim#with_preview('right'))<CR>
 " }}}
-" ----------------------------------------------------------------------------
-" Gundo {{{
-" ----------------------------------------------------------------------------
-" toggle gundo
-nnoremap <leader>u :GundoToggle<CR>
 
 " python3 support
 let g:gundo_prefer_python3 = 1
