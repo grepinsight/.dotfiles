@@ -2021,13 +2021,13 @@ nnoremap <LocalLeader>ot :call ChooseTerm("term-slider", 1)<CR>
 " Tertiary leaderkey
 " COMMA LEADER
 
-nnoremap ,a :History<CR>
+nnoremap ,a :CtrlPMRUFiles<CR>
 nnoremap ,b :Buffers<CR>
 nnoremap ,c :Colors<CR>
 nnoremap ,d :DogeGenerate<CR>
 nnoremap ,e :e <C-R>=expand("%:p:h") . "/" <CR>
-nnoremap ,f :call fzf#run(fzf#wrap({'source': 'fd $FD_OPTS . $HOME $HOME/.dotfiles', 'sink': 'edit'}))<CR>
-nnoremap ,g :GV<CR>
+nnoremap ,f :Rg! <C-R><C-W><CR>
+nnoremap ,g :GV!<CR>
 nnoremap ,h :History<CR>
 "nnoremap ,i 
 "nnoremap ,j 
@@ -2044,7 +2044,7 @@ nmap ,S <Plug>Sneak_S
 nnoremap ,t :call ChooseTerm("term-slider", 1)<CR>
 nnoremap ,v :Vista!!<CR>
 nnoremap ,u :GundoToggle<CR>
-" nnoremap ,v
+nnoremap ,v :call fzf#run(fzf#wrap({'source': 'fd $FD_OPTS . $HOME/Dropbox/vimwiki', 'sink': 'vsplit'}))<CR>
 " nnoremap ,w
 nnoremap ,x :Focus<CR>
 nnoremap ,y :call ChooseTerm("term-pane", 0)<CR>
