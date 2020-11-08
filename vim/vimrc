@@ -118,7 +118,6 @@ Plug 'tpope/vim-eunuch'
 
 " " Search files
 Plug 'grepinsight/ctrlp.vim' " my mutated version that supports vimwiki tag search
-Plug 'preservim/tagbar'
 "Plug 'grepinsight/fzf', { 'dir': '~/.fzf', 'do': './install --all'  }
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all'  }
 Plug 'junegunn/fzf.vim'
@@ -130,6 +129,7 @@ Plug 'junegunn/fzf.vim'
 " " Navigation
 " Plug 'Lokaltog/vim-easymotion'
 Plug 'justinmk/vim-sneak'
+Plug 'preservim/tagbar'
 Plug 'liuchengxu/vista.vim'
 " Plug 'tpope/vim-projectionist'
 Plug 'tpope/vim-unimpaired'
@@ -286,6 +286,16 @@ Plug 'nvim-lua/completion-nvim'
 
 " Diagnostic navigation and settings for built-in LSP
 Plug 'nvim-lua/diagnostic-nvim'
+
+" ---
+
+" Debugger Plugins
+Plug 'puremourning/vimspector'
+Plug 'szw/vim-maximizer'
+
+Plug 'nvim-lua/popup.nvim'
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-lua/telescope.nvim'
 
 call plug#end()
 
@@ -2023,7 +2033,7 @@ nnoremap <LocalLeader>ot :call ChooseTerm("term-slider", 1)<CR>
 
 nnoremap ,a :CtrlPMRUFiles<CR>
 nnoremap ,b :Buffers<CR>
-nnoremap ,c :Colors<CR>
+nnoremap ,c :GitGutterQuickFix<CR> <bar> :copen <CR>
 nnoremap ,d :DogeGenerate<CR>
 nnoremap ,e :e <C-R>=expand("%:p:h") . "/" <CR>
 nnoremap ,f :Rg! <C-R><C-W><CR>
