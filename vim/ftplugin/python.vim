@@ -6,7 +6,7 @@ set foldmethod=indent
 
 
 " Make a string f-string ; here I use '@z' as a placeholder register
-nnoremap <LocalLeader>f mzF"if`zl
+"nnoremap <LocalLeader>f mzF"if`zl
 
 
 
