@@ -2131,3 +2131,11 @@ function! s:check_back_space() abort
 endfunction
 
 let g:rooter_patterns = ['.git', 'Makefile', '.prjroot', '.hg']
+
+
+" Emoji shortcuts
+ab :shrug: 🤷
+ab :bulb: 💡
+ab :point_right: 👉
+ab :white_check_mark: ✅
+ab :link: 🔗
