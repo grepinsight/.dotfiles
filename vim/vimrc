@@ -26,6 +26,7 @@ unlet! skip_defaults_vim
 autocmd FileType rst syntax off
 autocmd FileType json set foldmethod=indent
 autocmd BufNewFile,BufRead *.org setfiletype org
+autocmd BufNewFile,BufRead *.snk setfiletype snakemake
 silent! source $VIMRUNTIME/defaults.vim
 set encoding=UTF-8
 filetype plugin indent on

@@ -420,7 +420,7 @@
   (setq org-capture-templates
         (quote (
                 ("t" "Personal todo" entry (file+datetree my/org-capture-todo-file)
-                 "* TODO %?\n%i\n" :prepend nil)
+                 "* TODO %?\n%i\n" :prepend nil :tree-type week)
                 ("Q" "Question" entry (file+datetree my/org-capture-todo-file)
                  "* QUESTION %?\n%i\n" :prepend nil)
                 ("r" "respond" entry (file +org-capture-todo-file)

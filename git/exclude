@@ -56,3 +56,6 @@ tags
 
 # C++ LSP
 .ccls-cache/*
+
+# Custom project root file
+.prjroot
