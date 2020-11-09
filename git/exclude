@@ -61,5 +61,4 @@ tags
 .prjroot
 
 # Snakemake
-.snakemake/*
-
+.snakemake
