@@ -241,7 +241,7 @@ Plug 'roman/golden-ratio'
 " Plug 'itchyny/calendar.vim'
 Plug 'sgur/vim-editorconfig'
 " Plug 'chrisbra/csv.vim'
-Plug 'liuchengxu/vim-which-key'
+" Plug 'liuchengxu/vim-which-key'
 Plug 'machakann/vim-highlightedyank'
 " Plug 'voldikss/vim-floaterm'
 
@@ -312,10 +312,9 @@ let g:deus_termcolors=256
 
 
 " }}}
-"
-"
+
 " Functions
-"
+
 function! ChooseTerm(termname, slider)
     let pane = bufwinnr(a:termname)
     let buf = bufexists(a:termname)
@@ -2043,7 +2042,7 @@ nnoremap ,m :Magit<CR>
 nnoremap ,n <cmd>lua require'telescope.builtin'.live_grep{}<CR>
 nnoremap ,o  :only<CR>
 nnoremap ,p :e <C-R>=resolve(expand("%"))<CR>
-nnoremap ,q
+" nnoremap ,q
 nnoremap ,r :BTags<CR>
 nmap ,s <Plug>Sneak_s
 nmap ,S <Plug>Sneak_S
@@ -2055,6 +2054,9 @@ nnoremap ,v :call fzf#run(fzf#wrap({'source': 'fd $FD_OPTS . $HOME/Dropbox/vimwi
 nnoremap ,x :Focus<CR>
 nnoremap ,y :call ChooseTerm("term-pane", 0)<CR>
 nnoremap ,z :Focus2<CR>
+
+nnoremap [t :tabprevious<CR>
+nnoremap ]t :tabnext<CR>
 
 " terminal
 tnoremap ,t <C-\><C-n>:q<CR>
