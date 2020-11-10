@@ -155,3 +155,5 @@ alias hle="$EDITOR $LEDGER_FILE"
 [ -f $HOME/.dotfiles/zsh/zshrc_init ] && source $HOME/.dotfiles/zsh/zshrc_init
 bindkey '^G' fzf-cd-widget
 
+
+export PATH="$HOME/.poetry/bin:$PATH"

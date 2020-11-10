@@ -934,10 +934,10 @@ let g:go_version_warning = 0
 " ----------------------------------------------------------------------------
 " Plugin - fzf {{{
 " ----------------------------------------------------------------------------
-nnoremap <F3> :call fzf#run(fzf#wrap({'source': 'fd $FD_OPTS . $HOME $HOME/.dotfiles $HOME/.vim', 'sink': 'edit'}))<CR>
-inoremap <F3> :call fzf#run(fzf#wrap({'source': 'fd $FD_OPTS . $HOME $HOME/.dotfiles $HOME/.vim', 'sink': 'edit'}))<CR>
-nnoremap <F4> :call fzf#run(fzf#wrap({'source': 'fd --no-ignore $FD_OPTS .', 'sink': 'edit'}))<CR>
-inoremap <F4> :call fzf#run(fzf#wrap({'source': 'fd --no-ignore $FD_OPTS .', 'sink': 'edit'}))<CR>
+nnoremap <F4> :call fzf#run(fzf#wrap({'source': 'fd $FD_OPTS . $HOME $HOME/.dotfiles $HOME/.vim', 'sink': 'edit'}))<CR>
+inoremap <F4> :call fzf#run(fzf#wrap({'source': 'fd $FD_OPTS . $HOME $HOME/.dotfiles $HOME/.vim', 'sink': 'edit'}))<CR>
+" nnoremap <F4> :call fzf#run(fzf#wrap({'source': 'fd --no-ignore $FD_OPTS .', 'sink': 'edit'}))<CR>
+" inoremap <F4> :call fzf#run(fzf#wrap({'source': 'fd --no-ignore $FD_OPTS .', 'sink': 'edit'}))<CR>
 nnoremap <F5> :call fzf#run(fzf#wrap({'source': 'fd --no-ignore $FD_OPTS . $HOME', 'sink': 'edit'}))<CR>
 inoremap <F5> :call fzf#run(fzf#wrap({'source': 'fd --no-ignore $FD_OPTS . $HOME', 'sink': 'edit'}))<CR>
 nnoremap <Leader>pv :call fzf#vim#gitfiles('', fzf#vim#with_preview('right'))<CR>
@@ -2063,6 +2063,11 @@ nnoremap ]t :tabnext<CR>
 tnoremap ,t <C-\><C-n>:q<CR>
 tnoremap [b <C-\><C-n>:bp<CR>
 tnoremap ]b <C-\><C-n>:bnext<CR>
+
+tnoremap <C-w><C-h> <C-\><C-n><C-w><C-h>
+tnoremap <C-w><C-j> <C-\><C-n><C-w><C-j>
+tnoremap <C-w><C-k> <C-\><C-n><C-w><C-k>
+tnoremap <C-w><C-l> <C-\><C-n><C-w><C-l>
 
 
 " }}}
