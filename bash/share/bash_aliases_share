@@ -560,3 +560,6 @@ alias hle="nvim $LEDGER_FILE"
 command -v bat 2> /dev/null && alias cat="bat"
 
 alias cond="conda deactivate"
+alias nvr_clean="rm /tmp/nvimsocket"
+
+alias ipy="ipython"

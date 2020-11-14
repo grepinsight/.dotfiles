@@ -191,7 +191,9 @@ Plug 'rust-lang/rust.vim'
 " Plug 'fatih/vim-go'
 Plug 'kana/vim-textobj-user'
 " Plug 'davidhalter/jedi-vim'                            " python intellisense
+Plug 'dense-analysis/ale'
 " Plug 'jeetsukumaran/vim-pythonsense'                   " text object for python
+Plug 'goerz/jupytext.vim'
 " Plug 'vim-pandoc/vim-pandoc'
 " Plug 'vim-pandoc/vim-pandoc-syntax'
 
@@ -2035,15 +2037,16 @@ nnoremap ,e :e <C-R>=expand("%:p:h") . "/" <CR>
 nnoremap ,f :Rg! <C-R><C-W><CR>
 nnoremap ,g :GV!<CR>
 nnoremap ,h :History<CR>
+nnoremap ,j :call fzf#run(fzf#wrap({'source': 'fd $FD_OPTS . $HOME $HOME/.dotfiles $HOME/.vim', 'sink': 'edit'}))<CR>
 "nnoremap ,i 
-"nnoremap ,j 
+" nnoremap ,j 
 "nnoremap ,k
 nmap ,l yor
 nnoremap ,m :Magit<CR>
 nnoremap ,n <cmd>lua require'telescope.builtin'.live_grep{}<CR>
 nnoremap ,o  :only<CR>
 nnoremap ,p :e <C-R>=resolve(expand("%"))<CR>
-" nnoremap ,q
+nnoremap ,q :Rg! <C-R>=expand("%:t")<CR>
 nnoremap ,r :BTags<CR>
 nmap ,s <Plug>Sneak_s
 nmap ,S <Plug>Sneak_S
@@ -2128,6 +2131,10 @@ local on_attach = function(client)
     require'diagnostic'.on_attach(client)
 end
 
+-- Enable ccls for C++
+nvim_lsp.ccls.setup({ on_attach=on_attach })
+--nvim_lsp.clangd.setup({on_attach=on_attach})
+
 -- Enable rust_analyzer
 nvim_lsp.rust_analyzer.setup({ 
     on_attach=on_attach,
@@ -2142,9 +2149,6 @@ nvim_lsp.bashls.setup({ on_attach=on_attach })
 
 -- R Language Server
 nvim_lsp.r_language_server.setup({ on_attach=on_attach })
-
--- Enable ccls for C++
-nvim_lsp.ccls.setup({ on_attach=on_attach })
 
 -- Microsoft Python LSP
 nvim_lsp.pyls_ms.setup({ on_attach=on_attach,
@@ -2182,3 +2186,16 @@ ab :bulb: 💡
 ab :point_right: 👉
 ab :white_check_mark: ✅
 ab :link: 🔗
+
+call dirvish#add_icon_fn({p -> p[-1:]=='/'?'📂':'📄'})
+" How to unmap things
+" augroup dirvish_config
+"   autocmd!
+"   autocmd FileType dirvish silent! unmap <buffer> <C-p>
+" augroup END
+
+augroup dirvish_config
+  autocmd!
+  autocmd FileType dirvish
+              \ nnoremap <silent><buffer> t ddO<Esc>:let @"=substitute(@", '\n', '', 'g')<CR>:r ! find "<C-R>"" -maxdepth 1 -print0 \| xargs -0 ls -Fd<CR>:silent! keeppatterns %s/\/\//\//g<CR>:silent! keeppatterns %s/[^a-zA-Z0-9\/]$//g<CR>:silent! keeppatterns g/^$/d<CR>:noh<CR>
+augroup END

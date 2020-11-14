@@ -106,8 +106,11 @@ endsnippet
 
 snippet arg "Argument Parser" b
 parser = argparse.ArgumentParser(description='A command line interface for $1')
-
-parser.add_argument('-c', '--config',
-                    help='File containing configuration settings.',
-                    type=str)
+parser.add_argument("-o", "--outdir",
+                 action="store",
+                 dest="outdir",
+                 type=str,
+                 help="help message",
+                 required=True,
+                 metavar="STR")
 endsnippet
