@@ -27,6 +27,7 @@ autocmd FileType rst syntax off
 autocmd FileType json set foldmethod=indent
 autocmd BufNewFile,BufRead *.org setfiletype org
 autocmd BufNewFile,BufRead *.snk setfiletype snakemake
+autocmd BufNewFile,BufRead Snakefile* setfiletype snakemake
 silent! source $VIMRUNTIME/defaults.vim
 set encoding=UTF-8
 filetype plugin indent on
@@ -41,7 +42,7 @@ set cursorline          " highlight current line
 set regexpengine=1
 set showmatch           " highlight matching [{()}]
 set foldenable          " enable folding
-set foldlevelstart=0    " open most folds by default
+set foldlevelstart=10    " open most folds by default
 "set foldmethod=indent   " fold based on indent level
 set splitright          " split navigation
 set hidden              " allow modified/unsaved buffers in the background.
@@ -257,7 +258,8 @@ Plug 'broadinstitute/vim-wdl'
 
 
 " VimOrganizer sutff
-Plug 'hsitz/VimOrganizer'
+"Plug 'hsitz/VimOrganizer'
+Plug 'axvr/org.vim'
 Plug 'chrisbra/NrrwRgn' " like emacs narrow region
 Plug 'mattn/calendar-vim'
 
