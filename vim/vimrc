@@ -2068,6 +2068,7 @@ nnoremap ]t :tabnext<CR>
 tnoremap ,t <C-\><C-n>:q<CR>
 tnoremap [b <C-\><C-n>:bp<CR>
 tnoremap ]b <C-\><C-n>:bnext<CR>
+tmap <C-p> <C-\><C-n>:CtrlP<CR>
 
 tnoremap <C-w><C-h> <C-\><C-n><C-w><C-h>
 tnoremap <C-w><C-j> <C-\><C-n><C-w><C-j>
