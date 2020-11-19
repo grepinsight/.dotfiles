@@ -1965,6 +1965,9 @@ nnoremap <Leader>fme :set foldmethod=expr<CR>
 nnoremap <Leader>fmi :set foldmethod=indent<CR>
 nnoremap <Leader>fmm :set foldmethod=marker<CR>
 nnoremap <Leader>fms :set foldmethod=syntax<CR>
+nnoremap <Leader>syn :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
+\ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
+\ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
 nnoremap <Leader>gi :e ./.gitignore<CR>
 nnoremap <Leader>hh :Helptags<CR>
 nnoremap <Leader>ht :Helptags<CR>
