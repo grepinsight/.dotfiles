@@ -242,6 +242,7 @@ alias cdr='cd $(git rev-parse --show-toplevel)' # go to git root directory
 
 ## Git Status
 alias gs="git status"
+alias gs.="git status ."
 alias gss="git status -s"
 alias gst="git status --untracked-files=no"
 alias gsu="git ls-files --others --exclude-standard"
@@ -564,3 +565,4 @@ alias nvr_clean="rm /tmp/nvimsocket"
 
 alias ipy="ipython --TerminalInteractiveShell.editing_mode=vi"
 alias ipython="ipython --TerminalInteractiveShell.editing_mode=vi"
+

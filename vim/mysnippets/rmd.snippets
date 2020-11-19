@@ -542,3 +542,21 @@ knitr::opts_chunk$set(message = FALSE)
 knitr::opts_chunk$set(warning = FALSE)
 \`\`\`
 endsnippet
+
+snippet !header "header" b
+---
+title: "${1:}"
+author: "${2:Albert Lee}"
+date: "\`r Sys.Date()\`"
+output:
+  rmdformats::readthedown:
+    code_folding: hide
+    lightbox: true
+    gallery: true
+    fig_caption: true
+    fig_width: 14
+    fig_height: 8
+    df_print: kable
+    number_sections: true
+---
+endsnippet
