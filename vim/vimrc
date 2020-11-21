@@ -165,7 +165,7 @@ Plug 'junegunn/gv.vim'
 Plug 'rhysd/git-messenger.vim'
 Plug 'junkblocker/git-time-lapse'
 " Plug 'lambdalisue/gina.vim' " TRIAL PERIOD
-" Plug 'fcpg/vim-osc52'
+Plug 'fcpg/vim-osc52'
 " Plug 'junegunn/vim-github-dashboard'
 " Plug 'mattn/gist-vim'
 " Plug 'mattn/webapi-vim'
