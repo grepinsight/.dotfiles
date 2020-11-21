@@ -18,3 +18,14 @@ fi
 
 mkdir -p ${JUPYTER_DIR}/nbconfig
 ln -sf $HOME/.dotfiles/jupyter/notebook.json  ${JUPYTER_DIR}/nbconfig/notebook.json
+
+if [[ ! -d $HOME/src/jupyter_contrib_nbextensions ]];then
+    cd $HOME/src && \
+        git clone https://github.com/ipython-contrib/jupyter_contrib_nbextensions.git
+
+    cp -r $HOME/src/jupyter_contrib_nbextensions/src/jupyter_contrib_nbextensions/nbextensions/toc2 $(jupyter --data-dir)/nbextensions/
+    cp -r $HOME/src/jupyter_contrib_nbextensions/src/jupyter_contrib_nbextensions/nbextensions/collapsible_headings $(jupyter --data-dir)/nbextensions/
+
+    jupyter nbextension enable toc2/main
+    jupyter nbextension enable collapsible_headings/main
+fi
