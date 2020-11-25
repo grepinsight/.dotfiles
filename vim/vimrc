@@ -104,6 +104,7 @@ Plug 'vim-airline/vim-airline'
 " Plug 'cormacrelf/vim-colors-github'
 
 " " Looks / Status
+Plug 'nvim-treesitter/nvim-treesitter'
 " " Start page
 " Plug 'ryanoasis/vim-devicons'
 
@@ -2045,6 +2046,7 @@ nnoremap ,h :History<CR>
 nnoremap ,j :call fzf#run(fzf#wrap({'source': 'fd $FD_OPTS . $HOME $HOME/.dotfiles $HOME/.vim', 'sink': 'edit'}))<CR>
 "nnoremap ,i 
 " nnoremap ,j 
+nnoremap ,j :lua vim.lsp.stop_client(vim.lsp.get_active_clients())<CR>
 "nnoremap ,k
 nmap ,l yor
 nnoremap ,m :Magit<CR>
@@ -2205,3 +2207,30 @@ augroup dirvish_config
   autocmd FileType dirvish
               \ nnoremap <silent><buffer> t ddO<Esc>:let @"=substitute(@", '\n', '', 'g')<CR>:r ! find "<C-R>"" -maxdepth 1 -print0 \| xargs -0 ls -Fd<CR>:silent! keeppatterns %s/\/\//\//g<CR>:silent! keeppatterns %s/[^a-zA-Z0-9\/]$//g<CR>:silent! keeppatterns g/^$/d<CR>:noh<CR>
 augroup END
+
+
+silent! if has_key(g:plugs, 'nvim-treesitter')
+lua <<EOF
+require'nvim-treesitter.configs'.setup {
+  ensure_installed = "maintained", -- one of "all", "maintained" (parsers with maintainers), or a list of languages
+  highlight = {
+    enable = true,              -- false will disable the whole extension
+  },
+  incremental_selection = {
+    enable = true,
+    keymaps = {
+      init_selection = "gnn",
+      node_incremental = "grn",
+      scope_incremental = "grc",
+      node_decremental = "grm",
+    },
+  },
+}
+EOF
+
+    set foldmethod=expr
+    set foldexpr=nvim_treesitter#foldexpr()
+endif
+
+
+

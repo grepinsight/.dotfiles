@@ -15,7 +15,7 @@ nvim_lsp.ccls.setup({ on_attach=on_attach })
 
 EOF
 
-set foldmethod=syntax
+" set foldmethod=syntax
 
 " nnoremap <silent> <c-]> <cmd>lua vim.lsp.buf.definition()<CR>
 nnoremap <silent> K     <cmd>lua vim.lsp.buf.hover()<CR>
