@@ -40,3 +40,4 @@ set signcolumn=yes
 
 nnoremap <Leader>T :lua require'lsp_extensions'.inlay_hints()
 
+let g:rustfmt_autosave = 1

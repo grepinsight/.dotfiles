@@ -1,3 +1,14 @@
+" vim: set foldmethod=marker foldlevel=0 nomodeline:
+" ============================================================================
+" Automatically install Vim Plug {{{
+" ----------------------------------------------------------------------------
+if empty(glob('~/.vim/autoload/plug.vim'))
+  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+" }}}
+"
 call plug#begin('~/.vim/plugged')
 
 Plug 'kassio/neoterm'
@@ -16,8 +27,12 @@ Plug 'nvim-treesitter/nvim-treesitter'
 " Session Management
 " Plug 'tpope/vim-obsession'
 Plug 'airblade/vim-rooter'
+    let g:rooter_silent_chdir = 1
+    let g:startify_change_to_dir = 0
+    let g:rooter_change_directory_for_non_project_files = 'current'
 
-" " Buffer Management
+
+" Buffer Management
 Plug 'vim-scripts/BufOnly.vim'
 
 " " Files related
@@ -46,14 +61,20 @@ Plug 'tpope/vim-unimpaired'
 
 " Editing
 Plug 'tpope/vim-surround'              " surround text objects with whatever
+Plug 'AndrewRadev/splitjoin.vim'
 Plug 'junegunn/vim-easy-align'         " perform alignment easier
 " Plug 'tommcdo/vim-exchange'            " swap two text objects
 " Plug 'michaeljsmith/vim-indent-object' " text object
-" Plug 'AndrewRadev/splitjoin.vim'
 Plug 'tpope/vim-repeat'
 " Plug 'terryma/vim-multiple-cursors'
 " Plug 'junegunn/vim-after-object'
+    silent! if has_key(g:plugs, 'vim-after-object')
+      autocmd VimEnter * silent! call after_object#enable('=', ':', '#', ' ', '|')
+    endif
 Plug 'sjl/gundo.vim'
+  " python3 support
+  let g:gundo_prefer_python3 = 1
+
 Plug 'tpope/vim-commentary'
 " Plug 'Yggdroot/indentLine'
 " Plug 'dhruvasagar/vim-table-mode'
@@ -86,6 +107,7 @@ Plug 'tpope/vim-dispatch'
 " Plug 'ncm2/ncm2'
 " Plug 'roxma/nvim-yarp'
 " Plug 'jalvesaq/Nvim-R'
+"let vimrplugin_assign = 0 " Stop annoying vimRplugin reassignment
 " Plug 'gaalcaras/ncm-R'
 " Plug 'ncm2/ncm2-bufword'
 " Plug 'ncm2/ncm2-path'
@@ -106,6 +128,23 @@ Plug 'goerz/jupytext.vim'
 
 
 Plug 'SirVer/ultisnips'
+    let g:UltiSnipsExpandTrigger="<S-tab>"
+    let g:UltiSnipsJumpForwardTrigger="<Tab>"
+    let g:UltiSnipsJumpBackwardTrigger="<S-Tab>"
+    "
+    "let g:UltiSnipsExpandTrigger = '<tab>'
+    "let g:UltiSnipsJumpForwardTrigger = '<tab>'
+    "let g:UltiSnipsJumpBackwardTrigger = '<s-tab>'
+
+    " " If you want :UltiSnipsEdit to split your window.
+    let g:UltiSnipsEditSplit="vertical"
+    let g:UltiSnipsNoPythonWarning = 1
+    let g:UltiSnipsSnippetDirectories=["mysnippets"]
+
+    noremap <silent> <Leader>ult :UltiSnipsEdit!<CR>2<CR>
+    vmap <F9> :call UltiSnips#SaveLastVisualSelection()<CR>gvs
+    imap <F9> <C-R>=UltiSnips#ExpandSnippet()<CR>
+
 Plug 'honza/vim-snippets'
 Plug 'ervandew/supertab'
 " Plug 'grepinsight/mysnippets'
@@ -165,6 +204,9 @@ Plug 'broadinstitute/vim-wdl'
 
 " VimOrganizer sutff
 "Plug 'hsitz/VimOrganizer'
+    " let g:org_agenda_files=['~/Dropbox/vimwiki/*.org']
+    " let g:org_todo_keywords=['TODO', 'DONE', 'MEETING', 'QUESTION']
+    "
 Plug 'axvr/org.vim'
 Plug 'chrisbra/NrrwRgn' " like emacs narrow region
 Plug 'mattn/calendar-vim'
@@ -204,8 +246,17 @@ Plug 'nvim-lua/diagnostic-nvim'
 Plug 'puremourning/vimspector'
 Plug 'szw/vim-maximizer'
 
-Plug 'nvim-lua/popup.nvim'
-Plug 'nvim-lua/plenary.nvim'
-Plug 'nvim-lua/telescope.nvim'
+"Plug 'nvim-lua/popup.nvim'
+"Plug 'nvim-lua/plenary.nvim'
+"Plug 'nvim-lua/telescope.nvim'
+
+" Fire Nvim
+Plug 'glacambre/firenvim', { 'do': { _ -> firenvim#install(0) } }
+
+if exists('g:started_by_firenvim')
+    set guifont=Monaco:h12
+    nnoremap ,l set lines=10
+endif
+" extension available at  https://chrome.google.com/webstore/detail/firenvim/egpjdkipkomnmjhjmdamaniclmdlobbo
 
 call plug#end()

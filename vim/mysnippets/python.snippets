@@ -114,3 +114,20 @@ parser.add_argument("-o", "--outdir",
                  required=True,
                  metavar="STR")
 endsnippet
+
+
+snippet !alt "Altair plot structure" b
+(alt.Chart($1)
+  .mark_point()
+  .encode(
+    x=$2,
+    y=$3
+    )
+  .properties(
+    height=300,
+    width=300,
+    title=$4
+  )
+)
+
+endsnippet

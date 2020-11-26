@@ -23,11 +23,17 @@ endif
 
 " Vim 8 defaults
 unlet! skip_defaults_vim
-autocmd FileType rst syntax off
-autocmd FileType json set foldmethod=indent
-autocmd BufNewFile,BufRead *.org setfiletype org
-autocmd BufNewFile,BufRead *.snk setfiletype snakemake
-autocmd BufNewFile,BufRead Snakefile* setfiletype snakemake
+
+
+augroup syntax_setup
+    autocmd!
+    autocmd FileType rst syntax off
+    autocmd FileType json set foldmethod=indent
+    autocmd BufNewFile,BufRead *.org setfiletype org
+    autocmd BufNewFile,BufRead *.snk setfiletype snakemake
+    autocmd BufNewFile,BufRead Snakefile* setfiletype snakemake
+augroup END
+
 silent! source $VIMRUNTIME/defaults.vim
 set encoding=UTF-8
 filetype plugin indent on
@@ -68,13 +74,36 @@ set undodir=$HOME/.vim/undo " where to save undo histories
 set undolevels=10000         " How many undos
 set undoreload=10000        " number of lines to save for undo
 set mouse=a
+" List Chars
+set list                              " show whitespace
+set listchars=nbsp:⦸                  " CIRCLED REVERSE SOLIDUS (U+29B8, UTF-8: E2 A6 B8)
+set listchars+=tab:▷┅                 " WHITE RIGHT-POINTING TRIANGLE (U+25B7, UTF-8: E2 96 B7)
+                                      " + BOX DRAWINGS HEAVY TRIPLE DASH HORIZONTAL (U+2505, UTF-8: E2 94 85)
+set listchars+=extends:»  " RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK (U+00BB, UTF-8: C2 BB)
+set listchars+=precedes:« " LEFT-POINTING DOUBLE ANGLE QUOTATION MARK (U+00AB, UTF-8: C2 AB)
+set listchars+=trail:•    " BULLET (U+2022, UTF-8: E2 80 A2)
+set nojoinspaces          " don't autoinsert two spaces after '.', '?', '!' for join command
+set t_ut=                 " Make sure background doesn't break
+set t_Co=256
+" Use bash rather than sh
+if &shell == 'sh'
+    set shell=bash
+endif
+
+" Set completeopt to have a better completion experience
+" :help completeopt
+" menuone: popup even when there's only one match
+" noinsert: Do not insert text until a selection is made
+" noselect: Do not select, force user to select one from the menu
+set completeopt=menuone,noinsert,noselect
+
+" Avoid showing extra messages when using completion
+set shortmess+=c
+
 " }}}
 " ============================================================================
 " Variables {{{
 " ============================================================================
-
-let vimrplugin_assign = 0 " Stop annoying vimRplugin reassignment
-let s:darwin = has('mac')
 
 " Define maplocalleader
 nnoremap <SPACE> <Nop>
@@ -82,21 +111,7 @@ let maplocalleader=" "
 
 " }}}
 " ============================================================================
-" Automatically install Vim Plug {{{
-" ----------------------------------------------------------------------------
-if empty(glob('~/.vim/autoload/plug.vim'))
-  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
-    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
-endif
-" }}}
-" ============================================================================
-" Plugin Setup VIM_PLUGIN BLOCK {{{
-" ============================================================================
-
 source ~/.dotfiles/vim/plugins.vim
-set t_Co=256
-
 
 if has('termguicolors')
     set termguicolors
@@ -172,7 +187,6 @@ endfunction
 " execute "set <M-m>=\033m"
 inoremap <M--> <-
 inoremap <M-m> %>%
-command! MakeTags !ctags -R .
 " }}}
 " ----------------------------------------------------------------------------
 " Remapping {{{
@@ -184,7 +198,6 @@ xnoremap j gj
 xnoremap k gk
 
 
-nnoremap <leader>ln :Lines<CR>
 nmap \q :nohlsearch<CR>
 "nmap <leader>e :NERDTreeToggle<CR>
 nmap <leader>e :Dirvish<CR>
@@ -199,20 +212,11 @@ nnoremap n nzzzv
 nnoremap N Nzzzv
 nnoremap vv ^vg_
 
-" Make execute able
-nnoremap <Leader>x :!chmod 750 %<CR>
 command! ReadOnlyfy execute "normal! \<esc>:!chmod 440 %<CR>"
-
-" space open/closes folds
-nnoremap <space> za
 
 " highlight last inserted text
 nnoremap gV `[v`]
 
-" Editing source files
-nnoremap <Leader>ev :e $HOME/.dotfiles/vim/vimrc<CR>
-nnoremap <Leader>sv :source $MYVIMRC<CR>
-nnoremap <Leader>es :vsplit ~/.vim/plugged/mysnippets/UltiSnips<CR>
 "reselect after indenting
 vnoremap < <gv
 vnoremap > >gv
@@ -257,48 +261,28 @@ endfunction
 command! BufferSmartDelete :call BufferSmartDelete()
 nnoremap BB :call BufferSmartDelete()<CR>
 nnoremap QQ :q<CR>
-
 " reopen the closed buffer
 nnoremap <c-s-t> :b#<CR>:e<CR>
 " 
 
 " }}}
 " ============================================================================
-" PythonRelated {{{
-
-function! ImportFix()
-    ^cwfrom^[$F.r i import^[^
-endfunction
-
-" TODO run it only on python file and only if yapf is available
-" setlocal equalprg=yapf
-
-" Import fix
-nnoremap <Leader>if ^cwfrom<Esc>$F.r i import<Esc>^ 
-
-
-command! BlackAuto autocmd BufWritePre *.py execute ':Black'
-
-autocmd FileType python nmap <Space> <Plug>SlimeParagraphSend
-autocmd FileType python vmap <Space> <Plug>SlimeRegionSend
-
-" }}}
-" ============================================================================
 " ============================================================================
 " save when losing focus {{{
-au FocusLost * :silent! wall
-au FocusLost * :wa
+autocmd FocusLost * :silent! wall
+autocmd FocusLost * :wa
 
 " Make sure Vim returns to the same line when you reopen a file.
 augroup line_return
-    au!
-    au BufReadPost *
+    autocmd!
+    autocmd BufReadPost *
         \ if line("'\"") > 0 && line("'\"") <= line("$") |
         \     execute 'normal! g`"zvzz' |
         \ endif
 augroup END
 
-au CursorHold * checktime
+" check file change every 4 seconds ('CursorHold') and reload the buffer upon detecting change
+autocmd CursorHold * checktime
 
 
 " }}}
@@ -364,8 +348,6 @@ function! s:AckMotion(type) abort
     let @@ = reg_save
 endfunction
 
-" check file change every 4 seconds ('CursorHold') and reload the buffer upon detecting change
-au CursorHold * checktime
 
 
 "airline support
@@ -396,15 +378,10 @@ let NERDTreeChDirMode=0
 let g:ctrlp_use_caching = 0
 let g:ctrlp_user_command = 'fd $FD_OPTS -E "*.pdf" -E "*.Rd"'
 
-" Tagbar
-nmap <F8> :TagbarToggle<CR>
-
 " ----------------------------------------------------------------------------
 " Plugin - Fugitive
 " ----------------------------------------------------------------------------
-"  - blame
-
-function! s:BlameToggle() abort
+function! BlameToggle() abort
   let found = 0
   for winnr in range(1, winnr('$'))
     if getbufvar(winbufnr(winnr), '&filetype') ==# 'fugitiveblame'
@@ -416,16 +393,6 @@ function! s:BlameToggle() abort
     Git blame
   endif
 endfunction
-
-" nnoremap <leader>b :Gblame<CR>
-nnoremap <leader>b :call <SID>BlameToggle()<CR>
-nnoremap <silent> <leader>gcv :Gcommit -v <CR>
-nnoremap <leader>gw :Gwrite <CR>:Gcommit -v<CR>
-nnoremap <leader>gf :GitGutterFold<CR>
-nnoremap <leader>vd :Gvdiff<CR>
-nnoremap <leader>gvd :Gvdiff<CR>
-nnoremap <leader>gd :Gvdiff<CR>
-nnoremap <leader>gau :Git add -u<CR><CR>
 
 "  - diff
 command! Greview :Git! diff --staged
@@ -441,16 +408,7 @@ function! ToggleGStatus()
     endif
 endfunction
 command! ToggleGStatus :call ToggleGStatus()
-nnoremap <leader>s :ToggleGStatus<CR>
-nnoremap <leader>ss :ToggleGStatus<CR>
-nnoremap <leader><leader>s :ToggleGStatus<CR>
 
-" Copy and Paste : https://vi.stackexchange.com/questions/84/how-can-i-copy-text-to-the-system-clipboard-from-vim
-"noremap <Leader>y "*y
-noremap <Leader> y:call SendViaOSC52(getreg('"'))<cr>
-noremap <Leader>Y "+y
-noremap <Leader>p "*p
-noremap <Leader>P "+p
 
 " Autopair
 let g:AutoPairsShortcutToggle = '<Leader>m'
@@ -490,18 +448,6 @@ let g:tagbar_type_markdown = {
     \ 'sort': 0,
 \ }
 
-" let g:tagbar_type_markdown = {
-"             \ 'ctagstype' : 'markdown',
-"             \ 'kinds' : [
-"                 \ 'h:headings',
-"                 \ 'l:links',
-"                 \ 'i:images'
-"             \ ],
-"     \ 'sort' : 0
-" \ }
-
-"colorscheme Tomorrow-Night
-"
 "" Set color scheme according to current time of day.
 let hr = str2nr(strftime('%H'))
 if hr <= 6 || hr >= 18
@@ -516,26 +462,6 @@ try
 catch
 endtry
 
-" github theme
-" colorscheme github
-" " if you use airline / lightline
-" let g:airline_theme = "github"
-" let g:lightline = { 'colorscheme': 'github' }
-
-"colorscheme dracula
-"colorscheme deus
-
-" Mapping selecting mappings
-nmap <leader><tab> <plug>(fzf-maps-n)
-xmap <leader><tab> <plug>(fzf-maps-x)
-omap <leader><tab> <plug>(fzf-maps-o)
-
-" Insert mode completion
-imap <c-x><c-k> <plug>(fzf-complete-word)
-imap <c-x><c-f> <plug>(fzf-complete-path)
-imap <c-x><c-j> <plug>(fzf-complete-file-ag)
-imap <c-x><c-l> <plug>(fzf-complete-line)
-
 "=================================================================
 " Plugin - Vim Test
 "=================================================================
@@ -543,12 +469,6 @@ let test#python#runner = 'pytest'
 "let test#python#pytest#options = '-s -v'
 let test#python#pytest#options = ''
 
-" these "Ctrl mappings" work well when Caps Lock is mapped to Ctrl
-nmap <silent> t<C-n> :TestNearest<CR> " t Ctrl+n
-nmap <silent> t<C-f> :TestFile<CR>    " t Ctrl+f
-nmap <silent> t<C-s> :TestSuite<CR>   " t Ctrl+s
-nmap <silent> t<C-l> :TestLast<CR>    " t Ctrl+l
-nmap <silent> t<C-g> :TestVisit<CR>   " t Ctrl+g
 let g:test#preserve_screen = 1
 let test#strategy = "dispatch"
 
@@ -586,8 +506,6 @@ autocmd! User GoyoLeave nested call <SID>goyo_leave()
 " to play nicely with YCM
 "let g:jedi#completions_enabled = 0
 
-
-
 " }}}
 
 " }}}
@@ -595,42 +513,11 @@ autocmd! User GoyoLeave nested call <SID>goyo_leave()
 " Plugin Specific Settings {{{
 " ============================================================================
 " ----------------------------------------------------------------------------
-" # Rooter {{{
-" ----------------------------------------------------------------------------
-let g:rooter_silent_chdir = 1
-let g:startify_change_to_dir = 0
-let g:rooter_change_directory_for_non_project_files = 'current'
-" }}}
-" ----------------------------------------------------------------------------
-" # OrgMode {{{
-" ----------------------------------------------------------------------------
-let g:org_agenda_files=['~/Dropbox/vimwiki/*.org']
-let g:org_todo_keywords=['TODO', 'DONE', 'MEETING', 'QUESTION']
-" }}}
-" ----------------------------------------------------------------------------
 " # coc {{{
 " ----------------------------------------------------------------------------
 
 autocmd FileType vimwiki let b:coc_suggest_disable = 1
 let g:coc_global_extensions = ['coc-emoji', 'coc-eslint', 'coc-prettier', 'coc-tsserver', 'coc-tslint', 'coc-tslint-plugin', 'coc-css', 'coc-json', 'coc-pyls', 'coc-yaml']
-
-" Remap keys for gotos
-nmap <silent> <leader>ld <Plug>(coc-definition)
-nmap <silent> <F12> <Plug>(coc-definition)
-nmap <silent> <leader>lt <Plug>(coc-type-definition)
-nmap <silent> <leader>li <Plug>(coc-implementation)
-nmap <silent> <leader>lf <Plug>(coc-references)
-
-" coc.vim stuff
-
-
-"nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gy <Plug>(coc-type-definition)
-" nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> gr <Plug>(coc-references)
-
-" Remap for rename current word
-nmap <leader>rn <Plug>(coc-rename)
 
 
 function! ShowDocumentation()
@@ -682,17 +569,6 @@ let g:pandoc#modules#disabled = ['formatting']
 nnoremap <silent> <Leader> :<c-u>WhichKey  '\'<CR>
 nnoremap <silent> , :<c-u>WhichKey  ','<CR>
 " }}}
-" ----------------------------------------------------------------------------
-" EasyAlign {{{
-" ----------------------------------------------------------------------------
-" Start interactive EasyAlign in visual mode (e.g. vip<Enter>)
-vmap <Enter> <Plug>(EasyAlign)
-
-" Start interactive EasyAlign in visual mode (e.g. vipga)
-xmap ga <Plug>(EasyAlign)
-
-" Start interactive EasyAlign for a motion/text object (e.g. gaip)
-nmap ga <Plug>(EasyAlign)
 " }}}
 " ----------------------------------------------------------------------------
 " Plugin - vim-sneak {{{
@@ -700,22 +576,7 @@ nmap ga <Plug>(EasyAlign)
 let g:sneak#s_next = 1
 
 " }}}
-" ----------------------------------------------------------------------------
-" Plugin - vim-wiki {{{
-" ----------------------------------------------------------------------------
-" Vimwiki
-nnoremap ]d :VimwikiDiaryNextDay<CR>
-nnoremap [d :VimwikiDiaryPrevDay<CR>
-nnoremap <Leader>toc :VimwikiTOC<CR>
-let g:vimwiki_list = [{'path': '~/Dropbox/vimwiki/',
-                   \ 'syntax': 'markdown', 'ext': '.md'}]
-let g:auto_tags = 1
-let g:vimwiki_table_mappings = 0
-let g:vimwiki_conceallevel = 1
 
-
-autocmd FileType vimwiki let g:vim_markdown_folding_disabled = 1  " Let the vimwiki handle the folding
-" }}}
 " ----------------------------------------------------------------------------
 " Plugin - vim-surround {{{
 " ----------------------------------------------------------------------------
@@ -735,18 +596,11 @@ inoremap <F4> :call fzf#run(fzf#wrap({'source': 'fd $FD_OPTS . $HOME $HOME/.dotf
 " inoremap <F4> :call fzf#run(fzf#wrap({'source': 'fd --no-ignore $FD_OPTS .', 'sink': 'edit'}))<CR>
 nnoremap <F5> :call fzf#run(fzf#wrap({'source': 'fd --no-ignore $FD_OPTS . $HOME', 'sink': 'edit'}))<CR>
 inoremap <F5> :call fzf#run(fzf#wrap({'source': 'fd --no-ignore $FD_OPTS . $HOME', 'sink': 'edit'}))<CR>
-nnoremap <Leader>pv :call fzf#vim#gitfiles('', fzf#vim#with_preview('right'))<CR>
 " }}}
 
-" python3 support
-let g:gundo_prefer_python3 = 1
-" }}}
 " ----------------------------------------------------------------------------
 " vim-after-object {{{
 " ----------------------------------------------------------------------------
-silent! if has_key(g:plugs, 'vim-after-object')
-  autocmd VimEnter * silent! call after_object#enable('=', ':', '#', ' ', '|')
-endif
 " }}}
 " ----------------------------------------------------------------------------
 " Plugin - Calendar {{{
@@ -764,8 +618,6 @@ nnoremap <leader>a :A <CR>
 " ----------------------------------------------------------------------------
 " Ale {{{
 " ----------------------------------------------------------------------------
-nnoremap ]al :ALENext<CR>
-nnoremap [al :ALEPrevious<CR>
 
 let g:ale_linters={'python': ['mypy'], 'r': ['lintr'], 'wdl': ['wdl-linter'] }
 let g:ale_fixers = {'python': ['yapf'], 'r': ['styler'], 'rmd': ['styler']}
@@ -785,22 +637,6 @@ let g:ale_python_mypy_options="--ignore-missing-imports"
 " Ultistnip {{{
 " ----------------------------------------------------------------------------
 
-let g:UltiSnipsExpandTrigger="<S-tab>"
-let g:UltiSnipsJumpForwardTrigger="<Tab>"
-let g:UltiSnipsJumpBackwardTrigger="<S-Tab>"
-"
-"let g:UltiSnipsExpandTrigger = '<tab>'
-"let g:UltiSnipsJumpForwardTrigger = '<tab>'
-"let g:UltiSnipsJumpBackwardTrigger = '<s-tab>'
-
-" " If you want :UltiSnipsEdit to split your window.
-let g:UltiSnipsEditSplit="vertical"
-let g:UltiSnipsNoPythonWarning = 1
-let g:UltiSnipsSnippetDirectories=["mysnippets"]
-
-noremap <silent> <Leader>ult :UltiSnipsEdit!<CR>2<CR>
-vmap <F9> :call UltiSnips#SaveLastVisualSelection()<CR>gvs
-imap <F9> <C-R>=UltiSnips#ExpandSnippet()<CR>
 " }}}
 " ----------------------------------------------------------------------------
 " Wordy {{{
@@ -859,37 +695,6 @@ function! RenameFile() "{{{
 endfunction
 nnoremap <F2> :call RenameFile()<cr>
 
-"}}}
-" }}}
-" ============================================================================
-" Unused/Disabled {{{
-"hi Comment  guifg=#80a0ff ctermfg=darkred
-"
-""Buffer navigation
-"nnoremap <silent> [b :bprevious<CR>
-"nnoremap <silent> ]b :bnext<CR>
-"nnoremap <silent> [B :bfirst<CR>
-"nnoremap <silent> ]B :blast<CR>
-"
-"Remapping marking pos
-" nnoremap ' `
-" nnoremap ` '
-
-" let g:indentguides_state = 0
-" function! IndentGuides() " {{{
-"     if g:indentguides_state
-"         let g:indentguides_state = 0
-"         2match None
-"     else
-"         let g:indentguides_state = 1
-"         execute '2match IndentGuides /\%(\_^\s*\)\@<=\%(\%'.(0*&sw+1).'v\|\%'.(1*&sw+1).'v\|\%'.(2*&sw+1).'v\|\%'.(3*&sw+1).'v\|\%'.(4*&sw+1).'v\|\%'.(5*&sw+1).'v\|\%'.(6*&sw+1).'v\|\%'.(7*&sw+1).'v\)\s/'
-"     endif
-" endfunction " }}}
-" hi def IndentGuides guibg=#303030 ctermbg=234
-" nnoremap <leader>I :call IndentGuides()<cr>
-"
-" }}}
-" ============================================================================
 " ============================================================================
 " Editing Setting {{{
 " ============================================================================
@@ -909,15 +714,6 @@ endif
 " Whitespace Decoration {{{
 " View white space with special characters
 "
-" List Chars
-set list                              " show whitespace
-set listchars=nbsp:⦸                  " CIRCLED REVERSE SOLIDUS (U+29B8, UTF-8: E2 A6 B8)
-set listchars+=tab:▷┅                 " WHITE RIGHT-POINTING TRIANGLE (U+25B7, UTF-8: E2 96 B7)
-                                      " + BOX DRAWINGS HEAVY TRIPLE DASH HORIZONTAL (U+2505, UTF-8: E2 94 85)
-set listchars+=extends:»              " RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK (U+00BB, UTF-8: C2 BB)
-set listchars+=precedes:«             " LEFT-POINTING DOUBLE ANGLE QUOTATION MARK (U+00AB, UTF-8: C2 AB)
-set listchars+=trail:•                " BULLET (U+2022, UTF-8: E2 80 A2)
-set nojoinspaces                      " don't autoinsert two spaces after '.', '?', '!' for join command
 
 " }}}
 " ============================================================================
@@ -1579,84 +1375,11 @@ command! -bang -range=% -nargs=* SortUnfolded call setline(<line1>, getline(<lin
 
 " }}}
 " ============================================================================
-" ============================================================================
-" # Comma Leader key {{{
-"
-
-" # Bracket Leader keys
-nnoremap <silent> ]j :call NextClosedFold('j')<cr>
-nnoremap <silent> [j :call NextClosedFold('k')<cr>
-" if v:version >= 704
-" else
-" endif
-
-" }}}
-" ============================================================================
-" ============================================================================
-" # Dynamic Numbering {{{
-
-" Dynamic numbering + Colorize line numbers in insert and visual modes
-" From https://stackoverflow.com/a/15587011/1058663
-" ------------------------------------------------
-function! SetCursorLineNrColorInsert(mode)
-    " Insert mode: blue
-    if a:mode == "i"
-        highlight CursorLineNr ctermfg=4 guifg=#268bd2
-        set norelativenumber
-
-    " Replace mode: red
-    elseif a:mode == "r"
-        highlight CursorLineNr ctermfg=1 guifg=#dc322f
-
-    endif
-endfunction
-
-
-function! SetCursorLineNrColorVisual()
-    set updatetime=0
-
-    " Visual mode: orange
-    highlight CursorLineNr cterm=none ctermfg=9 guifg=#cb4b16
-    set relativenumber
-endfunction
-
-
-function! ResetCursorLineNrColor()
-    set updatetime=4000
-    highlight CursorLineNr cterm=none ctermfg=0 guifg=#073642
-    set norelativenumber
-endfunction
-
-
-" " Toggle relative number / absolute number based on visual mode or normal mode
-" vnoremap <silent> <expr> <SID>SetCursorLineNrColorVisual SetCursorLineNrColorVisual()
-
-" " Need to set this in order to make SetCursorLineNrColorVisual work
-" nnoremap <silent> <script> v :call SetCursorLineNrColorVisual()<CR>v
-" nnoremap <silent> <script> V :call SetCursorLineNrColorVisual()<CR>V
-" nnoremap <silent> <script> <C-v> :call SetCursorLineNrColorVisual()<CR><C-v>
-
-" augroup CursorLineNrColorSwap
-"     autocmd!
-"     autocmd InsertEnter * call SetCursorLineNrColorInsert(v:insertmode)
-"     autocmd InsertLeave * call ResetCursorLineNrColor()
-"     autocmd CursorHold * call ResetCursorLineNrColor()
-" augroup END
-
-
-" }}}
-" ============================================================================
-"
-
 
 let g:cmdline_app = {'python':  'ipython'}
-
 let cmdline_map_send_paragraph = '<Space>'
 
-
-
 autocmd BufNewFile *.Rmd 0r ~/src/templates/report-template.Rmd
-
 
 function! ClearReg()
     let regs=split('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/-"', '\zs')
@@ -1664,7 +1387,6 @@ function! ClearReg()
       call setreg(r, [])
     endfor
 endfunction
-
 
 let g:detect_mod_reg_state = -1
 function! DetectRegChangeAndUpdateMark()
@@ -1677,16 +1399,18 @@ function! DetectRegChangeAndUpdateMark()
     endif
 endfunction
 
-" Mark I at the position where the last Insert mode occured across the buffer
-autocmd InsertLeave * execute 'normal! mI'
 
-" Mark M at the position when any modification happened in the Normal or Insert mode
-autocmd CursorMoved * call DetectRegChangeAndUpdateMark()
-autocmd InsertLeave * execute 'normal! mM'
+augroup insert_tracking
+    autocmd!
+    " Mark I at the position where the last Insert mode occured across the buffer
+    autocmd InsertLeave * execute 'normal! mI'
+    " Mark M at the position when any modification happened in the Normal or Insert mode
+    autocmd CursorMoved * call DetectRegChangeAndUpdateMark()
+    autocmd InsertLeave * execute 'normal! mM'
+augroup END
 
 
 " Spacemacs compatible
-
 
 if has('nvim')
     inoremap <D-v> <C-r>+
@@ -1695,13 +1419,6 @@ if has('nvim')
 else
     autocmd TerminalOpen * if bufwinnr('') > 0 | setlocal nobuflisted | endif
 endif
-
-
-" Rust
-let g:rustfmt_autosave = 1
-
-" Make sure background doesn't break
-set t_ut=
 
 
 " vim-highlightedyank: duration
@@ -1715,162 +1432,10 @@ endfunction
 command! OpenFileTypeSetting :call OpenFileTypeSetting()
 nnoremap <Leader>ft :call OpenFileTypeSetting()<CR>
 
-" Use bash rather than sh
-if &shell == 'sh'
-    set shell=bash
-endif
 " }}}
 " ============================================================================
 " Leader Key Mappings {{{
-
-" Leader {{{
-
-nnoremap <leader>Al :left<cr>
-nnoremap <leader>Ac :center<cr>
-nnoremap <leader>Ar :right<cr>
-vnoremap <leader>Al :left<cr>
-vnoremap <leader>Ac :center<cr>
-vnoremap <leader>Ar :right<cr>
-nnoremap <Leader>dot :!cat % \| dot -Tpng > <C-R>=expand('%:r')<CR>.png && open <C-R>=expand('%:r')<CR>.png<CR>
-
-"insert file name : \fn in insert mode
-inoremap \fn <C-R>=expand("%:t")<CR>
-inoremap <Leader>fn <C-R>=expand("%:t")<CR>
-
-"focus current fold
-nnoremap zs zMzvzz
-
-" Bash alias shortcut 
-nnoremap <Leader>bas :e $HOME/.dotfiles/bash/share/bash_aliases_share<CR>
-nnoremap <Leader>bcs :e $HOME/.dotfiles/bash/share/bash_colors_share<CR>
-nnoremap <Leader>bfs :e $HOME/.dotfiles/bash/share/bash_functions_share<CR>
-nnoremap <Leader>bss :e $HOME/.dotfiles/bash/share/bash_settings_share<CR>
-nnoremap <Leader>bal :e $HOME/.dotfiles/bash/local/bash_aliases_local<CR>
-nnoremap <Leader>bpl :e $HOME/.dotfiles/bash/local/bash_paths_local<CR>
-nnoremap <Leader>bsl :e $HOME/.dotfiles/bash/local/bash_settings_local<CR>
-
-nnoremap <Leader>btt :bufdo tab split<CR>
-nnoremap <Leader>c :ccl<CR>
-nnoremap <Leader>di :sp ~/Dropbox/vimwiki/diary/<C-R>=strftime("%Y-%m-%d")<CR>.md<CR>
-nnoremap <Leader>fme :set foldmethod=expr<CR>
-nnoremap <Leader>fmi :set foldmethod=indent<CR>
-nnoremap <Leader>fmm :set foldmethod=marker<CR>
-nnoremap <Leader>fms :set foldmethod=syntax<CR>
-nnoremap <Leader>syn :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
-\ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
-\ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
-nnoremap <Leader>gi :e ./.gitignore<CR>
-nnoremap <Leader>hh :Helptags<CR>
-nnoremap <Leader>ht :Helptags<CR>
-nnoremap <Leader>ls :ls<CR>
-nnoremap <Leader>md :w<CR> :!cygstart %<CR> " Open markdown
-vnoremap <Leader>tc :<C-U>silent! normal! gV:!titlecase<CR>
-map  <Leader>f <Plug>(easymotion-bd-f)
-nmap <Leader>f <Plug>(easymotion-overwin-f)
-
-" s{char}{char} to move to {char}{char}
-nmap s <Plug>(easymotion-overwin-f2)    
-map <Leader>L <Plug>(easymotion-bd-jk)
-nmap <Leader>L <Plug>(easymotion-overwin-line)
-map  <Leader>w <Plug>(easymotion-bd-w)
-nmap <Leader>w <Plug>(easymotion-overwin-w)
-map  <Leader>w$ <Plug>(easymotion-bd-w)
-nmap <Leader>w$ <Plug>(easymotion-overwin-w)
-
-
-
-"}}}
-
-"nnoremap <LocalLeader>c :ccl<CR>
-nnoremap <LocalLeader><LocalLeader> <C-^>
-nnoremap <LocalLeader>a :A <CR>
-nnoremap <LocalLeader>b :GitMessenger<CR>
-nnoremap <LocalLeader>c :call ToggleQuickFix()<CR>
-nnoremap <LocalLeader>d :Gvdiff<CR>
-nnoremap <LocalLeader>e :edit <C-R>=expand('%:p:h') . '/' <CR>
-nnoremap <LocalLeader>fs :w<CR>
-nnoremap <LocalLeader>fy :let @" = expand("%:p")<CR> <bar> :call SendViaOSC52(expand('%:p'))<cr> <bar> :echo expand('%:p')<CR> 
-nnoremap <LocalLeader>g :GV<CR>
-nnoremap <LocalLeader>ji :BTags<CR>
-nnoremap <LocalLeader>lc :lclose<CR>
-nnoremap <LocalLeader>lf :BLines<CR>
-nnoremap <LocalLeader>ss :BLines<CR>
-nnoremap <LocalLeader>lo :lopen<CR>
-nnoremap <LocalLeader>m :Magit<CR>
-nnoremap <LocalLeader>o :BufOnly<CR> <bar> :only<CR>
-nnoremap <LocalLeader>pro :e ~/src/productivity/
-nnoremap <silent> <LocalLeader>p :let @" = expand("%:p")<CR> <bar> :echo expand('%:p')<CR>
-nnoremap <silent> <LocalLeader>pzp :!echo <C-R>=expand("%:p")<CR> \| rpbcopy <CR> <bar> :echo expand('%:p')<CR>
-nnoremap <LocalLeader>pt :NERDTreeToggle<CR>
-nnoremap <LocalLeader>q :quit <CR>
-nnoremap <LocalLeader>s :w<CR>
-nnoremap <LocalLeader>t :!typora "%"<CR>
-nnoremap <LocalLeader>tn :TestNearest<CR>
-nnoremap <LocalLeader>toc :VimwikiTOC<CR>
-nnoremap <LocalLeader>tog :!toggl-start <C-R>=expand('<cWORD>')<CR>
-nnoremap <LocalLeader>v :Vista<CR>
-nnoremap <LocalLeader>w :write <CR>
-nnoremap <LocalLeader>wq :wq <CR>
-nnoremap <LocalLeader>ww <C-w>w
-nnoremap <LocalLeader>y :Goyo 120<CR>
-nnoremap <silent> <LocalLeader> :<c-u>WhichKey  '<Space>'<CR>
-nnoremap <silent> <LocalLeader>z :Focus2<CR>
-noremap <LocalLeader>x :Focus<CR>
-noremap <silent> <LocalLeader>ch :wincmd h<CR>:close<CR>
-noremap <silent> <LocalLeader>cj :wincmd j<CR>:close<CR>
-noremap <silent> <LocalLeader>ck :wincmd k<CR>:close<CR>
-noremap <silent> <LocalLeader>cl :wincmd l<CR>:close<CR>
-nnoremap <LocalLeader>ot :call ChooseTerm("term-slider", 1)<CR>
-
-" Tertiary leaderkey
-" COMMA LEADER
-
-nnoremap ,a :CtrlPMRUFiles<CR>
-nnoremap ,b :Buffers<CR>
-nnoremap ,c :GitGutterQuickFix<CR> <bar> :copen <CR> /<C-R>=bufname(winbufnr(1))<CR><CR>
-nnoremap ,d :DogeGenerate<CR>
-nnoremap ,e :e <C-R>=expand("%:p:h") . "/" <CR>
-nnoremap ,f :Rg! <C-R><C-W><CR>
-nnoremap ,g :GV!<CR>
-nnoremap ,h :History<CR>
-nnoremap ,j :call fzf#run(fzf#wrap({'source': 'fd $FD_OPTS . $HOME $HOME/.dotfiles $HOME/.vim', 'sink': 'edit'}))<CR>
-"nnoremap ,i 
-" nnoremap ,j 
-nnoremap ,j :lua vim.lsp.stop_client(vim.lsp.get_active_clients())<CR>
-"nnoremap ,k
-nmap ,l yor
-nnoremap ,m :Magit<CR>
-nnoremap ,n <cmd>lua require'telescope.builtin'.live_grep{}<CR>
-nnoremap ,o  :only<CR>
-nnoremap ,p :e <C-R>=resolve(expand("%"))<CR>
-nnoremap ,q :Rg! <C-R>=expand("%:t")<CR>
-nnoremap ,r :BTags<CR>
-nmap ,s <Plug>Sneak_s
-nmap ,S <Plug>Sneak_S
-nnoremap ,t :call ChooseTerm("term-slider", 1)<CR>
-nnoremap ,v :Vista!!<CR>
-nnoremap ,u :GundoToggle<CR>
-nnoremap ,v :call fzf#run(fzf#wrap({'source': 'fd $FD_OPTS . $HOME/Dropbox/vimwiki', 'sink': 'vsplit'}))<CR>
-" nnoremap ,w
-nnoremap ,x :Focus<CR>
-nnoremap ,y :call ChooseTerm("term-pane", 0)<CR>
-nnoremap ,z :Focus2<CR>
-
-nnoremap [t :tabprevious<CR>
-nnoremap ]t :tabnext<CR>
-
-" terminal
-tnoremap ,t <C-\><C-n>:q<CR>
-tnoremap [b <C-\><C-n>:bp<CR>
-tnoremap ]b <C-\><C-n>:bnext<CR>
-tmap <C-p> <C-\><C-n>:CtrlP<CR>
-
-tnoremap <C-w><C-h> <C-\><C-n><C-w><C-h>
-tnoremap <C-w><C-j> <C-\><C-n><C-w><C-j>
-tnoremap <C-w><C-k> <C-\><C-n><C-w><C-k>
-tnoremap <C-w><C-l> <C-\><C-n><C-w><C-l>
-
-
+source ~/.dotfiles/vim/leaders.vim
 " }}}
 " ============================================================================
 " Custom Commands {{{
@@ -1883,6 +1448,8 @@ command! Month execute "normal! \<esc>:e ~/Dropbox/vimwiki/diary/\<C-R>=strftime
 command! Week execute "normal! \<esc>:e ~/Dropbox/vimwiki/diary/\<C-R>=strftime(\"%Y-week%V\")\<CR>.md\<CR>"
 command! Year execute "normal! \<esc>:e ~/Dropbox/vimwiki/diary/\<C-R>=strftime(\"%Y\")\<CR>.md\<CR>"
 command! Meeting execute "normal! \<esc>:sp ~/Dropbox/vimwiki/meeting--\<C-R>=strftime(\"%Y-%m-%d\")\<CR>.md\<CR>"
+command! MakeTags !ctags -R .
+command! Wq execute "normal! \<esc>:wq<CR>"
 " }}}
 "
 "
@@ -1902,71 +1469,9 @@ let g:node_host_prog = '/usr/local/bin/neovim-node-host'
 
 autocmd BufEnter *.rules set filetype=hledgerrules
 
-command! Wq execute "normal! \<esc>:wq<CR>"
 
 
-" Set completeopt to have a better completion experience
-" :help completeopt
-" menuone: popup even when there's only one match
-" noinsert: Do not insert text until a selection is made
-" noselect: Do not select, force user to select one from the menu
-set completeopt=menuone,noinsert,noselect
-
-" Avoid showing extra messages when using completion
-set shortmess+=c
-
-" Configure LSP
-" https://github.com/neovim/nvim-lspconfig#rust_analyzer
-lua <<EOF
-
--- nvim_lsp object
-local nvim_lsp = require'nvim_lsp'
-
--- function to attach completion and diagnostics
--- when setting up lsp
-local on_attach = function(client)
-    require'completion'.on_attach(client)
-    require'diagnostic'.on_attach(client)
-end
-
--- Enable ccls for C++
-nvim_lsp.ccls.setup({ on_attach=on_attach })
---nvim_lsp.clangd.setup({on_attach=on_attach})
-
--- Enable rust_analyzer
-nvim_lsp.rust_analyzer.setup({ 
-    on_attach=on_attach,
-    settings = {
-          ["rust-analyzer"] = {}
-        }
-})
-
--- Enable bash language server
-
-nvim_lsp.bashls.setup({ on_attach=on_attach })
-
--- R Language Server
-nvim_lsp.r_language_server.setup({ on_attach=on_attach })
-
--- Microsoft Python LSP
-nvim_lsp.pyls_ms.setup({ on_attach=on_attach,
-      interpreter = {
-        properties = {
-          InterpreterPath = "/Users/allee/.pyenv/shims/python",
-          Version = "3.7"
-        }
-      }
-})
-
-
-EOF
-
-
-" Trigger completion with <Tab>
-inoremap <silent><expr> <TAB>
-  \ pumvisible() ? "\<C-n>" :
-  \ <SID>check_back_space() ? "\<TAB>" :
-  \ completion#trigger_completion()
+" source ~/.dotfiles/vim/lsp.vim
 
 function! s:check_back_space() abort
     let col = col('.') - 1
