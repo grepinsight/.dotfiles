@@ -17,10 +17,13 @@ Plug 'kassio/neoterm'
 Plug 'dracula/vim', { 'as': 'dracula' }
 Plug 'mhinz/vim-startify'
 Plug 'vim-airline/vim-airline'
+    let g:airline#extensions#tabline#enabled = 1
+    "let g:airline#extensions#disable_rtp_load = 1
 " Plug 'cormacrelf/vim-colors-github'
+Plug 'norcalli/nvim-colorizer.lua'
+autocmd FileType r lua require'colorizer'.setup()
 
 " " Looks / Status
-Plug 'nvim-treesitter/nvim-treesitter'
 " " Start page
 " Plug 'ryanoasis/vim-devicons'
 
@@ -228,17 +231,16 @@ Plug 'tweekmonster/startuptime.vim'
 
 
 
-" Collection of common configurations for the Nvim LSP client
-Plug 'neovim/nvim-lspconfig'
-
-" Extensions to built-in LSP, for example, providing type inlay hints
-Plug 'tjdevries/lsp_extensions.nvim'
-
-" Autocompletion framework for built-in LSP
-Plug 'nvim-lua/completion-nvim'
-
-" Diagnostic navigation and settings for built-in LSP
-Plug 'nvim-lua/diagnostic-nvim'
+" " Collection of common configurations for the Nvim LSP client
+" Plug 'nvim-treesitter/nvim-treesitter'
+" Plug 'neovim/nvim-lspconfig'
+" " Extensions to built-in LSP, for example, providing type inlay hints
+" Plug 'tjdevries/lsp_extensions.nvim'
+" " Autocompletion framework for built-in LSP
+" Plug 'nvim-lua/completion-nvim'
+" " Diagnostic navigation and settings for built-in LSP
+" Plug 'nvim-lua/diagnostic-nvim'
+" source ~/.dotfiles/vim/lsp.vim
 
 " ---
 
@@ -252,10 +254,20 @@ Plug 'szw/vim-maximizer'
 
 " Fire Nvim
 Plug 'glacambre/firenvim', { 'do': { _ -> firenvim#install(0) } }
-
 if exists('g:started_by_firenvim')
+    let g:startify_disable_at_vimenter = 1
+    let g:airline_extensions = []
     set guifont=Monaco:h12
     nnoremap ,l set lines=10
+    augroup firenvim_setting
+      autocmd!
+      autocmd BufEnter dbc*. nnoremap ZZ :wq!
+      autocmd BufEnter dbc*. set lines=10
+      autocmd BufEnter dbc*. ALEDisable
+      autocmd BufEnter dbc*. nnoremap <C-c><C-c> :wq!
+      " autocmd BufEnter dbc* set updatetime=500
+      " autocmd CursorHold dbc* set lines=10
+    augroup END
 endif
 " extension available at  https://chrome.google.com/webstore/detail/firenvim/egpjdkipkomnmjhjmdamaniclmdlobbo
 
