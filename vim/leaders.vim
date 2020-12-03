@@ -196,6 +196,7 @@ nnoremap ,v :call fzf#run(fzf#wrap({'source': 'fd $FD_OPTS . $HOME/Dropbox/vimwi
 " nnoremap ,w
 nnoremap ,x :Focus<CR>
 nnoremap ,y :call ChooseTerm("term-pane", 0)<CR>
+vnoremap <silent> ,y :'<,'>w !rpbcopy<CR><CR>
 nnoremap ,z :Focus2<CR>
 
 nnoremap [t :tabprevious<CR>
