@@ -107,14 +107,21 @@ source $ZSH/oh-my-zsh.sh
 #
 
 # ----
-export HISTTIMEFORMAT="%s "
+# export HISTTIMEFORMAT="%s "
+export ETERNAL_HISTORY_FILE="$HOME/.zsh_eternal_history"
+
 function precmd() {
-    echo \
+
+    echo -n \
     	$$ \
-    	$USER \
-    	$(date "+%Y-%m-%d %H:%M:%S")  \
-    	"@ $(pwd -P) | " \
-    		"$(history | tail -1)" >> ~/.zsh_eternal_history
+    	"@@@" \
+    	"$(date "+%s")" \
+    	"@@@" \
+    	"\"$(pwd -P)\"" \
+    	"@@@ " >> $ETERNAL_HISTORY_FILE
+    # must do it in seperate line otherwise newline is not properly escaped
+    history | tail -1 | perl -pe 's/^\s*\d+\s*//' >> $ETERNAL_HISTORY_FILE
+
 }
 
 calc() {
@@ -146,3 +153,7 @@ alias hle="$EDITOR $LEDGER_FILE"
 [ -f $HOME/.cargo/env ] && source $HOME/.cargo/env
 
 [ -f $HOME/.dotfiles/zsh/zshrc_init ] && source $HOME/.dotfiles/zsh/zshrc_init
+bindkey '^G' fzf-cd-widget
+
+
+export PATH="$HOME/.poetry/bin:$PATH"

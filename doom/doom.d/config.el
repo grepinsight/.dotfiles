@@ -6,6 +6,8 @@
 
 ;; Some functionality uses this to identify you, e.g. GPG configuration, email
 ;; clients, file templates and snippets.
+;;
+(exec-path-from-shell-initialize)
 
 (setq user-full-name "Albert Lee"
       user-mail-address "grepinsight@gmail.com")
@@ -26,8 +28,8 @@
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
-;;(setq doom-theme 'doom-one)
-(setq doom-theme 'doom-gruvbox)
+(setq doom-theme 'doom-one)
+;;(setq doom-theme 'doom-gruvbox)
 
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
@@ -306,6 +308,11 @@
     (interactive)
     (format "http://translate.google.com/?source=osdd#auto|auto|%s" (url-encode-url stuff)))
 
+  (defun my/collins (stuff)
+    "collins dictionary"
+    (interactive)
+    (format "https://www.collinsdictionary.com/us/dictionary/english/%s" (s-replace " " "-" stuff)))
+
   ; link abbreviations
   (setq org-link-abbrev-alist
         '(
@@ -313,6 +320,9 @@
           ("gmap"    . "http://maps.google.com/maps?q=%s")
           ("dx"      . "https://platform.dnanexus.com/panx/%(my/dx-id-to-url)")
           ("spanish" . "https://www.spanishdict.com/translate/%s")
+          ("gene" . "https://www.genecards.org/cgi-bin/carddisp.pl?gene=%s")
+          ("nwiki" . "https://terms.naver.com/search.nhn?query=%s")
+          ("collins" . "%(my/collins)")
           ("gt_es"   . "%(my/translate-es-en)")
           ("en_es"   . "%(my/translate-en-es)")
           ("translate"   . "%(my/translate)")
@@ -399,10 +409,20 @@
           )
         )
 
+
+
+  ;; for some reason you have to pass in the function rather than (getenv "ORG_DEFAULT_NOTE") directly
+  (defun my/org-capture-todo-file ()
+        "Expand `+org-capture-todo-file' from `org-directory'.
+        If it is an absolute path return `+org-capture-todo-file' verbatim."
+        (getenv "ORG_DEFAULT_NOTE"))
+
   (setq org-capture-templates
         (quote (
-                ("t" "Personal todo" entry (file+datetree +org-capture-todo-file)
-                 "* TODO %?\n%i\n" :prepend nil :clock-in t :clock-resume t)
+                ("t" "Personal todo" entry (file+datetree my/org-capture-todo-file)
+                 "* TODO %?\n%i\n" :prepend nil :tree-type week)
+                ("Q" "Question" entry (file+datetree my/org-capture-todo-file)
+                 "* QUESTION %?\n%i\n" :prepend nil)
                 ("r" "respond" entry (file +org-capture-todo-file)
                  "* NEXT Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n" :clock-in t :clock-resume t :immediate-finish t)
                 ("n" "Personal notes" entry
@@ -477,8 +497,8 @@
 (setq org-tags-exclude-from-inheritance '("transcript"))
 
 ; Org-Roam Related
-(setq org-roam-directory "~/Dropbox/vimwiki/personal/")
-(setq org-roam-index-file "~/Dropbox/vimwiki/personal/index.org")
+(setq org-roam-directory "~/Dropbox/vimwiki/")
+(setq org-roam-index-file "~/Dropbox/vimwiki/index.org")
 
 (map! :map evil-normal-state-map "ㅗ" 'evil-backward-char) ;; h
 (map! :map evil-normal-state-map "ㅓ" 'evil-next-line) ;; j
@@ -492,6 +512,7 @@
 (map! :map evil-normal-state-map "ㅒ" 'evil-open-above) ;; O
 
 (map! "C-c a" #'org-agenda)
+(map! "C-c h" #'helm-org-parent-headings)
 (map! "C-c e" #'treemacs)
 (map! "C-c c" #'org-capture)
 (map! "C-c l" #'org-store-link)
@@ -504,7 +525,6 @@
       :n "k" #'evil-previous-visual-line)
 
 (use-package! org-roam-server
-  :ensure t
   :config
   (setq org-roam-server-host "127.0.0.1"
         org-roam-server-port 8080
@@ -532,7 +552,7 @@
   (org-journal-dir "~/Dropbox/vimwiki/personal")
   (org-journal-date-format "%A, %d %B %Y"))
 
-(setq org-download-image-dir "~/Dropbox/vimwiki/personal/images/")
+(setq org-download-image-dir "~/Dropbox/vimwiki/shared/images/")
 
 (use-package! org-download
   :after org
@@ -565,21 +585,21 @@
     (setq
          org-ref-completion-library 'org-ref-ivy-cite
          org-ref-get-pdf-filename-function 'org-ref-get-pdf-filename-helm-bibtex
-         org-ref-default-bibliography (list "~/Dropbox/vimwiki/personal/references.bib")
-         org-ref-bibliography-notes "~/Dropbox/vimwiki/personal/notes.org"
+         org-ref-default-bibliography (list "~/Dropbox/vimwiki/shared/references.bib")
+         org-ref-bibliography-notes "~/Dropbox/vimwiki/shared/notes.org"
          org-ref-note-title-format "* TODO %y - %t\n :PROPERTIES:\n  :Custom_ID: %k\n  :NOTER_DOCUMENT: %F\n :ROAM_KEY: cite:%k\n  :AUTHOR: %9a\n  :JOURNAL: %j\n  :YEAR: %y\n  :VOLUME: %v\n  :PAGES: %p\n  :DOI: %D\n  :URL: %U\n :END:\n\n"
-         org-ref-notes-directory "~/Dropbox/vimwiki/personal"
-         org-ref-pdf-directory "~/Dropbox/vimwiki/personal/papers"
+         org-ref-notes-directory "~/Dropbox/vimwiki/shared"
+         org-ref-pdf-directory "~/Dropbox/vimwiki/shared/04_papers"
          org-ref-notes-function 'orb-edit-notes
     ))
 
 
 ; bibtex completion
 (setq
- bibtex-completion-notes-path "~/Dropbox/vimwiki/personal"
- bibtex-completion-bibliography "~/Dropbox/vimwiki/personal/references.bib"
+ bibtex-completion-notes-path "~/Dropbox/vimwiki/shared"
+ bibtex-completion-bibliography "~/Dropbox/vimwiki/shared/references.bib"
  bibtex-completion-pdf-field "file"
- bibtex-completion-library-path "~/Dropbox/vimwiki/personal/papers"
+ bibtex-completion-library-path "~/Dropbox/vimwiki/shared/04_papers"
  bibtex-completion-notes-template-multiple-files
  (concat
   "#+TITLE: ${title}\n"
@@ -606,7 +626,7 @@
   :custom
   (deft-use-filter-string-for-filename t)
   (deft-default-extension "org")
-  (deft-directory "~/Dropbox/vimwiki/personal/"))
+  (deft-directory "~/Dropbox/vimwiki/"))
 
 
 (use-package! ox-hugo
@@ -616,7 +636,10 @@
 ;; active Babel languages
 (org-babel-do-load-languages
  'org-babel-load-languages
- '((gnuplot . t)))
+ '(
+   (gnuplot . t)
+   (ipython . t)
+   ))
 
 (setq org-latex-pdf-process
       (quote
@@ -668,7 +691,27 @@ but `delete-file' is ignored."
 (map! "C-c d" 'al/goto-today-diary)
 (setq org-agenda-clockreport-parameter-plist '(:stepskip0 t :link t :maxlevel 4 :fileskip0 t))
 
-(exec-path-from-shell-initialize)
 
 
 (setq org-ditaa-jar-path "~/src/ditaa/ditaa0_9/ditaa0_9.jar")
+
+(when (getenv "ORG_DEFAULT_NOTE") (setq org-agenda-files `(,(getenv "ORG_DEFAULT_NOTE"))))
+
+(defun my/org-shared-files()
+  "Shared org Files"
+  (file-expand-wildcards "~/Dropbox/vimwiki/shared/*.org"))
+
+(setq org-id-extra-files (file-expand-wildcards "~/Dropbox/vimwiki/shared/*.org"))
+(add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
+
+;; display time
+(display-time-mode 1)
+
+;; show date and time
+(setq display-time-day-and-date t)
+
+;; copied from https://tecosaur.github.io/emacs-config/config.html
+(setq undo-limit 80000000                         ; Raise undo-limit to 80Mb
+      evil-want-fine-undo t                       ; By default while in insert all changes are one big blob. Be more granular
+      auto-save-default t                         ; Nobody likes to loose work, I certainly don't
+      truncate-string-ellipsis "…")               ; Unicode ellispis are nicer than "...", and also save /precious/ space

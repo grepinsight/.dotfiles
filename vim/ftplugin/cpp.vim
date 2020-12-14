@@ -1,23 +1,22 @@
-" R - related
-let r_syntax_folding = 1
+lua <<EOF
 
-vmap af :<C-U>silent! normal! [[vt{%<CR>
-omap af :normal Vaf<CR>
+-- nvim_lsp object
+local nvim_lsp = require'nvim_lsp'
 
-" nnoremap <F5> :call LanguageClient_contextMenu()<CR>
-" nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
-" nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
-" nnoremap <silent> <F2> :call LanguageClient#textDocument_rename()<CR>
+-- function to attach completion and diagnostics
+-- when setting up lsp
+local on_attach = function(client)
+    require'completion'.on_attach(client)
+    require'diagnostic'.on_attach(client)
+end
 
-let g:projectionist_heuristics["DESCRIPTION"] = {
-				\  "R/*.R": {"alternate": "tests/testthat/test-{basename}.R"},
-				\  "tests/testthat/test-*.R": {"alternate": "R/{basename}.R"},
-			\}
+-- Enable ccls for C++
+nvim_lsp.ccls.setup({ on_attach=on_attach })
 
+EOF
 
-" LSP
+" set foldmethod=syntax
 
-" Code navigation shortcuts
 " nnoremap <silent> <c-]> <cmd>lua vim.lsp.buf.definition()<CR>
 nnoremap <silent> K     <cmd>lua vim.lsp.buf.hover()<CR>
 nnoremap <silent> gD    <cmd>lua vim.lsp.buf.implementation()<CR>

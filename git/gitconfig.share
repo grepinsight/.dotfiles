@@ -60,3 +60,5 @@
 	whitespace = red reverse
 [commit]
 	verbose = true
+[pull]
+    rebase = false

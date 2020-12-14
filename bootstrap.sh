@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 NC='\033[0m'
@@ -215,6 +216,21 @@ if [[ $platform == "Darwin" ]]; then
     command -v diff-so-fancy || brew install diff-so-fancy
     command -v starship || brew install starship
     command -v cmake || brew install cmake
+    command -v parallel || brew install parallel
+
+    echo "Do you want to install emacs-plus? [n/Y]"
+    read varname
+    if [[ $varname == "Y" ]]; then
+        echo "installing"
+        brew tap "d12frosted/emacs-plus" && brew install emacs-plus
+
+        echo "Installing doom emacs (see https://github.com/hlissner/doom-emacs)"
+        git clone --depth 1 https://github.com/hlissner/doom-emacs ~/.emacs.d
+        ~/.emacs.d/bin/doom install
+
+    else
+        echo "not installing"
+    fi
 
 else
 
@@ -224,21 +240,33 @@ else
 
 	# install ripgrep
 	 command -v rg || \
-     DEB_RIPGREP="ripgrep_0.10.0_amd64.deb" && \
-     curl -LO https://github.com/BurntSushi/ripgrep/releases/download/0.10.0/${DEB_RIPGREP} && \
+     (RIPGREP_VERSION="12.1.1" && \
+     DEB_RIPGREP="ripgrep_${RIPGREP_VERSION}_amd64.deb" && \
+     curl -LO https://github.com/BurntSushi/ripgrep/releases/download/${RIPGREP_VERSION}/${DEB_RIPGREP} && \
      sudo dpkg -i ${DEB_RIPGREP} && \
      sudo apt-get install ripgrep && \
-     sudo rm -rf ${DEB_RIPGREP}
+     sudo rm -rf ${DEB_RIPGREP})
+
+     # sudo add-apt-repository ppa:x4121/ripgrep
 
 
     command -v fd || \
-	 DEB_FD="fd_7.3.0_amd64.deb" && \
-	 curl -LO https://github.com/sharkdp/fd/releases/download/v7.3.0/${DEB_FD} && \
+     (FD_VERSION="8.1.1" && \
+	 DEB_FD="fd_${FD_VERSION}_amd64.deb" && \
+	 curl -LO https://github.com/sharkdp/fd/releases/download/v${FD_VERSION}/${DEB_FD} && \
 	 sudo dpkg -i ${DEB_FD} && \
 	 sudo apt-get install fd && \
-	 sudo rm -rf ${DEB_FD}
+     sudo rm -rf ${DEB_FD})
 
-	sudo apt-get install tree
+    command -v bat || \
+     (BAT_VERSION="0.16.0" && \
+	 DEB_FD="bat_${BAT_VERSION}_amd64.deb" && \
+	 curl -LO https://github.com/sharkdp/bat/releases/download/v${BAT_VERSION}/bat_${BAT_VERSION}_amd64.deb
+	 sudo dpkg -i ${DEB_FD} && \
+	 sudo apt-get install fd && \
+     sudo rm -rf ${DEB_FD})
+
+	command -v tree || sudo apt-get install tree
 
 	# install tmux
 	command -v tmux || bash ./etc/install_tmux.ubuntu.sh

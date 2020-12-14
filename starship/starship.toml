@@ -1,3 +1,8 @@
+format = """
+[┌───────────────────>](bold green)
+[│](bold green)$all
+[└─>](bold green) """
+
 [memory_usage]
 disabled = false
 show_percentage = true
@@ -7,11 +12,13 @@ symbol = " "
 separator = "/"
 style = "bold dimmed green"
 
+[git_branch]
+symbol = "🌲"
+
 [git_commit]
 commit_hash_length = 7
 disabled = false
-prefix = "("
-suffix = ")"
+format = "[\\($hash\\)]($style) "
 style = "bold dimmed green"
 
 [aws]
@@ -26,12 +33,13 @@ discharging_symbol = "💀"
 [custom.gituser]
 command = "git config --get user.email"
 when = """ test 1 """
-prefix = "as gituser: "
 style = "yellow"
+format = "[as gituser: $output]($style)"
 
 [time]
 disabled = false
-format = " time: [ %T ]"
+format = "🕙 [\\[ $time \\]]($style) "
+time_format = "%T"
 utc_time_offset = "-7"
 
 

@@ -242,6 +242,7 @@ alias cdr='cd $(git rev-parse --show-toplevel)' # go to git root directory
 
 ## Git Status
 alias gs="git status"
+alias gs.="git status ."
 alias gss="git status -s"
 alias gst="git status --untracked-files=no"
 alias gsu="git ls-files --others --exclude-standard"
@@ -552,8 +553,16 @@ alias chr="open -a 'Google Chrome'"
 
 command -v hub 2> /dev/null && alias git="hub"
 alias code="/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code"
-alias ipython="ipython --TerminalInteractiveShell.editing_mode=vi"
+#alias ipython="ipython --TerminalInteractiveShell.editing_mode=vi"
 
 alias hl="hledger"
 alias hla="hledger add"
 alias hle="nvim $LEDGER_FILE"
+command -v bat > /dev/null 2>&1 && alias cat="bat"
+
+alias cond="conda deactivate"
+alias nvr_clean="rm /tmp/nvimsocket"
+
+alias ipy="ipython --TerminalInteractiveShell.editing_mode=vi"
+alias ipython="ipython --TerminalInteractiveShell.editing_mode=vi"
+

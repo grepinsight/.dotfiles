@@ -6,7 +6,9 @@ IS_MAC=$(uname -a | grep Darwin)
 
 
 if $IS_MAC; then
-    echo "is mac"
+    brew tap universal-ctags/universal-ctags
+    brew install --HEAD universal-ctags
+
 fi
 
 IS_UBUNTU=$(uname -a | grep -i Ubuntu)

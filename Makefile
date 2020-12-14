@@ -57,3 +57,4 @@ reload:  ## Reload configs
 	cd doom && make
 	cd zsh && make
 	cd git && make
+	cd jupyter && make

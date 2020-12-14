@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 NEOVIM_DIST="nvim-linux64"
-NEOVIM_VERSION="v0.4.3"
+NEOVIM_VERSION="nightly"
 set -x
 
 IS_MAC=$(uname -a | grep Darwin)
@@ -11,7 +11,7 @@ if [[ -n $IS_MAC ]]; then
     brew install neovim
 fi
 
-IS_UBUNTU=$(uname -a | grep -i Ubuntu)
+IS_UBUNTU=$(uname -a | egrep -i "Ubuntu|Linux")
 
 if [[ -n $IS_UBUNTU ]]; then
     mkdir -p $HOME/src

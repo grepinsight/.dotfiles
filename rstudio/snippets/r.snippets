@@ -87,15 +87,15 @@ snippet ts
 
 snippet shinyapp
 	library(shiny)
-	
+
 	ui <- fluidPage(
 	  ${0}
 	)
-	
+
 	server <- function(input, output, session) {
-	  
+
 	}
-	
+
 	shinyApp(ui, server)
 
 snippet shinymod
@@ -105,33 +105,33 @@ snippet shinymod
 		${0}
 	  )
 	}
-	
+
 	${1:name} <- function(input, output, session) {
-	  
+
 	}
 
 
 snippet labs
 	labs(title="${1:title}", x="${2:x}", y="${3}")
-	
+
 snippet ppp
 	${1}
 	```
-	
+
 	```{r}
-	
+
 snippet reload
 	devtools::reload(devtools::inst("${1}"))
-	
+
 snippet lib2
 	options(rlang_trace_top_env = rlang::current_env())
-	options(error = function() { 
+	options(error = function() {
 		sink()
 		print(rlang::trace_back(bottom = sys.frame(-1)), simplify = "none")
 	})
 	library <- function(...) {
 		suppressPackageStartupMessages(base::library(...))
-		
+
 	}
 	library(tidyverse)
 	library(glue)
@@ -142,6 +142,10 @@ snippet lib2
 	library(vroom)
 	library(data.table)
 	library(tictoc)
-# Dplyr related ---------------------------------------	
+# Dplyr related ---------------------------------------
 snippet summ
 	summarize(${1})
+
+snippet !alt
+	if (!requireNamespace("remotes"))
+	  install.packages("remotes")

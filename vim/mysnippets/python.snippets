@@ -102,3 +102,44 @@ import numpy as np
 import pandas as pd
 import scipy.stats as stats
 endsnippet
+
+
+snippet arg "Argument Parser" b
+parser = argparse.ArgumentParser(description='A command line interface for $1')
+parser.add_argument("-o", "--outdir",
+                 action="store",
+                 dest="outdir",
+                 type=str,
+                 help="help message",
+                 required=True,
+                 metavar="STR")
+endsnippet
+
+
+snippet !alt "Altair plot structure" b
+(alt.Chart($1)
+  .mark_point()
+  .encode(
+    x=$2,
+    y=$3
+    )
+  .properties(
+    height=300,
+    width=300,
+    title=$4
+  )
+)
+endsnippet
+
+snippet !alt_setup "setup altair" b
+alt.data_transformers.enable('default')
+alt.data_transformers.disable_max_rows()
+endsnippet
+
+snippet !alt_hist "Altair Histogram" b
+  .mark_bar()
+  .encode(
+    x=alt.X('test', bin=alt.Bin(extent=[0, 5000], step=100)),
+    y='count()',
+    )
+endsnippet

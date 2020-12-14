@@ -1,0 +1,5 @@
+--langdef=rmd
+--langmap=rmd:.Rmd
+--regex-Rmd=/^(#+[ \t]+.*)/\1/h,heading,headings/
+--regex-Rmd=/([A-Za-z0-9_]+)[ ]*<-[ ]*function/\1/f,function,functions/
+--regex-Rmd=/^(```){r ([A-Za-z0-9_\-]+)/\1\2/s,section,sections/
