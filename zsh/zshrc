@@ -142,7 +142,7 @@ eval "$(starship init zsh)"
 # alias
 alias h='hsearch'
 
-export LEDGER_FILE=$HOME/Dropbox/vimwiki/.hledger.journal
+export LEDGER_FILE=$HOME/Dropbox/vimwiki/personal/.hledger.journal
 alias hla='hledger add'
 alias hl='hledger'
 alias hle="$EDITOR $LEDGER_FILE"
