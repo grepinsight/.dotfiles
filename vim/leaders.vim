@@ -190,6 +190,7 @@ nnoremap ,r :BTags<CR>
 nmap ,s <Plug>Sneak_s
 nmap ,S <Plug>Sneak_S
 nnoremap ,t :call ChooseTerm("term-slider", 1)<CR>
+nnoremap ,,t :call ChooseTerm("term-slider2", 1)<CR>
 nnoremap ,v :Vista!!<CR>
 nnoremap ,u :GundoToggle<CR>
 nnoremap ,v :call fzf#run(fzf#wrap({'source': 'fd $FD_OPTS . $HOME/Dropbox/vimwiki', 'sink': 'vsplit'}))<CR>
