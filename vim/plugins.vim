@@ -195,7 +195,7 @@ Plug 'sgur/vim-editorconfig'
 " Plug 'chrisbra/csv.vim'
 " Plug 'liuchengxu/vim-which-key'
 Plug 'machakann/vim-highlightedyank'
-" Plug 'voldikss/vim-floaterm'
+Plug 'voldikss/vim-floaterm'
 
 
 " Syntax Highlighting / FileType
@@ -285,6 +285,7 @@ let g:firenvim_config = {
 \ }
 let fc = g:firenvim_config['localSettings']
 let fc['https://www\.linkedin\.com'] = { 'takeover': 'never', 'priority': 1 }
+let fc['https://translate\.google\.com'] = { 'takeover': 'never', 'priority': 1 }
 " extension available at  https://chrome.google.com/webstore/detail/firenvim/egpjdkipkomnmjhjmdamaniclmdlobbo
 
 call plug#end()
