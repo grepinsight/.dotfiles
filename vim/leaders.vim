@@ -1,3 +1,14 @@
+nnoremap   <silent>   <F9>   :FloatermToggle<CR>
+tnoremap   <silent>   <F9>   <C-\><C-n>:FloatermToggle<CR>
+
+command! R :FloatermNew --width=0.5 --wintype=normal --name=repl --position=right R --vanilla
+command! Py :FloatermNew --width=0.5 --wintype=normal --name=repl --position=right ipython --TerminalInteractiveShell.editing_mode=vi
+command! PY :FloatermNew --width=0.5 --wintype=normal --name=repl --position=right ipython --TerminalInteractiveShell.editing_mode=vi
+
+nnoremap   <leader>ts   :FloatermSend<CR>
+vnoremap   <leader>ts   :FloatermSend<CR>
+
+
 " vim: set foldmethod=marker foldlevel=0 nomodeline:
 " these "Ctrl mappings" work well when Caps Lock is mapped to Ctrl
 nmap <silent> t<C-n> :TestNearest<CR> " t Ctrl+n

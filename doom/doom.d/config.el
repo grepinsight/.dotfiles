@@ -326,6 +326,7 @@
           ("gt_es"   . "%(my/translate-es-en)")
           ("en_es"   . "%(my/translate-en-es)")
           ("translate"   . "%(my/translate)")
+          ("ko" . "https://ko.dict.naver.com/#/search?query=%s")
           )
         )
 
