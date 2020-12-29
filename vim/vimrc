@@ -11,6 +11,9 @@ if has('nvim')
     " terminal split
     command! -nargs=* T split | terminal <args>
     command! -nargs=* VT vsplit | terminal <args>
+
+    " get Lua syntax highlighting inside .vim files 
+    let g:vimsyn_embed = 'l'
 endif
 
 if v:version >= 802 && has('popupwin') || has('nvim')

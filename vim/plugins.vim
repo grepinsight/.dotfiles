@@ -239,8 +239,7 @@ Plug 'tjdevries/lsp_extensions.nvim'
 " " Autocompletion framework for built-in LSP
 Plug 'nvim-lua/completion-nvim'
 " " Diagnostic navigation and settings for built-in LSP
-Plug 'nvim-lua/diagnostic-nvim'
-" source ~/.dotfiles/vim/lsp.vim
+"Plug 'nvim-lua/diagnostic-nvim'
 
 
 " ---
@@ -290,3 +289,5 @@ let fc['https://translate\.google\.com'] = { 'takeover': 'never', 'priority': 1 
 " extension available at  https://chrome.google.com/webstore/detail/firenvim/egpjdkipkomnmjhjmdamaniclmdlobbo
 
 call plug#end()
+
+source ~/.dotfiles/vim/lsp.vim
