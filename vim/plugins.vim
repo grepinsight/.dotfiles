@@ -195,7 +195,7 @@ Plug 'sgur/vim-editorconfig'
 " Plug 'chrisbra/csv.vim'
 " Plug 'liuchengxu/vim-which-key'
 Plug 'machakann/vim-highlightedyank'
-" Plug 'voldikss/vim-floaterm'
+Plug 'voldikss/vim-floaterm'
 
 
 " Syntax Highlighting / FileType
@@ -233,14 +233,14 @@ Plug 'tweekmonster/startuptime.vim'
 
 " " Collection of common configurations for the Nvim LSP client
 " Plug 'nvim-treesitter/nvim-treesitter'
-" Plug 'neovim/nvim-lspconfig'
+Plug 'neovim/nvim-lspconfig'
 " " Extensions to built-in LSP, for example, providing type inlay hints
-" Plug 'tjdevries/lsp_extensions.nvim'
+Plug 'tjdevries/lsp_extensions.nvim'
 " " Autocompletion framework for built-in LSP
-" Plug 'nvim-lua/completion-nvim'
+Plug 'nvim-lua/completion-nvim'
 " " Diagnostic navigation and settings for built-in LSP
-" Plug 'nvim-lua/diagnostic-nvim'
-" source ~/.dotfiles/vim/lsp.vim
+"Plug 'nvim-lua/diagnostic-nvim'
+
 
 " ---
 
@@ -269,6 +269,25 @@ if exists('g:started_by_firenvim')
       " autocmd CursorHold dbc* set lines=10
     augroup END
 endif
+let g:firenvim_config = {
+    \ 'globalSettings': {
+        \ 'alt': 'all',
+    \  },
+    \ 'localSettings': {
+        \ '.*': {
+            \ 'cmdline': 'neovim',
+            \ 'content': 'text',
+            \ 'priority': 0,
+            \ 'selector': 'textarea',
+            \ 'takeover': 'always',
+        \ },
+    \ }
+\ }
+let fc = g:firenvim_config['localSettings']
+let fc['https://www\.linkedin\.com'] = { 'takeover': 'never', 'priority': 1 }
+let fc['https://translate\.google\.com'] = { 'takeover': 'never', 'priority': 1 }
 " extension available at  https://chrome.google.com/webstore/detail/firenvim/egpjdkipkomnmjhjmdamaniclmdlobbo
 
 call plug#end()
+
+source ~/.dotfiles/vim/lsp.vim

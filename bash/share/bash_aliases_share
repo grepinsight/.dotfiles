@@ -94,11 +94,12 @@ fi
 if [[ $platform == 'Darwin' ]]; then
    alias ls="gls"
    command -v exa > /dev/null && alias ls="exa"
-   alias ls='ls -G'
+   command -v lsd > /dev/null && alias ls="lsd"
 
    alias ll='ls -G -lh'
    # if exa is avalable use that
    command -v exa > /dev/null && alias ll="exa -l -g" # list, show group
+   command -v lsd > /dev/null && alias ll="lsd -l --timesort -r --date +%Y-%m-%d"
    alias lll='ls -G -lh'
 else
     alias ls='ls --color=auto'
@@ -258,6 +259,10 @@ alias gap="git add -p"
 
 alias grhp="git reset HEAD -p"
 alias grh="git reset HEAD"
+
+## Git Restore
+alias grs="git restore"
+alias grss="git restore --staged"
 
 ## Git Log
 alias gl="git log"
@@ -551,7 +556,7 @@ command -v rpbcopy > /dev/null && alias pbcopy="rpbcopy"
 
 alias chr="open -a 'Google Chrome'"
 
-command -v hub 2> /dev/null && alias git="hub"
+command -v hub > /dev/null 2>&1 && alias git="hub"
 alias code="/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code"
 #alias ipython="ipython --TerminalInteractiveShell.editing_mode=vi"
 

@@ -3,13 +3,13 @@
 lua <<EOF
 
 -- nvim_lsp object
-local nvim_lsp = require'nvim_lsp'
+local nvim_lsp = require'lspconfig'
 
 -- function to attach completion and diagnostics
 -- when setting up lsp
 local on_attach = function(client)
     require'completion'.on_attach(client)
-    require'diagnostic'.on_attach(client)
+--    require'diagnostic'.on_attach(client)
 end
 
 -- Enable ccls for C++
@@ -50,3 +50,32 @@ inoremap <silent><expr> <TAB>
   \ pumvisible() ? "\<C-n>" :
   \ <SID>check_back_space() ? "\<TAB>" :
   \ completion#trigger_completion()
+
+
+lua <<EOF
+vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
+  vim.lsp.diagnostic.on_publish_diagnostics, {
+    -- Enable underline, use default values
+    underline = true,
+    -- Enable virtual text, override spacing to 4
+    virtual_text = {
+      spacing = 4,
+      prefix = '~',
+    },
+    -- Use a function to dynamically turn signs off
+    -- and on, using buffer local variables
+    signs = function(bufnr, client_id)
+      local ok, result = pcall(vim.api.nvim_buf_get_var, bufnr, 'show_signs')
+      -- No buffer local variable set, so just enable by default
+      if not ok then
+        return true
+      end
+
+      return result
+    end,
+    -- Disable a feature
+    update_in_insert = true,
+  }
+)
+EOF
+autocmd CursorHold * lua vim.lsp.diagnostic.show_line_diagnostics()

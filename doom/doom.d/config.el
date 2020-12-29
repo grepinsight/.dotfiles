@@ -326,6 +326,7 @@
           ("gt_es"   . "%(my/translate-es-en)")
           ("en_es"   . "%(my/translate-en-es)")
           ("translate"   . "%(my/translate)")
+          ("ko" . "https://ko.dict.naver.com/#/search?query=%s")
           )
         )
 
@@ -421,13 +422,12 @@
         (quote (
                 ("t" "Personal todo" entry (file+datetree my/org-capture-todo-file)
                  "* TODO %?\n%i\n" :prepend nil :tree-type week)
+                ("n" "Notes" entry (file+headline my/org-capture-todo-file "Notes")
+                 "* %u %?\n%i\n%a" :prepend nil)
                 ("Q" "Question" entry (file+datetree my/org-capture-todo-file)
                  "* QUESTION %?\n%i\n" :prepend nil)
                 ("r" "respond" entry (file +org-capture-todo-file)
                  "* NEXT Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n" :clock-in t :clock-resume t :immediate-finish t)
-                ("n" "Personal notes" entry
-                 (file+headline +org-capture-notes-file "Inbox")
-                 "* %u %?\n%i\n%a" :prepend t)
                 ("j" "Journal" entry
                  (file+olp+datetree +org-capture-journal-file)
                  "* %U %?\n%i\n%a" :prepend t)

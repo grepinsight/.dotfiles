@@ -42,7 +42,7 @@ set -g status-left-length 20
 set -g status-interval 60
 set -g status-left '#[fg=yellow,bold] ❐ #S - '
 
-set -g status-right "#[fg=green]#(date '+%Y-%m-%d (wk-%V)') | #(time-pst)"
+set -g status-right "#[fg=green]#(date '+%Y-%m-%d (wk-%V)') | #(time-pst) | #($HOME/.pyenv/shims/tamariz-clock)"
 
 
 #bind-key C-a last-window
