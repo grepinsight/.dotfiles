@@ -94,11 +94,12 @@ fi
 if [[ $platform == 'Darwin' ]]; then
    alias ls="gls"
    command -v exa > /dev/null && alias ls="exa"
-   alias ls='ls -G'
+   command -v lsd > /dev/null && alias ls="lsd"
 
    alias ll='ls -G -lh'
    # if exa is avalable use that
    command -v exa > /dev/null && alias ll="exa -l -g" # list, show group
+   command -v lsd > /dev/null && alias ll="lsd -l --timesort -r --date +%Y-%m-%d"
    alias lll='ls -G -lh'
 else
     alias ls='ls --color=auto'
