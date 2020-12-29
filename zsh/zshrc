@@ -162,3 +162,4 @@ bindkey '^G' fzf-cd-widget
 
 
 export PATH="$HOME/.poetry/bin:$PATH"
+eval "$(direnv hook zsh)"
