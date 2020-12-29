@@ -260,6 +260,10 @@ alias gap="git add -p"
 alias grhp="git reset HEAD -p"
 alias grh="git reset HEAD"
 
+## Git Restore
+alias grs="git restore"
+alias grss="git restore --staged"
+
 ## Git Log
 alias gl="git log"
 alias glo="git log --oneline"
