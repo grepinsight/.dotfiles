@@ -556,7 +556,7 @@ command -v rpbcopy > /dev/null && alias pbcopy="rpbcopy"
 
 alias chr="open -a 'Google Chrome'"
 
-command -v hub 2> /dev/null && alias git="hub"
+command -v hub > /dev/null 2>&1 && alias git="hub"
 alias code="/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code"
 #alias ipython="ipython --TerminalInteractiveShell.editing_mode=vi"
 
