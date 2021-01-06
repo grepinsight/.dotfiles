@@ -115,20 +115,6 @@ source $ZSH/oh-my-zsh.sh
 # export HISTTIMEFORMAT="%s "
 export ETERNAL_HISTORY_FILE="$HOME/.zsh_eternal_history"
 
-function precmd() {
-
-    echo -n \
-    	$$ \
-    	"@@@" \
-    	"$(date "+%s")" \
-    	"@@@" \
-    	"\"$(pwd -P)\"" \
-    	"@@@ " >> $ETERNAL_HISTORY_FILE
-    # must do it in seperate line otherwise newline is not properly escaped
-    history | tail -1 | perl -pe 's/^\s*\d+\s*//' >> $ETERNAL_HISTORY_FILE
-
-}
-
 calc() {
   echo $@| tr -d ',' | perl -ne 'print eval . "\n"'
 }
@@ -162,4 +148,5 @@ bindkey '^G' fzf-cd-widget
 
 
 export PATH="$HOME/.poetry/bin:$PATH"
-eval "$(direnv hook zsh)"
+command -v direnv > /dev/null 2>&1 && eval "$(direnv hook zsh)"
+command -v hsearch > /dev/null 2>&1 && eval "$(hsearch init zsh)"

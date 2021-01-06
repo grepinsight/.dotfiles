@@ -183,13 +183,22 @@ alias ...="cd ../..;ls -lh"
 alias ....="cd ../../..;ls -lh"
 alias .....="cd ../../../..;ls -lh"
 
+
+ls_thor() {
+    if command -v lsd > /dev/null 2>&1; then
+        lsd -l --timesort -r --date +%Y-%m-%d
+    else
+        ls -thor
+    fi
+}
+
 function cd_fzf() {
 	dir_to_go_to=$(/bin/ls -d */ | strip_color | fzf)
 
 	if [[ $? == 0  ]]; then
 		cd ${dir_to_go_to}
 		pwd -P
-		ls -thor
+		ls_thor
 	fi
 }
 
@@ -199,7 +208,7 @@ function cd_fzf_recursive() {
 	if [[ $? == 0  ]]; then
 		cd ${dir_to_go_to}
 		pwd -P
-		ls -thor
+		ls_thor
 	fi
 }
 
