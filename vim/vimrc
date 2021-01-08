@@ -1199,6 +1199,8 @@ autocmd FileType rbrowser let g:golden_ratio_autocommand = 0
 
 " ============================================================================
 " Spanish {{{
+iabbrev obvi/ obviously
+iabbrev pts/ points
 
 iabbrev ma_s más
 iabbrev fri_os fríos

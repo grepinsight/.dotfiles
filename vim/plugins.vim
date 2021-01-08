@@ -241,6 +241,10 @@ Plug 'nvim-lua/completion-nvim'
 " " Diagnostic navigation and settings for built-in LSP
 "Plug 'nvim-lua/diagnostic-nvim'
 
+if getcwd() != $HOME
+    " frameworks.vim causes massive slow down in home directory
+    Plug 'dbeniamine/cheat.sh-vim'
+endif
 
 " ---
 
@@ -257,8 +261,9 @@ Plug 'glacambre/firenvim', { 'do': { _ -> firenvim#install(0) } }
 if exists('g:started_by_firenvim')
     let g:startify_disable_at_vimenter = 1
     let g:airline_extensions = []
-    set guifont=Monaco:h12
+    " set guifont=Monaco:h12
     nnoremap ,l set lines=10
+    set lines=30
     augroup firenvim_setting
       autocmd!
       autocmd BufEnter dbc*. nnoremap ZZ :wq!
@@ -286,6 +291,7 @@ let g:firenvim_config = {
 let fc = g:firenvim_config['localSettings']
 let fc['https://www\.linkedin\.com'] = { 'takeover': 'never', 'priority': 1 }
 let fc['https://translate\.google\.com'] = { 'takeover': 'never', 'priority': 1 }
+let fc['https://www\.spanishdict\.com/'] = { 'takeover': 'never', 'priority': 1 }
 " extension available at  https://chrome.google.com/webstore/detail/firenvim/egpjdkipkomnmjhjmdamaniclmdlobbo
 
 call plug#end()
