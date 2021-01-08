@@ -1,0 +1,88 @@
+{
+    "shortcuts": [
+        {
+            "command": "notebook:run-all-above",
+            "keys": [
+                "Ctrl 1"
+            ],
+            "selector": "[data-jp-code-runner]"
+        },
+        {
+            "command": "runmenu:run-all",
+            "keys": [
+                "Ctrl F9"
+            ],
+            "selector": "body"
+        },
+        {
+            "command": "apputils:activate-command-palette",
+            "keys": [
+                "Ctrl P"
+            ],
+            "selector": "body"
+        },
+        {
+            "command": "notebook:cut-cell",
+            "keys": [
+                "D",
+                "D"
+            ],
+            "selector": ".jp-Notebook:focus"
+        },
+        {
+            "command": "notebook:clear-cell-output",
+            "keys": [
+                "D",
+                "O"
+            ],
+            "selector": ".jp-Notebook:focus"
+
+        },
+        {
+            "command": "notebook:insert-cell-above",
+            "keys": [
+                "Shift O",
+            ],
+            "selector": ".jp-Notebook:focus"
+
+        },
+        {
+            "command": "notebook:insert-cell-below",
+            "keys": [
+                "O",
+            ],
+            "selector": ".jp-Notebook:focus"
+
+        },
+        {
+            "command": "notebook:copy-cell",
+            "keys": [
+                "Y",
+                "Y"
+            ],
+            "selector": ".jp-Notebook:focus"
+        },
+        {
+            "command": "notebook:paste-cell-below",
+            "keys": [
+                "P"
+            ],
+            "selector": ".jp-Notebook:focus"
+        },
+        {
+            "command": "notebook:paste-cell-above",
+            "keys": [
+                "Shift P"
+            ],
+            "selector": ".jp-Notebook:focus"
+        },
+        {
+            "command": "notebook:change-cell-to-code",
+            "keys": [
+                "C"
+            ],
+            "selector": ".jp-Notebook:focus"
+        }
+    ]
+}
+
