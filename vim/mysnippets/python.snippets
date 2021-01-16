@@ -156,8 +156,10 @@ endsnippet
 
 snippet !pd_ex "Pandas Example" b
 import pandas as pd
+import altair as alt
 
-pd.DataFrame({'a': [1,2,3,4]})
+a = pd.DataFrame({'a': [1,2,3,4]})
+alt.Chart(a).mark_bar().encode(x='a', y='count()')
 endsnippet
 
 
