@@ -30,13 +30,13 @@
             "selector": ".jp-Notebook:focus"
         },
         {
-            "command": "notebook:clear-cell-output",
+            "command": "notebook:clear-cell-output", 
             "keys": [
                 "D",
                 "O"
             ],
             "selector": ".jp-Notebook:focus"
-
+           
         },
         {
             "command": "notebook:insert-cell-above",
