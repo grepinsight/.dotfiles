@@ -161,3 +161,13 @@ import altair as alt
 a = pd.DataFrame({'a': [1,2,3,4]})
 alt.Chart(a).mark_bar().encode(x='a', y='count()')
 endsnippet
+
+
+snippet !init_version "Init Version" b
+import pkg_resources
+
+try:
+    __version__ = pkg_resources.get_distribution('$1').version
+except pkg_resources.DistributionNotFound:  # pragma: no cover
+    __version__ = None
+endsnippet
