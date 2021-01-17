@@ -30,13 +30,13 @@
             "selector": ".jp-Notebook:focus"
         },
         {
-            "command": "notebook:clear-cell-output", 
+            "command": "notebook:clear-cell-output",
             "keys": [
                 "D",
                 "O"
             ],
             "selector": ".jp-Notebook:focus"
-           
+
         },
         {
             "command": "notebook:insert-cell-above",
@@ -82,6 +82,14 @@
                 "C"
             ],
             "selector": ".jp-Notebook:focus"
+        },
+        {
+            "command": "quickopen:activate",
+            "keys": ["Ctrl T"],
+            "selector": "body",
+            "title": "Activate Quick Open",
+            "category": "Main Area"
         }
+
     ]
 }
