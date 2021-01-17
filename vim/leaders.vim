@@ -97,6 +97,7 @@ nnoremap zs zMzvzz
 nnoremap <Leader>bas :e $HOME/.dotfiles/bash/share/bash_aliases_share<CR>
 nnoremap <Leader>bcs :e $HOME/.dotfiles/bash/share/bash_colors_share<CR>
 nnoremap <Leader>bfs :e $HOME/.dotfiles/bash/share/bash_functions_share<CR>
+nnoremap <Leader>bfl :e $HOME/.dotfiles/bash/share/bash_functions_local<CR>
 nnoremap <Leader>bss :e $HOME/.dotfiles/bash/share/bash_settings_share<CR>
 nnoremap <Leader>bal :e $HOME/.dotfiles/bash/local/bash_aliases_local<CR>
 nnoremap <Leader>bpl :e $HOME/.dotfiles/bash/local/bash_paths_local<CR>
