@@ -11,7 +11,7 @@ endif
 "
 call plug#begin('~/.vim/plugged')
 
-Plug 'kassio/neoterm'
+" Plug 'kassio/neoterm'
 
 " " Colorschemes
 Plug 'dracula/vim', { 'as': 'dracula' }
@@ -60,7 +60,14 @@ Plug 'liuchengxu/vista.vim'
 " Plug 'tpope/vim-projectionist'
 Plug 'tpope/vim-unimpaired'
 " Plug 'christoomey/vim-tmux-navigator'
-" Plug 'tmhedberg/SimpylFold'
+
+" Folding
+Plug 'tmhedberg/SimpylFold'
+let g:SimpylFold_docstring_preview = 1
+Plug 'masukomi/vim-markdown-folding'
+" Plug 'Konfekt/FastFold'
+Plug 'matze/vim-tex-fold'
+Plug 'lambdalisue/fern.vim'
 
 " Editing
 Plug 'tpope/vim-surround'              " surround text objects with whatever
@@ -82,7 +89,6 @@ Plug 'tpope/vim-commentary'
 " Plug 'Yggdroot/indentLine'
 " Plug 'dhruvasagar/vim-table-mode'
 " Plug 'elzr/vim-json'
-" Plug 'Konfekt/FastFold'
 " Plug 'kalekundert/vim-coiled-snake'
 
 " " Git
@@ -156,7 +162,6 @@ Plug 'ervandew/supertab'
 " Plug 'christoomey/vim-titlecase'
 " Plug 'plasticboy/vim-markdown'
 " Plug 'coachshea/vim-textobj-markdown'
-" Plug 'masukomi/vim-markdown-folding'
 Plug 'tpope/vim-abolish'
 Plug 'junegunn/goyo.vim'
 Plug 'junegunn/limelight.vim'
@@ -177,7 +182,6 @@ let g:vimtex_quickfix_latexlog = {
       \}
 let g:tex_flavor = "latex"
 
-Plug 'matze/vim-tex-fold'
 " Plug 'reedes/vim-wordy'
 " Plug 'AndrewRadev/switch.vim'
 
@@ -261,7 +265,7 @@ Plug 'glacambre/firenvim', { 'do': { _ -> firenvim#install(0) } }
 if exists('g:started_by_firenvim')
     let g:startify_disable_at_vimenter = 1
     let g:airline_extensions = []
-    " set guifont=Monaco:h12
+    set guifont=Monaco:h12
     nnoremap ,l set lines=10
     set lines=30
     augroup firenvim_setting
