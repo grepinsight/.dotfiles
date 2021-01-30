@@ -580,3 +580,6 @@ alias nvr_clean="rm /tmp/nvimsocket"
 alias ipy="ipython --TerminalInteractiveShell.editing_mode=vi"
 alias ipython="ipython --TerminalInteractiveShell.editing_mode=vi"
 
+alias fd-analyses='fd "\.(py|ipynb|R|Rmd|md)$"'
+alias fd-data='fd "\.(tsv|txt|csv|tar.gz|csv.gz)$"'
+alias fd-plots='fd "\.(png|jpeg|pdf|html)$"'

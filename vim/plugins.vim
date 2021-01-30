@@ -223,9 +223,9 @@ Plug 'mattn/calendar-vim'
 "Plug 'ThePrimeagen/vim-be-good'
 Plug 'burneyy/vim-snakemake'
 
-if executable('black')
-    Plug 'psf/black', { 'on':  'Black' }
-endif
+" if executable('black')
+Plug 'psf/black', { 'on':  'Black' }
+" endif
 
 Plug 'kkoomen/vim-doge', { 'do': { -> doge#install() } }
 let g:doge_doc_standard_python = 'google'

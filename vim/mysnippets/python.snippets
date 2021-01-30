@@ -171,3 +171,18 @@ try:
 except pkg_resources.DistributionNotFound:  # pragma: no cover
     __version__ = None
 endsnippet
+
+snippet anno "Description" b
+from __future__ import annotations
+endsnippet
+
+
+snippet !luigit! "luigi task" b
+class TaskName(luigi.Task):
+    def requires(self):
+        pass
+    def run(self):
+        pass
+    def output(self):
+        pass
+endsnippet
