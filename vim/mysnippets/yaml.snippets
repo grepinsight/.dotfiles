@@ -1,0 +1,30 @@
+snippet k8s! "kubernetes basic" bA
+apiVersion: v1
+kind: Pod
+metadata:
+  name: echo
+  labels:
+    app: echo
+spec:
+  containers:
+    - name: app
+      image: ghcr.io/subicura/echo:v1
+endsnippet
+
+snippet dc! "Description" bA
+version: "3"
+
+services:
+  wordpress:
+    image: wordpress:5.5.3-apache
+    environment:
+      WORDPRESS_DB_HOST: mysql
+      WORDPRESS_DB_PASSWORD: password
+    ports:
+      - "30000:80"
+
+  mysql:
+    image: mysql:5.6
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+endsnippet
