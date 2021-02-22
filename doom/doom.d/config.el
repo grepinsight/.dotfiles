@@ -347,6 +347,7 @@
            "TODO(t)"  ; A task that needs doing & is ready to do
            "NEXT(n)"
            "IN-PROGRESS(p)"
+           "IN-REVIEW(v)"
            "WAIT(w)"
            "MAYBE(b)"
            "PROJ(p)"  ; A project, which usually contains other tasks

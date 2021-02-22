@@ -32,14 +32,7 @@ nvim_lsp.bashls.setup({ on_attach=on_attach })
 nvim_lsp.r_language_server.setup({ on_attach=on_attach })
 
 -- Microsoft Python LSP
-nvim_lsp.pyls_ms.setup({ on_attach=on_attach,
-      interpreter = {
-        properties = {
-          InterpreterPath = "/Users/allee/.pyenv/shims/python",
-          Version = "3.7"
-        }
-      }
-})
+nvim_lsp.pyls_ms.setup({ on_attach=on_attach, interpreter = { properties = { InterpreterPath = "/Users/allee/.pyenv/shims/python", Version = "4.7" } } })
 
 
 EOF
