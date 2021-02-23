@@ -16,8 +16,9 @@ call plug#begin('~/.vim/plugged')
 " " Colorschemes
 Plug 'dracula/vim', { 'as': 'dracula' }
 Plug 'mhinz/vim-startify'
-Plug 'vim-airline/vim-airline'
-    let g:airline#extensions#tabline#enabled = 1
+Plug 'rbong/vim-crystalline'
+" Plug 'vim-airline/vim-airline'
+"     let g:airline#extensions#tabline#enabled = 1
     "let g:airline#extensions#disable_rtp_load = 1
 " Plug 'cormacrelf/vim-colors-github'
 Plug 'norcalli/nvim-colorizer.lua'
@@ -253,7 +254,7 @@ endif
 " ---
 
 " Debugger Plugins
-Plug 'puremourning/vimspector'
+"Plug 'puremourning/vimspector'
 Plug 'szw/vim-maximizer'
 
 "Plug 'nvim-lua/popup.nvim'
