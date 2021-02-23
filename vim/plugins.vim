@@ -16,10 +16,10 @@ call plug#begin('~/.vim/plugged')
 " " Colorschemes
 Plug 'dracula/vim', { 'as': 'dracula' }
 Plug 'mhinz/vim-startify'
-Plug 'rbong/vim-crystalline'
-" Plug 'vim-airline/vim-airline'
-"     let g:airline#extensions#tabline#enabled = 1
-    "let g:airline#extensions#disable_rtp_load = 1
+"Plug 'rbong/vim-crystalline'
+Plug 'vim-airline/vim-airline'
+    let g:airline#extensions#tabline#enabled = 1
+  "let g:airline#extensions#disable_rtp_load = 1
 " Plug 'cormacrelf/vim-colors-github'
 Plug 'norcalli/nvim-colorizer.lua'
 autocmd FileType r lua require'colorizer'.setup()
@@ -238,11 +238,11 @@ Plug 'tweekmonster/startuptime.vim'
 
 " " Collection of common configurations for the Nvim LSP client
 " Plug 'nvim-treesitter/nvim-treesitter'
+"
 Plug 'neovim/nvim-lspconfig'
-" " Extensions to built-in LSP, for example, providing type inlay hints
 Plug 'tjdevries/lsp_extensions.nvim'
-" " Autocompletion framework for built-in LSP
 Plug 'nvim-lua/completion-nvim'
+
 " " Diagnostic navigation and settings for built-in LSP
 "Plug 'nvim-lua/diagnostic-nvim'
 
@@ -301,4 +301,3 @@ let fc['https://www\.spanishdict\.com/'] = { 'takeover': 'never', 'priority': 1 
 
 call plug#end()
 
-source ~/.dotfiles/vim/lsp.vim
