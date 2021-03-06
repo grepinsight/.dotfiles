@@ -9,24 +9,24 @@ install:
 bootstrap: ## Boostrap configuration
 	bash bootstrap.sh
 
-all: tmux_setup git_setup symlinks run_scripts ## run all '*_setup' recipes
+all:
+	ln -sf $$HOME/.dotfiles/ctags/ctags.share $$HOME/.ctags
+	ln -sf $$HOME/.dotfiles/editorconfig $$HOME/.editorconfig
 
-tmux_setup: ## setup tmux
-	ln -sf $$HOME/.dotfiles/tmux/tmux.conf.share $$HOME/.tmux.conf
-	git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+reload:  ## Reload configs
+	cd rstudio && make
+	cd bash && make
+	cd tmux && make
+	cd nvim && make
+	cd starship && make
+	cd nvim && make  # nvim has to come before vim
+	cd vim && make
+	cd ctags && make
+	cd doom && make
+	cd zsh && make
+	cd git && make
+	cd jupyter && make
 
-tmux/tmux.conf.local:
-	touch $@
-
-git_setup: git/gitconfig.combined ## combine gitconfig base and gitconfig local and link it to $HOME/.gitconfig
-
-git/gitconfig.combined: git/gitconfig.share git/gitconfig.local
-	touch git/gitconfig.local
-	cat git/gitconfig.share git/gitconfig.local > git/gitconfig.combined
-	ln -sf $$HOME/.dotfiles/git/gitconfig.combined $$HOME/.gitconfig
-
-git/gitconfig.local:
-	touch $@
 
 update_brew:
 	brew bundle dump --force && mv Brewfile osx
@@ -37,25 +37,3 @@ update_brew:
 migrate:  ## migrate helper
 	fd --no-ignore -t f local
 
-.PHONY: symlinks
-symlinks:
-	ln -sf $$HOME/.dotfiles/bash/share/bash_inputrc $$HOME/.inputrc
-	mkdir -p $$HOME/.config/rstudio/
-	ln -sf $$HOME/.dotfiles/rstudio/rstudio-prefs.json $$HOME/.config/rstudio/rstudio-prefs.json
-	ln -sf $$HOME/.dotfiles/ctags/ctags.share $$HOME/.ctags
-	ln -sf $$HOME/.dotfiles/editorconfig $$HOME/.editorconfig
-
-.PHONY: run_scripts
-run_scripts:  ## link rstudio
-	bash scripts/link-rstudio-snippets-and-bindings.sh # link rstudio scripts
-
-reload:  ## Reload configs
-	cd nvim && make
-	cd starship && make
-	cd nvim && make  # nvim has to come before vim
-	cd vim && make
-	cd ctags && make
-	cd doom && make
-	cd zsh && make
-	cd git && make
-	cd jupyter && make
