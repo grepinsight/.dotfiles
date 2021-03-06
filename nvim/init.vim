@@ -1,6 +1,8 @@
 set runtimepath^=~/.vim runtimepath+=~/.vim/after
 let &packpath = &runtimepath
 
+set relativenumber
+
 " vim: set foldmethod=marker foldlevel=0 nomodeline:
 " ============================================================================
 " VIMRC of grepinsight

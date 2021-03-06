@@ -251,7 +251,12 @@ alias root='cd $(git rev-parse --show-toplevel)' # go to git root directory
 alias cdr='cd $(git rev-parse --show-toplevel)' # go to git root directory
 
 ## Git Status
-alias gs="git status"
+
+git_fetch_random_status() {
+    [ $[ $RANDOM % 6 ] == 0 ] && git fetch origin
+    git status
+}
+alias gs="git_fetch_random_status"
 alias gs.="git status ."
 alias gss="git status -s"
 alias gst="git status --untracked-files=no"

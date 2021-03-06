@@ -142,8 +142,17 @@ nnoremap <LocalLeader>b :GitMessenger<CR>
 nnoremap <LocalLeader>c :call ToggleQuickFix()<CR>
 nnoremap <LocalLeader>d :Gvdiff<CR>
 nnoremap <LocalLeader>e :edit <C-R>=expand('%:p:h') . '/' <CR>
-nnoremap <LocalLeader>fs :w<CR>
-nnoremap <LocalLeader>fy :let @" = expand("%:p")<CR> <bar> :call SendViaOSC52(expand('%:p'))<cr> <bar> :echo expand('%:p')<CR>
+nnoremap <LocalLeader>ff <cmd>Telescope find_files<cr>
+nnoremap <LocalLeader>fw :lua require('telescope.builtin').grep_string { search = vim.fn.expand("<cword>") } <CR>
+nnoremap <LocalLeader>fg <cmd>Telescope live_grep<cr>
+nnoremap <LocalLeader>fc <cmd>Telescope git_commits<cr>
+nnoremap <LocalLeader>fb <cmd>Telescope buffers<cr>
+nnoremap <LocalLeader>fh <cmd>Telescope help_tags<cr>
+nnoremap <LocalLeader>fq <cmd>Telescope quickfix<cr>
+nnoremap <LocalLeader>fs <cmd>Telescope git_status<cr>
+nnoremap <LocalLeader>fm <cmd>Telescope marks<cr>
+nnoremap <LocalLeader>fr <cmd>Telescope lsp_references<cr>
+
 nnoremap <LocalLeader>g :GV<CR>
 nnoremap <LocalLeader>ji :BTags<CR>
 nnoremap <LocalLeader>lc :lclose<CR>

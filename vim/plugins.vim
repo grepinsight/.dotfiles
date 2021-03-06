@@ -41,6 +41,7 @@ Plug 'vim-scripts/BufOnly.vim'
 
 " " Files related
 Plug 'justinmk/vim-dirvish'
+
 Plug 'tpope/vim-eunuch'
 
 " " Search files
@@ -94,7 +95,7 @@ Plug 'tpope/vim-commentary'
 
 " " Git
 Plug 'airblade/vim-gitgutter'
-" Plug 'kshenoy/vim-signature'
+"Plug 'kshenoy/vim-signature'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-rhubarb'
 Plug 'jreybert/vimagit'
@@ -257,9 +258,10 @@ endif
 "Plug 'puremourning/vimspector'
 Plug 'szw/vim-maximizer'
 
-"Plug 'nvim-lua/popup.nvim'
-"Plug 'nvim-lua/plenary.nvim'
-"Plug 'nvim-lua/telescope.nvim'
+Plug 'nvim-lua/popup.nvim'
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-telescope/telescope.nvim'
+Plug 'nvim-telescope/telescope-fzy-native.nvim'
 
 " Fire Nvim
 Plug 'glacambre/firenvim', { 'do': { _ -> firenvim#install(0) } }
