@@ -1,7 +1,7 @@
 configure:
+	@echo "Configuring Neovim"
 	# Assume neovim is a default editor
 	mkdir -p $$HOME/.config/nvim
-
 	# Install neovim
 	command -v nvim > /dev/null || bash install.sh
 
