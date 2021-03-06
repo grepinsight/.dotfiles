@@ -3,8 +3,9 @@ help: ## Prints help for targets with comments
 
 install:
 	make --silent bootstrap &&\
-		make --silent all &&\
-		make --silent reload
+	make --silent all &&\
+	make --silent reload
+
 bootstrap: ## Boostrap configuration
 	bash bootstrap.sh
 
