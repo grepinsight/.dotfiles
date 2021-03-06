@@ -3,17 +3,13 @@ help: ## Prints help for targets with comments
 
 install:
 	make --silent bootstrap &&\
-	make --silent all &&\
 	make --silent reload
 
 bootstrap: ## Boostrap configuration
 	bash bootstrap.sh
 
-all:
-	ln -sf $$HOME/.dotfiles/ctags/ctags.share $$HOME/.ctags
-	ln -sf $$HOME/.dotfiles/editorconfig $$HOME/.editorconfig
-
 reload:  ## Reload configs
+	ln -sf $$HOME/.dotfiles/editorconfig $$HOME/.editorconfig
 	cd rstudio && make
 	cd bash && make
 	cd tmux && make
