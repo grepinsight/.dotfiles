@@ -45,14 +45,14 @@ discharging_symbol = "💀"
 [custom.gituser]
 command = "git config --get user.email"
 when = """ test 1 """
-style = "yellow"
+style = "bold yellow"
 format = "[as gituser: $output]($style)"
 
 [custom.gitlog]
 command = "git log -n 1 --date=relative --format='%>(88,trunc)%s(%ad)' | tr '\n' '|'; git diff --numstat | sort -k1,1nr | tr '\t' ':' | tr '\n' '|'"
 when = """ test 1 """
-style = "yellow"
-format = """[|$output|]($style)"""
+style = "bold underline fg:246"
+format = """[🎬 $output]($style)"""
 
 [custom.docker]
 command = "egrep -l 'docker|lxc' /proc/1/cgroup > /dev/null 2>&1"
