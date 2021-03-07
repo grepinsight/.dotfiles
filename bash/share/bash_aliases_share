@@ -253,7 +253,8 @@ alias cdr='cd $(git rev-parse --show-toplevel)' # go to git root directory
 ## Git Status
 
 git_fetch_random_status() {
-    [ $[ $RANDOM % 6 ] == 0 ] && git fetch origin
+    rid=$(($RANDOM % 6))
+    [[ $rid == 0 ]] && git fetch origin
     git status
 }
 alias gs="git_fetch_random_status"
