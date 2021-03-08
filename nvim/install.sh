@@ -8,20 +8,23 @@ IS_MAC=$(uname -a | grep Darwin)
 
 
 if [[ -n $IS_MAC ]]; then
-    brew install neovim
+    NEOVIM_DIST="nvim-macos"
 fi
 
 IS_UBUNTU=$(uname -a | egrep -i "Ubuntu|Linux")
 
-if [[ -n $IS_UBUNTU ]]; then
-    mkdir -p $HOME/src
-    cd $HOME/src && curl -O -L https://github.com/neovim/neovim/releases/download/$NEOVIM_VERSION/$NEOVIM_DIST.tar.gz
-    tar xvzf $NEOVIM_DIST.tar.gz
+mkdir -p $HOME/src
+cd $HOME/src && curl -O -L https://github.com/neovim/neovim/releases/download/$NEOVIM_VERSION/$NEOVIM_DIST.tar.gz
+tar xvzf $NEOVIM_DIST.tar.gz
 
-    if cd $HOME/src/$NEOVIM_DIST; then
-        sudo cp -r bin/* /usr/bin/
-        sudo cp -r share/* /usr/share/
-    fi
-
+if cd $HOME/src/$NEOVIM_DIST; then
+  sudo cp -r bin/* /usr/bin/
+  sudo cp -r share/* /usr/share/
+elif [[ -n $IS_MAC ]]; then
+  if cd $HOME/src/nvim-osx64; then
+    sudo cp -r bin/* /usr/local/bin/
+    sudo cp -r share/* /usr/local/share/
+  fi
 fi
+
 
