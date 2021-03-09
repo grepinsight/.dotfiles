@@ -38,12 +38,12 @@ snippet testy
 snippet opt
 	```{r setup, include=FALSE}
 	knitr::opts_chunk\$set(cache=TRUE)
-	
+
 	knitr::opts_chunk\$set(echo=FALSE)
 	knitr::opts_chunk\$set(warning=FALSE)
 	knitr::opts_chunk\$set(message=FALSE)
 	```
-	
+
 snippet exp
 	## EXP-NUMBER: ${1:EXPERIMENT_TITLE}
 
@@ -56,8 +56,8 @@ snippet exp
 	To check whether ${4}
 
 	### PENDING Results {.tabset}
-  
-  
+
+
   ### Appendix
 
 snippet conflr
@@ -72,4 +72,11 @@ snippet conflr
 	    toc: true
 	    use_original_size: true
 ---
-	
+
+snippet ppp
+	```
+	```{r}
+	${1}
+
+snippet hellohi
+	hi
