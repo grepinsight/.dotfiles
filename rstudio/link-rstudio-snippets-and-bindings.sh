@@ -3,7 +3,7 @@
 set -x
 
 for item in snippets keybindings; do
-    for snippet in rstudio/$item/*; do
+    for snippet in $item/*; do
         item_name="$(basename $snippet)"
         mkdir -p $HOME/.config/rstudio/$item/
         ln -sf $HOME/.dotfiles/rstudio/$item/"$item_name" \
