@@ -12,5 +12,6 @@
     "notebookToggleExpansion": "Ctrl+-",
     "layoutZoomCurrentPane": "Ctrl+=",
     "goToNextSection": "Ctrl+J",
-    "goToPrevSection": "Ctrl+K"
+    "goToPrevSection": "Ctrl+K",
+    "insertChunkPython": "Alt+Cmd+Y"
 }
