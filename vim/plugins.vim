@@ -14,7 +14,9 @@ call plug#begin('~/.vim/plugged')
 " Plug 'kassio/neoterm'
 
 " " Colorschemes
-Plug 'dracula/vim', { 'as': 'dracula' }
+"Plug 'dracula/vim', { 'as': 'dracula' }
+Plug 'morhetz/gruvbox'
+autocmd vimenter * ++nested colorscheme gruvbox
 Plug 'mhinz/vim-startify'
 "Plug 'rbong/vim-crystalline'
 Plug 'vim-airline/vim-airline'
