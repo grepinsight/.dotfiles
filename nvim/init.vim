@@ -320,26 +320,6 @@ endfunction
 nmap <silent> <leader>mw :call MarkWindowSwap()<CR>
 nmap <silent> <leader>pw :call DoWindowSwap()<CR>
 
-"""""""""""""""""
-" Ack motions {{{
-
-" Motions to Ack for things.  Works with pretty much everything, including:
-"
-"   w, W, e, E, b, B, t*, f*, i*, a*, and custom text objects
-"
-" Awesome.
-"
-" Note: If the text covered by a motion contains a newline it won't work.  Ack
-" searches line-by-line.
-
-nnoremap <silent> <leader>A :set opfunc=<SID>AckMotion<CR>g@
-xnoremap <silent> <leader>A :<C-U>call <SID>AckMotion(visualmode())<CR>
-xnoremap <silent> <leader>A :<C-U>call <SID>AckMotion(visualmode())<CR>
-nmap <Leader>ack :Ack! "\b<cword>\b" <CR>
-"nnoremap <bs> :Ack! '\b<c-r><c-w>\b'<cr>
-"xnoremap <silent> <bs> :<C-U>call <SID>AckMotion(visualmode())<CR>
-
-
 
 function! s:CopyMotionForType(type)
     if a:type ==# 'v'
