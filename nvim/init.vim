@@ -122,7 +122,7 @@ let maplocalleader=" "
 " }}}
 " ============================================================================
 source ~/.dotfiles/vim/plugins.vim
-"source ~/.dotfiles/vim/lsp.vim
+source ~/.dotfiles/vim/lsp.vim
 
 if has('termguicolors')
     set termguicolors
@@ -616,13 +616,6 @@ inoremap <F5> :call fzf#run(fzf#wrap({'source': 'fd --no-ignore $FD_OPTS . $HOME
 " ----------------------------------------------------------------------------
 let g:calendar_google_calendar = 1
 let g:calendar_google_task = 1
-" }}}
-" ----------------------------------------------------------------------------
-" Projectionist {{{
-" ----------------------------------------------------------------------------
-nnoremap <leader>aa :A <CR>
-nnoremap <leader><leader>a :A <CR>
-nnoremap <leader>a :A <CR>
 " }}}
 " ----------------------------------------------------------------------------
 " Ale {{{

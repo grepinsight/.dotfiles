@@ -138,6 +138,9 @@ nmap <Leader>w$ <Plug>(easymotion-overwin-w)
 "nnoremap <LocalLeader>c :ccl<CR>
 nnoremap <LocalLeader><LocalLeader> <C-^>
 nnoremap <LocalLeader>a :A <CR>
+nnoremap <leader>aa :A <CR>
+nnoremap <leader><leader>a :A <CR>
+nnoremap <leader>a :A <CR>
 nnoremap <LocalLeader>b :GitMessenger<CR>
 nnoremap <LocalLeader>c :call ToggleQuickFix()<CR>
 nnoremap <LocalLeader>d :Gvdiff<CR>
