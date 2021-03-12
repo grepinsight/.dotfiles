@@ -56,7 +56,7 @@ nmap <F8> :TagbarToggle<CR>
 nnoremap <leader><leader>s :ToggleGStatus<CR>
 nnoremap <leader>b :call BlameToggle()<CR>
 nnoremap <leader>es :vsplit ~/.vim/plugged/mysnippets/UltiSnips<CR>
-nnoremap <leader>ev :e $HOME/.dotfiles/vim/vimrc<CR>
+nnoremap <leader>ev :e $HOME/.dotfiles/nvim/init.vim<CR>
 nnoremap <leader>gau :Git add -u<CR><CR>
 nnoremap <leader>gcv :Gcommit -v <CR>
 nnoremap <leader>gd :Gvdiff<CR>
