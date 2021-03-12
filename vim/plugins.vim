@@ -201,7 +201,11 @@ Plug 'sgur/vim-editorconfig'
 " Plug 'chrisbra/csv.vim'
 " Plug 'liuchengxu/vim-which-key'
 Plug 'machakann/vim-highlightedyank'
+
+" terminal
 Plug 'voldikss/vim-floaterm'
+
+"Plug 'direnv/direnv.vim'
 
 
 " Syntax Highlighting / FileType

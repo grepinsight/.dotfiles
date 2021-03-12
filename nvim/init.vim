@@ -93,6 +93,8 @@ set listchars+=trail:•    " BULLET (U+2022, UTF-8: E2 80 A2)
 set nojoinspaces          " don't autoinsert two spaces after '.', '?', '!' for join command
 set t_ut=                 " Make sure background doesn't break
 set t_Co=256
+
+set exrc                  " use project specific .vimrc file
 " Use bash rather than sh
 if &shell == 'sh'
     set shell=bash
