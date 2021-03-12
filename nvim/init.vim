@@ -1443,17 +1443,7 @@ source ~/.dotfiles/vim/leaders.vim
 " }}}
 " ============================================================================
 " Custom Commands {{{
-command! Today execute "normal! \<esc>:e ~/Dropbox/vimwiki/diary/\<C-R>=strftime(\"%Y-%m-%d\")\<CR>.md\<CR>"
-command! Kanban execute "normal! \<esc>:e ~/Dropbox/vimwiki/kanban.org\<CR>"
-command! Topics execute "normal! \<esc>:e ~/Dropbox/vimwiki/topics.org\<CR>"
-command! Stats execute "normal! \<esc>:e ~/Dropbox/vimwiki/statistics.org\<CR>"
-command! Work execute "normal! \<esc>:e ~/Dropbox/vimwiki/work.org\<CR>"
-command! Month execute "normal! \<esc>:e ~/Dropbox/vimwiki/diary/\<C-R>=strftime(\"%Y-%m\")\<CR>.md\<CR>"
-command! Week execute "normal! \<esc>:e ~/Dropbox/vimwiki/diary/\<C-R>=strftime(\"%Y-week%V\")\<CR>.md\<CR>"
-command! Year execute "normal! \<esc>:e ~/Dropbox/vimwiki/diary/\<C-R>=strftime(\"%Y\")\<CR>.md\<CR>"
-command! Meeting execute "normal! \<esc>:sp ~/Dropbox/vimwiki/meeting--\<C-R>=strftime(\"%Y-%m-%d\")\<CR>.md\<CR>"
-command! MakeTags !ctags -R .
-command! Wq execute "normal! \<esc>:wq<CR>"
+source ~/.dotfiles/vim/commands.vim
 " }}}
 "
 "
