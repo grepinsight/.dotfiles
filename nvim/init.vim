@@ -1473,7 +1473,6 @@ endfunction
 
 
 " ----------
-let g:rooter_patterns = ['.git', 'Makefile', '.prjroot', '.hg']
 
 
 " Emoji shortcuts
