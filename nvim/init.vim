@@ -122,7 +122,7 @@ let maplocalleader=" "
 " }}}
 " ============================================================================
 source ~/.dotfiles/vim/plugins.vim
-source ~/.dotfiles/vim/lsp.vim
+"source ~/.dotfiles/vim/lsp.vim
 
 if has('termguicolors')
     set termguicolors

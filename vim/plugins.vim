@@ -246,9 +246,9 @@ Plug 'tweekmonster/startuptime.vim'
 " " Collection of common configurations for the Nvim LSP client
 " Plug 'nvim-treesitter/nvim-treesitter'
 "
-Plug 'neovim/nvim-lspconfig'
-Plug 'tjdevries/lsp_extensions.nvim'
-Plug 'nvim-lua/completion-nvim'
+"Plug 'neovim/nvim-lspconfig'
+"Plug 'tjdevries/lsp_extensions.nvim'
+"Plug 'nvim-lua/completion-nvim'
 
 " " Diagnostic navigation and settings for built-in LSP
 "Plug 'nvim-lua/diagnostic-nvim'
