@@ -320,26 +320,6 @@ endfunction
 nmap <silent> <leader>mw :call MarkWindowSwap()<CR>
 nmap <silent> <leader>pw :call DoWindowSwap()<CR>
 
-"""""""""""""""""
-" Ack motions {{{
-
-" Motions to Ack for things.  Works with pretty much everything, including:
-"
-"   w, W, e, E, b, B, t*, f*, i*, a*, and custom text objects
-"
-" Awesome.
-"
-" Note: If the text covered by a motion contains a newline it won't work.  Ack
-" searches line-by-line.
-
-nnoremap <silent> <leader>A :set opfunc=<SID>AckMotion<CR>g@
-xnoremap <silent> <leader>A :<C-U>call <SID>AckMotion(visualmode())<CR>
-xnoremap <silent> <leader>A :<C-U>call <SID>AckMotion(visualmode())<CR>
-nmap <Leader>ack :Ack! "\b<cword>\b" <CR>
-"nnoremap <bs> :Ack! '\b<c-r><c-w>\b'<cr>
-"xnoremap <silent> <bs> :<C-U>call <SID>AckMotion(visualmode())<CR>
-
-
 
 function! s:CopyMotionForType(type)
     if a:type ==# 'v'
@@ -402,10 +382,6 @@ function! BlameToggle() abort
     Git blame
   endif
 endfunction
-
-"  - diff
-command! Greview :Git! diff --staged
-"nnoremap <leader>r :Greview<cr>
 
 "  - status
 " Obtained from https://gist.github.com/actionshrimp/6493611
@@ -1210,15 +1186,9 @@ iabbrev que_ qué
 iabbrev dejo_ dejó
 
 
-" }}}j
-" ============================================================================
-
-" ============================================================================
-" Custom commands {{{
-command! Focus execute "normal! zMzvzz"
-command! Focus2 execute "normal! zMzOzt"
 " }}}
 " ============================================================================
+
 
 
 function! MoveLibrary()
@@ -1443,17 +1413,7 @@ source ~/.dotfiles/vim/leaders.vim
 " }}}
 " ============================================================================
 " Custom Commands {{{
-command! Today execute "normal! \<esc>:e ~/Dropbox/vimwiki/diary/\<C-R>=strftime(\"%Y-%m-%d\")\<CR>.md\<CR>"
-command! Kanban execute "normal! \<esc>:e ~/Dropbox/vimwiki/kanban.org\<CR>"
-command! Topics execute "normal! \<esc>:e ~/Dropbox/vimwiki/topics.org\<CR>"
-command! Stats execute "normal! \<esc>:e ~/Dropbox/vimwiki/statistics.org\<CR>"
-command! Work execute "normal! \<esc>:e ~/Dropbox/vimwiki/work.org\<CR>"
-command! Month execute "normal! \<esc>:e ~/Dropbox/vimwiki/diary/\<C-R>=strftime(\"%Y-%m\")\<CR>.md\<CR>"
-command! Week execute "normal! \<esc>:e ~/Dropbox/vimwiki/diary/\<C-R>=strftime(\"%Y-week%V\")\<CR>.md\<CR>"
-command! Year execute "normal! \<esc>:e ~/Dropbox/vimwiki/diary/\<C-R>=strftime(\"%Y\")\<CR>.md\<CR>"
-command! Meeting execute "normal! \<esc>:sp ~/Dropbox/vimwiki/meeting--\<C-R>=strftime(\"%Y-%m-%d\")\<CR>.md\<CR>"
-command! MakeTags !ctags -R .
-command! Wq execute "normal! \<esc>:wq<CR>"
+source ~/.dotfiles/vim/commands.vim
 " }}}
 "
 "
@@ -1483,7 +1443,6 @@ endfunction
 
 
 " ----------
-let g:rooter_patterns = ['.git', 'Makefile', '.prjroot', '.hg']
 
 
 " Emoji shortcuts

@@ -36,6 +36,7 @@ Plug 'airblade/vim-rooter'
     let g:rooter_silent_chdir = 1
     let g:startify_change_to_dir = 0
     let g:rooter_change_directory_for_non_project_files = 'current'
+    let g:rooter_patterns = ['.git', 'Makefile', '.prjroot', '.hg']
 
 
 " Buffer Management
@@ -61,7 +62,7 @@ Plug 'junegunn/fzf.vim'
 Plug 'justinmk/vim-sneak'
 Plug 'preservim/tagbar'
 Plug 'liuchengxu/vista.vim'
-" Plug 'tpope/vim-projectionist'
+Plug 'tpope/vim-projectionist'
 Plug 'tpope/vim-unimpaired'
 " Plug 'christoomey/vim-tmux-navigator'
 
@@ -246,9 +247,9 @@ Plug 'tweekmonster/startuptime.vim'
 " " Collection of common configurations for the Nvim LSP client
 " Plug 'nvim-treesitter/nvim-treesitter'
 "
-"Plug 'neovim/nvim-lspconfig'
-"Plug 'tjdevries/lsp_extensions.nvim'
-"Plug 'nvim-lua/completion-nvim'
+Plug 'neovim/nvim-lspconfig'
+Plug 'tjdevries/lsp_extensions.nvim'
+Plug 'nvim-lua/completion-nvim'
 
 " " Diagnostic navigation and settings for built-in LSP
 "Plug 'nvim-lua/diagnostic-nvim'
