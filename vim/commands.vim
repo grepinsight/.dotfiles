@@ -11,3 +11,4 @@ command! Week execute "normal! \<esc>:e ~/Dropbox/vimwiki/diary/\<C-R>=strftime(
 command! Work execute "normal! \<esc>:e ~/Dropbox/vimwiki/work.org\<CR>"
 command! Wq execute "normal! \<esc>:wq<CR>"
 command! Year execute "normal! \<esc>:e ~/Dropbox/vimwiki/diary/\<C-R>=strftime(\"%Y\")\<CR>.md\<CR>"
+command! Greview :Git! diff --staged

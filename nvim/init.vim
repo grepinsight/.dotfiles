@@ -383,10 +383,6 @@ function! BlameToggle() abort
   endif
 endfunction
 
-"  - diff
-command! Greview :Git! diff --staged
-"nnoremap <leader>r :Greview<cr>
-
 "  - status
 " Obtained from https://gist.github.com/actionshrimp/6493611
 function! ToggleGStatus()
