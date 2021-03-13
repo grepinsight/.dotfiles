@@ -1031,8 +1031,8 @@ nnoremap <Leader>vpn :!anyconnect <CR>
 nmap <Leader>ju <Plug>(VcsJump)
 
 
-nnoremap <Leader>pyan :!pyan3 % --dot -c -e \| dot -Tpng > <C-R>=expand('%:r')<CR>.png && open <C-R>=expand('%:r')<CR>.png <CR>
-nnoremap <Leader>tgf :!pyan3 % --tgf -c -e  > <C-R>=expand('%:r')<CR>.tgf<CR>
+nnoremap <Leader>pyan :!pyan % --dot -c -e \| dot -Tpng > <C-R>=expand('%:r')<CR>.png && open <C-R>=expand('%:r')<CR>.png <CR>
+nnoremap <Leader>tgf :!pyan % --tgf -c -e  > <C-R>=expand('%:r')<CR>.tgf<CR>
 
 
 if filereadable(expand("~/.vimrc_work"))
