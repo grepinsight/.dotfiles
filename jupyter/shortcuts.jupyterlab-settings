@@ -3,7 +3,7 @@
         {
             "command": "notebook:run-all-above",
             "keys": [
-                "Ctrl 1"
+                "Shift Alt Cmd P"
             ],
             "selector": "[data-jp-code-runner]"
         },

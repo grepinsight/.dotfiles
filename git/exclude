@@ -20,6 +20,7 @@
 
 # Vim
 Session.vim
+.projections.json
 
 # Python
 .pytest_cache/
@@ -62,3 +63,4 @@ tags
 
 # Snakemake
 .snakemake
+

@@ -597,7 +597,7 @@ let g:calendar_google_task = 1
 " Ale {{{
 " ----------------------------------------------------------------------------
 
-let g:ale_linters={'python': ['mypy'], 'r': ['lintr'], 'wdl': ['wdl-linter'] }
+let g:ale_linters={'python': ['mypy', 'pydocstyle'], 'r': ['lintr'], 'wdl': ['wdl-linter'] }
 let g:ale_fixers = {'python': ['yapf'], 'r': ['styler'], 'rmd': ['styler']}
 
 autocmd FileType r let g:ale_fix_on_save = 1

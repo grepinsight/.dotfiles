@@ -25,6 +25,7 @@ Plug 'vim-airline/vim-airline'
 " Plug 'cormacrelf/vim-colors-github'
 Plug 'norcalli/nvim-colorizer.lua'
 autocmd FileType r lua require'colorizer'.setup()
+autocmd FileType python lua require'colorizer'.setup()
 
 " " Looks / Status
 " " Start page
