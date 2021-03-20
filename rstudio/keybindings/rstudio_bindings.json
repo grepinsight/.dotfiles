@@ -13,5 +13,7 @@
     "layoutZoomCurrentPane": "Ctrl+=",
     "goToNextSection": "Ctrl+J",
     "goToPrevSection": "Ctrl+K",
-    "insertChunkPython": "Alt+Cmd+Y"
+    "insertChunkPython": "Alt+Cmd+Y",
+    "nextTab": "Ctrl+Shift+]",
+    "previousTab": "Ctrl+Shift+["
 }
