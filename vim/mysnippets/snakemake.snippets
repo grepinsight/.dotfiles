@@ -1,8 +1,18 @@
-snippet rule "Description" b
+snippet rule "rule" b
 rule ${1:name}:
-  input:
-  output:
-  shell:
-      """
-      """
+    input:
+    output:
+    shell:
+        """
+        """
+endsnippet
+
+
+snippet input "input" b
+input:
+    ${1}
+output:
+shell:
+    """
+    """
 endsnippet
