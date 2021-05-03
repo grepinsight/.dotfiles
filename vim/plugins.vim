@@ -114,7 +114,7 @@ Plug 'junkblocker/git-time-lapse'
 
 " " Testing
 " Plug 'metakirby5/codi.vim'
-Plug 'janko-m/vim-test'
+Plug 'vim-test/vim-test'
 Plug 'tpope/vim-dispatch'
 " Plug 'puremourning/vimspector'
 
@@ -251,6 +251,7 @@ Plug 'tweekmonster/startuptime.vim'
 Plug 'neovim/nvim-lspconfig'
 Plug 'tjdevries/lsp_extensions.nvim'
 Plug 'nvim-lua/completion-nvim'
+Plug 'onsails/lspkind-nvim'
 
 " " Diagnostic navigation and settings for built-in LSP
 "Plug 'nvim-lua/diagnostic-nvim'

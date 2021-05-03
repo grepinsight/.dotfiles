@@ -599,6 +599,8 @@ let g:calendar_google_task = 1
 
 let g:ale_linters={'python': ['mypy', 'pydocstyle'], 'r': ['lintr'], 'wdl': ['wdl-linter'] }
 let g:ale_fixers = {'python': ['yapf'], 'r': ['styler'], 'rmd': ['styler']}
+let g:ale_python_flake8_options = "--ignore=E501"
+let g:ale_python_pydocstyle_options = "--ignore=E501"
 
 autocmd FileType r let g:ale_fix_on_save = 1
 autocmd FileType rmd let g:ale_fix_on_save = 1

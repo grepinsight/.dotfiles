@@ -1,4 +1,5 @@
-set foldmethod=syntax
+" set foldmethod=syntax "need to disable this otherwise it's very slow in
+" neovim
 set foldlevelstart=10 "open's all folds
 set spell
 setlocal nolist

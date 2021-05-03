@@ -1,0 +1,3 @@
+--langdef=snakemake
+--langmap=snakemake:.Snakefile.snk
+--regex-snakemake=/^(rule[ \t]+.*)/\1/r,rule,rules/
