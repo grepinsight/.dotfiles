@@ -327,8 +327,9 @@
           ("gt_es"   . "%(my/translate-es-en)")
           ("en_es"   . "%(my/translate-en-es)")
           ("translate"   . "%(my/translate)")
-          ("ko" . "https://ko.dict.naver.com/#/search?query=%s")
           ("ja" . "https://ja.dict.naver.com/#/search?query=%s")
+          ("ko" . "https://ko.dict.naver.com/#/search?query=%s")
+          )
         )
 
   (setq org-columns-default-format "%TODO %7EFFORT %10TIME_SPENT{:} %PRIORITY %100ITEM 100%TAGS")
