@@ -299,7 +299,9 @@ alias gpom="git push origin master"
 
 ## Git Commit
 alias gc="git commit"
+alias gcom="git commit"
 alias gm="git commit -m"
+alias gcim="git commit -m"
 alias gcv="git commit -v"
 alias gqc="git commit -m" # git "quick commit"
 alias gd="git diff"

@@ -93,7 +93,7 @@ Plug 'sjl/gundo.vim'
 
 Plug 'tpope/vim-commentary'
 " Plug 'Yggdroot/indentLine'
-" Plug 'dhruvasagar/vim-table-mode'
+Plug 'dhruvasagar/vim-table-mode'
 " Plug 'elzr/vim-json'
 " Plug 'kalekundert/vim-coiled-snake'
 

@@ -9,7 +9,7 @@ omap af :normal Vaf<CR>
 
 " Set updatetime for CursorHold
 " 300ms of no cursor movement to trigger CursorHold
-set updatetime=300
+" set updatetime=300
 " Show diagnostic popup on cursor hold
 
 " Goto previous/next diagnostic warning/error
@@ -26,5 +26,5 @@ nnoremap <Leader>if ^cwfrom<Esc>$F.r i import<Esc>^
 
 command! BlackAuto autocmd BufWritePre *.py execute ':Black'
 
-autocmd FileType python nmap <Space> <Plug>SlimeParagraphSend
-autocmd FileType python vmap <Space> <Plug>SlimeRegionSend
+" autocmd FileType python nmap <Space> <Plug>SlimeParagraphSend
+" autocmd FileType python vmap <Space> <Plug>SlimeRegionSend
