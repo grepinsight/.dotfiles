@@ -21,3 +21,15 @@ endsnippet
 snippet set "safer bash" b
 set -eux -o pipefail
 endsnippet
+
+
+snippet script_dir "script_dir" b
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+endsnippet
+
+
+snippet seto "set -o options" b
+set -o errexit
+set -o pipefail
+set -o nounset
+endsnippet

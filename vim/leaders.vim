@@ -60,7 +60,7 @@ nnoremap <leader>ev :e $HOME/.dotfiles/nvim/init.vim<CR>
 nnoremap <leader>gau :Git add -u<CR><CR>
 nnoremap <leader>gcv :Gcommit -v <CR>
 nnoremap <leader>gs :vert Git diff --staged<CR>
-nnoremap <leader>gd :Gvdiffsplit<CR>
+nnoremap <leader>gd :term git diff -- % <CR>
 nnoremap <leader>gf :GitGutterFold<CR>
 nnoremap <leader>gvd :Gvdiffsplit<CR>
 nnoremap <leader>gw :Gwrite <CR>:Gcommit -v<CR>
