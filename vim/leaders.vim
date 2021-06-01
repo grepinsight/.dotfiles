@@ -58,7 +58,7 @@ nnoremap <leader>b :call BlameToggle()<CR>
 nnoremap <leader>es :vsplit ~/.vim/plugged/mysnippets/UltiSnips<CR>
 nnoremap <leader>ev :e $HOME/.dotfiles/nvim/init.vim<CR>
 nnoremap <leader>gau :Git add -u<CR><CR>
-nnoremap <leader>gcv :Gcommit -v <CR>
+nnoremap <leader>gcv :Git commit -v <CR>
 nnoremap <leader>gs :vert Git diff --staged<CR>
 nnoremap <leader>gd :term git diff -- % <CR>
 nnoremap <leader>gf :GitGutterFold<CR>
@@ -158,6 +158,7 @@ nnoremap <LocalLeader>fm <cmd>Telescope marks<cr>
 nnoremap <LocalLeader>fr <cmd>Telescope lsp_references<cr>
 
 nnoremap <LocalLeader>g :GV<CR>
+nnoremap <LocalLeader>gf :<c-u>vie <c-r>=findfile(expand('<cfile>'))<cr><cr>
 nnoremap <LocalLeader>ji :BTags<CR>
 nnoremap <LocalLeader>lc :lclose<CR>
 nnoremap <LocalLeader>lf :BLines<CR>
@@ -250,3 +251,8 @@ vmap <Enter> <Plug>(EasyAlign)
 xmap ga <Plug>(EasyAlign)
 " Start interactive EasyAlign for a motion/text object (e.g. gaip)
 nmap ga <Plug>(EasyAlign)
+
+
+
+let g:table_mode_delete_column_map = '<Leader>tdc'
+let g:table_mode_insert_column_after_map = '<Leader>tic'
