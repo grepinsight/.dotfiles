@@ -80,8 +80,8 @@ nvim_lsp.pyls.setup {
         mypy = {enabled = true},
         isort = {enabled = true},
         yapf = {enabled = false},
-        pylint = {enabled = false},
-        pydocstyle = {enabled = true},
+        pylint = {enabled = true},
+        pydocstyle = {enabled = false},
         mccabe = {enabled = false},
         preload = {enabled = false},
         rope_completion = {enabled = false}
