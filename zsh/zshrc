@@ -168,3 +168,5 @@ command -v hsearch > /dev/null 2>&1 && eval "$(hsearch init zsh)"
 # source $HOME/antigen.zsh
 # antigen bundle soimort/translate-shell
 # antigen apply
+export FZF_CTRL_T_COMMAND='rg --files --hidden --glob "!.git/*" --glob "!node_modules/*"'
+
