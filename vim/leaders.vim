@@ -202,7 +202,7 @@ nnoremap ,f :Rg! <C-R><C-W><CR>
 nnoremap ,g :GV!<CR>
 nnoremap ,h :History<CR>
 nnoremap ,j :call fzf#run(fzf#wrap({'source': 'fd $FD_OPTS . $HOME $HOME/.dotfiles $HOME/.vim', 'sink': 'edit'}))<CR>
-"nnoremap ,i
+nnoremap ,i :e <C-R>=resolve(expand("%:h"))<CR>/
 " nnoremap ,j
 nnoremap ,j :lua vim.lsp.stop_client(vim.lsp.get_active_clients())<CR>
 "nnoremap ,k
@@ -234,6 +234,8 @@ nnoremap ]t :tabnext<CR>
 tnoremap ,t <C-\><C-n>:q<CR>
 tnoremap [b <C-\><C-n>:bp<CR>
 tnoremap ]b <C-\><C-n>:bnext<CR>
+tnoremap [t <C-\><C-n>:tabprevious<CR>
+tnoremap ]t <C-\><C-n>:tabnext<CR>
 tmap <C-p> <C-\><C-n>:CtrlP<CR>
 
 tnoremap <C-w><C-h> <C-\><C-n><C-w><C-h>
@@ -256,3 +258,4 @@ nmap ga <Plug>(EasyAlign)
 
 let g:table_mode_delete_column_map = '<Leader>tdc'
 let g:table_mode_insert_column_after_map = '<Leader>tic'
+

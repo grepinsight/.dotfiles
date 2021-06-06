@@ -257,6 +257,7 @@ git_fetch_random_status() {
     [[ $rid == 0 ]] && git fetch origin
     git status
 }
+alias grps="git restore -p --staged"
 alias gs="git_fetch_random_status"
 alias gs.="git status ."
 alias gss="git status -s"
