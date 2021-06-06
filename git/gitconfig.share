@@ -1,4 +1,5 @@
 [alias]
+    tree = log --graph --decorate --pretty=oneline --abbrev-commit
 	grog = log --graph --abbrev-commit --decorate --all --format=format:\"%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(dim white) - %an%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n %C(white)%s%C(reset)\" --name-only
     graph = log --all --graph --pretty=format:'%C(auto)%h%C(auto)%d %s %C(dim white)(%aN, %ar)'
 	please = push --force-with-lease
@@ -9,8 +10,11 @@
     st = status -sb
     s = status -sb
     ci = commit
+    cp = cherry-pick
+    com = commit
     co = checkout
     cob = checkout -b
+    drymerge = merge --no-commit --no-ff
     g = grep --break --heading --line-number
 	it = !git init && git commit -m “root” --allow-empty
 	stsh = stash --keep-index
@@ -22,6 +26,8 @@
     diffs = diff --staged
 	ls = log --pretty=format:'%C(magenta)%h%Creset %C(dim)%cr%Creset  %C(yellow)%aN%Creset %s %C(cyan)%d%Creset'
 	aliases = !git config --get-regexp ^alias\\. | sed -e s/^alias.// -e s/\\ /\\ $(printf \"\\043\")--\\>\\ / | column -t -s $(printf \"\\043\") | sort -k 1
+
+    switch = "!f() { git switch $1 2>/dev/null || git switch -c $1; }; f"
 
     # From Jeff
     undo = reset --soft HEAD^
@@ -41,7 +47,6 @@
 [core]
     editor = nvim
 	excludesfile = ~/.dotfiles/git/exclude
-	pager = diff-so-fancy | less --tabs=4 -RFX
 [color]
 	ui = true
 [push]
@@ -62,3 +67,20 @@
 	verbose = true
 [pull]
     rebase = false
+[pager]
+    diff = delta
+    log = delta
+    reflog = delta
+    show = delta
+
+[interactive]
+    diffFilter = delta --color-only
+
+[delta]
+    features = side-by-side line-numbers decorations
+    whitespace-error-style = 22 reverse
+
+[delta "decorations"]
+    commit-decoration-style = bold yellow box ul
+    file-style = bold yellow ul
+    file-decoration-style = none
