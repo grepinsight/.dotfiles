@@ -1,18 +1,17 @@
 [alias]
     tree = log --graph --decorate --pretty=oneline --abbrev-commit
+    st = status -sb
+    s = status -sb
+    ci = commit
+    com = commit
+    co = checkout
+    rs = restore
 	grog = log --graph --abbrev-commit --decorate --all --format=format:\"%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(dim white) - %an%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n %C(white)%s%C(reset)\" --name-only
     graph = log --all --graph --pretty=format:'%C(auto)%h%C(auto)%d %s %C(dim white)(%aN, %ar)'
 	please = push --force-with-lease
 	commend = commit --amend --no-edit
 	delete-local = branch -d
 
-    # Shortcuts
-    st = status -sb
-    s = status -sb
-    ci = commit
-    cp = cherry-pick
-    com = commit
-    co = checkout
     cob = checkout -b
     drymerge = merge --no-commit --no-ff
     g = grep --break --heading --line-number
@@ -63,10 +62,11 @@
 	old = red bold
 	new = green bold
 	whitespace = red reverse
-[commit]
-	verbose = true
 [pull]
     rebase = false
+[commit]
+	verbose = true
+    template = ~/.dotfiles/git/gitmessage
 [pager]
     diff = delta
     log = delta
