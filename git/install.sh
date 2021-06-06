@@ -1,7 +1,15 @@
 #!/usr/bin/env bash
 
-if grep core $HOME/.gitconfig ; then 
-	echo "git already configured"
+set -o errexit
+set -o pipefail
+set -o nounset
+set -x
+
+touch $HOME/.gitconfig.local
+cat $HOME/.gitconfig.local gitconfig.share > gitconfig.combined
+
+if [[ ! -f $HOME/.gitconfig ]]; then
+    ln -sf $HOME/.dotfiles/git/gitconfig.combined $HOME/.gitconfig
 else
-	cat gitconfig.share >> $HOME/.gitconfig
+    echo "$HOME/.gitconfig already exists!"
 fi
