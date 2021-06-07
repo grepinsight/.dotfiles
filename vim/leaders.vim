@@ -59,7 +59,7 @@ nnoremap <leader>es :vsplit ~/.vim/plugged/mysnippets/UltiSnips<CR>
 nnoremap <leader>ev :e $HOME/.dotfiles/nvim/init.vim<CR>
 nnoremap <leader>gau :Git add -u<CR><CR>
 nnoremap <leader>gcv :Git commit -v <CR>
-nnoremap <leader>gs :vert Git diff --staged<CR>
+nnoremap <leader>gs :term git diff --staged -- %<CR>
 nnoremap <leader>gd :term git diff -- % <CR>
 nnoremap <leader>gf :GitGutterFold<CR>
 nnoremap <leader>gvd :Gvdiffsplit<CR>
@@ -259,3 +259,7 @@ nmap ga <Plug>(EasyAlign)
 let g:table_mode_delete_column_map = '<Leader>tdc'
 let g:table_mode_insert_column_after_map = '<Leader>tic'
 
+
+" This changes the binding in popup
+inoremap <expr> <C-j> pumvisible() ? "\<C-n>" : "\<C-j>"
+inoremap <expr> <C-k> pumvisible() ? "\<C-p>" : "\<C-k>"
