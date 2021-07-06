@@ -212,3 +212,25 @@ snippet yapf "Description" b
 # yapf: disable
 # yapf: enable
 endsnippet
+
+snippet defs "Description" b
+def __str__(self):
+    return f"{$0}"
+endsnippet
+
+snippet @api "Description" b
+ # from rest_framework.decorators import api_view
+
+@api_view(['${1:GET}'])
+def ${2:hello_world}(request):
+    return Response({"message": "Hello, world!"})
+endsnippet
+
+
+snippet !sms "Description" b
+class ${1}Serializer(serializers.ModelSerializer):
+    class Meta:
+        model = ${1}
+        fields = ${2:"__all__"}
+endsnippet
+

@@ -3,3 +3,42 @@ constructor(props) {
 	super(props);
 }
 endsnippet
+
+snippet makeStyles "Description" b
+import { makeStyles } from "@material-ui/core";
+const useStyles = makeStyles({
+  root: {
+    display: "flex",
+  },
+});
+// const classes = useStyles();
+endsnippet
+
+snippet ! "Description" b
+import React from "react";
+
+export default function ${1:MyComponent}(){
+  return (
+    <div>
+    $0
+    </div>
+  );
+
+}
+endsnippet
+
+snippet btn "Description" b
+import { Button } from "@material-ui/core";
+endsnippet
+
+snippet rfc "Description" b
+import React from "react";
+
+export default function FormikSelect() {
+  return <div></div>;
+}
+endsnippet
+
+snippet usee "Description" b
+useEffect(() => {$1}, []);
+endsnippet

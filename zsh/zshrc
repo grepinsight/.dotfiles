@@ -127,7 +127,7 @@ alias v="$EDITOR"
 
 export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
+eval "$($HOME/.pyenv/bin/pyenv init -)"
 eval "$(starship init zsh)"
 
 # alias
@@ -169,4 +169,3 @@ command -v hsearch > /dev/null 2>&1 && eval "$(hsearch init zsh)"
 # antigen bundle soimort/translate-shell
 # antigen apply
 export FZF_CTRL_T_COMMAND='rg --files --hidden --glob "!.git/*" --glob "!node_modules/*"'
-

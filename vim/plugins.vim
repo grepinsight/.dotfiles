@@ -39,8 +39,30 @@ Plug 'airblade/vim-rooter'
     let g:rooter_change_directory_for_non_project_files = 'current'
     let g:rooter_patterns = ['.git', 'Makefile', '.prjroot', '.hg']
 
+" Javscript, typescript
+Plug 'maxmellon/vim-jsx-pretty'
+" Plug 'jiangmiao/auto-pairs'
+Plug 'pangloss/vim-javascript'
+Plug 'alvan/vim-closetag'
+let g:closetag_filenames = '*.html,*.xhtml,*.phtml,*.tsx'
+let g:closetag_xhtml_filenames = '*.xhtml,*.jsx,*.tsx'
+let g:closetag_filetypes = 'html,xhtml,phtml,tsx'
+let g:closetag_xhtml_filetypes = 'xhtml,jsx,typescriptreact,tsx'
+let g:closetag_shortcut = '>'
 
-" Buffer Management
+
+
+
+
+
+
+" Plug "mlaursen/vim-react-snippets"
+Plug 'prettier/vim-prettier'
+Plug 'mattn/emmet-vim'
+" Plug 'jose-elias-alvarez/nvim-lsp-ts-utils'
+" Plug 'jose-elias-alvarez/null-ls.nvim'
+
+"Buffer Management
 Plug 'vim-scripts/BufOnly.vim'
 
 " " Files related
@@ -246,7 +268,7 @@ Plug 'tweekmonster/startuptime.vim'
 
 
 " " Collection of common configurations for the Nvim LSP client
-" Plug 'nvim-treesitter/nvim-treesitter'
+Plug 'nvim-treesitter/nvim-treesitter'
 "
 Plug 'neovim/nvim-lspconfig'
 Plug 'tjdevries/lsp_extensions.nvim'

@@ -2,7 +2,10 @@
 " https://github.com/neovim/nvim-lspconfig#rust_analyzer
 lua <<EOF
 local nvim_lsp = require('lspconfig')
+
 local on_attach = function(client, bufnr)
+
+
   local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
   local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
 
@@ -53,10 +56,31 @@ end
 
 -- Use a loop to conveniently both setup defined servers
 -- and map buffer local keybindings when the language server attaches
-local servers = {"rust_analyzer", "tsserver" }
+local servers = {"rust_analyzer"}
 for _, lsp in ipairs(servers) do
   nvim_lsp[lsp].setup { on_attach = on_attach }
+
 end
+
+local function organize_imports()
+  local params = {
+    command = "_typescript.organizeImports",
+    arguments = {vim.api.nvim_buf_get_name(0)},
+    title = ""
+  }
+  vim.lsp.buf.execute_command(params)
+end
+
+nvim_lsp.tsserver.setup {
+  on_attach = on_attach,
+ -- capabilities = capabilities,
+  commands = {
+    OrganizeImports = {
+      organize_imports,
+      description = "Organize Imports"
+    }
+  }
+}
 
 
 nvim_lsp.pyls.setup {
@@ -89,4 +113,6 @@ nvim_lsp.pyls.setup {
   },
   on_attach = on_attach
 }
+
+
 EOF

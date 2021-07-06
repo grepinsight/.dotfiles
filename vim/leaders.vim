@@ -204,6 +204,8 @@ nnoremap ,h :History<CR>
 nnoremap ,j :call fzf#run(fzf#wrap({'source': 'fd $FD_OPTS . $HOME $HOME/.dotfiles $HOME/.vim', 'sink': 'edit'}))<CR>
 nnoremap ,i :e <C-R>=resolve(expand("%:h"))<CR>/
 " nnoremap ,j
+" .MuiDropzoneArea-root
+"
 nnoremap ,j :lua vim.lsp.stop_client(vim.lsp.get_active_clients())<CR>
 "nnoremap ,k
 nmap ,l yor
@@ -217,9 +219,8 @@ nmap ,s <Plug>Sneak_s
 nmap ,S <Plug>Sneak_S
 nnoremap ,t :call ChooseTerm("term-slider", 1)<CR>
 nnoremap ,,t :call ChooseTerm("term-slider2", 1)<CR>
-nnoremap ,v :Vista!!<CR>
 nnoremap ,u :GundoToggle<CR>
-nnoremap ,v :call fzf#run(fzf#wrap({'source': 'fd $FD_OPTS . $HOME/Dropbox/vimwiki', 'sink': 'vsplit'}))<CR>
+nnoremap ,v :call fzf#run(fzf#wrap({'source': 'fd $FD_OPTS . $HOME/Dropbox/vimwiki', 'sink': 'split'}))<CR>
 " nnoremap ,w
 nnoremap ,x :Focus<CR>
 "nnoremap ,y :call ChooseTerm("term-pane", 0)<CR>
@@ -263,3 +264,25 @@ let g:table_mode_insert_column_after_map = '<Leader>tic'
 " This changes the binding in popup
 inoremap <expr> <C-j> pumvisible() ? "\<C-n>" : "\<C-j>"
 inoremap <expr> <C-k> pumvisible() ? "\<C-p>" : "\<C-k>"
+
+" au FileType javascript setlocal formatprg=prettier\ --parser\ typescript
+" au FileType javascript.jsx setlocal formatprg=prettier\ --parser\ typescript
+" au FileType typescript setlocal formatprg=prettier\ --parser\ typescript
+" au FileType html setlocal formatprg=js-beautify\ --type\ html
+" au FileType scss setlocal formatprg=prettier\ --parser\ css
+" au FileType css setlocal formatprg=prettier\ --parser\ css
+" " command! Prettier execute "normal! mwgggqGgg=G`w"
+autocmd BufWritePre *.js execute ':Prettier'
+autocmd BufWritePre *.tsx execute ':Prettier'
+
+
+let g:user_emmet_settings = {
+\ 'typescript' : {
+\     'extends' : 'jsx',
+\ },
+\ 'javascript' : {
+\     'extends' : 'jsx',
+\ },
+\}
+
+autocmd BufEnter * lua require'completion'.on_attach()
