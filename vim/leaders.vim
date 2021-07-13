@@ -212,6 +212,7 @@ nmap ,l yor
 nnoremap ,m :Magit<CR>
 nnoremap ,n <cmd>lua require'telescope.builtin'.live_grep{}<CR>
 nnoremap ,o  :only<CR>
+nnoremap ,O :BOnly<CR>
 nnoremap ,p :e <C-R>=resolve(expand("%"))<CR>
 nnoremap ,q :Rg! <C-R>=expand("%:t")<CR>
 nnoremap ,r :BTags<CR>
