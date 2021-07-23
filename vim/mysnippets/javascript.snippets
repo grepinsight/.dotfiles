@@ -42,3 +42,18 @@ endsnippet
 snippet usee "Description" b
 useEffect(() => {$1}, []);
 endsnippet
+
+# Cypress
+snippet con "Description" b
+context('', () => {})
+endsnippet
+
+snippet be "Description" b
+beforeEach(() => {
+  $1
+})
+endsnippet
+
+snippet it "Description" b
+it("$1", () => {$0})
+endsnippet
