@@ -234,3 +234,23 @@ class ${1}Serializer(serializers.ModelSerializer):
         fields = ${2:"__all__"}
 endsnippet
 
+
+snippet django_script "Django Runscript Template" b
+"""Run script.
+
+Use this script as
+python manage.py runscript \
+        <NAME_OF_THIS_SCRIPT>  \
+        --script-args \
+"""
+import logging
+# from django.db import transaction
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+
+def run(*args):
+    """Run this."""
+    logger.info("reading %s", args[0])
+endsnippet

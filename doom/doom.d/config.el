@@ -328,6 +328,8 @@
           ("en_es"   . "%(my/translate-en-es)")
           ("translate"   . "%(my/translate)")
           ("ja" . "https://ja.dict.naver.com/#/search?query=%s")
+          ("jax" . "https://ja.dict.naver.com/#/search?range=vlive&query=%s")
+          ("jaudio" . "https://ja.dict.naver.com//api/nvoice?speaker=yuri&service=dictionary&speech_fmt=mp3&text=%s&vcode=764096")
           ("ko" . "https://ko.dict.naver.com/#/search?query=%s")
           )
         )
