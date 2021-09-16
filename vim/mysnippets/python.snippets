@@ -234,3 +234,18 @@ class ${1}Serializer(serializers.ModelSerializer):
         fields = ${2:"__all__"}
 endsnippet
 
+
+snippet bashop "Description" b
+${1}= BashOperator(
+    task_id="`!p snip.rv=t[1]`",
+    env={
+    },
+    bash_command="""
+    """,
+)
+endsnippet
+
+
+snippet ,pl "Description" bA
+from pathlib import Path
+endsnippet

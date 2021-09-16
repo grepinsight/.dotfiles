@@ -2,6 +2,7 @@
 " https://github.com/neovim/nvim-lspconfig#rust_analyzer
 lua <<EOF
 local nvim_lsp = require('lspconfig')
+local coq = require "coq"
 
 local on_attach = function(client, bufnr)
 
@@ -83,36 +84,40 @@ nvim_lsp.tsserver.setup {
 }
 
 
-nvim_lsp.pyls.setup {
-  cmd = {"pyls"},
-  filetypes = {"python"},
-  settings = {
-    pyls = {
-      configurationSources = {"flake8"},
-      plugins = {
-        jedi_completion = {enabled = true},
-        jedi_hover = {enabled = true},
-        jedi_references = {enabled = true},
-        jedi_signature_help = {enabled = true},
-        jedi_symbols = {enabled = true, all_scopes = true},
-        pycodestyle = {enabled = false},
-        flake8 = {
-          enabled = true,
-          ignore = {},
-        },
-        mypy = {enabled = true},
-        isort = {enabled = true},
-        yapf = {enabled = false},
-        pylint = {enabled = true},
-        pydocstyle = {enabled = false},
-        mccabe = {enabled = false},
-        preload = {enabled = false},
-        rope_completion = {enabled = false}
+nvim_lsp.pylsp.setup (
+    coq.lsp_ensure_capabilities({
+    cmd = {"pylsp"},
+    filetypes = {"python"},
+    settings = {
+        pyls = {
+            configurationSources = {"flake8"},
+            plugins = {
+                jedi_completion = {enabled = true},
+                jedi_hover = {enabled = true},
+                jedi_references = {enabled = true},
+                jedi_signature_help = {enabled = true},
+                jedi_symbols = {enabled = true, all_scopes = true},
+                pycodestyle = {enabled = false},
+                flake8 = {
+                enabled = true,
+                ignore = {},
+                },
+            mypy = {enabled = true},
+            isort = {enabled = true},
+            yapf = {enabled = false},
+            pylint = {enabled = true},
+            pydocstyle = {enabled = false},
+            mccabe = {enabled = false},
+            preload = {enabled = false},
+            rope_completion = {enabled = false}
+            }
+        }
+    },
+      on_attach = on_attach
       }
-    }
-  },
-  on_attach = on_attach
-}
+  )
+)
+
 
 
 EOF

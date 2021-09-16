@@ -265,6 +265,7 @@ alias gst="git status --untracked-files=no"
 alias gsu="git ls-files --others --exclude-standard"
 alias gsup="git standup"
 alias gstup="git standup"
+alias gfp="git fetch --prune"
 
 ## Git Add
 alias gau="git add -u"
