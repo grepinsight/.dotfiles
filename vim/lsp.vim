@@ -83,11 +83,11 @@ nvim_lsp.tsserver.setup {
 }
 
 
-nvim_lsp.pyls.setup {
-  cmd = {"pyls"},
+nvim_lsp.pylsp.setup {
+  cmd = {"pylsp"},
   filetypes = {"python"},
   settings = {
-    pyls = {
+    pylsp = {
       configurationSources = {"flake8"},
       plugins = {
         jedi_completion = {enabled = true},

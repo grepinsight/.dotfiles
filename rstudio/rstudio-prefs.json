@@ -35,7 +35,7 @@
         "console_left_on_top": false,
         "console_right_on_top": true
     },
-    "posix_terminal_shell": "bash",
+    "posix_terminal_shell": "zsh",
     "source_with_echo": true,
     "jobs_tab_visibility": "shown",
     "rmd_preferred_template_path": "/Library/Frameworks/R.framework/Versions/4.0/Resources/library/mwhat/rmarkdown/templates/mwh_analysis_basic",

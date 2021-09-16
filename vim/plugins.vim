@@ -67,6 +67,8 @@ Plug 'vim-scripts/BufOnly.vim'
 
 " " Files related
 Plug 'justinmk/vim-dirvish'
+Plug 'kyazdani42/nvim-web-devicons' " for file icons
+Plug 'kyazdani42/nvim-tree.lua'
 
 Plug 'tpope/vim-eunuch'
 
@@ -114,7 +116,7 @@ Plug 'sjl/gundo.vim'
   let g:gundo_prefer_python3 = 1
 
 Plug 'tpope/vim-commentary'
-" Plug 'Yggdroot/indentLine'
+Plug 'Yggdroot/indentLine'
 Plug 'dhruvasagar/vim-table-mode'
 " Plug 'elzr/vim-json'
 " Plug 'kalekundert/vim-coiled-snake'
@@ -201,13 +203,6 @@ Plug 'tpope/vim-speeddating'
 
 Plug 'lervag/vimtex'
 " Disable overfull/underfull \hbox and all package warnings
-let g:vimtex_quickfix_latexlog = {
-      \ 'overfull' : 0,
-      \ 'underfull' : 0,
-      \ 'packages' : {
-      \   'default' : 0,
-      \ },
-      \}
 let g:tex_flavor = "latex"
 
 " Plug 'reedes/vim-wordy'
@@ -274,6 +269,9 @@ Plug 'neovim/nvim-lspconfig'
 Plug 'tjdevries/lsp_extensions.nvim'
 Plug 'nvim-lua/completion-nvim'
 Plug 'onsails/lspkind-nvim'
+
+
+Plug 'ms-jpq/coq_nvim', {'branch': 'coq'}
 
 " " Diagnostic navigation and settings for built-in LSP
 "Plug 'nvim-lua/diagnostic-nvim'

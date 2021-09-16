@@ -47,6 +47,8 @@ set -g status-right "#[fg=green]#(date '+%Y-%m-%d (wk-%V)') | #(time-pst) | #($H
 
 #bind-key C-a last-window
 bind-key e switch-client -l
+bind-key -r i run-shell "tmux neww ~/src/productivity/tmux-cht.sh"
+bind-key -r j run-shell "tmux neww ~/src/productivity/notes.sh"
 
 # Swap windows
 bind-key '<' swap-window -d -t '{previous}' # Move window left.
