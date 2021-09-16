@@ -49,7 +49,7 @@ style = "bold yellow"
 format = "[as gituser: $output]($style)"
 
 [custom.gitlog]
-command = "git log -n 1 --date=relative --format='%>(88,trunc)%s(%ad) (%h) ' | tr '\n' '|'; git diff --numstat | sort -k1,1nr | tr '\t' ':' | tr '\n' '|'; git rev-list @{u}.. | wc -l | tr '\n' ' '; echo -n 'commits ahead'"
+command = "git log -n 1 --date=relative --format='%>(88,trunc)%s(%ad) (%h) ' | tr -d '`' | tr '\n' '|'; git diff --numstat | sort -k1,1nr | tr '\t' ':' | tr '\n' '|'; git rev-list @{u}.. | wc -l | tr '\n' ' '; echo -n 'commits ahead'"
 when = """ test 1 """
 style = "bold underline fg:246"
 format = """[🎬 $output]($style)"""

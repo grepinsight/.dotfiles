@@ -235,6 +235,21 @@ class ${1}Serializer(serializers.ModelSerializer):
 endsnippet
 
 
+snippet bashop "Description" b
+${1}= BashOperator(
+    task_id="`!p snip.rv=t[1]`",
+    env={
+    },
+    bash_command="""
+    """,
+)
+endsnippet
+
+
+snippet ,pl "Description" bA
+from pathlib import Path
+endsnippet
+
 snippet django_script "Django Runscript Template" b
 """Run script.
 

@@ -12,6 +12,8 @@ endif
 call plug#begin('~/.vim/plugged')
 
 " Plug 'kassio/neoterm'
+Plug 'ms-jpq/coq_nvim', {'branch': 'coq'}
+Plug 'ms-jpq/coq.artifacts', {'branch': 'artifacts'}
 
 " " Colorschemes
 "Plug 'dracula/vim', { 'as': 'dracula' }
@@ -88,6 +90,23 @@ Plug 'justinmk/vim-sneak'
 Plug 'preservim/tagbar'
 Plug 'liuchengxu/vista.vim'
 Plug 'tpope/vim-projectionist'
+
+" let g:projectionist_heuristics= {
+"     \ '*': {
+"     \   'R/*.R': {
+"     \     'alternate': 'tests/testthat/test-{basename}.R'
+"     \    },
+"     \   'tests/testthat/test-*.R': {
+"     \     'alternate': 'R/{basename}.R'
+"     \   }
+"     \ },
+"     \ 'pyproject.toml': {
+"     \   '*.py': {
+"     \     'alternate': 'test_{basename}.py'
+"     \    },
+"     \ }
+"     \ }
+
 Plug 'tpope/vim-unimpaired'
 " Plug 'christoomey/vim-tmux-navigator'
 
