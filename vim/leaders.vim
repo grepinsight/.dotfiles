@@ -275,6 +275,7 @@ inoremap <expr> <C-k> pumvisible() ? "\<C-p>" : "\<C-k>"
 " " command! Prettier execute "normal! mwgggqGgg=G`w"
 autocmd BufWritePre *.js execute ':Prettier'
 autocmd BufWritePre *.tsx execute ':Prettier'
+autocmd BufWritePre *.css execute ':Prettier'
 
 
 let g:user_emmet_settings = {

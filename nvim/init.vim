@@ -202,11 +202,6 @@ inoremap <M-m> %>%
 " ----------------------------------------------------------------------------
 " Remapping {{{
 
-" Make movement more visual oriented
-nnoremap j gj
-nnoremap k gk
-xnoremap j gj
-xnoremap k gk
 
 
 nmap \q :nohlsearch<CR>
@@ -218,10 +213,6 @@ nnoremap / /\v
 vnoremap / /\v
 
 
-"Keep search matches in the middle of the window and pulse the line when moving to them
-nnoremap n nzzzv
-nnoremap N Nzzzv
-nnoremap vv ^vg_
 
 command! ReadOnlyfy execute "normal! \<esc>:!chmod 440 %<CR>"
 
@@ -1412,6 +1403,7 @@ nnoremap <Leader>ft :call OpenFileTypeSetting()<CR>
 " ============================================================================
 " Leader Key Mappings {{{
 source ~/.dotfiles/vim/leaders.vim
+source ~/.dotfiles/vim/remaps.vim
 " }}}
 " ============================================================================
 " Custom Commands {{{
