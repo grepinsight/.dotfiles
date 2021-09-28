@@ -157,8 +157,10 @@ nnoremap <LocalLeader>fs <cmd>Telescope git_status<cr>
 nnoremap <LocalLeader>fm <cmd>Telescope marks<cr>
 nnoremap <LocalLeader>fr <cmd>Telescope lsp_references<cr>
 
+nnoremap <LocalLeader>K :Lspsaga hover_doc<CR>
 nnoremap <LocalLeader>g :GV<CR>
 nnoremap <LocalLeader>gf :<c-u>vie <c-r>=findfile(expand('<cfile>'))<cr><cr>
+nnoremap <LocalLeader>gd :Lspsaga preview_definition<CR>
 nnoremap <LocalLeader>ji :BTags<CR>
 nnoremap <LocalLeader>lc :lclose<CR>
 nnoremap <LocalLeader>lf :BLines<CR>
@@ -231,6 +233,10 @@ nnoremap ,z :Focus2<CR>
 
 nnoremap [t :tabprevious<CR>
 nnoremap ]t :tabnext<CR>
+
+
+
+nnoremap <C-t> :Files<CR>
 
 " terminal
 tnoremap ,t <C-\><C-n>:q<CR>

@@ -279,7 +279,7 @@ let g:doge_doc_standard_python = 'google'
 " " Profiling
 Plug 'tweekmonster/startuptime.vim'
 
-
+Plug 'wfxr/minimap.vim', {'do': ':!cargo install --locked code-minimap'}
 
 " " Collection of common configurations for the Nvim LSP client
 Plug 'nvim-treesitter/nvim-treesitter'
@@ -287,6 +287,12 @@ Plug 'nvim-treesitter/nvim-treesitter'
 Plug 'neovim/nvim-lspconfig'
 Plug 'tjdevries/lsp_extensions.nvim'
 Plug 'nvim-lua/completion-nvim'
+Plug 'glepnir/lspsaga.nvim'
+
+" Plug 'hrsh7th/cmp-nvim-lsp'
+" Plug 'hrsh7th/cmp-buffer'
+" Plug 'hrsh7th/nvim-cmp'
+
 Plug 'onsails/lspkind-nvim'
 
 
