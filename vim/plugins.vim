@@ -128,7 +128,7 @@ Plug 'junegunn/vim-easy-align'         " perform alignment easier
 " Plug 'tommcdo/vim-exchange'            " swap two text objects
 " Plug 'michaeljsmith/vim-indent-object' " text object
 Plug 'tpope/vim-repeat'
-Plug 'terryma/vim-multiple-cursors'
+"Plug 'terryma/vim-multiple-cursors'
 " Plug 'junegunn/vim-after-object'
     silent! if has_key(g:plugs, 'vim-after-object')
       autocmd VimEnter * silent! call after_object#enable('=', ':', '#', ' ', '|')
