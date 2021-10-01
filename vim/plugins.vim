@@ -18,6 +18,9 @@ Plug 'ms-jpq/coq.artifacts', {'branch': 'artifacts'}
 " " Colorschemes
 "Plug 'dracula/vim', { 'as': 'dracula' }
 Plug 'morhetz/gruvbox'
+" Plug 'sainnhe/gruvbox-material'
+" Plug 'EdenEast/nightfox.nvim'
+" autocmd vimenter * ++nested colorscheme nightfox
 autocmd vimenter * ++nested colorscheme gruvbox
 Plug 'mhinz/vim-startify'
 "Plug 'rbong/vim-crystalline'
@@ -282,6 +285,7 @@ Plug 'broadinstitute/vim-wdl'
 Plug 'axvr/org.vim'
 Plug 'chrisbra/NrrwRgn' " like emacs narrow region
 Plug 'mattn/calendar-vim'
+Plug 'nvim-neorg/neorg' " Neovim notetaking
 
 
 " Etc Plugins

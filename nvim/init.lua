@@ -1,5 +1,7 @@
+
 require('telescope').load_extension('fzy_native')
 local actions = require('telescope.actions')
+
 
 require('telescope').setup {
     defaults = {

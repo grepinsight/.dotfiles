@@ -123,6 +123,10 @@ let maplocalleader=" "
 " ============================================================================
 source ~/.dotfiles/vim/plugins.vim
 source ~/.dotfiles/vim/lsp.vim
+lua <<EOF
+require("init")
+EOF
+
 
 if has('termguicolors')
     set termguicolors
