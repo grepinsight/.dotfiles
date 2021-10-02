@@ -5,7 +5,6 @@
 "let g:python3_host_prog = '/Users/allee/.pyenv/versions/3.8.2/bin/python'
 lua <<EOF
 local nvim_lsp = require('lspconfig')
-local coq = require "coq"
 
 local on_attach = function(client, bufnr)
 
@@ -89,9 +88,7 @@ nvim_lsp.tsserver.setup {
 }
 
 
-nvim_lsp.pylsp.setup (
-    coq.lsp_ensure_capabilities(
-    {
+nvim_lsp.pylsp.setup ( {
     -- capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities()),
     cmd = {"pylsp"},
     filetypes = {"python"},
@@ -120,10 +117,8 @@ nvim_lsp.pylsp.setup (
             }
         }
     },
-      on_attach = on_attach
-      }
-  )
-)
+on_attach = on_attach
+})
 
 
 -- require('neorg').setup {
