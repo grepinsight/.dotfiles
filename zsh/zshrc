@@ -74,7 +74,7 @@ plugins=(git
     web-search
     fzf
     gnu-utils
-    z
+    #z
     # git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
     zsh-syntax-highlighting
     # git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
@@ -148,8 +148,9 @@ bindkey '^G' fzf-cd-widget
 
 
 export PATH="$HOME/.poetry/bin:$PATH"
-command -v direnv > /dev/null 2>&1 && eval "$(direnv hook zsh)"
+command -v direnv  > /dev/null 2>&1 && eval "$(direnv hook zsh)"
 command -v hsearch > /dev/null 2>&1 && eval "$(hsearch init zsh)"
+command -v zoxide  > /dev/null 2>&1 && eval "$(zoxide init zsh)"
 
 # # >>> conda initialize >>>
 # # !! Contents within this block are managed by 'conda init' !!
