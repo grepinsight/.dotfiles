@@ -1,5 +1,29 @@
+" Systems
+"
+" Double Capital Letters
+" F1-F9
+" Backslash Leader
+" Space Leader
+" Comma Leader
+
+nnoremap <SPACE> <Nop>
+let maplocalleader=" "
+
 nnoremap   <silent>   <F9>   :FloatermToggle<CR>
 tnoremap   <silent>   <F9>   <C-\><C-n>:FloatermToggle<CR>
+
+" Double Capital letters
+nnoremap BB :call BufferSmartDelete()<CR>
+
+nnoremap TB :lua require('telescope.builtin').buffers()<CR>
+nnoremap TG :lua require('telescope.builtin').grep_string { search = vim.fn.expand("<cword>") }<CR>
+nnoremap TS :lua require('telescope.builtin').grep_string({ search = vim.fn.input("Grep For > ")})<CR>
+nnoremap TF :lua require('telescope.builtin').find_files()<CR>
+nnoremap TM :Telescope marks<CR>
+nnoremap TR :Telescope lsp_references<CR>
+
+nnoremap QQ :q<CR>
+" ZZ        : q
 
 command! R :FloatermNew --width=0.5 --wintype=normal --name=repl --position=right R --vanilla
 command! Py :FloatermNew --width=0.5 --wintype=normal --name=repl --position=right ipython --TerminalInteractiveShell.editing_mode=vi
@@ -111,6 +135,11 @@ nnoremap <Leader>fme :set foldmethod=expr<CR>
 nnoremap <Leader>fmi :set foldmethod=indent<CR>
 nnoremap <Leader>fmm :set foldmethod=marker<CR>
 nnoremap <Leader>fms :set foldmethod=syntax<CR>
+
+" Move to start of fold
+nnoremap <leader>fs zo[z
+" Move to end of fold
+nnoremap <leader>fe zo]z
 nnoremap <Leader>syn :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
 \ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
 \ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
@@ -131,6 +160,11 @@ map  <Leader>w <Plug>(easymotion-bd-w)
 nmap <Leader>w <Plug>(easymotion-overwin-w)
 map  <Leader>w$ <Plug>(easymotion-bd-w)
 nmap <Leader>w$ <Plug>(easymotion-overwin-w)
+nnoremap <Leader>rg :Rg! <C-R><C-W><CR>
+
+" Edit the macro quickly; "q<leader>m
+nnoremap <leader>m  :<c-u><c-r><c-r>='let @'. v:register .' = '. string(getreg(v:register))<cr><c-f><left>
+nnoremap <Leader>mg :Magit<CR>
 
 
 
@@ -138,12 +172,14 @@ nmap <Leader>w$ <Plug>(easymotion-overwin-w)
 
 "nnoremap <LocalLeader>c :ccl<CR>
 nnoremap <LocalLeader><LocalLeader> <C-^>
-nnoremap <LocalLeader>a :A <CR>
+"nnoremap <LocalLeader>a :A <CR>
+nnoremap <LocalLeader>af :lua require("harpoon.mark").add_file()<CR>
 nnoremap <leader>aa :A <CR>
-nnoremap <leader><leader>a :A <CR>
-nnoremap <leader>a :A <CR>
+nnoremap <LocalLeader>1 :lua require("harpoon.ui").nav_file(1)<CR>
+nnoremap <LocalLeader>2 :lua require("harpoon.ui").nav_file(2)<CR>
+nnoremap <LocalLeader>3 :lua require("harpoon.ui").nav_file(3)<CR>
+nnoremap <LocalLeader>4 :lua require("harpoon.ui").nav_file(4)<CR>
 nnoremap <LocalLeader>b :GitMessenger<CR>
-nnoremap <LocalLeader>c :call ToggleQuickFix()<CR>
 nnoremap <LocalLeader>d :Gvdiff<CR>
 nnoremap <LocalLeader>e :edit <C-R>=expand('%:p:h') . '/' <CR>
 nnoremap <LocalLeader>ff <cmd>Telescope find_files<cr>
@@ -172,10 +208,15 @@ nnoremap <LocalLeader>pro :e ~/src/productivity/
 nnoremap <silent> <LocalLeader>p :let @" = expand("%:p")<CR> <bar> :echo expand('%:p')<CR>
 nnoremap <silent> <LocalLeader>pzp :!echo <C-R>=expand("%:p")<CR> \| rpbcopy <CR> <bar> :echo expand('%:p')<CR>
 nnoremap <LocalLeader>pt :NERDTreeToggle<CR>
-nnoremap <LocalLeader>q :quit <CR>
-nnoremap <LocalLeader>s :w<CR>
-nnoremap <LocalLeader>t :!typora "%"<CR>
+nnoremap <LocalLeader>qq :quit <CR>
+nnoremap <LocalLeader>qf :call ToggleQuickFix()<CR>
+nnoremap <LocalLeader>s1 :lua require("harpoon.term").sendCommand(1, "ipython --TerminalInteractiveShell.editing_mode=vi")<CR>
+nnoremap <LocalLeader>s2 :lua require("harpoon.term").sendCommand(1, 2)<CR>
+nnoremap <LocalLeader>ty :!typora "%"<CR>
 nnoremap <LocalLeader>tn :TestNearest<CR>
+nnoremap <LocalLeader>t1 :lua require("harpoon.term").gotoTerminal(1)<CR>
+nnoremap <LocalLeader>t2 :lua require("harpoon.term").gotoTerminal(2)<CR>
+
 nnoremap <LocalLeader>toc :VimwikiTOC<CR>
 nnoremap <LocalLeader>tog :!toggl-start <C-R>=expand('<cWORD>')<CR>
 nnoremap <LocalLeader>v :Vista<CR>
@@ -193,8 +234,8 @@ noremap <silent> <LocalLeader>cl :wincmd l<CR>:close<CR>
 nnoremap <LocalLeader>ot :call ChooseTerm("term-slider", 1)<CR>
 
 " Tertiary leaderkey
+"
 " COMMA LEADER
-
 nnoremap ,a :CtrlPMRUFiles<CR>
 nnoremap ,b :Buffers<CR>
 nnoremap ,c :GitGutterQuickFix<CR> <bar> :copen <CR> /<C-R>=bufname(winbufnr(1))<CR><CR>
@@ -203,13 +244,9 @@ nnoremap ,e :e <C-R>=expand("%:p:h") . "/" <CR>
 nnoremap ,f :Rg! <C-R><C-W><CR>
 nnoremap ,g :GV!<CR>
 nnoremap ,h :History<CR>
-nnoremap ,j :call fzf#run(fzf#wrap({'source': 'fd $FD_OPTS . $HOME $HOME/.dotfiles $HOME/.vim', 'sink': 'edit'}))<CR>
 nnoremap ,i :e <C-R>=resolve(expand("%:h"))<CR>/
-" nnoremap ,j
-" .MuiDropzoneArea-root
-"
-nnoremap ,j :lua vim.lsp.stop_client(vim.lsp.get_active_clients())<CR>
-"nnoremap ,k
+"nnoremap ,j
+nnoremap ,k :lua require("harpoon.mark").add_file()<CR>
 nmap ,l yor
 nnoremap ,m :Magit<CR>
 nnoremap ,n <cmd>lua require'telescope.builtin'.live_grep{}<CR>
@@ -234,6 +271,10 @@ nnoremap ,z :Focus2<CR>
 nnoremap [t :tabprevious<CR>
 nnoremap ]t :tabnext<CR>
 
+
+" Ctrl <C-***>
+nnoremap <C-e> :lua require("harpoon.ui").toggle_quick_menu()<CR>
+nnoremap <C-y> :lua require("harpoon.cmd-ui").toggle_quick_menu()<CR>
 
 
 nnoremap <C-t> :Files<CR>
@@ -269,8 +310,8 @@ let g:table_mode_insert_column_after_map = '<Leader>tic'
 
 
 " This changes the binding in popup
-inoremap <expr> <C-j> pumvisible() ? "\<C-n>" : "\<C-j>"
-inoremap <expr> <C-k> pumvisible() ? "\<C-p>" : "\<C-k>"
+"inoremap <expr> <C-j> pumvisible() ? "\<C-n>" : "\<C-j>"
+"inoremap <expr> <C-k> pumvisible() ? "\<C-p>" : "\<C-k>"
 
 " au FileType javascript setlocal formatprg=prettier\ --parser\ typescript
 " au FileType javascript.jsx setlocal formatprg=prettier\ --parser\ typescript
@@ -293,4 +334,4 @@ let g:user_emmet_settings = {
 \ },
 \}
 
-autocmd BufEnter * lua require'completion'.on_attach()
+"autocmd BufEnter * lua require'completion'.on_attach()

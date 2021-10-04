@@ -119,21 +119,20 @@ let g:SimpylFold_docstring_preview = 1
 Plug 'masukomi/vim-markdown-folding'
 " Plug 'Konfekt/FastFold'
 Plug 'matze/vim-tex-fold'
-Plug 'lambdalisue/fern.vim'
 
 " Editing
 Plug 'tpope/vim-surround'              " surround text objects with whatever
 Plug 'AndrewRadev/splitjoin.vim'
 Plug 'junegunn/vim-easy-align'         " perform alignment easier
+Plug 'tpope/vim-repeat'
+Plug 'sjl/gundo.vim'
 " Plug 'tommcdo/vim-exchange'            " swap two text objects
 " Plug 'michaeljsmith/vim-indent-object' " text object
-Plug 'tpope/vim-repeat'
 "Plug 'terryma/vim-multiple-cursors'
 " Plug 'junegunn/vim-after-object'
-    silent! if has_key(g:plugs, 'vim-after-object')
-      autocmd VimEnter * silent! call after_object#enable('=', ':', '#', ' ', '|')
-    endif
-Plug 'sjl/gundo.vim'
+"    silent! if has_key(g:plugs, 'vim-after-object')
+"      autocmd VimEnter * silent! call after_object#enable('=', ':', '#', ' ', '|')
+"    endif
   " python3 support
   let g:gundo_prefer_python3 = 1
 
@@ -305,21 +304,22 @@ Plug 'tweekmonster/startuptime.vim'
 Plug 'wfxr/minimap.vim', {'do': ':!cargo install --locked code-minimap'}
 
 " " Collection of common configurations for the Nvim LSP client
-Plug 'nvim-treesitter/nvim-treesitter'
+" Plug 'nvim-treesitter/nvim-treesitter'
 "
 Plug 'neovim/nvim-lspconfig'
 Plug 'tjdevries/lsp_extensions.nvim'
 Plug 'nvim-lua/completion-nvim'
 Plug 'glepnir/lspsaga.nvim'
 
-" Plug 'hrsh7th/cmp-nvim-lsp'
-" Plug 'hrsh7th/cmp-buffer'
-" Plug 'hrsh7th/nvim-cmp'
+Plug 'hrsh7th/nvim-cmp'
+Plug 'hrsh7th/cmp-nvim-lsp'
+Plug 'hrsh7th/cmp-buffer'
+Plug 'hrsh7th/cmp-path'
+Plug 'quangnguyen30192/cmp-nvim-ultisnips'
 
-Plug 'onsails/lspkind-nvim'
-
-
-Plug 'ms-jpq/coq_nvim', {'branch': 'coq'}
+" Experimental--------------------------------------------------
+"Plug 'onsails/lspkind-nvim'
+"Plug 'ms-jpq/coq_nvim', {'branch': 'coq'}
 
 " " Diagnostic navigation and settings for built-in LSP
 "Plug 'nvim-lua/diagnostic-nvim'
@@ -338,6 +338,7 @@ Plug 'szw/vim-maximizer'
 Plug 'nvim-lua/popup.nvim'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'ThePrimeagen/harpoon'
+
 
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-telescope/telescope-fzy-native.nvim'

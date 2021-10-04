@@ -33,14 +33,6 @@ endif
 unlet! skip_defaults_vim
 
 
-augroup syntax_setup
-    autocmd!
-    autocmd FileType rst syntax off
-    autocmd FileType json set foldmethod=indent
-    autocmd BufNewFile,BufRead *.org setfiletype org
-    autocmd BufNewFile,BufRead *.snk setfiletype snakemake
-    autocmd BufNewFile,BufRead Snakefile* setfiletype snakemake
-augroup END
 
 silent! source $VIMRUNTIME/defaults.vim
 set encoding=UTF-8
@@ -115,14 +107,13 @@ set shortmess+=c
 " Variables {{{
 " ============================================================================
 
-" Define maplocalleader
-nnoremap <SPACE> <Nop>
-let maplocalleader=" "
-
 " }}}
 " ============================================================================
+source ~/.dotfiles/nvim/autocmds.vim
 source ~/.dotfiles/vim/plugins.vim
 source ~/.dotfiles/vim/lsp.vim
+source ~/.dotfiles/nvim/shortcuts.vim
+source ~/.dotfiles/vim/functions.vim
 lua <<EOF
 require("init")
 EOF
@@ -141,33 +132,6 @@ let g:deus_termcolors=256
 
 " Functions
 
-function! ChooseTerm(termname, slider)
-    let pane = bufwinnr(a:termname)
-    let buf = bufexists(a:termname)
-    if pane > 0
-        " pane is visible
-        if a:slider > 0
-            :exe pane . "wincmd c"
-        else
-            :exe "e #"
-        endif
-        :exe "normal i"
-    elseif buf > 0
-        " buffer is not in pane
-        if a:slider
-            :exe "topleft split"
-        endif
-        :exe "buffer " . a:termname
-        :exe "normal i"
-    else
-        " buffer is not loaded, create
-        if a:slider
-            :exe "topleft split"
-        endif
-        :terminal
-        :exe "f " a:termname
-    endif
-endfunction
 " ============================================================================
 " Productivity Aliases {{{
 " ============================================================================
@@ -264,9 +228,6 @@ function! BufferSmartDelete()
 	endif
 endfunction
 
-command! BufferSmartDelete :call BufferSmartDelete()
-nnoremap BB :call BufferSmartDelete()<CR>
-nnoremap QQ :q<CR>
 " reopen the closed buffer
 nnoremap <c-s-t> :b#<CR>:e<CR>
 "
@@ -365,18 +326,6 @@ let g:ctrlp_user_command = 'fd $FD_OPTS -E "*.pdf" -E "*.Rd"'
 " ----------------------------------------------------------------------------
 " Plugin - Fugitive
 " ----------------------------------------------------------------------------
-function! BlameToggle() abort
-  let found = 0
-  for winnr in range(1, winnr('$'))
-    if getbufvar(winbufnr(winnr), '&filetype') ==# 'fugitiveblame'
-      exe winnr . 'close'
-      let found = 1
-    endif
-  endfor
-  if !found
-    Git blame
-  endif
-endfunction
 
 "  - status
 " Obtained from https://gist.github.com/actionshrimp/6493611
@@ -1080,17 +1029,8 @@ set copyindent
 "     \ 'rmd': ['R', '--slave', '-e', 'languageserver::run()'],
 "     \ }
 
-nnoremap <Leader>rg :Rg! <C-R><C-W><CR>
 "let g:signify_vcs_list = [ 'git', 'hg' ]
 
-
-autocmd BufEnter *.png,*.jpg,*gif exec "!open ".expand("%") | bw
-autocmd BufEnter *.pdf exec "!open -a 'PDF Expert' "."\"".expand("%")."\"" | bw
-
-" Edit the macro quickly; "q<leader>m
-nnoremap <leader>m  :<c-u><c-r><c-r>='let @'. v:register .' = '. string(getreg(v:register))<cr><c-f><left>
-
-nnoremap <Leader>mg :Magit<CR>
 
 let g:ctrlp_working_path_mode = 0
 
@@ -1154,46 +1094,8 @@ if has('terminal')
 endif
 
 " }}}
-" ============================================================================
-" ============================================================================
-" Autocmd FileType {{{
-autocmd FileType gitcommit set foldlevelstart=10 "open's all folds
-autocmd FileType gitcommit set foldlevel=10 "open's all folds
-
-autocmd FileType make set foldlevelstart=1 "open's all folds
-autocmd FileType make set foldlevel=1 "open's all folds
 
 
-let g:golden_ratio_autocommand = 0
-autocmd FileType r let g:golden_ratio_autocommand = 0
-autocmd FileType rbrowser let g:golden_ratio_autocommand = 0
-
-" }}}
-" ============================================================================
-
-" ============================================================================
-" Spanish {{{
-iabbrev obvi/ obviously
-iabbrev pts/ points
-
-iabbrev ma_s más
-iabbrev fri_os fríos
-iabbrev waht what
-iabbrev que_ qué
-iabbrev dejo_ dejó
-
-
-" }}}
-" ============================================================================
-
-
-
-function! MoveLibrary()
-    silent! let @a=''
-    silent! g/^library/d A
-    silent! normal gg"ap
-endfunction
-command! MoveLibrary :call MoveLibrary()
 
 function! GotoJump()
   jumps
@@ -1352,33 +1254,6 @@ let cmdline_map_send_paragraph = '<Space>'
 
 autocmd BufNewFile *.Rmd 0r ~/src/templates/report-template.Rmd
 
-function! ClearReg()
-    let regs=split('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/-"', '\zs')
-    for r in regs
-      call setreg(r, [])
-    endfor
-endfunction
-
-let g:detect_mod_reg_state = -1
-function! DetectRegChangeAndUpdateMark()
-    let current_small_register = getreg('"-')
-    let current_mod_register = getreg('""')
-    if g:detect_mod_reg_state != current_small_register ||
-                \ g:detect_mod_reg_state != current_mod_register
-        normal! mM
-        let g:detect_mod_reg_state = current_small_register
-    endif
-endfunction
-
-
-augroup insert_tracking
-    autocmd!
-    " Mark I at the position where the last Insert mode occured across the buffer
-    autocmd InsertLeave * execute 'normal! mI'
-    " Mark M at the position when any modification happened in the Normal or Insert mode
-    autocmd CursorMoved * call DetectRegChangeAndUpdateMark()
-    autocmd InsertLeave * execute 'normal! mM'
-augroup END
 
 
 " Spacemacs compatible
@@ -1395,26 +1270,15 @@ endif
 " vim-highlightedyank: duration
 let g:highlightedyank_highlight_duration = 200
 
-function! OpenFileTypeSetting()
-    let my_ft_file = "$HOME/.config/nvim/ftplugin/" . &filetype . ".vim"
-    execute ":edit ". my_ft_file
-endfunction
-
-command! OpenFileTypeSetting :call OpenFileTypeSetting()
-nnoremap <Leader>ft :call OpenFileTypeSetting()<CR>
 
 " }}}
 " ============================================================================
 " Leader Key Mappings {{{
 source ~/.dotfiles/vim/leaders.vim
 source ~/.dotfiles/vim/remaps.vim
-" }}}
-" ============================================================================
-" Custom Commands {{{
 source ~/.dotfiles/vim/commands.vim
 " }}}
-"
-"
+" ============================================================================
 let g:floaterm_gitcommit = 'floaterm'
 
 function! s:setup_git_messenger_popup() abort
@@ -1439,29 +1303,4 @@ function! s:check_back_space() abort
     return !col || getline('.')[col - 1]  =~ '\s'
 endfunction
 
-
 " ----------
-
-
-" Emoji shortcuts
-ab :shrug: 🤷
-ab :bulb: 💡
-ab :point_right: 👉
-ab :white_check_mark: ✅
-ab :link: 🔗
-
-call dirvish#add_icon_fn({p -> p[-1:]=='/'?'📂':'📄'})
-" How to unmap things
-" augroup dirvish_config
-"   autocmd!
-"   autocmd FileType dirvish silent! unmap <buffer> <C-p>
-" augroup END
-
-augroup dirvish_config
-  autocmd!
-  autocmd FileType dirvish
-              \ nnoremap <silent><buffer> t ddO<Esc>:let @"=substitute(@", '\n', '', 'g')<CR>:r ! find "<C-R>"" -maxdepth 1 -print0 \| xargs -0 ls -Fd<CR>:silent! keeppatterns %s/\/\//\//g<CR>:silent! keeppatterns %s/[^a-zA-Z0-9\/]$//g<CR>:silent! keeppatterns g/^$/d<CR>:noh<CR>
-augroup END
-
-
-

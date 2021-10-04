@@ -50,6 +50,7 @@ bind-key e switch-client -l
 bind -r T neww -c "#{pane_current_path}" "[[ -e TODO.md ]] && nvim TODO.md || nvim ~/todo.md"
 bind-key -r W run-shell "~/src/productivity/tmux-sessionizer ~/work"
 bind-key -r D run-shell "~/src/productivity/tmux-sessionizer ~/.dotfiles"
+bind-key -r S run-shell "~/src/productivity/tmux-sessionizer ~/Dropbox/vimwiki/shared"
 bind-key -r i run-shell "tmux neww ~/src/productivity/tmux-cht.sh"
 bind-key -r j run-shell "tmux neww ~/src/productivity/notes.sh"
 
