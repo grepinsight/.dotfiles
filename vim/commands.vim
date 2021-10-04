@@ -1,10 +1,12 @@
 command! Focus             execute "normal! zMzvzz"
 command! Focus2            execute "normal! zMzOzt"
+
 command! InsightSystem     execute "normal! \<esc>:e  ~/Dropbox/vimwiki/shared/albert-s-system.org\<CR>"
 command! InsightPrinciples execute "normal! \<esc>:e  ~/Dropbox/vimwiki/shared/principles.org\<CR>"
 command! InsightTodo       execute "normal! \<esc>:e  ~/todo.org\<CR>"
 command! InsightNotes      execute "normal! \<esc>:e  ~/notes.org\<CR>"
 command! InsightScratch    execute "normal! \<esc>:e  ~/scratch.org\<CR>"
+command! InsightThoughts   execute "normal! \<esc>:e  ~/thoughts.org\<CR>"
 command! InsightOrg        execute "normal! \<esc>:e  ~/index.org\<CR>"
 command! Kanban            execute "normal! \<esc>:e  ~/Dropbox/vimwiki/shared/kanban.org\<CR>"
 command! Meeting           execute "normal! \<esc>:sp ~/Dropbox/vimwiki/shared/meeting--\<C-R>=strftime(\"%Y-%m-%d\")\<CR>.md\<CR>"

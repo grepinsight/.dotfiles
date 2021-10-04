@@ -107,6 +107,8 @@ Plug 'neovim/nvim-lspconfig'
 Plug 'tjdevries/lsp_extensions.nvim'
 Plug 'nvim-lua/completion-nvim'
 Plug 'onsails/lspkind-nvim'
+
+Plug 'nvim-treesitter/nvim-treesitter'
 -- Plug 'glepnir/lspsaga.nvim'
 
 --- Completion
@@ -114,6 +116,7 @@ Plug 'hrsh7th/nvim-cmp'
 Plug 'hrsh7th/cmp-nvim-lsp'
 Plug 'hrsh7th/cmp-buffer'
 Plug 'hrsh7th/cmp-path'
+Plug 'octaltree/cmp-look'
 Plug 'hrsh7th/cmp-nvim-lua'
 Plug 'quangnguyen30192/cmp-nvim-ultisnips'
 Plug 'ervandew/supertab'
@@ -149,7 +152,10 @@ Plug 'lervag/vimtex'
 vim.cmd 'let g:tex_flavor = "latex"'
 
 ------ Org
-Plug 'axvr/org.vim'
+-- Plug 'axvr/org.vim'
+Plug 'kristijanhusak/orgmode.nvim'
+Plug 'akinsho/org-bullets.nvim'
+
 
 ------ Snakemake
 Plug 'burneyy/vim-snakemake'

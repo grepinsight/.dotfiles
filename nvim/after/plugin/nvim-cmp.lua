@@ -62,6 +62,8 @@ cmp.setup {
   sources = {
     { name = 'nvim_lsp' },
     { name = 'ultisnips' },
+    -- { name = 'look', keyword_length = 2},
+    { name = 'orgmode' },
     { name = 'buffer' },
     { name = "path" },
   },
