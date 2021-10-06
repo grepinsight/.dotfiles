@@ -15,12 +15,14 @@ tnoremap   <silent>   <F9>   <C-\><C-n>:FloatermToggle<CR>
 " Double Capital letters
 nnoremap BB :call BufferSmartDelete()<CR>
 
+nnoremap TC :lua require('telescope.builtin').commands()<CR>
 nnoremap TB :lua require('telescope.builtin').buffers()<CR>
 nnoremap TG :lua require('telescope.builtin').grep_string { search = vim.fn.expand("<cword>") }<CR>
 nnoremap TS :lua require('telescope.builtin').grep_string({ search = vim.fn.input("Grep For > ")})<CR>
 nnoremap TF :lua require('telescope.builtin').find_files()<CR>
 nnoremap TM :Telescope marks<CR>
 nnoremap TR :Telescope lsp_references<CR>
+nnoremap TO :Telescope oldfiles<CR>
 
 nnoremap QQ :q<CR>
 " ZZ        : q

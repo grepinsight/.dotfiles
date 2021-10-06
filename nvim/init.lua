@@ -59,6 +59,7 @@ Plug 'tpope/vim-eunuch'       -- unix's Mkdir, Delete, etc.
 Plug 'justinmk/vim-dirvish'
 Plug('kyazdani42/nvim-tree.lua', {commit= '7c88a0f8ee6250a8408c28e0b03a4925b396c916'})      -- tree
 Plug 'kyazdani42/nvim-web-devicons'  -- for file icons
+Plug 'nanotee/zoxide.vim'
 
 
 -- IDE Like Featues
@@ -97,6 +98,7 @@ Plug 'kana/vim-textobj-user'
 Plug 'vim-scripts/BufOnly.vim'
 Plug 'machakann/vim-highlightedyank'
 Plug 'sbdchd/neoformat'
+Plug('kkoomen/vim-doge', { ['do'] = ':call doge#install()' })  -- doc generator
 
 ---- Snippets
 Plug 'SirVer/ultisnips'
