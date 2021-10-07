@@ -33,7 +33,7 @@ local Plug = vim.fn['plug#']
 vim.call('plug#begin', '~/.config/nvim/plugged')
 
 -- Essential
-Plug 'grepinsight/ctrlp.vim' -- my mutated version that supports vimwiki tag search
+--Plug 'grepinsight/ctrlp.vim' -- my mutated version that supports vimwiki tag search
 Plug 'tpope/vim-unimpaired'
 Plug('junegunn/fzf', { dir = '~/.fzf', ['do'] = './install --all'  })
 Plug 'junegunn/fzf.vim'
