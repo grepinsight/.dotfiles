@@ -20,3 +20,4 @@ command! Wq                execute "normal! \<esc>:wq<CR>"
 command! Year              execute "normal! \<esc>:e ~/Dropbox/vimwiki/diary/\<C-R>=strftime(\"%Y\")\<CR>.md\<CR>"
 command! Greview           :Git! diff --staged
 command! MakeTags          !ctags -R .
+command! Black             :Neoformat! python black
