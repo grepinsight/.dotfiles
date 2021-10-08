@@ -1,6 +1,7 @@
 " Systems
 "
 " Double Capital Letters
+" Unimpaired style
 " F1-F9
 " Backslash Leader
 " Space Leader
@@ -22,7 +23,9 @@ nnoremap TS :lua require('telescope.builtin').grep_string({ search = vim.fn.inpu
 nnoremap TF :lua require('telescope.builtin').find_files()<CR>
 nnoremap TM :Telescope marks<CR>
 nnoremap TR :Telescope lsp_references<CR>
-nnoremap TO :Telescope oldfiles<CR>
+nnoremap TO :Telescope oldfiles path_display=shorten<CR>
+
+nnoremap ST :GitGutterStageHunk<CR>
 
 nnoremap QQ :q<CR>
 " ZZ        : q
@@ -37,11 +40,11 @@ vnoremap   <leader>ts   :FloatermSend<CR>
 
 " vim: set foldmethod=marker foldlevel=0 nomodeline:
 " these "Ctrl mappings" work well when Caps Lock is mapped to Ctrl
-nmap <silent> t<C-n> :TestNearest<CR> " t Ctrl+n
-nmap <silent> t<C-f> :TestFile<CR>    " t Ctrl+f
-nmap <silent> t<C-s> :TestSuite<CR>   " t Ctrl+s
-nmap <silent> t<C-l> :TestLast<CR>    " t Ctrl+l
-nmap <silent> t<C-g> :TestVisit<CR>   " t Ctrl+g
+nmap <silent> t<C-n> :TestNearest<CR>
+nmap <silent> t<C-f> :TestFile<CR>
+nmap <silent> t<C-s> :TestSuite<CR>
+nmap <silent> t<C-l> :TestLast<CR>
+nmap <silent> t<C-g> :TestVisit<CR>
 nnoremap <silent> <C-p> :Telescope find_files<CR>
 
 " # Bracket Leader keys
@@ -239,8 +242,9 @@ nnoremap <LocalLeader>ot :call ChooseTerm("term-slider", 1)<CR>
 " Tertiary leaderkey
 "
 " COMMA LEADER
-nnoremap ,a :CtrlPMRUFiles<CR>
-nnoremap ,b :Buffers<CR>
+"nnoremap ,a :CtrlPMRUFiles<CR>
+nnoremap ,a :Telescope oldfiles path_display=shorten<CR>
+nnoremap ,b :Telescope buffers<CR>
 nnoremap ,c :GitGutterQuickFix<CR> <bar> :copen <CR> /<C-R>=bufname(winbufnr(1))<CR><CR>
 nnoremap ,d :DogeGenerate<CR>
 nnoremap ,e :e <C-R>=expand("%:p:h") . "/" <CR>
@@ -271,8 +275,19 @@ vnoremap <silent> ,y :'<,'>w !rpbcopy<CR><CR>
 nnoremap <silent> ,y :!echo <C-R>=expand("<cword>")<CR> \| rpbcopy <CR><CR>
 nnoremap ,z :Focus2<CR>
 
+" Unimparied style
 nnoremap [t :tabprevious<CR>
 nnoremap ]t :tabnext<CR>
+nnoremap ]1 :lua require("harpoon.ui").nav_file(1)<CR>
+nnoremap ]2 :lua require("harpoon.ui").nav_file(2)<CR>
+nnoremap ]3 :lua require("harpoon.ui").nav_file(3)<CR>
+nnoremap ]4 :lua require("harpoon.ui").nav_file(4)<CR>
+nnoremap [1 :lua require("harpoon.term").gotoTerminal(1)<CR>
+nnoremap [2 :lua require("harpoon.term").gotoTerminal(2)<CR>
+nnoremap [3 :lua require("harpoon.term").gotoTerminal(3)<CR>
+nnoremap [4 :lua require("harpoon.term").gotoTerminal(4)<CR>
+" nnoremap <LocalLeader>t1 :lua require("harpoon.term").gotoTerminal(1)<CR>
+" nnoremap <LocalLeader>t2 :lua require("harpoon.term").gotoTerminal(2)<CR>
 
 
 " Ctrl <C-***>
@@ -288,7 +303,17 @@ tnoremap [b <C-\><C-n>:bp<CR>
 tnoremap ]b <C-\><C-n>:bnext<CR>
 tnoremap [t <C-\><C-n>:tabprevious<CR>
 tnoremap ]t <C-\><C-n>:tabnext<CR>
-tmap <C-p> <C-\><C-n>:CtrlP<CR>
+tnoremap ]1 <C-\><C-n>:lua require("harpoon.ui").nav_file(1)<CR>
+tnoremap ]2 <C-\><C-n>:lua require("harpoon.ui").nav_file(2)<CR>
+tnoremap ]3 <C-\><C-n>:lua require("harpoon.ui").nav_file(3)<CR>
+tnoremap ]4 <C-\><C-n>:lua require("harpoon.ui").nav_file(4)<CR>
+tnoremap [1 <C-\><C-n>:lua require("harpoon.term").gotoTerminal(1)<CR>
+tnoremap [2 <C-\><C-n>:lua require("harpoon.term").gotoTerminal(2)<CR>
+tnoremap [3 <C-\><C-n>:lua require("harpoon.term").gotoTerminal(3)<CR>
+tnoremap [4 <C-\><C-n>:lua require("harpoon.term").gotoTerminal(4)<CR>
+tnoremap <C-w>s <C-\><C-n>:split<CR>
+"tmap <C-p> <C-\><C-n>:CtrlP<CR>
+tnoremap <silent> <C-p> :Telescope find_files<CR>
 
 tnoremap <C-w><C-h> <C-\><C-n><C-w><C-h>
 tnoremap <C-w><C-j> <C-\><C-n><C-w><C-j>
