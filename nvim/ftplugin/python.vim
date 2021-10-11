@@ -28,3 +28,4 @@ command! BlackAuto autocmd BufWritePre *.py execute ':Black'
 
 " autocmd FileType python nmap <Space> <Plug>SlimeParagraphSend
 " autocmd FileType python vmap <Space> <Plug>SlimeRegionSend
+"

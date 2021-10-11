@@ -27,6 +27,7 @@ vim.opt.undofile       = true      -- Save undos after file closes
 vim.opt.undolevels     = 10000         -- How many undos
 vim.opt.undoreload     = 10000        --number of lines to save for undo
 vim.opt.mouse          = 'a'
+vim.opt.exrc           = true     -- use project specific .vimrc file
 
 local Plug = vim.fn['plug#']
 
@@ -109,6 +110,7 @@ Plug 'neovim/nvim-lspconfig'
 Plug 'tjdevries/lsp_extensions.nvim'
 Plug 'nvim-lua/completion-nvim'
 Plug 'onsails/lspkind-nvim'
+Plug 'folke/lsp-colors.nvim'
 
 Plug 'nvim-treesitter/nvim-treesitter'
 -- Plug 'glepnir/lspsaga.nvim'

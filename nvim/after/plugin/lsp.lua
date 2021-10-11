@@ -89,32 +89,35 @@ nvim_lsp.tsserver.setup {
 }
 
 
-nvim_lsp.pylsp.setup ( {
+nvim_lsp.pylsp.setup ({
     -- capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities()),
     cmd = {"pylsp"},
     filetypes = {"python"},
     settings = {
-        pyls = {
+        pylsp = {
             configurationSources = {"flake8"},
             plugins = {
+                pylint = {
+                    enabled = true,
+                    args={'--rcfile ' .. os.getenv( "HOME" ) .. '/.dotfiles/pylintrc'}
+                },
+                flake8 = {
+                    enabled = true,
+                    ignore = {"W503"}
+                },
                 jedi_completion = {enabled = true},
                 jedi_hover = {enabled = true},
                 jedi_references = {enabled = true},
                 jedi_signature_help = {enabled = true},
                 jedi_symbols = {enabled = true, all_scopes = true},
+                mypy = {enabled = true},
+                isort = {enabled = true},
                 pycodestyle = {enabled = false},
-                flake8 = {
-                enabled = true,
-                ignore = {},
-                },
-            mypy = {enabled = true},
-            isort = {enabled = true},
-            yapf = {enabled = false},
-            pylint = {enabled = true},
-            pydocstyle = {enabled = false},
-            mccabe = {enabled = false},
-            preload = {enabled = false},
-            rope_completion = {enabled = false}
+                yapf = {enabled = false},
+                pydocstyle = {enabled = false},
+                mccabe = {enabled = false},
+                preload = {enabled = false},
+                rope_completion = {enabled = false}
             }
         }
     },

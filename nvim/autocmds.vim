@@ -28,6 +28,9 @@ fun! DirenvReload()
     if &ft =~ 'fzf'
         return
     endif
+    if bufname(bufnr("%")) =~ 'pytest'
+        return
+    endif
     let fn = bufname("%") + "__" +bufnr("%")
     if !has_key(g:direnv_loaded, fn)
         call jobsend(b:terminal_job_id, "direnv reload 2>/dev/null\n")
@@ -39,3 +42,8 @@ augroup terminal_setup | au!
     autocmd TermEnter * call DirenvReload()
 augroup end
 
+
+
+if filereadable(".vimrc_proj")
+    so .vimrc_proj
+endif
