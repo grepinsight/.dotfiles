@@ -27,7 +27,7 @@ vim.opt.undofile       = true      -- Save undos after file closes
 vim.opt.undolevels     = 10000         -- How many undos
 vim.opt.undoreload     = 10000        --number of lines to save for undo
 vim.opt.mouse          = 'a'
-vim.opt.exrc           = true     -- use project specific .vimrc file
+vim.opt.termguicolors  = true
 
 local Plug = vim.fn['plug#']
 
@@ -38,7 +38,9 @@ vim.call('plug#begin', '~/.config/nvim/plugged')
 Plug 'tpope/vim-unimpaired'
 Plug('junegunn/fzf', { dir = '~/.fzf', ['do'] = './install --all'  })
 Plug 'junegunn/fzf.vim'
-Plug 'vim-airline/vim-airline'
+-- Plug 'vim-airline/vim-airline'
+Plug 'hoob3rt/lualine.nvim'
+Plug 'akinsho/bufferline.nvim'
 Plug 'airblade/vim-rooter'
 Plug 'mhinz/vim-startify'
 
@@ -175,6 +177,9 @@ vim.cmd 'source ~/.dotfiles/vim/functions.vim'
 vim.cmd 'source ~/.dotfiles/nvim/shortcuts.vim'
 vim.cmd 'source ~/.dotfiles/nvim/autocmds.vim'
 vim.cmd 'source ~/.dotfiles/vim/commands.vim'
+
+require('lualine').setup()
+require("bufferline").setup{}
 
 vim.cmd 'let g:airline#extensions#tabline#enabled = 1'
 vim.cmd "let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6 } }"
