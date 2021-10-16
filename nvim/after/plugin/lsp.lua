@@ -91,7 +91,6 @@ nvim_lsp.tsserver.setup {
 
 
 nvim_lsp.pylsp.setup ({
-    -- capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities()),
     cmd = {"pylsp"},
     filetypes = {"python"},
     settings = {
@@ -174,3 +173,4 @@ require'lspconfig'.sumneko_lua.setup {
       },
     },
   },
+  }
