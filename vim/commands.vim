@@ -21,3 +21,4 @@ command! Year              execute "normal! \<esc>:e ~/Dropbox/vimwiki/diary/\<C
 command! Greview           :Git! diff --staged
 command! MakeTags          !ctags -R .
 command! Black             :Neoformat! python black
+command! Yapf              :Neoformat! python yapf

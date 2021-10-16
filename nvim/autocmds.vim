@@ -1,6 +1,6 @@
 augroup syntax_setup
     autocmd!
-    autocmd FileType rst syntax off
+    " autocmd FileType rst syntax off autocmd FileType rst exec "LspStop"
     autocmd FileType json set foldmethod=indent
     autocmd BufNewFile,BufRead *.org setfiletype org
     autocmd BufNewFile,BufRead *.snk setfiletype snakemake

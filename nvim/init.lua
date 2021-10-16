@@ -146,6 +146,7 @@ Plug 'mattn/emmet-vim'
 
 ------ Python
 Plug 'goerz/jupytext.vim'
+Plug 'kalekundert/vim-coiled-snake'
 
 ------ Rust
 Plug 'rust-lang/rust.vim'

@@ -1,5 +1,6 @@
 " Systems
 "
+" Double Characters
 " Double Capital Letters
 " Unimpaired style
 " F1-F9
@@ -10,6 +11,7 @@
 nnoremap <SPACE> <Nop>
 let maplocalleader=" "
 
+nnoremap   <silent>   ==   :Neoformat<CR>
 nnoremap   <silent>   <F9>   :FloatermToggle<CR>
 tnoremap   <silent>   <F9>   <C-\><C-n>:FloatermToggle<CR>
 
