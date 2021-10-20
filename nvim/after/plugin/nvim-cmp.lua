@@ -26,7 +26,6 @@ local function tab(fallback)
 end
 
 local function shift_tab(fallback)
-    local luasnip = require "luasnip"
     if fn.pumvisible() == 1 then
         fn.feedkeys(t "<C-p>", "n")
     else

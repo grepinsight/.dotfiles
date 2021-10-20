@@ -66,6 +66,11 @@ Plug 'nanotee/zoxide.vim'
 
 
 -- IDE Like Featues
+-- Viewport
+Plug 'szw/vim-maximizer'
+Plug 'ggandor/lightspeed.nvim'
+
+
 ---- Metaview
 Plug 'liuchengxu/vista.vim'
 Plug 'simrat39/symbols-outline.nvim'

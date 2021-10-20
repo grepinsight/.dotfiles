@@ -27,7 +27,7 @@ nnoremap TM :Telescope marks<CR>
 nnoremap TR :Telescope lsp_references<CR>
 nnoremap TO :Telescope oldfiles path_display=shorten<CR>
 
-nnoremap ST :GitGutterStageHunk<CR>
+" nnoremap ST :GitGutterStageHunk<CR>
 
 nnoremap QQ :q<CR>
 " ZZ        : q
@@ -264,8 +264,8 @@ nnoremap ,O :BOnly<CR>
 nnoremap ,p :e <C-R>=resolve(expand("%"))<CR>
 nnoremap ,q :Rg! <C-R>=expand("%:t")<CR>
 nnoremap ,r :BTags<CR>
-nmap ,s <Plug>Sneak_s
-nmap ,S <Plug>Sneak_S
+nmap s <Plug>Lightspeed_s
+nmap S <Plug>Lightspeed_S
 nnoremap ,t :call ChooseTerm("term-slider", 1)<CR>
 nnoremap ,,t :call ChooseTerm("term-slider2", 1)<CR>
 nnoremap ,u :GundoToggle<CR>
