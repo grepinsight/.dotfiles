@@ -27,7 +27,8 @@ nnoremap TM :Telescope marks<CR>
 nnoremap TR :Telescope lsp_references<CR>
 nnoremap TO :Telescope oldfiles path_display=shorten<CR>
 
-nnoremap ST :GitGutterStageHunk<CR>
+nnoremap ]s :GitGutterStageHunk<CR>
+nnoremap [s :GitGutterUndoHunk<CR>
 
 nnoremap QQ :q<CR>
 " ZZ        : q
@@ -38,6 +39,9 @@ command! PY :FloatermNew --width=0.5 --wintype=normal --name=repl --position=rig
 
 nnoremap   <leader>ts   :FloatermSend<CR>
 vnoremap   <leader>ts   :FloatermSend<CR>
+
+nnoremap <Leader>pyan :!pyan % --dot -c -e \| dot -Tpng > <C-R>=expand('%:r')<CR>.png && open <C-R>=expand('%:r')<CR>.png <CR>
+nnoremap <Leader>tgf :!pyan % --tgf -c -e  > <C-R>=expand('%:r')<CR>.tgf<CR>
 
 
 " vim: set foldmethod=marker foldlevel=0 nomodeline:

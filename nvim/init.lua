@@ -40,6 +40,7 @@ Plug('junegunn/fzf', { dir = '~/.fzf', ['do'] = './install --all'  })
 Plug 'junegunn/fzf.vim'
 -- Plug 'vim-airline/vim-airline'
 Plug 'hoob3rt/lualine.nvim'
+Plug 'nvim-lua/lsp-status.nvim'
 Plug 'akinsho/bufferline.nvim'
 Plug 'airblade/vim-rooter'
 Plug 'mhinz/vim-startify'
@@ -115,6 +116,10 @@ Plug 'onsails/lspkind-nvim'
 Plug 'folke/lsp-colors.nvim'
 
 Plug 'nvim-treesitter/nvim-treesitter'
+Plug 'SmiteshP/nvim-gps'
+Plug 'nvim-treesitter/nvim-treesitter-textobjects'
+
+Plug 'nvim-treesitter/playground'
 -- Plug 'glepnir/lspsaga.nvim'
 
 --- Completion
@@ -179,8 +184,8 @@ vim.cmd 'source ~/.dotfiles/nvim/shortcuts.vim'
 vim.cmd 'source ~/.dotfiles/nvim/autocmds.vim'
 vim.cmd 'source ~/.dotfiles/vim/commands.vim'
 
-require('lualine').setup()
-require("bufferline").setup{}
+
+
 
 vim.cmd 'let g:airline#extensions#tabline#enabled = 1'
 vim.cmd "let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6 } }"
@@ -230,3 +235,67 @@ vim.cmd "let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6 } }"
 --
 -- or --use default config
 --
+--
+
+-- require'nvim-treesitter.configs'.setup {
+--   playground = {
+--     enable = true,
+--     disable = {},
+--     updatetime = 25, -- Debounced time for highlighting nodes in the playground from source code
+--     persist_queries = false, -- Whether the query persists across vim sessions
+--     keybindings = {
+--       toggle_query_editor = 'o',
+--       toggle_hl_groups = 'i',
+--       toggle_injected_languages = 't',
+--       toggle_anonymous_nodes = 'a',
+--       toggle_language_display = 'I',
+--       focus_language = 'f',
+--       unfocus_language = 'F',
+--       update = 'R',
+--       goto_node = '<cr>',
+--       show_help = '?',
+--     },
+--   },
+--   textobjects = {
+--     lsp_interop = {
+--       enable = true,
+--       border = 'none',
+--       peek_definition_code = {
+--         ["<leader>df"] = "@function.outer",
+--         ["<leader>dF"] = "@class.outer",
+--       },
+--     },
+--     swap = {
+--       enable = true,
+--       swap_next = {
+--         [",,n"] = "@parameter.inner",
+--       },
+--       swap_previous = {
+--         [",,p"] = "@parameter.inner",
+--       },
+--     },
+--     select = {
+--       enable = true,
+
+--       -- Automatically jump forward to textobj, similar to targets.vim
+--       lookahead = true,
+
+--       keymaps = {
+--         -- You can use the capture groups defined in textobjects.scm
+--         ["af"] = "@function.outer",
+--         ["if"] = "@function.inner",
+--         ["ac"] = "@class.outer",
+--         ["ic"] = "@class.inner",
+
+--         -- Or you can define your own textobjects like this
+--         ["iF"] = {
+--           python = "(function_definition) @function",
+--           cpp = "(function_definition) @function",
+--           c = "(function_definition) @function",
+--           java = "(method_declaration) @function",
+--         },
+--       },
+--     },
+--   },
+-- }
+

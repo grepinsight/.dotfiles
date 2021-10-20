@@ -1,6 +1,7 @@
 local lsp = vim.lsp
 local handlers = lsp.handlers
 
+
 -- Hover doc popup
 local pop_opts = { border = "rounded", max_width = 80 }
 handlers["textDocument/hover"] = lsp.with(handlers.hover, pop_opts)
@@ -122,10 +123,26 @@ nvim_lsp.pylsp.setup ({
             }
         }
     },
-on_attach = on_attach
+    on_attach = on_attach
 })
 
 
 nvim_lsp.r_language_server.setup {
   on_attach = on_attach,
 }
+
+local gps = require("nvim-gps")
+gps.setup()
+
+require('lualine').setup {
+    options = {theme = 'gruvbox'},
+    sections = {
+        lualine_b = {
+            { "branch" },
+            { "diff", colored = true, color_added = "#a7c080", color_modified = "#ffdf1b", color_removed = "#ff6666" },
+        },
+
+        lualine_c = {gps.get_location, condition=gps.is_available}}
+
+    }
+    require("bufferline").setup{}

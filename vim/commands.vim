@@ -22,3 +22,5 @@ command! Greview           :Git! diff --staged
 command! MakeTags          !ctags -R .
 command! Black             :Neoformat! python black
 command! Yapf              :Neoformat! python yapf
+command! PreWrite          :split ~/.prewrite
+command! PreWriteRead          :r ~/.prewrite
