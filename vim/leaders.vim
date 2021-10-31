@@ -11,6 +11,10 @@
 nnoremap <SPACE> <Nop>
 let maplocalleader=" "
 
+" Allow gf to open non-existent files
+map gf :edit <cfile><cr>
+
+
 nnoremap   <silent>   ==   :Neoformat<CR>
 nnoremap   <silent>   <F9>   :FloatermToggle<CR>
 tnoremap   <silent>   <F9>   <C-\><C-n>:FloatermToggle<CR>

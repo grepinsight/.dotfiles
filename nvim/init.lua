@@ -50,9 +50,12 @@ Plug 'nvim-telescope/telescope-fzy-native.nvim'
 
 -- Colorschemes
 Plug 'morhetz/gruvbox'
+Plug 'arcticicestudio/nord-vim'
+Plug 'NLKNguyen/papercolor-theme'
 vim.cmd [[
   autocmd vimenter * ++nested colorscheme gruvbox
 ]]
+
 
 -- Maintainence
 Plug 'tweekmonster/startuptime.vim'
@@ -70,7 +73,7 @@ Plug 'nanotee/zoxide.vim'
 -- Viewport
 Plug 'szw/vim-maximizer'
 Plug 'ggandor/lightspeed.nvim'
-
+Plug('glacambre/firenvim', { ['do'] = ':call firenvim#install(0)' })
 
 ---- Metaview
 Plug 'liuchengxu/vista.vim'
@@ -135,6 +138,7 @@ Plug 'hrsh7th/cmp-path'
 Plug 'octaltree/cmp-look'
 Plug 'hrsh7th/cmp-nvim-lua'
 Plug 'quangnguyen30192/cmp-nvim-ultisnips'
+Plug 'tjdevries/complextras.nvim'
 Plug 'ervandew/supertab'
 
 Plug 'nvim-lua/popup.nvim'
@@ -167,6 +171,7 @@ Plug 'fatih/vim-go'
 ------ Latex
 Plug 'lervag/vimtex'
 vim.cmd 'let g:tex_flavor = "latex"'
+
 
 ------ Org
 -- Plug 'axvr/org.vim'
