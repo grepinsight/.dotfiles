@@ -28,6 +28,11 @@ vim.opt.undolevels     = 10000         -- How many undos
 vim.opt.undoreload     = 10000        --number of lines to save for undo
 vim.opt.mouse          = 'a'
 vim.opt.termguicolors  = true
+vim.cmd [[
+set list
+set showbreak=↪\
+set listchars=tab:→\ ,eol:↲,nbsp:␣,trail:•,extends:⟩,precedes:⟨
+]]
 
 local Plug = vim.fn['plug#']
 

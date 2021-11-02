@@ -274,7 +274,8 @@ nnoremap ,q :Rg! <C-R>=expand("%:t")<CR>
 nnoremap ,r :BTags<CR>
 nmap s <Plug>Lightspeed_s
 nmap S <Plug>Lightspeed_S
-nnoremap ,t :call ChooseTerm("term-slider", 1)<CR>
+" nnoremap ,t :call ChooseTerm("term-slider", 1)<CR>
+nnoremap ,t :sp<CR><Esc>:lua require("harpoon.term").gotoTerminal(1)<CR>
 nnoremap ,,t :call ChooseTerm("term-slider2", 1)<CR>
 nnoremap ,u :GundoToggle<CR>
 nnoremap ,v :call fzf#run(fzf#wrap({'source': 'fd $FD_OPTS . $HOME/Dropbox/vimwiki', 'sink': 'split'}))<CR>
