@@ -22,14 +22,16 @@ tnoremap   <silent>   <F9>   <C-\><C-n>:FloatermToggle<CR>
 " Double Capital letters
 nnoremap BB :call BufferSmartDelete()<CR>
 
-nnoremap TC :lua require('telescope.builtin').commands()<CR>
 nnoremap TB :lua require('telescope.builtin').buffers()<CR>
-nnoremap TG :lua require('telescope.builtin').grep_string { search = vim.fn.expand("<cword>") }<CR>
-nnoremap TS :lua require('telescope.builtin').grep_string({ search = vim.fn.input("Grep For > ")})<CR>
+nnoremap TC :lua require('telescope.builtin').commands()<CR>
 nnoremap TF :lua require('telescope.builtin').find_files()<CR>
+nnoremap TG :lua require('telescope.builtin').grep_string { search = vim.fn.expand("<cword>") }<CR>
 nnoremap TM :Telescope marks<CR>
-nnoremap TR :Telescope lsp_references<CR>
 nnoremap TO :Telescope oldfiles path_display=shorten<CR>
+nnoremap TR :Telescope lsp_references<CR>
+nnoremap TS :lua require('telescope.builtin').grep_string({ search = vim.fn.input("Grep For > ")})<CR>
+nnoremap TT :lua require('telescope').extensions.git_worktree.create_git_worktree()
+nnoremap TW :lua require('telescope').extensions.git_worktree.git_worktrees()<CR>
 
 nnoremap ]s :GitGutterStageHunk<CR>
 nnoremap [s :GitGutterUndoHunk<CR>

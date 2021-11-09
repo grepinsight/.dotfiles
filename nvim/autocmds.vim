@@ -31,6 +31,9 @@ fun! DirenvReload()
     if bufname(bufnr("%")) =~ 'pytest'
         return
     endif
+    if bufname(bufnr("%")) =~ ':vd'
+        return
+    endif
     let fn = bufname("%") + "__" +bufnr("%")
     if !has_key(g:direnv_loaded, fn)
         call jobsend(b:terminal_job_id, "direnv reload 2>/dev/null\n")

@@ -98,6 +98,8 @@ Plug 'tpope/vim-rhubarb'
 Plug 'jreybert/vimagit'
 Plug 'junegunn/gv.vim'
 Plug 'rhysd/git-messenger.vim'
+Plug 'ThePrimeagen/git-worktree.nvim'
+Plug 'pwntester/octo.nvim'
 
 -- Testing
 Plug 'vim-test/vim-test'
@@ -131,8 +133,8 @@ Plug 'folke/lsp-colors.nvim'
 Plug 'nvim-treesitter/nvim-treesitter'
 Plug 'SmiteshP/nvim-gps'
 Plug 'nvim-treesitter/nvim-treesitter-textobjects'
-
 Plug 'nvim-treesitter/playground'
+Plug 'code-biscuits/nvim-biscuits' -- in-editor annotations usually at the end of a closing tag/bracket/parenthesis/etc.
 -- Plug 'glepnir/lspsaga.nvim'
 
 --- Completion
@@ -199,6 +201,11 @@ vim.cmd 'source ~/.dotfiles/nvim/shortcuts.vim'
 vim.cmd 'source ~/.dotfiles/nvim/autocmds.vim'
 vim.cmd 'source ~/.dotfiles/vim/commands.vim'
 
+if vim.fn.filereadable("~/.vimrc_work") then
+    vim.cmd 'source ~/.vimrc_work'
+end
+
+
 
 
 
@@ -251,6 +258,30 @@ vim.cmd "let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6 } }"
 -- or --use default config
 --
 --
+require'nvim-treesitter.configs'.setup({})
+require('nvim-biscuits').setup({
+  toggle_keybind = "<leader>cb",
+  cursor_line_only = true,
+  default_config = {
+    max_length = 12,
+    min_distance = 5,
+    prefix_string = " 📎 "
+  },
+  language_config = {
+    html = {
+      prefix_string = " 🌐 "
+    },
+    javascript = {
+      prefix_string = " ✨ ",
+      max_length = 80
+    },
+    python = {
+      -- disabled = true
+      -- prefix_string = " ✨ ",
+    }
+  }
+})
+
 
 -- require'nvim-treesitter.configs'.setup {
 --   playground = {
