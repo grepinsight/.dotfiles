@@ -1,3 +1,8 @@
+augroup remember_cursor_position
+    autocmd!
+    autocmd BufEnter *.vim silent! normal! g`"
+augroup END
+
 augroup syntax_setup
     autocmd!
     " autocmd FileType rst syntax off autocmd FileType rst exec "LspStop"
