@@ -98,7 +98,8 @@ Plug 'tpope/vim-rhubarb'
 Plug 'jreybert/vimagit'
 Plug 'junegunn/gv.vim'
 Plug 'rhysd/git-messenger.vim'
-Plug 'ThePrimeagen/git-worktree.nvim'
+-- Plug('ThePrimeagen/git-worktree.nvim')
+Plug('Juksuu/git-worktree.nvim', {['commit']="a50af35f923868deb728f9fcb668b85539926b42"})
 Plug 'pwntester/octo.nvim'
 
 -- Testing
@@ -111,7 +112,8 @@ Plug 'AndrewRadev/splitjoin.vim'
 Plug 'junegunn/vim-easy-align'         -- perform alignment easier
 Plug 'tpope/vim-repeat'
 Plug 'sgur/vim-editorconfig'
-Plug 'Yggdroot/indentLine'
+-- Plug 'Yggdroot/indentLine'
+Plug 'lukas-reineke/indent-blankline.nvim'
 Plug 'tpope/vim-commentary'          -- commenting plugin
 Plug 'kana/vim-textobj-user'
 Plug 'vim-scripts/BufOnly.vim'
@@ -190,6 +192,14 @@ Plug 'akinsho/org-bullets.nvim'
 Plug 'burneyy/vim-snakemake'
 
 
+-- Plug 'luukvbaal/stabilize.nvim'
+Plug 'folke/twilight.nvim'
+-- Plug 'sunjon/shade.nvim'
+Plug 'NFrid/due.nvim'
+Plug('michaelb/sniprun', { ['do'] = 'bash install.sh 1'})
+
+
+
 vim.call('plug#end')
 
 -- Define maplocalleader
@@ -258,6 +268,31 @@ vim.cmd "let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6 } }"
 -- or --use default config
 --
 --
+require("twilight").setup({
+    exclude = {"lua"},
+})
+-- require'shade'.setup({})
+require'sniprun'.setup({})
+require("indent_blankline").setup {
+    char = "|",
+    buftype_exclude = {"terminal"}
+}
+require('due_nvim').setup({
+  prescript = 'due: ',           -- prescript to due data
+  prescript_hi = 'Comment',      -- highlight group of it
+  due_hi = 'String',             -- highlight group of the data itself
+  ft = '*.org,*.md',                   -- filename template to apply aucmds :)
+  today = 'TODAY',               -- text for today's due
+  today_hi = 'Character',        -- highlight group of today's due
+  overdue = 'OVERDUE',           -- text for overdued
+  overdue_hi = 'Error',          -- highlight group of overdued
+  date_hi = 'Conceal',           -- highlight group of date string
+  pattern_start = '<',           -- start for a date string pattern
+  pattern_end = '>',             -- end for a date string pattern
+  use_clock_time = false,        -- allow due.nvim to calculate hours, minutes, and seconds
+  default_due_time = "midnight", -- if use_clock_time == true, calculate time until option on specified date.
+                                --   Accepts "midnight", for 23:59:59, or noon, for 12:00:00
+})
 require'nvim-treesitter.configs'.setup({})
 require('nvim-biscuits').setup({
   toggle_keybind = "<leader>cb",
@@ -283,65 +318,65 @@ require('nvim-biscuits').setup({
 })
 
 
--- require'nvim-treesitter.configs'.setup {
---   playground = {
---     enable = true,
---     disable = {},
---     updatetime = 25, -- Debounced time for highlighting nodes in the playground from source code
---     persist_queries = false, -- Whether the query persists across vim sessions
---     keybindings = {
---       toggle_query_editor = 'o',
---       toggle_hl_groups = 'i',
---       toggle_injected_languages = 't',
---       toggle_anonymous_nodes = 'a',
---       toggle_language_display = 'I',
---       focus_language = 'f',
---       unfocus_language = 'F',
---       update = 'R',
---       goto_node = '<cr>',
---       show_help = '?',
---     },
---   },
---   textobjects = {
---     lsp_interop = {
---       enable = true,
---       border = 'none',
---       peek_definition_code = {
---         ["<leader>df"] = "@function.outer",
---         ["<leader>dF"] = "@class.outer",
---       },
---     },
---     swap = {
---       enable = true,
---       swap_next = {
---         [",,n"] = "@parameter.inner",
---       },
---       swap_previous = {
---         [",,p"] = "@parameter.inner",
---       },
---     },
---     select = {
---       enable = true,
+require'nvim-treesitter.configs'.setup {
+  playground = {
+    enable = true,
+    disable = {},
+    updatetime = 25, -- Debounced time for highlighting nodes in the playground from source code
+    persist_queries = false, -- Whether the query persists across vim sessions
+    keybindings = {
+      toggle_query_editor = 'o',
+      toggle_hl_groups = 'i',
+      toggle_injected_languages = 't',
+      toggle_anonymous_nodes = 'a',
+      toggle_language_display = 'I',
+      focus_language = 'f',
+      unfocus_language = 'F',
+      update = 'R',
+      goto_node = '<cr>',
+      show_help = '?',
+    },
+  },
+  textobjects = {
+    lsp_interop = {
+      enable = true,
+      border = 'none',
+      peek_definition_code = {
+        ["<leader>df"] = "@function.outer",
+        ["<leader>dF"] = "@class.outer",
+      },
+    },
+    swap = {
+      enable = true,
+      swap_next = {
+        [",,n"] = "@parameter.inner",
+      },
+      swap_previous = {
+        [",,p"] = "@parameter.inner",
+      },
+    },
+    select = {
+      enable = true,
 
---       -- Automatically jump forward to textobj, similar to targets.vim
---       lookahead = true,
+      -- Automatically jump forward to textobj, similar to targets.vim
+      lookahead = true,
 
---       keymaps = {
---         -- You can use the capture groups defined in textobjects.scm
---         ["af"] = "@function.outer",
---         ["if"] = "@function.inner",
---         ["ac"] = "@class.outer",
---         ["ic"] = "@class.inner",
+      keymaps = {
+        -- You can use the capture groups defined in textobjects.scm
+        ["af"] = "@function.outer",
+        ["if"] = "@function.inner",
+        ["ac"] = "@class.outer",
+        ["ic"] = "@class.inner",
 
---         -- Or you can define your own textobjects like this
---         ["iF"] = {
---           python = "(function_definition) @function",
---           cpp = "(function_definition) @function",
---           c = "(function_definition) @function",
---           java = "(method_declaration) @function",
---         },
---       },
---     },
---   },
--- }
+        -- Or you can define your own textobjects like this
+        ["iF"] = {
+          python = "(function_definition) @function",
+          cpp = "(function_definition) @function",
+          c = "(function_definition) @function",
+          java = "(method_declaration) @function",
+        },
+      },
+    },
+  },
+}
 
