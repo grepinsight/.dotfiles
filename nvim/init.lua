@@ -82,7 +82,7 @@ Plug('glacambre/firenvim', { ['do'] = ':call firenvim#install(0)' })
 
 ---- Metaview
 Plug 'liuchengxu/vista.vim'
-Plug 'simrat39/symbols-outline.nvim'
+Plug('simrat39/symbols-outline.nvim', {['on'] = {"SymbolsOutline"}})
 
 ---- Projects
 Plug 'tpope/vim-projectionist'
@@ -113,7 +113,7 @@ Plug 'junegunn/vim-easy-align'         -- perform alignment easier
 Plug 'tpope/vim-repeat'
 Plug 'sgur/vim-editorconfig'
 -- Plug 'Yggdroot/indentLine'
-Plug 'lukas-reineke/indent-blankline.nvim'
+Plug('lukas-reineke/indent-blankline.nvim', {['for'] = {"python"}})
 Plug 'tpope/vim-commentary'          -- commenting plugin
 Plug 'kana/vim-textobj-user'
 Plug 'vim-scripts/BufOnly.vim'
