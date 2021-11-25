@@ -99,7 +99,7 @@ nnoremap <leader><leader>s :ToggleGStatus<CR>
 nnoremap <leader>b :call BlameToggle()<CR>
 nnoremap <leader>es :vsplit ~/.vim/plugged/mysnippets/UltiSnips<CR>
 nnoremap <leader>ev :e $HOME/.dotfiles/nvim/init.lua<CR>
-nnoremap <leader>el :e $HOME/.dotfiles/vim/leaders.vim<CR>
+nnoremap <leader>el :e $HOME/.dotfiles/vim/leaders.vim<CR><bar>:lua vim.api.nvim_buf_set_option(buf, 'bufhidden', 'wipe')<CR>
 nnoremap <leader>eo :e $HOME/org/notes.org<CR>
 nnoremap <leader>eO :e $HOME/.dotfiles/nvim/after/plugin/org.lua<CR>
 nnoremap <leader>gau :Git add -u<CR><CR>
@@ -224,7 +224,7 @@ nnoremap <LocalLeader>lf :BLines<CR>
 nnoremap <LocalLeader>ss :BLines<CR>
 nnoremap <LocalLeader>lo :lopen<CR>
 nnoremap <LocalLeader>m :Magit<CR>
-nnoremap <LocalLeader>o :BufOnly<CR> <bar> :only<CR>
+nnoremap <LocalLeader>o :lua require('orgmode').action('clock.org_clock_goto')<CR>
 nnoremap <LocalLeader>pro :e ~/src/productivity/
 nnoremap <silent> <LocalLeader>p :let @" = expand("%:p")<CR> <bar> :echo expand('%:p')<CR>
 nnoremap <silent> <LocalLeader>pzp :!echo <C-R>=expand("%:p")<CR> \| rpbcopy <CR> <bar> :echo expand('%:p')<CR>
@@ -252,13 +252,14 @@ noremap <silent> <LocalLeader>ch :wincmd h<CR>:close<CR>
 noremap <silent> <LocalLeader>cj :wincmd j<CR>:close<CR>
 noremap <silent> <LocalLeader>ck :wincmd k<CR>:close<CR>
 noremap <silent> <LocalLeader>cl :wincmd l<CR>:close<CR>
-nnoremap <LocalLeader>ot :call ChooseTerm("term-slider", 1)<CR>
+" nnoremap <LocalLeader>ot :call ChooseTerm("term-slider", 1)<CR>
 
 " Tertiary leaderkey
 "
 " COMMA LEADER
 "nnoremap ,a :CtrlPMRUFiles<CR>
-nnoremap ,a :Telescope oldfiles path_display=shorten<CR>
+nnoremap ,a :lua require("telescope.builtin").oldfiles {path_display = {"shorten"}}<CR>
+
 nnoremap ,b :Telescope buffers<CR>
 nnoremap ,c :GitGutterQuickFix<CR> <bar> :copen <CR> /<C-R>=bufname(winbufnr(1))<CR><CR>
 nnoremap ,d :DogeGenerate<CR>
@@ -283,13 +284,17 @@ nmap S <Plug>Lightspeed_S
 nnoremap ,t :sp<CR><Esc>:lua require("harpoon.term").gotoTerminal(1)<CR>
 nnoremap ,,t :call ChooseTerm("term-slider2", 1)<CR>
 nnoremap ,u :GundoToggle<CR>
-nnoremap ,v :call fzf#run(fzf#wrap({'source': 'fd $FD_OPTS . $HOME/Dropbox/vimwiki', 'sink': 'split'}))<CR>
+nnoremap ,v :call fzf#run(fzf#wrap({'source': 'fd $FD_OPTS . $HOME/org', 'sink': 'split'}))<CR>
 nnoremap ,w :NvimTreeToggle<CR>
 nnoremap ,x :Focus<CR>
 "nnoremap ,y :call ChooseTerm("term-pane", 0)<CR>
 vnoremap <silent> ,y :'<,'>w !rpbcopy<CR><CR>
 nnoremap <silent> ,y :!echo <C-R>=expand("<cword>")<CR> \| rpbcopy <CR><CR>
 nnoremap ,z :Focus2<CR>
+
+vnoremap <silent> ,e :'<,'>!equalify<CR><CR>
+vnoremap <silent> ,i :'<,'>!itemify<CR><CR>
+vnoremap <silent> ,l :'<,'>!listify<CR><CR>
 
 " Unimparied style
 nnoremap [t :tabprevious<CR>
@@ -379,3 +384,4 @@ let g:user_emmet_settings = {
 \}
 
 "autocmd BufEnter * lua require'completion'.on_attach()
+

@@ -18,7 +18,7 @@ vim.opt.incsearch      = true    -- search as characters are entered
 vim.opt.hlsearch       = true   -- highlight matches
 vim.opt.wildmenu       = true
 vim.opt.swapfile       = false
-vim.opt.conceallevel   = 0
+vim.opt.conceallevel   = 2
 vim.opt.scrolloff      = 2         -- Minimal number of screen lines to keep above and below the cursor.
 -- vim.opt.iskeyword      =
 vim.opt.background     = 'dark'   -- Setting dark mode
@@ -199,6 +199,7 @@ Plug 'NFrid/due.nvim'
 Plug('michaelb/sniprun', { ['do'] = 'bash install.sh 1'})
 
 
+-- Plug 'grepinsight/insight.nvim'
 
 vim.call('plug#end')
 
@@ -355,6 +356,26 @@ require'nvim-treesitter.configs'.setup {
         [",,p"] = "@parameter.inner",
       },
     },
+    move = {
+        enable = true,
+        set_jumps = true, -- whether to set jumps in the jumplist
+        goto_next_start = {
+            ["]m"] = "@function.outer",
+            ["]]"] = "@class.outer",
+        },
+        goto_next_end = {
+            ["]M"] = "@function.outer",
+            ["]["] = "@class.outer",
+        },
+        goto_previous_start = {
+            ["[m"] = "@function.outer",
+            ["[["] = "@class.outer",
+        },
+        goto_previous_end = {
+            ["[M"] = "@function.outer",
+            ["[]"] = "@class.outer",
+        },
+    },
     select = {
       enable = true,
 
@@ -378,5 +399,14 @@ require'nvim-treesitter.configs'.setup {
       },
     },
   },
+  incremental_selection = {
+      enable = true,
+      keymaps = {
+          init_selection = '<CR>',
+          scope_incremental = 'CR>',
+          node_incremental = '<S-TAB>',
+          node_decremental = '<TAB>'
+      }
+  }
 }
 

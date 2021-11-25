@@ -21,6 +21,7 @@ require'nvim-treesitter.configs'.setup {
 require('orgmode').setup({
     -- default mappings vailable at https://github.com/kristijanhusak/orgmode.nvim/blob/master/lua/orgmode/config/defaults.lua
     org_agenda_files = {'~/org/*'},
+    org_todo_keywords = { 'TODO', 'INPROGRESS', '|', 'DONE' , 'WONTDO'},
     org_default_notes_file = '~/org/notes.org',
     org_agenda_templates = {
         t = {
@@ -44,19 +45,28 @@ require('orgmode').setup({
         },
         org = {
             org_set_tags_command = '<C-c>q',
-            org_timestamp_up = '<C-i>',
+            org_timestamp_up = '+',
             org_timestamp_down = '<C-x>',
             org_move_subtree_up = 'gK',
             org_move_subtree_down = 'gJ',
             org_todo = '<C-c><C-t>',
             org_deadline = '<C-c><C-d>',
             org_schedule = '<C-c><C-s>',
+            org_insert_heading_respect_content = '<Leader>oih', -- Add new headling after current heading block with same level
+            org_insert_todo_heading = '<Leader>oiT', -- Add new todo headling right after current heading with same level
+            org_insert_todo_heading_respect_content = '<Leader>oit', -- Add new todo headling after current heading block on same level
         }
     }
 })
+vim.cmd [[
+nnoremap <silent> <Plug>MyMap :lua require('orgmode').action('org_mappings.archive')<CR>
+silent! call repeat#set("\<Plug>MyMap",-1)
+nmap ,,a <Plug>MyMap
+]]
 
 require("org-bullets").setup {
   symbols = { "◉", "○", "✸", "✿" }
 }
+
 
 

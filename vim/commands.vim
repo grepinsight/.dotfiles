@@ -24,3 +24,4 @@ command! Black             :Neoformat! python black
 command! Yapf              :Neoformat! python yapf
 command! PreWrite          :split ~/.prewrite
 command! PreWriteRead          :r ~/.prewrite
+command! ChoreEqualer execute "normal! ^yw$a = p^"
