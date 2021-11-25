@@ -50,7 +50,7 @@ Plug 'akinsho/bufferline.nvim'
 Plug 'airblade/vim-rooter'
 Plug 'mhinz/vim-startify'
 
-Plug 'nvim-telescope/telescope.nvim'
+Plug('nvim-telescope/telescope.nvim', {['on'] = {'Telescope'}})
 Plug 'nvim-telescope/telescope-fzy-native.nvim'
 
 -- Colorschemes
@@ -68,7 +68,7 @@ Plug 'tweekmonster/startuptime.vim'
 
 -- Files
 Plug 'tpope/vim-eunuch'       -- unix's Mkdir, Delete, etc.
-Plug 'justinmk/vim-dirvish'
+Plug('justinmk/vim-dirvish')
 Plug('kyazdani42/nvim-tree.lua', {commit= '7c88a0f8ee6250a8408c28e0b03a4925b396c916'})      -- tree
 Plug 'kyazdani42/nvim-web-devicons'  -- for file icons
 Plug 'nanotee/zoxide.vim'
@@ -100,7 +100,7 @@ Plug 'junegunn/gv.vim'
 Plug 'rhysd/git-messenger.vim'
 -- Plug('ThePrimeagen/git-worktree.nvim')
 Plug('Juksuu/git-worktree.nvim', {['commit']="a50af35f923868deb728f9fcb668b85539926b42"})
-Plug 'pwntester/octo.nvim'
+Plug('pwntester/octo.nvim', {['on']= {'Octo'} })
 
 -- Testing
 Plug 'vim-test/vim-test'
@@ -119,34 +119,38 @@ Plug 'kana/vim-textobj-user'
 Plug 'vim-scripts/BufOnly.vim'
 Plug 'machakann/vim-highlightedyank'
 Plug 'sbdchd/neoformat'
-Plug('kkoomen/vim-doge', { ['do'] = ':call doge#install()' })  -- doc generator
+Plug('kkoomen/vim-doge', { ['do'] = ':call doge#install()', ['for'] = {"python"} })  -- doc generator
 
 ---- Snippets
 Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 
 ---- LSP
-Plug 'neovim/nvim-lspconfig'
+local fts = {"python", "react", "typescript", "typescriptreact", "lua", "rust"}
+Plug('neovim/nvim-lspconfig' , {['for'] = fts})
 Plug 'tjdevries/lsp_extensions.nvim'
 Plug 'nvim-lua/completion-nvim'
 Plug 'onsails/lspkind-nvim'
 Plug 'folke/lsp-colors.nvim'
 
-Plug 'nvim-treesitter/nvim-treesitter'
-Plug 'SmiteshP/nvim-gps'
-Plug 'nvim-treesitter/nvim-treesitter-textobjects'
-Plug 'nvim-treesitter/playground'
-Plug 'code-biscuits/nvim-biscuits' -- in-editor annotations usually at the end of a closing tag/bracket/parenthesis/etc.
+Plug('nvim-treesitter/nvim-treesitter' , {['for'] = fts })
+Plug('SmiteshP/nvim-gps',{['for'] = fts})
+Plug('nvim-treesitter/nvim-treesitter-textobjects', {['for'] = fts})
+
+Plug('nvim-treesitter/playground' , {['for'] = fts})
+Plug('code-biscuits/nvim-biscuits', {['for'] = fts}) -- in-editor annotations usually at the end of a closing tag/bracket/parenthesis/etc.
+Plug('romgrk/nvim-treesitter-context', {['for'] = fts})
 -- Plug 'glepnir/lspsaga.nvim'
 
 --- Completion
-Plug 'hrsh7th/nvim-cmp'
-Plug 'hrsh7th/cmp-nvim-lsp'
-Plug 'hrsh7th/cmp-buffer'
-Plug 'hrsh7th/cmp-path'
-Plug 'octaltree/cmp-look'
-Plug 'hrsh7th/cmp-nvim-lua'
-Plug 'quangnguyen30192/cmp-nvim-ultisnips'
+local cmp_fts =  {"python", "lua"}
+Plug('hrsh7th/nvim-cmp', {['for'] = cmp_fts})
+Plug('hrsh7th/cmp-nvim-lsp', {['for'] = cmp_fts})
+Plug('hrsh7th/cmp-buffer', {['for'] = cmp_fts})
+Plug('hrsh7th/cmp-path', {['for'] = cmp_fts})
+Plug('octaltree/cmp-look', {['for'] = cmp_fts})
+Plug('hrsh7th/cmp-nvim-lua', {['for'] = cmp_fts})
+Plug('quangnguyen30192/cmp-nvim-ultisnips', {['for'] = cmp_fts})
 Plug 'tjdevries/complextras.nvim'
 Plug 'ervandew/supertab'
 
@@ -164,7 +168,7 @@ Plug 'junegunn/limelight.vim'
 ------ Javascript
 Plug 'maxmellon/vim-jsx-pretty'
 Plug 'pangloss/vim-javascript'
-Plug 'prettier/vim-prettier'
+Plug('prettier/vim-prettier', {['on'] = {"Prettier"}} )
 Plug 'mattn/emmet-vim'
 
 ------ Python
@@ -175,7 +179,7 @@ Plug 'kalekundert/vim-coiled-snake'
 Plug 'rust-lang/rust.vim'
 
 ------ Go
-Plug 'fatih/vim-go'
+Plug('fatih/vim-go', {['for'] = {"go"}})
 
 ------ Latex
 Plug 'lervag/vimtex'
@@ -184,8 +188,8 @@ vim.cmd 'let g:tex_flavor = "latex"'
 
 ------ Org
 -- Plug 'axvr/org.vim'
-Plug 'kristijanhusak/orgmode.nvim'
-Plug 'akinsho/org-bullets.nvim'
+Plug('kristijanhusak/orgmode.nvim', {['for'] = {"org"}})
+Plug('akinsho/org-bullets.nvim', {['for'] = {"org"}})
 
 
 ------ Snakemake
@@ -196,9 +200,9 @@ Plug 'burneyy/vim-snakemake'
 Plug 'folke/twilight.nvim'
 -- Plug 'sunjon/shade.nvim'
 Plug 'NFrid/due.nvim'
-Plug('michaelb/sniprun', { ['do'] = 'bash install.sh 1'})
+Plug('michaelb/sniprun', { ['do'] = 'bash install.sh 1', ['for'] = fts})
 
-
+Plug('mrjones2014/dash.nvim', { ['do'] =  'make install', ['on'] = {'Dash'} })
 -- Plug 'grepinsight/insight.nvim'
 
 vim.call('plug#end')
@@ -222,191 +226,4 @@ end
 
 vim.cmd 'let g:airline#extensions#tabline#enabled = 1'
 vim.cmd "let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6 } }"
-
--- local saga = require 'lspsaga'
--- saga.init_lsp_saga()
-
--- add your config value here
--- default value
--- use_saga_diagnostic_sign = true
--- error_sign = '',
--- warn_sign = '',
--- hint_sign = '',
--- infor_sign = '',
--- dianostic_header_icon = '   ',
--- code_action_icon = ' ',
--- code_action_prompt = {
---   enable = true,
---   sign = true,
---   sign_priority = 20,
---   virtual_text = true,
--- },
--- finder_definition_icon = '  ',
--- finder_reference_icon = '  ',
--- max_preview_lines = 10, -- preview lines of lsp_finder and definition preview
--- finder_action_keys = {
---   open = 'o', vsplit = 's',split = 'i',quit = 'q',scroll_down = '<C-f>', scroll_up = '<C-b>' -- quit can be a table
--- },
--- code_action_keys = {
---   quit = 'q',exec = '<CR>'
--- },
--- rename_action_keys = {
---   quit = '<C-c>',exec = '<CR>'  -- quit can be a table
--- },
--- definition_preview_icon = '  '
--- "single" "double" "round" "plus"
--- border_style = "single"
--- rename_prompt_prefix = '➤',
--- if you don't use nvim-lspconfig you must pass your server name and
--- the related filetypes into this table
--- like server_filetype_map = {metals = {'sbt', 'scala'}}
--- server_filetype_map = {}
-
--- saga.init_lsp_saga {
---   your custom option here
--- }
---
--- or --use default config
---
---
-require("twilight").setup({
-    exclude = {"lua"},
-})
--- require'shade'.setup({})
-require'sniprun'.setup({})
-require("indent_blankline").setup {
-    char = "|",
-    buftype_exclude = {"terminal"}
-}
-require('due_nvim').setup({
-  prescript = 'due: ',           -- prescript to due data
-  prescript_hi = 'Comment',      -- highlight group of it
-  due_hi = 'String',             -- highlight group of the data itself
-  ft = '*.org,*.md',                   -- filename template to apply aucmds :)
-  today = 'TODAY',               -- text for today's due
-  today_hi = 'Character',        -- highlight group of today's due
-  overdue = 'OVERDUE',           -- text for overdued
-  overdue_hi = 'Error',          -- highlight group of overdued
-  date_hi = 'Conceal',           -- highlight group of date string
-  pattern_start = '<',           -- start for a date string pattern
-  pattern_end = '>',             -- end for a date string pattern
-  use_clock_time = false,        -- allow due.nvim to calculate hours, minutes, and seconds
-  default_due_time = "midnight", -- if use_clock_time == true, calculate time until option on specified date.
-                                --   Accepts "midnight", for 23:59:59, or noon, for 12:00:00
-})
-require'nvim-treesitter.configs'.setup({})
-require('nvim-biscuits').setup({
-  toggle_keybind = "<leader>cb",
-  cursor_line_only = true,
-  default_config = {
-    max_length = 12,
-    min_distance = 5,
-    prefix_string = " 📎 "
-  },
-  language_config = {
-    html = {
-      prefix_string = " 🌐 "
-    },
-    javascript = {
-      prefix_string = " ✨ ",
-      max_length = 80
-    },
-    python = {
-      -- disabled = true
-      -- prefix_string = " ✨ ",
-    }
-  }
-})
-
-
-require'nvim-treesitter.configs'.setup {
-  playground = {
-    enable = true,
-    disable = {},
-    updatetime = 25, -- Debounced time for highlighting nodes in the playground from source code
-    persist_queries = false, -- Whether the query persists across vim sessions
-    keybindings = {
-      toggle_query_editor = 'o',
-      toggle_hl_groups = 'i',
-      toggle_injected_languages = 't',
-      toggle_anonymous_nodes = 'a',
-      toggle_language_display = 'I',
-      focus_language = 'f',
-      unfocus_language = 'F',
-      update = 'R',
-      goto_node = '<cr>',
-      show_help = '?',
-    },
-  },
-  textobjects = {
-    lsp_interop = {
-      enable = true,
-      border = 'none',
-      peek_definition_code = {
-        ["<leader>df"] = "@function.outer",
-        ["<leader>dF"] = "@class.outer",
-      },
-    },
-    swap = {
-      enable = true,
-      swap_next = {
-        [",,n"] = "@parameter.inner",
-      },
-      swap_previous = {
-        [",,p"] = "@parameter.inner",
-      },
-    },
-    move = {
-        enable = true,
-        set_jumps = true, -- whether to set jumps in the jumplist
-        goto_next_start = {
-            ["]m"] = "@function.outer",
-            ["]]"] = "@class.outer",
-        },
-        goto_next_end = {
-            ["]M"] = "@function.outer",
-            ["]["] = "@class.outer",
-        },
-        goto_previous_start = {
-            ["[m"] = "@function.outer",
-            ["[["] = "@class.outer",
-        },
-        goto_previous_end = {
-            ["[M"] = "@function.outer",
-            ["[]"] = "@class.outer",
-        },
-    },
-    select = {
-      enable = true,
-
-      -- Automatically jump forward to textobj, similar to targets.vim
-      lookahead = true,
-
-      keymaps = {
-        -- You can use the capture groups defined in textobjects.scm
-        ["af"] = "@function.outer",
-        ["if"] = "@function.inner",
-        ["ac"] = "@class.outer",
-        ["ic"] = "@class.inner",
-
-        -- Or you can define your own textobjects like this
-        ["iF"] = {
-          python = "(function_definition) @function",
-          cpp = "(function_definition) @function",
-          c = "(function_definition) @function",
-          java = "(method_declaration) @function",
-        },
-      },
-    },
-  },
-  incremental_selection = {
-      enable = true,
-      keymaps = {
-          init_selection = '<CR>',
-          scope_incremental = 'CR>',
-          node_incremental = '<S-TAB>',
-          node_decremental = '<TAB>'
-      }
-  }
-}
 

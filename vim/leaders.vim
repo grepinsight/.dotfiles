@@ -258,7 +258,8 @@ noremap <silent> <LocalLeader>cl :wincmd l<CR>:close<CR>
 "
 " COMMA LEADER
 "nnoremap ,a :CtrlPMRUFiles<CR>
-nnoremap ,a :lua require("telescope.builtin").oldfiles {path_display = {"shorten"}}<CR>
+" nnoremap ,a :lua require("telescope.builtin").oldfiles {path_display = {"shorten"}}<CR>
+nnoremap ,a :Telescope oldfiles<CR>
 
 nnoremap ,b :Telescope buffers<CR>
 nnoremap ,c :GitGutterQuickFix<CR> <bar> :copen <CR> /<C-R>=bufname(winbufnr(1))<CR><CR>
