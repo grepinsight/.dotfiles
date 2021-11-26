@@ -125,7 +125,7 @@ Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 
 ---- LSP
-local fts = {"python", "react", "typescript", "typescriptreact", "lua", "rust"}
+local fts = {"org", "python", "react", "typescript", "typescriptreact", "lua", "rust"}
 Plug('neovim/nvim-lspconfig' , {['for'] = fts})
 Plug 'tjdevries/lsp_extensions.nvim'
 Plug 'nvim-lua/completion-nvim'
@@ -142,14 +142,13 @@ Plug('romgrk/nvim-treesitter-context', {['for'] = fts})
 -- Plug 'glepnir/lspsaga.nvim'
 
 --- Completion
-local cmp_fts =  {"python", "lua"}
-Plug('hrsh7th/nvim-cmp', {['for'] = cmp_fts})
-Plug('hrsh7th/cmp-nvim-lsp', {['for'] = cmp_fts})
-Plug('hrsh7th/cmp-buffer', {['for'] = cmp_fts})
-Plug('hrsh7th/cmp-path', {['for'] = cmp_fts})
-Plug('octaltree/cmp-look', {['for'] = cmp_fts})
-Plug('hrsh7th/cmp-nvim-lua', {['for'] = cmp_fts})
-Plug('quangnguyen30192/cmp-nvim-ultisnips', {['for'] = cmp_fts})
+Plug('hrsh7th/nvim-cmp')
+Plug('hrsh7th/cmp-nvim-lsp')
+Plug('hrsh7th/cmp-buffer')
+Plug('hrsh7th/cmp-path')
+Plug('octaltree/cmp-look')
+Plug('hrsh7th/cmp-nvim-lua')
+Plug('quangnguyen30192/cmp-nvim-ultisnips')
 Plug 'tjdevries/complextras.nvim'
 Plug 'ervandew/supertab'
 
@@ -225,4 +224,3 @@ end
 
 vim.cmd 'let g:airline#extensions#tabline#enabled = 1'
 vim.cmd "let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6 } }"
-
