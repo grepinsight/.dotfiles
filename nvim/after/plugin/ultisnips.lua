@@ -1,7 +1,0 @@
-vim.cmd 'let g:UltiSnipsExpandTrigger="<S-tab>"'
-vim.cmd 'let g:UltiSnipsJumpForwardTrigger="<Tab>"'
-vim.cmd 'let g:UltiSnipsJumpBackwardTrigger="<S-Tab>"'
-vim.cmd 'let g:UltiSnipsEditSplit="vertical"'
-vim.cmd 'let g:UltiSnipsNoPythonWarning = 1'
-vim.cmd 'let g:UltiSnipsSnippetDirectories=["mysnippets"]'
-vim.cmd 'noremap <silent> <Leader>ult :UltiSnipsEdit!<CR>2<CR>'

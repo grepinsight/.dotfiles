@@ -34,176 +34,301 @@ set showbreak=↪\
 set listchars=tab:→\ ,eol:↲,nbsp:␣,trail:•,extends:⟩,precedes:⟨
 ]]
 
-local Plug = vim.fn['plug#']
+vim.cmd [[packadd packer.nvim]]
 
-vim.call('plug#begin', '~/.config/nvim/plugged')
-
--- Essential
---Plug 'grepinsight/ctrlp.vim' -- my mutated version that supports vimwiki tag search
-Plug 'tpope/vim-unimpaired'
-Plug('junegunn/fzf', { dir = '~/.fzf', ['do'] = './install --all'  })
-Plug 'junegunn/fzf.vim'
--- Plug 'vim-airline/vim-airline'
-Plug 'hoob3rt/lualine.nvim'
-Plug 'nvim-lua/lsp-status.nvim'
-Plug 'akinsho/bufferline.nvim'
-Plug 'airblade/vim-rooter'
-Plug 'mhinz/vim-startify'
-
-Plug('nvim-telescope/telescope.nvim', {['on'] = {'Telescope'}})
-Plug 'nvim-telescope/telescope-fzy-native.nvim'
-
--- Colorschemes
-Plug 'morhetz/gruvbox'
-Plug 'arcticicestudio/nord-vim'
-Plug 'NLKNguyen/papercolor-theme'
-vim.cmd [[
-  autocmd vimenter * ++nested colorscheme gruvbox
-]]
+require('packer').startup(function()
+	use 'wbthomason/packer.nvim'
+    use 'lewis6991/impatient.nvim'
 
 
--- Maintainence
-Plug 'tweekmonster/startuptime.vim'
+	-- Essential
+    use 'tpope/vim-unimpaired'
+    use {'junegunn/fzf', dir = '~/.fzf', run = './install --all' }
+    use 'junegunn/fzf.vim'
+    -- use 'nvim-lua/lsp-status.nvim'
+	use { 'akinsho/bufferline.nvim', config = [[require('config.bufferline')]]}
+	use {'airblade/vim-rooter', config= function()
+		vim.cmd [[ let g:rooter_silent_chdir = 1
+		let g:startify_change_to_dir = 0
+		let g:rooter_change_directory_for_non_project_files = "current"
+		let g:rooter_patterns = [".git", "Makefile", ".prjroot", ".hg"]
+		]]
+	end}
+	use 'mhinz/vim-startify'
+
+   -- Files
+    use {
+		'justinmk/vim-dirvish',
+		config = [[require('config.dirvish')]]
+	}
+    use 'tpope/vim-eunuch'
+    use 'kyazdani42/nvim-tree.lua'
+    use 'kyazdani42/nvim-web-devicons'  -- for file icons
+
+	-- Editing
+	use 'tpope/vim-surround'              -- surround text objects with whatever
+	use 'AndrewRadev/splitjoin.vim'
+	use 'junegunn/vim-easy-align'         -- perform alignment easier
+	use 'tpope/vim-repeat'
+	use 'sgur/vim-editorconfig'
+	use { 'lukas-reineke/indent-blankline.nvim', ft= {"python"}}
+	use 'tpope/vim-commentary'          -- commenting plugin
+	use 'kana/vim-textobj-user'
+	use 'vim-scripts/BufOnly.vim'
+	use 'machakann/vim-highlightedyank'
+	use 'sbdchd/neoformat'
+	use {
+		'kkoomen/vim-doge',
+		run = ':call doge#install()',
+		ft = {"python"}
+	} -- doc generat
+    use 'ThePrimeagen/harpoon'
+
+	-- Color Schemes
+	use {'morhetz/gruvbox', config = function() vim.cmd [[ autocmd vimenter * ++nested colorscheme gruvbox ]] end}
+	use 'arcticicestudio/nord-vim'
+	use 'NLKNguyen/papercolor-theme'
+
+	use {
+		'nvim-telescope/telescope.nvim',
+		requires = {
+		    'nvim-lua/popup.nvim',
+			'nvim-lua/plenary.nvim',
+            'nvim-telescope/telescope-fzy-native.nvim',
+			'ThePrimeagen/git-worktree.nvim',
+		},
+		 wants = {
+			'popup.nvim',
+			'plenary.nvim',
+		},
+		config = [[require('config.telescope')]],
+		cmd =  {'Telescope'},
+	}
 
 
--- Files
-Plug 'tpope/vim-eunuch'       -- unix's Mkdir, Delete, etc.
-Plug('justinmk/vim-dirvish')
-Plug('kyazdani42/nvim-tree.lua', {commit= '7c88a0f8ee6250a8408c28e0b03a4925b396c916'})      -- tree
-Plug 'kyazdani42/nvim-web-devicons'  -- for file icons
+	use {
+		'nvim-treesitter/nvim-treesitter',
+        opt = true,
+		requires = {
+			'nvim-treesitter/nvim-treesitter-textobjects',
+			'nvim-treesitter/playground',
+			'romgrk/nvim-treesitter-context',
+		},
+        config = [[require('config.treesitter')]],
+		run = ':TSUpdate',
+	}
+	-- use {
+	-- 	'SmiteshP/nvim-gps',
+	-- 	requires = 'nvim-treesitter/nvim-treesitter',
+	-- 	after = "nivm-treesitter"
+	-- }
+	use {
+		'hoob3rt/lualine.nvim',
+		config = [[require('config.lualine')]],
+		-- requires = 'SmiteshP/nvim-gps',
+	}
+	-- Completion and linting
+	use {
+		'neovim/nvim-lspconfig',
+		config = [[require('config.lsp')]],
+	}
+
+	use {
+		'folke/lsp-colors.nvim',
+		'onsails/lspkind-nvim',
+	}
+
+    use {
+        'code-biscuits/nvim-biscuits',
+        opt = true,
+        config = [[
+        require('nvim-biscuits').setup({
+            toggle_keybind = "<leader>cb",
+            cursor_line_only = true,
+            default_config = {
+                max_length = 12,
+                min_distance = 5,
+                prefix_string = " 📎 "
+            },
+            language_config = {
+                html = {
+                    prefix_string = " 🌐 "
+                },
+                javascript = {
+                    prefix_string = " ✨ ",
+                    max_length = 80
+                },
+                python = {
+                    -- disabled = true
+                    -- prefix_string = " ✨ ",
+                }
+            }
+        })
+        ]],
+        after = 'nvim-treesitter',
+    }
+    -- Completion
+    ---- Snippets
+    use { 'SirVer/ultisnips',
+    config = function()
+        vim.cmd 'let g:UltiSnipsExpandTrigger="<S-tab>"'
+        vim.cmd 'let g:UltiSnipsJumpForwardTrigger="<Tab>"'
+        vim.cmd 'let g:UltiSnipsJumpBackwardTrigger="<S-Tab>"'
+        vim.cmd 'let g:UltiSnipsEditSplit="vertical"'
+        vim.cmd 'let g:UltiSnipsNoPythonWarning = 1'
+        vim.cmd 'let g:UltiSnipsSnippetDirectories=["mysnippets"]'
+        vim.cmd 'noremap <silent> <Leader>ult :UltiSnipsEdit!<CR>2<CR>'
+    end
+}
+    use 'honza/vim-snippets'
+    use {
+        'hrsh7th/nvim-cmp',
+        requires = {
+            {'hrsh7th/cmp-buffer', after = 'nvim-cmp'},
+            {'quangnguyen30192/cmp-nvim-ultisnips', after = 'nvim-cmp'},
+            'hrsh7th/cmp-nvim-lsp',
+            {'hrsh7th/cmp-path', after = 'nvim-cmp'},
+            {'octaltree/cmp-look', after = 'nvim-cmp'},
+            {'hrsh7th/cmp-nvim-lua', after = 'nvim-cmp'},
+            {'tjdevries/complextras.nvim', after = 'nvim-cmp'},
+        },
+        config = [[require('config.cmp')]],
+        event = 'InsertEnter *',
+    }
+    -- Plug 'ervandew/supertab'
+
+    ------ Org
+    use {
+        'kristijanhusak/orgmode.nvim',
+        opt= true,
+        config = [[require('config.org')]],
+        ft = {"org"},
+        requires = {
+            {'akinsho/org-bullets.nvim', opt= true}
+        }
+    }
+    -- Projects
+    use 'tpope/vim-projectionist'
 
 
--- IDE Like Featues
--- Viewport
-Plug 'szw/vim-maximizer'
-Plug 'ggandor/lightspeed.nvim'
-Plug('glacambre/firenvim', { ['do'] = ':call firenvim#install(0)' })
+    -- -- IDE Like Featues
+    use 'szw/vim-maximizer'
+    use 'ggandor/lightspeed.nvim'
+    use {'glacambre/firenvim', run = ':call firenvim#install(0)' }
 
----- Metaview
-Plug 'liuchengxu/vista.vim'
-Plug('simrat39/symbols-outline.nvim', {['on'] = {"SymbolsOutline"}})
+    ---- Metaview
+    use {'liuchengxu/vista.vim', cmd = "Vista"}
+    use {'simrat39/symbols-outline.nvim', cmd = {"SymbolsOutline"}}
 
----- Projects
-Plug 'tpope/vim-projectionist'
----- REPL
-Plug 'jpalardy/vim-slime'
+-- ---- REPL
+-- Plug 'jpalardy/vim-slime'
 
 
--- Git
-Plug 'rhysd/committia.vim'
-Plug 'airblade/vim-gitgutter'
-Plug 'tpope/vim-fugitive'
-Plug 'tpope/vim-rhubarb'
-Plug 'jreybert/vimagit'
-Plug 'junegunn/gv.vim'
-Plug 'rhysd/git-messenger.vim'
--- Plug('ThePrimeagen/git-worktree.nvim')
-Plug('Juksuu/git-worktree.nvim', {['commit']="a50af35f923868deb728f9fcb668b85539926b42"})
-Plug('pwntester/octo.nvim', {['on']= {'Octo'} })
+    -- Git
+    use 'rhysd/committia.vim'
+    use 'airblade/vim-gitgutter'
+    use 'tpope/vim-fugitive'
+    use 'tpope/vim-rhubarb'
+    use 'jreybert/vimagit'
+    use 'junegunn/gv.vim'
+    use 'rhysd/git-messenger.vim'
+    use {
+        'pwntester/octo.nvim',
+        config = [[require('config.octo')]],
+        cmd = {'Octo'}
+    }
 
--- Testing
-Plug 'vim-test/vim-test'
-Plug 'tpope/vim-dispatch'
-
--- Editing
-Plug 'tpope/vim-surround'              -- surround text objects with whatever
-Plug 'AndrewRadev/splitjoin.vim'
-Plug 'junegunn/vim-easy-align'         -- perform alignment easier
-Plug 'tpope/vim-repeat'
-Plug 'sgur/vim-editorconfig'
--- Plug 'Yggdroot/indentLine'
-Plug('lukas-reineke/indent-blankline.nvim', {['for'] = {"python"}})
-Plug 'tpope/vim-commentary'          -- commenting plugin
-Plug 'kana/vim-textobj-user'
-Plug 'vim-scripts/BufOnly.vim'
-Plug 'machakann/vim-highlightedyank'
-Plug 'sbdchd/neoformat'
-Plug('kkoomen/vim-doge', { ['do'] = ':call doge#install()', ['for'] = {"python"} })  -- doc generator
-
----- Snippets
-Plug 'SirVer/ultisnips'
-Plug 'honza/vim-snippets'
-
----- LSP
-local fts = {"org", "python", "react", "typescript", "typescriptreact", "lua", "rust"}
-Plug('neovim/nvim-lspconfig' , {['for'] = fts})
-Plug 'tjdevries/lsp_extensions.nvim'
-Plug 'nvim-lua/completion-nvim'
-Plug 'onsails/lspkind-nvim'
-Plug 'folke/lsp-colors.nvim'
-
-Plug('nvim-treesitter/nvim-treesitter' , {['for'] = fts })
-Plug('SmiteshP/nvim-gps',{['for'] = fts})
-Plug('nvim-treesitter/nvim-treesitter-textobjects', {['for'] = fts})
-
-Plug('nvim-treesitter/playground' , {['for'] = fts})
-Plug('code-biscuits/nvim-biscuits', {['for'] = fts}) -- in-editor annotations usually at the end of a closing tag/bracket/parenthesis/etc.
-Plug('romgrk/nvim-treesitter-context', {['for'] = fts})
--- Plug 'glepnir/lspsaga.nvim'
-
---- Completion
-Plug('hrsh7th/nvim-cmp')
-Plug('hrsh7th/cmp-nvim-lsp')
-Plug('hrsh7th/cmp-buffer')
-Plug('hrsh7th/cmp-path')
-Plug('octaltree/cmp-look')
-Plug('hrsh7th/cmp-nvim-lua')
-Plug('quangnguyen30192/cmp-nvim-ultisnips')
-Plug 'tjdevries/complextras.nvim'
-Plug 'ervandew/supertab'
-
-Plug 'nvim-lua/popup.nvim'
-Plug 'nvim-lua/plenary.nvim'
-Plug 'ThePrimeagen/harpoon'
-
----- Languages
------- Writing/Markdown/Rst
-Plug 'dhruvasagar/vim-table-mode'
-Plug 'tpope/vim-abolish'
-Plug 'junegunn/goyo.vim'
-Plug 'junegunn/limelight.vim'
-
------- Javascript
-Plug 'maxmellon/vim-jsx-pretty'
-Plug 'pangloss/vim-javascript'
-Plug('prettier/vim-prettier', {['on'] = {"Prettier"}} )
-Plug 'mattn/emmet-vim'
-
------- Python
-Plug 'goerz/jupytext.vim'
-Plug 'kalekundert/vim-coiled-snake'
-
------- Rust
-Plug 'rust-lang/rust.vim'
-
------- Go
-Plug('fatih/vim-go', {['for'] = {"go"}})
-
------- Latex
-Plug 'lervag/vimtex'
-vim.cmd 'let g:tex_flavor = "latex"'
+    -- Testing
+    use 'vim-test/vim-test'
+    use { 'tpope/vim-dispatch', cmd = { 'Dispatch', 'Make', 'Focus', 'Start' } }
 
 
------- Org
--- Plug 'axvr/org.vim'
-Plug('kristijanhusak/orgmode.nvim', {['for'] = {"org"}})
-Plug('akinsho/org-bullets.nvim', {['for'] = {"org"}})
+
+-- ---- LSP
+-- local fts = {"org", "python", "react", "typescript", "typescriptreact", "lua", "rust"}
+-- Plug 'tjdevries/lsp_extensions.nvim'
+-- Plug 'nvim-lua/completion-nvim'
+-- -- Plug 'glepnir/lspsaga.nvim'
 
 
------- Snakemake
-Plug 'burneyy/vim-snakemake'
+
+-- ---- Languages
+-- ------ Writing/Markdown/Rst
+    use 'dhruvasagar/vim-table-mode'
+    use 'tpope/vim-abolish'
+    use {
+        'junegunn/goyo.vim',
+        opt = true,
+        requires = {
+            'junegunn/limelight.vim'
+        },
+        cmd = "Goyo"
+    }
+
+    -- Javascript
+    use {
+        'maxmellon/vim-jsx-pretty',
+        ft = {"javascript", "react", "typescript", "typescriptreact"}
+
+    }
+    use {
+        'pangloss/vim-javascript',
+        ft = {"javascript", "react", "typescript", "typescriptreact"}
+    }
+    use {
+        'prettier/vim-prettier',
+        ft = {"javascript", "react", "typescript", "typescriptreact"},
+        cmd = {"Prettier"}
+    }
+    use {
+        'mattn/emmet-vim',
+        ft = {"javascript", "react", "typescript", "typescriptreact", "html"},
+    }
+
+-- ------ Python
+-- Plug 'goerz/jupytext.vim'
+-- Plug 'kalekundert/vim-coiled-snake'
+
+-- ------ Rust
+-- Plug 'rust-lang/rust.vim'
+
+-- ------ Go
+-- Plug('fatih/vim-go', {['for'] = {"go"}})
+
+-- ------ Latex
+-- Plug 'lervag/vimtex'
+-- vim.cmd 'let g:tex_flavor = "latex"'
 
 
--- Plug 'luukvbaal/stabilize.nvim'
-Plug 'folke/twilight.nvim'
--- Plug 'sunjon/shade.nvim'
-Plug 'NFrid/due.nvim'
-Plug('michaelb/sniprun', { ['do'] = 'bash install.sh 1', ['for'] = fts})
 
-Plug('mrjones2014/dash.nvim', { ['do'] =  'make install', ['on'] = {'Dash'} })
--- Plug 'grepinsight/insight.nvim'
 
-vim.call('plug#end')
+-- ------ Snakemake
+-- Plug 'burneyy/vim-snakemake'
+
+
+-- -- Plug 'luukvbaal/stabilize.nvim'
+-- Plug 'folke/twilight.nvim'
+-- -- Plug 'sunjon/shade.nvim'
+-- Plug 'NFrid/due.nvim'
+
+	-- Maintainence
+	use { 'tweekmonster/startuptime.vim', opt = true, cmd = {'StartupTime'}}
+end)
+
+
+-- local Plug = vim.fn['plug#']
+
+-- vim.call('plug#begin', '~/.config/nvim/plugged')
+
+
+-- Plug('nvim-telescope/telescope.nvim', {['on'] = {'Telescope'}})
+-- Plug 'nvim-telescope/telescope-fzy-native.nvim'
+-- Plug('michaelb/sniprun', { ['do'] = 'bash install.sh 1', ['for'] = fts})
+
+-- Plug('mrjones2014/dash.nvim', { ['do'] =  'make install', ['on'] = {'Dash'} })
+-- -- Plug 'grepinsight/insight.nvim'
+
+-- vim.call('plug#end')
 
 -- Define maplocalleader
 
