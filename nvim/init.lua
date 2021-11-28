@@ -1,8 +1,11 @@
+require('impatient')
+-- require'impatient'.enable_profile()
 vim.opt.autoread       = true           -- automatically read changed file again
 vim.opt.autowrite      = true -- Write the contents of the file, if it has been modified
 vim.opt.cursorline     = true           --highlight current line
 vim.opt.showmatch      = true          -- highlight matching [{()}]
-vim.opt.foldenable     = true         -- enable folding
+vim.opt.foldenable     = false
+-- vim.opt.foldenable     = true         -- enable folding
 vim.opt.foldlevelstart = 10     --open most folds by default
 vim.opt.splitright     = true   -- split to the right
 vim.opt.splitbelow     = true   -- split below
@@ -36,9 +39,18 @@ set listchars=tab:→\ ,eol:↲,nbsp:␣,trail:•,extends:⟩,precedes:⟨
 
 vim.cmd [[packadd packer.nvim]]
 
+local packer = require('packer')
+packer.init {
+    max_jobs = 50,
+    compile_path = vim.fn.stdpath('config')..'/lua/packer_compiled.lua',
+}
+
 require('packer').startup(function()
+
 	use 'wbthomason/packer.nvim'
-    use 'lewis6991/impatient.nvim'
+    use { 'lewis6991/impatient.nvim', opt = false }
+
+
 
 
 	-- Essential
@@ -46,7 +58,11 @@ require('packer').startup(function()
     use {'junegunn/fzf', dir = '~/.fzf', run = './install --all' }
     use 'junegunn/fzf.vim'
     -- use 'nvim-lua/lsp-status.nvim'
-	use { 'akinsho/bufferline.nvim', config = [[require('config.bufferline')]]}
+	use {
+		'akinsho/bufferline.nvim',
+		opt = false,
+		config = [[require('config.bufferline')]]
+	}
 	use {'airblade/vim-rooter', config= function()
 		vim.cmd [[ let g:rooter_silent_chdir = 1
 		let g:startify_change_to_dir = 0
@@ -59,6 +75,7 @@ require('packer').startup(function()
    -- Files
     use {
 		'justinmk/vim-dirvish',
+		opt = false,
 		config = [[require('config.dirvish')]]
 	}
     use 'tpope/vim-eunuch'
@@ -80,7 +97,10 @@ require('packer').startup(function()
 	use {
 		'kkoomen/vim-doge',
 		run = ':call doge#install()',
-		ft = {"python"}
+		ft = {"python"},
+        config = function()
+            vim.cmd [[ let g:doge_doc_standard_python = 'google' ]]
+        end
 	} -- doc generat
     use 'ThePrimeagen/harpoon'
 
@@ -109,39 +129,81 @@ require('packer').startup(function()
 	use {
 		'nvim-treesitter/nvim-treesitter',
         opt = true,
+        ft = {"python", "org"},
 		requires = {
 			'nvim-treesitter/nvim-treesitter-textobjects',
 			'nvim-treesitter/playground',
-			'romgrk/nvim-treesitter-context',
 		},
         config = [[require('config.treesitter')]],
 		run = ':TSUpdate',
 	}
-	-- use {
-	-- 	'SmiteshP/nvim-gps',
-	-- 	requires = 'nvim-treesitter/nvim-treesitter',
-	-- 	after = "nivm-treesitter"
-	-- }
+	use {
+        'romgrk/nvim-treesitter-context',
+        opt = true,
+        ft = {"python"},
+        requires = 'nvim-treesitter/nvim-treesitter',
+        after = "nvim-treesitter",
+        config = function ()
+            require'treesitter-context'.setup{
+                enable = true, -- Enable this plugin (Can be enabled/disabled later via commands)
+                throttle = true, -- Throttles plugin updates (may improve performance)
+                max_lines = 0, -- How many lines the window should span. Values <= 0 mean no limit.
+                patterns = { -- Match patterns for TS nodes. These get wrapped to match at word boundaries.
+                -- For all filetypes
+                -- Note that setting an entry here replaces all other patterns for this entry.
+                -- By setting the 'default' entry below, you can control which nodes you want to
+                -- appear in the context window.
+                default = {
+                    'class',
+                    'function',
+                    'method',
+                    -- 'for', -- These won't appear in the context
+                    -- 'while',
+                    -- 'if',
+                    -- 'switch',
+                    -- 'case',
+                },
+                -- Example for a specific filetype.
+                -- If a pattern is missing, *open a PR* so everyone can benefit.
+                --   rust = {
+                --       'impl_item',
+                --   },
+            },
+        }
+
+        end
+    }
+	use {
+		'SmiteshP/nvim-gps',
+        -- opt = true,
+        -- ft = {"python"},
+        -- requires = 'nvim-treesitter/nvim-treesitter',
+        -- after = "nvim-treesitter",
+        -- config = function ()
+        --     require("nvim-gps").setup({})
+        -- end
+	}
 	use {
 		'hoob3rt/lualine.nvim',
+		opt = false,
 		config = [[require('config.lualine')]],
 		-- requires = 'SmiteshP/nvim-gps',
 	}
 	-- Completion and linting
 	use {
 		'neovim/nvim-lspconfig',
+        opt = true,
+        ft = {"python", "lua"},
 		config = [[require('config.lsp')]],
 	}
 
-	use {
-		'folke/lsp-colors.nvim',
-		'onsails/lspkind-nvim',
-	}
+	use { 'folke/lsp-colors.nvim' }
 
     use {
         'code-biscuits/nvim-biscuits',
         opt = true,
-        config = [[
+        ft = {"python"},
+        config = function()
         require('nvim-biscuits').setup({
             toggle_keybind = "<leader>cb",
             cursor_line_only = true,
@@ -164,7 +226,8 @@ require('packer').startup(function()
                 }
             }
         })
-        ]],
+        end,
+        requires = 'nvim-treesitter/nvim-treesitter',
         after = 'nvim-treesitter',
     }
     -- Completion
@@ -181,6 +244,7 @@ require('packer').startup(function()
     end
 }
     use 'honza/vim-snippets'
+	use 'onsails/lspkind-nvim'
     use {
         'hrsh7th/nvim-cmp',
         requires = {
@@ -195,6 +259,10 @@ require('packer').startup(function()
         config = [[require('config.cmp')]],
         event = 'InsertEnter *',
     }
+    use {
+        'rcarriga/nvim-notify'
+    }
+
     -- Plug 'ervandew/supertab'
 
     ------ Org
@@ -204,7 +272,8 @@ require('packer').startup(function()
         config = [[require('config.org')]],
         ft = {"org"},
         requires = {
-            {'akinsho/org-bullets.nvim', opt= true}
+            {'akinsho/org-bullets.nvim', opt = true},
+            {'nvim-treesitter/nvim-treesitter'}
         }
     }
     -- Projects
@@ -214,11 +283,19 @@ require('packer').startup(function()
     -- -- IDE Like Featues
     use 'szw/vim-maximizer'
     use 'ggandor/lightspeed.nvim'
-    use {'glacambre/firenvim', run = ':call firenvim#install(0)' }
+    use {
+        'glacambre/firenvim',
+        opt = true,
+        run = ':call firenvim#install(0)',
+        config = function()
+            vim.cmd 'source ~/.dotfiles/nvim/lua/config/firenvim.vim'
+        end
+    }
 
     ---- Metaview
     use {'liuchengxu/vista.vim', cmd = "Vista"}
     use {'simrat39/symbols-outline.nvim', cmd = {"SymbolsOutline"}}
+    use {'stevearc/aerial.nvim'}
 
 -- ---- REPL
 -- Plug 'jpalardy/vim-slime'
@@ -229,8 +306,17 @@ require('packer').startup(function()
     use 'airblade/vim-gitgutter'
     use 'tpope/vim-fugitive'
     use 'tpope/vim-rhubarb'
-    use 'jreybert/vimagit'
-    use 'junegunn/gv.vim'
+    use {
+        'jreybert/vimagit',
+        opt = true,
+        cmd = "Magit",
+    }
+
+    use {
+        'junegunn/gv.vim',
+        opt = true,
+        cmd = "GV"
+    }
     use 'rhysd/git-messenger.vim'
     use {
         'pwntester/octo.nvim',
@@ -239,7 +325,19 @@ require('packer').startup(function()
     }
 
     -- Testing
-    use 'vim-test/vim-test'
+    use {
+        'vim-test/vim-test',
+        opt = true,
+        ft= {"python", "rust", "r"},
+        config = function ()
+            vim.cmd [[
+            let test#python#runner = 'pytest'
+            let g:test_extra= '--pdb '
+            let test#python#pytest#options = g:test_extra . '-s -v'
+            ]]
+        end
+
+    }
     use { 'tpope/vim-dispatch', cmd = { 'Dispatch', 'Make', 'Focus', 'Start' } }
 
 
@@ -287,29 +385,46 @@ require('packer').startup(function()
 
 -- ------ Python
 -- Plug 'goerz/jupytext.vim'
--- Plug 'kalekundert/vim-coiled-snake'
+    use {
+        'kalekundert/vim-coiled-snake',
+        opt = true,
+        lock=true,
+        ft = {"python"}
+    }
 
--- ------ Rust
--- Plug 'rust-lang/rust.vim'
+    ------ Rust
+    use { 'rust-lang/rust.vim', opt = true, ft = {"rust"}}
 
--- ------ Go
--- Plug('fatih/vim-go', {['for'] = {"go"}})
+    ------ Go
+    use {'fatih/vim-go', opt = true, ft = {"go"}}
 
--- ------ Latex
--- Plug 'lervag/vimtex'
--- vim.cmd 'let g:tex_flavor = "latex"'
+    ------ Latex
+    use {
+        'lervag/vimtex',
+        opt = true,
+        ft = {"tex", "latex"},
+        config = function()
+            vim.cmd 'let g:tex_flavor = "latex"'
+        end
+    }
+
+    ------ Snakemake
+    use { 'burneyy/vim-snakemake', opt = true, ft = {"snakemake" }}
 
 
-
-
--- ------ Snakemake
--- Plug 'burneyy/vim-snakemake'
-
-
--- -- Plug 'luukvbaal/stabilize.nvim'
--- Plug 'folke/twilight.nvim'
--- -- Plug 'sunjon/shade.nvim'
--- Plug 'NFrid/due.nvim'
+    -- -- Plug 'luukvbaal/stabilize.nvim'
+    use {
+        'folke/twilight.nvim',
+        opt = true,
+        cmd = "Twilight",
+        config = function()
+            require("twilight").setup({
+                exclude = {"lua"},
+            })
+        end
+    }
+    -- -- Plug 'sunjon/shade.nvim'
+    -- Plug 'NFrid/due.nvim'
 
 	-- Maintainence
 	use { 'tweekmonster/startuptime.vim', opt = true, cmd = {'StartupTime'}}
@@ -320,11 +435,7 @@ end)
 
 -- vim.call('plug#begin', '~/.config/nvim/plugged')
 
-
--- Plug('nvim-telescope/telescope.nvim', {['on'] = {'Telescope'}})
--- Plug 'nvim-telescope/telescope-fzy-native.nvim'
 -- Plug('michaelb/sniprun', { ['do'] = 'bash install.sh 1', ['for'] = fts})
-
 -- Plug('mrjones2014/dash.nvim', { ['do'] =  'make install', ['on'] = {'Dash'} })
 -- -- Plug 'grepinsight/insight.nvim'
 
@@ -335,7 +446,7 @@ end)
 vim.cmd 'source ~/.dotfiles/vim/leaders.vim'
 vim.cmd 'source ~/.dotfiles/vim/remaps.vim'
 vim.cmd 'source ~/.dotfiles/vim/functions.vim'
-vim.cmd 'source ~/.dotfiles/nvim/shortcuts.vim'
+-- vim.cmd 'source ~/.dotfiles/nvim/shortcuts.vim'
 vim.cmd 'source ~/.dotfiles/nvim/autocmds.vim'
 vim.cmd 'source ~/.dotfiles/vim/commands.vim'
 

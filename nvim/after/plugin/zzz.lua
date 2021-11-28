@@ -1,7 +1,3 @@
--- require("twilight").setup({
---     exclude = {"lua"},
--- })
-
 function setup_due_nvim()
     -- require'shade'.setup({})
     require('due_nvim').setup({
