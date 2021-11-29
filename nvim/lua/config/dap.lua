@@ -1,3 +1,4 @@
+require('telescope').load_extension('dap')
 local map = require('config.utils').map
 
 vim.cmd [[command! BreakpointToggle lua require('dap').toggle_breakpoint()]]
