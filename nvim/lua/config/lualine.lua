@@ -1,7 +1,11 @@
 
 local function nvim_gps()
     local gps = require("nvim-gps")
-    gps.setup()
+    gps.setup({
+        languages = {
+            ["org"] = false
+        }
+    })
     return gps.get_location()
     -- return
 end

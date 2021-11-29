@@ -300,7 +300,6 @@ require('packer').startup(function()
     -- use {'ray-x/navigator.lua', requires = {'ray-x/guihua.lua', run = 'cd lua/fzy && make'}}
     use {
         'glacambre/firenvim',
-        opt = true,
         run = ':call firenvim#install(0)',
         config = function()
             vim.cmd 'source ~/.dotfiles/nvim/lua/config/firenvim.vim'
@@ -357,18 +356,28 @@ require('packer').startup(function()
 
     -- https://alpha2phi.medium.com/neovim-dap-enhanced-ebc730ff498b
     use {
-        'mfussenegger/nvim-dap-python',
-        opt = true,
-        ft = "python",
-        config = [[ require('config.dap') ]],
-        requires =  {
-            'mfussenegger/nvim-dap',
+        'mfussenegger/nvim-dap',
+        -- opt = true,
+        ft = {"python","lua"},
+        config = [[require('config.dap')]],
+        requires = {
+            'jbyuki/one-small-step-for-vimkind',
+            'mfussenegger/nvim-dap-python',
             'rcarriga/nvim-dap-ui',
-        }
+        },
+        wants = 'one-small-step-for-vimkind',
     }
+
+
     use {
         'theHamsta/nvim-dap-virtual-text',
+        opt = true,
+        ft = "python",
         config = [[ require("nvim-dap-virtual-text").setup() ]],
+        requires = {
+            'mfussenegger/nvim-dap',
+        }
+
 
     }
     use {
@@ -468,7 +477,30 @@ require('packer').startup(function()
             })
         end
     }
-    -- Plug 'NFrid/due.nvim'
+
+    use {
+        'NFrid/due.nvim',
+        opt = true,
+        ft = {"org"},
+        config = function()
+            require('due_nvim').setup({
+                prescript = 'due: ',           -- prescript to due data
+                prescript_hi = 'Comment',      -- highlight group of it
+                due_hi = 'String',             -- highlight group of the data itself
+                ft = '*.org,*.md',                   -- filename template to apply aucmds :)
+                today = 'TODAY',               -- text for today's due
+                today_hi = 'Character',        -- highlight group of today's due
+                overdue = 'OVERDUE',           -- text for overdued
+                overdue_hi = 'Error',          -- highlight group of overdued
+                date_hi = 'Conceal',           -- highlight group of date string
+                pattern_start = '<',           -- start for a date string pattern
+                pattern_end = '>',             -- end for a date string pattern
+                use_clock_time = false,        -- allow due.nvim to calculate hours, minutes, and seconds
+                default_due_time = "midnight", -- if use_clock_time == true, calculate time until option on specified date.
+                --   Accepts "midnight", for 23:59:59, or noon, for 12:00:00
+            })
+        end
+    }
 
 	-- Maintainence
 	use { 'tweekmonster/startuptime.vim', opt = true, cmd = {'StartupTime'}}

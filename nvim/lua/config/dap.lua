@@ -1,5 +1,13 @@
+local map = require('config.utils').map
 
-local function map(a,b,c) vim.api.nvim_set_keymap(a,b,c, {silent = true, noremap = true}) end
+vim.cmd [[command! BreakpointToggle lua require('dap').toggle_breakpoint()]]
+vim.cmd [[command! Debug lua require('dap').continue()]]
+vim.cmd [[command! DapREPL lua require('dap').repl.open()]]
+
+map('n', '<F5>', [[<cmd>lua require'dap'.continue()<CR>]])
+map('n', '<F10>', [[<cmd>lua require'dap'.step_over()<CR>]])
+map('n', '<F11>', [[<cmd>lua require'dap'.step_into()<CR>]])
+map('n', '<F12>', [[<cmd>lua require'dap'.step_out()<CR>]])
 
 map('n', '<leader>dct', '<cmd>lua require"dap".continue()<CR>')
 -- map('n', '<leader>dsv', '<cmd>lua require"dap".step_over()<CR>')
@@ -57,3 +65,4 @@ vim.cmd [[
   nmap <leader>dsv <Plug>(DapStepOver)
 ]]
 
+require('config.dbg.lua')
