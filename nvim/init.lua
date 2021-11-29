@@ -184,16 +184,16 @@ require('packer').startup(function()
 
         end
     }
-	use {
-		'SmiteshP/nvim-gps',
-        -- opt = true,
-        -- ft = {"python"},
-        -- requires = 'nvim-treesitter/nvim-treesitter',
-        -- after = "nvim-treesitter",
-        -- config = function ()
-        --     require("nvim-gps").setup({})
-        -- end
-	}
+	use { 'SmiteshP/nvim-gps' }
+    -- use {'nvim-lua/lsp-status.nvim'}
+        -- -- opt = true,
+        -- -- ft = {"python"},
+        -- -- requires = 'nvim-treesitter/nvim-treesitter',
+        -- -- after = "nvim-treesitter",
+        -- -- config = function ()
+        -- --     require("nvim-gps").setup({})
+        -- -- end
+	-- }
 	use {
 		'hoob3rt/lualine.nvim',
 		opt = false,
