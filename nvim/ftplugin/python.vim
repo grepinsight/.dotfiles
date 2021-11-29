@@ -32,10 +32,3 @@ augroup BiscuitHighlight
     autocmd!
     autocmd BufWritePre *.py hi BiscuitColorpython ctermfg=grey guifg=grey
 augroup END
-
-lua << EOF
-require("indent_blankline").setup {
-    char = "|",
-    buftype_exclude = {"terminal"}
-}
-EOF

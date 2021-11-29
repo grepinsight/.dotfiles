@@ -3,6 +3,7 @@ local function nvim_gps()
     local gps = require("nvim-gps")
     gps.setup()
     return gps.get_location()
+    -- return
 end
 
 local function lualine_orgmode()
