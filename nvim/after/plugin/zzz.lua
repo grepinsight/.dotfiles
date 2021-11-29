@@ -1,4 +1,5 @@
 function setup_due_nvim()
+    -- require'shade'.setup({})
     require('due_nvim').setup({
         prescript = 'due: ',           -- prescript to due data
         prescript_hi = 'Comment',      -- highlight group of it
