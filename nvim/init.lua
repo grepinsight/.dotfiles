@@ -72,6 +72,11 @@ require('packer').startup(function()
 	end}
 	use 'mhinz/vim-startify'
 
+    use {
+        'sunjon/shade.nvim',
+        config = [[ require'shade'.setup({})]]
+    }
+
    -- Files
     use {
 		'justinmk/vim-dirvish',
@@ -88,7 +93,13 @@ require('packer').startup(function()
 	use 'junegunn/vim-easy-align'         -- perform alignment easier
 	use 'tpope/vim-repeat'
 	use 'sgur/vim-editorconfig'
-	use { 'lukas-reineke/indent-blankline.nvim', ft= {"python"}}
+    use {
+        'lukas-reineke/indent-blankline.nvim',
+        ft= {"python"},
+        config = function()
+            require("indent_blankline").setup { char = "|", buftype_exclude = {"terminal"} }
+        end
+    }
 	use 'tpope/vim-commentary'          -- commenting plugin
 	use 'kana/vim-textobj-user'
 	use 'vim-scripts/BufOnly.vim'
@@ -177,8 +188,8 @@ require('packer').startup(function()
 		'SmiteshP/nvim-gps',
         -- opt = true,
         -- ft = {"python"},
-        -- requires = 'nvim-treesitter/nvim-treesitter',
-        -- after = "nvim-treesitter",
+        requires = 'nvim-treesitter/nvim-treesitter',
+        after = "nvim-treesitter",
         -- config = function ()
         --     require("nvim-gps").setup({})
         -- end
@@ -272,7 +283,7 @@ require('packer').startup(function()
         config = [[require('config.org')]],
         ft = {"org"},
         requires = {
-            {'akinsho/org-bullets.nvim', opt = true},
+            {'akinsho/org-bullets.nvim', after = "orgmode.nvim"},
             {'nvim-treesitter/nvim-treesitter'}
         }
     }
@@ -423,7 +434,6 @@ require('packer').startup(function()
             })
         end
     }
-    -- -- Plug 'sunjon/shade.nvim'
     -- Plug 'NFrid/due.nvim'
 
 	-- Maintainence
