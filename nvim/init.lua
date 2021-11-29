@@ -188,8 +188,8 @@ require('packer').startup(function()
 		'SmiteshP/nvim-gps',
         -- opt = true,
         -- ft = {"python"},
-        requires = 'nvim-treesitter/nvim-treesitter',
-        after = "nvim-treesitter",
+        -- requires = 'nvim-treesitter/nvim-treesitter',
+        -- after = "nvim-treesitter",
         -- config = function ()
         --     require("nvim-gps").setup({})
         -- end
@@ -283,7 +283,7 @@ require('packer').startup(function()
         config = [[require('config.org')]],
         ft = {"org"},
         requires = {
-            {'akinsho/org-bullets.nvim', after = "orgmode.nvim"},
+            {'akinsho/org-bullets.nvim'},
             {'nvim-treesitter/nvim-treesitter'}
         }
     }
