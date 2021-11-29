@@ -1,3 +1,50 @@
+vim.cmd [[
+" gray
+highlight! CmpItemAbbrDeprecated guibg=NONE gui=strikethrough guifg=#808080
+" blue
+highlight! CmpItemAbbrMatch guibg=NONE guifg=#569CD6
+highlight! CmpItemAbbrMatchFuzzy guibg=NONE guifg=#569CD6
+" light blue
+highlight! CmpItemKindVariable guibg=NONE guifg=#9CDCFE
+highlight! CmpItemKindInterface guibg=NONE guifg=#9CDCFE
+highlight! CmpItemKindText guibg=NONE guifg=#9CDCFE
+" pink
+highlight! CmpItemKindFunction guibg=NONE guifg=#C586C0
+highlight! CmpItemKindMethod guibg=NONE guifg=#C586C0
+" front
+highlight! CmpItemKindKeyword guibg=NONE guifg=#D4D4D4
+highlight! CmpItemKindProperty guibg=NONE guifg=#D4D4D4
+highlight! CmpItemKindUnit guibg=NONE guifg=#D4D4D4
+]]
+
+local cmp_kinds = {
+  Text = 'ﭨ ',
+  Method = '  ',
+  Function = ' ',
+  Constructor = '  ',
+  Field = '  ',
+  Variable = ' ',
+  Class = 'פּ ',
+  Interface = 'ﳤ ',
+  Module = ' ',
+  Property = ' ',
+  Unit = '  ',
+  Value = '  ',
+  Enum = '  ',
+  Keyword = '  ',
+  Snippet = ' ',
+  Color = ' ',
+  File = ' ',
+  Reference = '  ',
+  Folder = '  ',
+  EnumMember = '  ',
+  Constant = '  ',
+  Struct = '  ',
+  Event = ' ',
+  Operator = '  ',
+  TypeParameter = '  ',
+}
+
 local cmp = require 'cmp'
 local lspkind = require('lspkind')
 lspkind.init()
@@ -68,6 +115,12 @@ cmp.setup {
 	--     return vim_item
 	--   end
 	-- },
+    -- formatting = {
+    -- format = function(_, vim_item)
+    --   vim_item.kind = (cmp_kinds[vim_item.kind] or '') .. vim_item.kind
+    --   return vim_item
+    -- end,
+    -- },
 	formatting = {
 		-- Youtube: How to set up nice formatting for your sources.
 		format = lspkind.cmp_format {

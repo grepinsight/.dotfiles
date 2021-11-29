@@ -21,6 +21,7 @@ tnoremap   <silent>   <F9>   <C-\><C-n>:FloatermToggle<CR>
 
 " Double Capital letters
 nnoremap BB :call BufferSmartDelete()<CR>
+" nnoremap BB :Sayonara!<CR>
 
 nnoremap TB :lua require('telescope.builtin').buffers()<CR>
 nnoremap TC :lua require('telescope.builtin').commands()<CR>

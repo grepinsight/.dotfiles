@@ -36,6 +36,9 @@ fun! DirenvReload()
     if bufname(bufnr("%")) =~ 'pytest'
         return
     endif
+    if bufname(bufnr("%")) =~ 'python'
+        return
+    endif
     if bufname(bufnr("%")) =~ ':vd'
         return
     endif

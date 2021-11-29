@@ -55,6 +55,7 @@ require('packer').startup(function()
 
 	-- Essential
     use 'tpope/vim-unimpaired'
+    -- use 'mhinz/vim-sayonara'
     use {'junegunn/fzf', dir = '~/.fzf', run = './install --all' }
     use 'junegunn/fzf.vim'
     -- use 'nvim-lua/lsp-status.nvim'
@@ -72,10 +73,10 @@ require('packer').startup(function()
 	end}
 	use 'mhinz/vim-startify'
 
-    use {
-        'sunjon/shade.nvim',
-        config = [[ require'shade'.setup({})]]
-    }
+    -- use {
+    --     'sunjon/shade.nvim',
+    --     config = [[ require'shade'.setup({})]]
+    -- }
 
    -- Files
     use {
@@ -97,7 +98,7 @@ require('packer').startup(function()
         'lukas-reineke/indent-blankline.nvim',
         ft= {"python"},
         config = function()
-            require("indent_blankline").setup { char = "|", buftype_exclude = {"terminal"} }
+            require("indent_blankline").setup({buftype_exclude = {"terminal"} })
         end
     }
 	use 'tpope/vim-commentary'          -- commenting plugin
@@ -184,7 +185,10 @@ require('packer').startup(function()
 
         end
     }
-	use { 'SmiteshP/nvim-gps' }
+	use { 'SmiteshP/nvim-gps',
+        requires = 'nvim-treesitter/nvim-treesitter',
+        after = "nvim-treesitter",
+    }
     -- use {'nvim-lua/lsp-status.nvim'}
         -- -- opt = true,
         -- -- ft = {"python"},
@@ -279,9 +283,7 @@ require('packer').startup(function()
     ------ Org
     use {
         'kristijanhusak/orgmode.nvim',
-        opt= true,
         config = [[require('config.org')]],
-        ft = {"org"},
         requires = {
             {'akinsho/org-bullets.nvim'},
             {'nvim-treesitter/nvim-treesitter'}
@@ -293,7 +295,9 @@ require('packer').startup(function()
 
     -- -- IDE Like Featues
     use 'szw/vim-maximizer'
+    -- Navigation
     use 'ggandor/lightspeed.nvim'
+    -- use {'ray-x/navigator.lua', requires = {'ray-x/guihua.lua', run = 'cd lua/fzy && make'}}
     use {
         'glacambre/firenvim',
         opt = true,
@@ -350,6 +354,36 @@ require('packer').startup(function()
 
     }
     use { 'tpope/vim-dispatch', cmd = { 'Dispatch', 'Make', 'Focus', 'Start' } }
+
+    -- https://alpha2phi.medium.com/neovim-dap-enhanced-ebc730ff498b
+    use {
+        'mfussenegger/nvim-dap-python',
+        opt = true,
+        ft = "python",
+        config = [[ require('config.dap') ]],
+        requires =  {
+            'mfussenegger/nvim-dap',
+            'rcarriga/nvim-dap-ui',
+        }
+    }
+    use {
+        'theHamsta/nvim-dap-virtual-text',
+        config = [[ require("nvim-dap-virtual-text").setup() ]],
+
+    }
+    use {
+        'nvim-telescope/telescope-dap.nvim',
+        opt = true,
+        ft = "python",
+        after = "telescope.nvim"
+    }
+    use {
+        "rcarriga/vim-ultest",
+        opt = true,
+        config = "require('config.ultest').post()",
+        requires = {"vim-test/vim-test"},
+        cmd = {"Ultest", "UltestNearest", "UltestDebug", "UltestDebugNearest"}
+    }
 
 
 
@@ -438,6 +472,29 @@ require('packer').startup(function()
 
 	-- Maintainence
 	use { 'tweekmonster/startuptime.vim', opt = true, cmd = {'StartupTime'}}
+    -- Lua
+    use {
+        "folke/trouble.nvim",
+        requires = "kyazdani42/nvim-web-devicons",
+        config = function()
+            require("trouble").setup {
+                -- your configuration comes here
+                -- or leave it empty to use the default settings
+                -- refer to the configuration section below
+            }
+        end
+    }
+    -- use {
+    --     "folke/which-key.nvim",
+    --     config = function()
+    --         require("which-key").setup {
+    --             -- your configuration comes here
+    --             -- or leave it empty to use the default settings
+    --             -- refer to the configuration section below
+    --         }
+    --     end
+    -- }
+
 end)
 
 
