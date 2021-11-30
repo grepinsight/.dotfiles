@@ -116,6 +116,9 @@ nnoremap <leader>s  :ToggleGStatus<CR>
 nnoremap <leader>ss :ToggleGStatus<CR>
 nnoremap <leader>sv :source $MYVIMRC<CR>
 nnoremap <leader>vd :Gvdiff<CR>
+nnoremap <leader>ut :Ultest<CR>
+nnoremap <leader>un :UltestNearest<CR>
+nnoremap <leader>us :UltestSummary<CR>
 nnoremap <leader>x :!chmod 750 %<CR>
 
 " Copy and Paste : https://vi.stackexchange.com/questions/84/how-can-i-copy-text-to-the-system-clipboard-from-vim

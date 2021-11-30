@@ -346,7 +346,7 @@ require('packer').startup(function()
         config = function ()
             vim.cmd [[
             let test#python#runner = 'pytest'
-            let g:test_extra= '--pdb '
+            let g:test_extra = ''
             let test#python#pytest#options = g:test_extra . '-s -v'
             ]]
         end
@@ -391,7 +391,7 @@ require('packer').startup(function()
         opt = true,
         config = "require('config.ultest').post()",
         requires = {"vim-test/vim-test"},
-        cmd = {"Ultest", "UltestNearest", "UltestDebug", "UltestDebugNearest"}
+        cmd = {"Ultest", "UltestNearest"}
     }
 
 

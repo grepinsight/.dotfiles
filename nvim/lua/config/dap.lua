@@ -1,14 +1,9 @@
-require('telescope').load_extension('dap')
 local map = require('config.utils').map
 
 vim.cmd [[command! BreakpointToggle lua require('dap').toggle_breakpoint()]]
 vim.cmd [[command! Debug lua require('dap').continue()]]
 vim.cmd [[command! DapREPL lua require('dap').repl.open()]]
 
-map('n', '<F5>', [[<cmd>lua require'dap'.continue()<CR>]])
-map('n', '<F10>', [[<cmd>lua require'dap'.step_over()<CR>]])
-map('n', '<F11>', [[<cmd>lua require'dap'.step_into()<CR>]])
-map('n', '<F12>', [[<cmd>lua require'dap'.step_out()<CR>]])
 
 map('n', '<leader>dct', '<cmd>lua require"dap".continue()<CR>')
 -- map('n', '<leader>dsv', '<cmd>lua require"dap".step_over()<CR>')
@@ -34,6 +29,7 @@ map('n', '<leader>drl', '<cmd>lua require"dap".repl.run_last()<CR>')
 
 
 -- telescope-dap
+require('telescope').load_extension('dap')
 map('n', '<leader>dcc',
     '<cmd>lua require"telescope".extensions.dap.commands{}<CR>')
 map('n', '<leader>dco',
@@ -42,7 +38,7 @@ map('n', '<leader>dlb',
     '<cmd>lua require"telescope".extensions.dap.list_breakpoints{}<CR>')
 map('n', '<leader>dv',
     '<cmd>lua require"telescope".extensions.dap.variables{}<CR>')
-map('n', '<leader>df',
+map('n', '<leader>dlf',
           '<cmd>lua require"telescope".extensions.dap.frames{}<CR>')
 map('n', '<leader>dui', '<cmd>lua require"dapui".toggle()<CR>')
 
@@ -50,6 +46,7 @@ require('dap-python').setup('python')
 require("dapui").setup()
 
 vim.fn.sign_define("DapBreakpoint", {text = '🛑', texthl = '', linehl = '', numhl = ''})
+vim.fn.sign_define("DapStopped",    {text = '⭐', texthl = '', linehl = '', numhl = ''})
 vim.g.dap_virtual_text = true
 
 

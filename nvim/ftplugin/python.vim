@@ -32,3 +32,6 @@ augroup BiscuitHighlight
     autocmd!
     autocmd BufWritePre *.py hi BiscuitColorpython ctermfg=grey guifg=grey
 augroup END
+
+
+" silent exec ":UpdateRemotePlugins"
