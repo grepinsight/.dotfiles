@@ -34,4 +34,4 @@ augroup BiscuitHighlight
 augroup END
 
 
-" silent exec ":UpdateRemotePlugins"
+silent exec ":UpdateRemotePlugins"

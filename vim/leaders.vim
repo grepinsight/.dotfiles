@@ -302,8 +302,10 @@ vnoremap <silent> ,i :'<,'>!itemify<CR><CR>
 vnoremap <silent> ,l :'<,'>!listify<CR><CR>
 
 " Unimparied style
-nnoremap [t :tabprevious<CR>
-nnoremap ]t :tabnext<CR>
+" nnoremap [t :tabprevious<CR>
+" nnoremap ]t :tabnext<CR>
+nmap ]t <Plug>(ultest-next-fail)
+nmap [t <Plug>(ultest-prev-fail)
 nnoremap ]1 :lua require("harpoon.ui").nav_file(1)<CR>
 nnoremap ]2 :lua require("harpoon.ui").nav_file(2)<CR>
 nnoremap ]3 :lua require("harpoon.ui").nav_file(3)<CR>
