@@ -45,7 +45,7 @@ packer.init {
     compile_path = vim.fn.stdpath('config')..'/lua/packer_compiled.lua',
 }
 
-require('packer').startup(function()
+require('packer').startup(function(use)
 
 	use 'wbthomason/packer.nvim'
     use { 'lewis6991/impatient.nvim', opt = false }
@@ -117,9 +117,12 @@ require('packer').startup(function()
     use 'ThePrimeagen/harpoon'
 
 	-- Color Schemes
-	use {'morhetz/gruvbox', config = function() vim.cmd [[ autocmd vimenter * ++nested colorscheme gruvbox ]] end}
-	use 'arcticicestudio/nord-vim'
+	-- use {'morhetz/gruvbox', config = function() vim.cmd [[ autocmd vimenter * ++nested colorscheme gruvbox ]] end}
+	use { 'arcticicestudio/nord-vim', config = function() vim.cmd [[ autocmd vimenter * ++nested colorscheme nord ]] end}
+
 	use 'NLKNguyen/papercolor-theme'
+
+    use {'rafi/awesome-vim-colorschemes'}
 
 	use {
 		'nvim-telescope/telescope.nvim',
@@ -141,7 +144,7 @@ require('packer').startup(function()
 	use {
 		'nvim-treesitter/nvim-treesitter',
         opt = true,
-        ft = {"python", "org"},
+        ft = {"python", "org", "lua"},
 		requires = {
 			'nvim-treesitter/nvim-treesitter-textobjects',
 			'nvim-treesitter/playground',
@@ -208,7 +211,7 @@ require('packer').startup(function()
 	use {
 		'neovim/nvim-lspconfig',
         opt = true,
-        ft = {"python", "lua"},
+        ft = {"python", "lua", "rust"},
 		config = [[require('config.lsp')]],
 	}
 
@@ -296,7 +299,15 @@ require('packer').startup(function()
     -- -- IDE Like Featues
     use 'szw/vim-maximizer'
     -- Navigation
-    use 'ggandor/lightspeed.nvim'
+    -- use 'ggandor/lightspeed.nvim'
+    use {
+        'phaazon/hop.nvim',
+        branch = 'v1', -- optional but strongly recommended
+        config = function()
+            -- you can configure Hop the way you like here; see :h hop-config
+            require'hop'.setup { keys = 'etovxqpdygfblzhckisuran' }
+        end
+    }
     -- use {'ray-x/navigator.lua', requires = {'ray-x/guihua.lua', run = 'cd lua/fzy && make'}}
     use {
         'glacambre/firenvim',
@@ -316,8 +327,18 @@ require('packer').startup(function()
 
 
     -- Git
-    use 'rhysd/committia.vim'
-    use 'airblade/vim-gitgutter'
+    -- use 'rhysd/committia.vim'
+    -- use 'airblade/vim-gitgutter'
+    use {
+        'lewis6991/gitsigns.nvim',
+        requires = {
+            'nvim-lua/plenary.nvim'
+        },
+        config = function()
+            require('gitsigns').setup()
+        end
+    }
+
     use 'tpope/vim-fugitive'
     use 'tpope/vim-rhubarb'
     use {
@@ -391,7 +412,8 @@ require('packer').startup(function()
         opt = true,
         config = "require('config.ultest').post()",
         requires = {"vim-test/vim-test"},
-        cmd = {"Ultest", "UltestNearest"}
+        cmd = {"Ultest", "UltestNearest"},
+		run = ':UpdateRemotePlugins',
     }
 
 

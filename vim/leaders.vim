@@ -31,6 +31,7 @@ nnoremap TM :Telescope marks<CR>
 nnoremap TO :Telescope oldfiles path_display=shorten<CR>
 nnoremap TR :Telescope lsp_references<CR>
 nnoremap TS :lua require('telescope.builtin').grep_string({ search = vim.fn.input("Grep For > ")})<CR>
+nnoremap TH :Telescope help_tags<CR>
 nnoremap TT :lua require('telescope').extensions.git_worktree.create_git_worktree()
 nnoremap TW :lua require('telescope').extensions.git_worktree.git_worktrees()<CR>
 
@@ -119,6 +120,7 @@ nnoremap <leader>vd :Gvdiff<CR>
 nnoremap <leader>ut :Ultest<CR>
 nnoremap <leader>un :UltestNearest<CR>
 nnoremap <leader>us :UltestSummary<CR>
+nnoremap <leader>uo :UltestOutput<CR>
 nnoremap <leader>x :!chmod 750 %<CR>
 
 " Copy and Paste : https://vi.stackexchange.com/questions/84/how-can-i-copy-text-to-the-system-clipboard-from-vim
@@ -283,8 +285,8 @@ nnoremap ,O :BOnly<CR>
 nnoremap ,p :e <C-R>=resolve(expand("%"))<CR>
 nnoremap ,q :Rg! <C-R>=expand("%:t")<CR>
 nnoremap ,r :BTags<CR>
-nmap s <Plug>Lightspeed_s
-nmap S <Plug>Lightspeed_S
+nmap s :HopChar2AC<CR>
+nmap S :HopChar2BC<CR>
 " nnoremap ,t :call ChooseTerm("term-slider", 1)<CR>
 nnoremap ,t :sp<CR><Esc>:lua require("harpoon.term").gotoTerminal(1)<CR>
 nnoremap ,,t :call ChooseTerm("term-slider2", 1)<CR>
@@ -376,9 +378,6 @@ let g:table_mode_insert_column_after_map = '<Leader>tic'
 " au FileType scss setlocal formatprg=prettier\ --parser\ css
 " au FileType css setlocal formatprg=prettier\ --parser\ css
 " " command! Prettier execute "normal! mwgggqGgg=G`w"
-autocmd BufWritePre *.js execute ':Prettier'
-autocmd BufWritePre *.tsx execute ':Prettier'
-autocmd BufWritePre *.css execute ':Prettier'
 
 
 let g:user_emmet_settings = {

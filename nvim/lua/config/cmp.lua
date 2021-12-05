@@ -132,17 +132,34 @@ cmp.setup {
 				buffer = "[buf]",
 				gh_issues = "[issues]",
 				orgmode = "[orgmode]",
+				rst_glossary = "[glossary]",
 			},
 		},
 	},
-	sources = {
-		{ name = "gh_issues" },
-		{ name = 'orgmode' },
-		{ name = 'nvim_lsp' },
-		{ name = 'ultisnips', keyword_length = 2 },
-		{ name = "path" },
-		{ name = "buffer", keyword_length = 5 },
-	},
+    sources = {
+        { name = "gh_issues" },
+        { name = "rst_glossary" },
+        { name = 'orgmode' },
+        { name = 'nvim_lsp' },
+        { name = 'ultisnips', keyword_length = 2 },
+        { name = "path" },
+        { name = "buffer",
+        keyword_length = 3,
+        get_bufnrs = function()
+            local filter = vim.tbl_filter
+            local bufnrs = filter(function(b)
+                if 1 ~= vim.fn.buflisted(b) then
+                    return false
+                end
+                if not vim.api.nvim_buf_is_loaded(b) then
+                    return false
+                end
+                return true
+            end, vim.api.nvim_list_bufs())
+            return bufnrs
+        end
+    },
+    },
 	experimental = {
 		-- I like the new menu better! Nice work hrsh7th
 		native_menu = false,
@@ -151,3 +168,4 @@ cmp.setup {
 		ghost_text = true,
 	},
 }
+
