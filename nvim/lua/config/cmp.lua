@@ -132,11 +132,13 @@ cmp.setup {
 				buffer = "[buf]",
 				gh_issues = "[issues]",
 				orgmode = "[orgmode]",
+				rst_glossary = "[glossary]",
 			},
 		},
 	},
     sources = {
         { name = "gh_issues" },
+        { name = "rst_glossary" },
         { name = 'orgmode' },
         { name = 'nvim_lsp' },
         { name = 'ultisnips', keyword_length = 2 },

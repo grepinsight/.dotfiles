@@ -378,9 +378,6 @@ let g:table_mode_insert_column_after_map = '<Leader>tic'
 " au FileType scss setlocal formatprg=prettier\ --parser\ css
 " au FileType css setlocal formatprg=prettier\ --parser\ css
 " " command! Prettier execute "normal! mwgggqGgg=G`w"
-autocmd BufWritePre *.js execute ':Prettier'
-autocmd BufWritePre *.tsx execute ':Prettier'
-autocmd BufWritePre *.css execute ':Prettier'
 
 
 let g:user_emmet_settings = {

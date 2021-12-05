@@ -1,10 +1,6 @@
-
-vim.cmd [[ :silent exec ":UpdateRemotePlugins" ]]
-vim.g.ultest_use_pty = 1
-
 local M = {}
-
 function M.post()
+    vim.g.ultest_use_pty = 1
     local builders = {
         python = function(cmd)
             local non_modules = {"python", "pipenv", "poetry"}

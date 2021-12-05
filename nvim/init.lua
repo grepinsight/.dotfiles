@@ -211,7 +211,7 @@ require('packer').startup(function(use)
 	use {
 		'neovim/nvim-lspconfig',
         opt = true,
-        ft = {"python", "lua"},
+        ft = {"python", "lua", "rust"},
 		config = [[require('config.lsp')]],
 	}
 
@@ -409,11 +409,11 @@ require('packer').startup(function(use)
     }
     use {
         "rcarriga/vim-ultest",
-        commit = "f925585c8cd6d062b62ba94cd0a4d9bc1d61844c",
         opt = true,
         config = "require('config.ultest').post()",
         requires = {"vim-test/vim-test"},
-        cmd = {"Ultest", "UltestNearest"}
+        cmd = {"Ultest", "UltestNearest"},
+		run = ':UpdateRemotePlugins',
     }
 
 

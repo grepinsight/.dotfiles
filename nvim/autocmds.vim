@@ -59,3 +59,7 @@ augroup end
 if filereadable(".vimrc_proj")
     so .vimrc_proj
 endif
+
+autocmd BufWritePre *.js execute ':Prettier'
+autocmd BufWritePre *.tsx execute ':Prettier'
+autocmd BufWritePre *.css execute ':Prettier'
