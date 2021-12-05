@@ -720,3 +720,19 @@ but `delete-file' is ignored."
       evil-want-fine-undo t                       ; By default while in insert all changes are one big blob. Be more granular
       auto-save-default t                         ; Nobody likes to loose work, I certainly don't
       truncate-string-ellipsis "…")               ; Unicode ellispis are nicer than "...", and also save /precious/ space
+
+
+;; obsidan link handling for obsidian:// links
+(defun org-obidian-link-open (slash-message-id)
+  "Handler for org-link-set-parameters that opens a obsidian:// link in obsidian"
+  ;; remove any / at the start of slash-message-id to create real note-id
+  (let ((message-id
+         (replace-regexp-in-string (rx bos (* "/"))
+                                   ""
+                                   slash-message-id)))
+    (do-applescript
+     (concat "tell application \"Obsidian\" to open location \"obsidian://"
+             message-id
+             "\" activate"))))
+;; on obsdian://aoeu link, this will call handler with //aoeu
+(org-link-set-parameters "obsidian" :follow #'org-obidian-link-open)
