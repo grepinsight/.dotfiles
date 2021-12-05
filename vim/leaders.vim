@@ -31,7 +31,7 @@ nnoremap TM :Telescope marks<CR>
 nnoremap TO :Telescope oldfiles path_display=shorten<CR>
 nnoremap TR :Telescope lsp_references<CR>
 nnoremap TS :lua require('telescope.builtin').grep_string({ search = vim.fn.input("Grep For > ")})<CR>
-nnoremap TH :Telescope
+nnoremap TH :Telescope help_tags<CR>
 nnoremap TT :lua require('telescope').extensions.git_worktree.create_git_worktree()
 nnoremap TW :lua require('telescope').extensions.git_worktree.git_worktrees()<CR>
 
