@@ -16,7 +16,7 @@ local function lualine_orgmode()
 end
 
 require('lualine').setup {
-	options = {theme = 'gruvbox'},
+	options = {theme = 'nord'},
 	sections = {
 		lualine_b = {
 				{ "branch" },

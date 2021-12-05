@@ -141,7 +141,7 @@ cmp.setup {
 		{ name = 'nvim_lsp' },
 		{ name = 'ultisnips', keyword_length = 2 },
 		{ name = "path" },
-		{ name = "buffer", keyword_length = 5 },
+		{ name = "buffer", keyword_length = 3 },
 	},
 	experimental = {
 		-- I like the new menu better! Nice work hrsh7th
