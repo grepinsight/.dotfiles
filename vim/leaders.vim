@@ -23,6 +23,7 @@ tnoremap   <silent>   <F9>   <C-\><C-n>:FloatermToggle<CR>
 nnoremap BB :call BufferSmartDelete()<CR>
 " nnoremap BB :Sayonara!<CR>
 
+nnoremap TA :Telescope aerial<CR>
 nnoremap TB :lua require('telescope.builtin').buffers()<CR>
 nnoremap TC :lua require('telescope.builtin').commands()<CR>
 nnoremap TF :lua require('telescope.builtin').find_files()<CR>
