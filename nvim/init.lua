@@ -1,4 +1,4 @@
-require('impatient')
+-- require('impatient')
 -- require'impatient'.enable_profile()
 vim.opt.autoread       = true           -- automatically read changed file again
 vim.opt.autowrite      = true -- Write the contents of the file, if it has been modified
@@ -188,10 +188,10 @@ require('packer').startup(function(use)
 
         end
     }
-	use { 'SmiteshP/nvim-gps',
-        requires = 'nvim-treesitter/nvim-treesitter',
-        after = "nvim-treesitter",
-    }
+	-- use { 'SmiteshP/nvim-gps',
+        -- requires = 'nvim-treesitter/nvim-treesitter',
+        -- after = "nvim-treesitter",
+    -- }
     -- use {'nvim-lua/lsp-status.nvim'}
         -- -- opt = true,
         -- -- ft = {"python"},
@@ -290,7 +290,8 @@ require('packer').startup(function(use)
         requires = {
             {'akinsho/org-bullets.nvim'},
             {'nvim-treesitter/nvim-treesitter'}
-        }
+        },
+        after = "nvim-treesitter"
     }
     -- Projects
     use 'tpope/vim-projectionist'
