@@ -428,6 +428,7 @@ require('packer').startup(function(use)
 
 -- ---- Languages
 -- ------ Writing/Markdown/Rst
+    use { 'masukomi/vim-markdown-folding', opt = true, ft = "markdown"}
     use 'dhruvasagar/vim-table-mode'
     use 'tpope/vim-abolish'
     use {
@@ -470,6 +471,13 @@ require('packer').startup(function(use)
 
     ------ Rust
     use { 'rust-lang/rust.vim', opt = true, ft = {"rust"}}
+    use {
+        'simrat39/rust-tools.nvim',
+        opt = true,
+        ft = {"rust"},
+		config = [[require('config.rust_tools')]]
+    }
+
 
     ------ Go
     use {'fatih/vim-go', opt = true, ft = {"go"}}
@@ -486,6 +494,7 @@ require('packer').startup(function(use)
 
     ------ Snakemake
     use { 'burneyy/vim-snakemake', opt = true, ft = {"snakemake" }}
+    use {'pest-parser/pest.vim', opt = true, ft = "pest" }
 
 
     -- -- Plug 'luukvbaal/stabilize.nvim'
