@@ -22,7 +22,7 @@ source.complete = function(self, _, callback)
             -- Uses `gh` executable to request the issues from the remote repository.
             "rg",
             "^[^\tA-Za-z.]{3}[A-Za-z]",
-            "docs/glossary.rst",
+            "glossary.rst",
 
             on_exit = function(job)
                 local parsed = job:result()
@@ -56,11 +56,11 @@ source.complete = function(self, _, callback)
 end
 
 source.get_trigger_characters = function()
-    return { ":" }
+    return { ":term:" }
 end
 
 source.is_available = function()
-    return vim.bo.filetype == "python"
+    return vim.bo.filetype == "python" or vim.bo.filetype == "rst"
 end
 
 require("cmp").register_source("rst_glossary", source.new())
