@@ -142,6 +142,7 @@ nnoremap <Leader>dot :!cat % \| dot -Tpng > <C-R>=expand('%:r')<CR>.png && open 
 "insert file name : \fn in insert mode
 inoremap \fn <C-R>=expand("%:t")<CR>
 inoremap <Leader>fn <C-R>=expand("%:t")<CR>
+inoremap <Leader>dn <C-R>=expand("%:p:h:t")<CR>
 
 "focus current fold
 nnoremap zs zMzvzz
@@ -177,17 +178,8 @@ nnoremap <Leader>ht :Helptags<CR>
 nnoremap <Leader>ls :ls<CR>
 nnoremap <Leader>md :w<CR> :!cygstart %<CR> " Open markdown
 vnoremap <Leader>tc :<C-U>silent! normal! gV:!titlecase<CR>
-map  <Leader>f <Plug>(easymotion-bd-f)
-nmap <Leader>f <Plug>(easymotion-overwin-f)
 
 " s{char}{char} to move to {char}{char}
-nmap s <Plug>(easymotion-overwin-f2)
-map <Leader>L <Plug>(easymotion-bd-jk)
-nmap <Leader>L <Plug>(easymotion-overwin-line)
-map  <Leader>w <Plug>(easymotion-bd-w)
-nmap <Leader>w <Plug>(easymotion-overwin-w)
-map  <Leader>w$ <Plug>(easymotion-bd-w)
-nmap <Leader>w$ <Plug>(easymotion-overwin-w)
 nnoremap <Leader>rg :Rg! <C-R><C-W><CR>
 
 " Edit the macro quickly; "q<leader>m
@@ -391,4 +383,17 @@ let g:user_emmet_settings = {
 \}
 
 "autocmd BufEnter * lua require'completion'.on_attach()
+
+
+
+nmap <Leader>wj <Plug>(grammarous-move-to-info-window)
+nmap <Leader>wo <Plug>(grammarous-open-info-window)
+nmap <Leader>wr <Plug>(grammarous-reset)
+nmap <Leader>wf <Plug>(grammarous-fixit)
+nmap <Leader>wa <Plug>(grammarous-fixall)
+nmap <Leader>wc <Plug>(grammarous-close-info-window)
+nmap <Leader>wr <Plug>(grammarous-remove-error)
+nmap <Leader>wd <Plug>(grammarous-disable-rule)
+nmap <Leader>wn <Plug>(grammarous-move-to-next-error)
+nmap <Leader>wp <Plug>(grammarous-move-to-previous-error)
 

@@ -16,7 +16,7 @@ local function lualine_orgmode()
 end
 
 require('lualine').setup {
-	options = {theme = 'nord'},
+	options = {theme = "auto"},
 	sections = {
 		lualine_b = {
 				{ "branch" },

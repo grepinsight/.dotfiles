@@ -110,7 +110,10 @@ nvim_lsp.pylsp.setup ({
 				jedi_references = {enabled = true},
 				jedi_signature_help = {enabled = true},
 				jedi_symbols = {enabled = true, all_scopes = true},
-				mypy = {enabled = true},
+				mypy_ls = {
+                    enabled = true,
+                   live_mode = true,
+                },
 				isort = {enabled = true},
 				pycodestyle = {enabled = false},
 				yapf = {enabled = false},

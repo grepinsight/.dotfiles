@@ -22,7 +22,7 @@ source.complete = function(self, _, callback)
             -- Uses `gh` executable to request the issues from the remote repository.
             "rg",
             "^[^\tA-Za-z.]{3}[A-Za-z]",
-            "glossary.rst",
+            "docs/glossary.rst",
 
             on_exit = function(job)
                 local parsed = job:result()

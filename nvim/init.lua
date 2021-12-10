@@ -1,4 +1,4 @@
--- require('impatient')
+require('impatient')
 -- require'impatient'.enable_profile()
 vim.opt.autoread       = true           -- automatically read changed file again
 vim.opt.autowrite      = true -- Write the contents of the file, if it has been modified
@@ -54,7 +54,9 @@ require('packer').startup(function(use)
 
 
 	-- Essential
-    use 'tpope/vim-unimpaired'
+    use {
+        'tpope/vim-unimpaired'
+    }
     -- use 'mhinz/vim-sayonara'
     use {'junegunn/fzf', dir = '~/.fzf', run = './install --all' }
     use 'junegunn/fzf.vim'
@@ -104,7 +106,7 @@ require('packer').startup(function(use)
 	use 'tpope/vim-commentary'          -- commenting plugin
 	use 'kana/vim-textobj-user'
 	use 'vim-scripts/BufOnly.vim'
-	use 'machakann/vim-highlightedyank'
+	-- use 'machakann/vim-highlightedyank'
 	use 'sbdchd/neoformat'
 	use {
 		'kkoomen/vim-doge',
@@ -188,10 +190,10 @@ require('packer').startup(function(use)
 
         end
     }
-	-- use { 'SmiteshP/nvim-gps',
-        -- requires = 'nvim-treesitter/nvim-treesitter',
-        -- after = "nvim-treesitter",
-    -- }
+	use { 'SmiteshP/nvim-gps',
+        requires = 'nvim-treesitter/nvim-treesitter',
+        after = "nvim-treesitter",
+    }
     -- use {'nvim-lua/lsp-status.nvim'}
         -- -- opt = true,
         -- -- ft = {"python"},
@@ -548,6 +550,9 @@ require('packer').startup(function(use)
             }
         end
     }
+    use {
+        'mechatroner/rainbow_csv',
+    }
     -- use {
     --     "folke/which-key.nvim",
     --     config = function()
@@ -558,6 +563,12 @@ require('packer').startup(function(use)
     --         }
     --     end
     -- }
+    --
+    use {
+        'rhysd/vim-grammarous',
+        opt = true,
+        ft = {"rst", "org", "markdown" }
+    }
 
 end)
 

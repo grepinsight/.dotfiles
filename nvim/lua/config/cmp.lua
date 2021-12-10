@@ -72,6 +72,9 @@ local check_back_space = function()
 	return col == 0 or vim.fn.getline('.'):sub(col, col):match '%s' ~= nil
 end
 
+-- Extra sources
+require('config.cmp_sources.rst_glossary')
+
 cmp.setup {
 	snippet = {
 		expand = function(args)
@@ -168,4 +171,5 @@ cmp.setup {
 		ghost_text = true,
 	},
 }
+
 
