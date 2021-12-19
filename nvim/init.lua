@@ -42,7 +42,6 @@ vim.cmd [[packadd packer.nvim]]
 local packer = require('packer')
 packer.init {
     max_jobs = 50,
-    compile_path = vim.fn.stdpath('config')..'/lua/packer_compiled.lua',
 }
 
 require('packer').startup(function(use)
