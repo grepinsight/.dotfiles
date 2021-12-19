@@ -120,7 +120,10 @@ require('packer').startup(function(use)
 
 	-- Color Schemes
 	-- use {'morhetz/gruvbox', config = function() vim.cmd [[ autocmd vimenter * ++nested colorscheme gruvbox ]] end}
-	use { 'arcticicestudio/nord-vim', config = function() vim.cmd [[ autocmd vimenter * ++nested colorscheme nord ]] end}
+	-- use { 'arcticicestudio/nord-vim', config = function() vim.cmd [[ autocmd vimenter * ++nested colorscheme nord ]] end}
+	use {'arcticicestudio/nord-vim'}
+    use {'folke/tokyonight.nvim', config = function() vim.cmd [[ autocmd vimenter * ++nested colorscheme tokyonight]] end}
+
 
 	use 'NLKNguyen/papercolor-theme'
 
@@ -567,8 +570,13 @@ require('packer').startup(function(use)
     use {
         'rhysd/vim-grammarous',
         opt = true,
-        ft = {"rst", "org", "markdown" }
+        ft = {"rst", "org", "markdown", "rmd" },
+        config = function()
+            vim.g["grammarous#languagetool_cmd"] = vim.fn.stdpath('data')..'/site/pack/packer/opt/vim-grammarous/misc/LanguageTool-5.5/languagetool'
+        end
     }
+
+
 
 end)
 
