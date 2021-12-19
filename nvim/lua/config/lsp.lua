@@ -179,3 +179,16 @@ require'lspconfig'.sumneko_lua.setup {
 	},
 }
 
+
+vim.g.diagnostics_active = true
+function _G.toggle_diagnostics()
+  if vim.g.diagnostics_active then
+    vim.g.diagnostics_active = false
+    vim.lsp.diagnostic.disable()
+  else
+    vim.g.diagnostics_active = true
+    vim.lsp.diagnostic.enable()
+  end
+end
+
+vim.api.nvim_set_keymap('n', '<leader>tt', ':call v:lua.toggle_diagnostics()<CR>',  {noremap = true, silent = true})
