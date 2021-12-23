@@ -74,10 +74,10 @@ require('packer').startup(function(use)
 	end}
 	use 'mhinz/vim-startify'
 
-    -- use {
-    --     'sunjon/shade.nvim',
-    --     config = [[ require'shade'.setup({})]]
-    -- }
+    use {
+        'sunjon/shade.nvim',
+        config = [[ require'shade'.setup({})]]
+    }
 
    -- Files
     use {
@@ -102,7 +102,13 @@ require('packer').startup(function(use)
             require("indent_blankline").setup({buftype_exclude = {"terminal"} })
         end
     }
-	use 'tpope/vim-commentary'          -- commenting plugin
+	-- use 'tpope/vim-commentary'          -- commenting plugin
+    use {
+    'numToStr/Comment.nvim',
+    config = function()
+        require('Comment').setup()
+    end
+    }
 	use 'kana/vim-textobj-user'
 	use 'vim-scripts/BufOnly.vim'
 	-- use 'machakann/vim-highlightedyank'
@@ -148,7 +154,7 @@ require('packer').startup(function(use)
 	use {
 		'nvim-treesitter/nvim-treesitter',
         opt = true,
-        ft = {"python", "org", "lua"},
+        ft = {"python", "org", "lua", "markdown"},
 		requires = {
 			'nvim-treesitter/nvim-treesitter-textobjects',
 			'nvim-treesitter/playground',
@@ -254,24 +260,30 @@ require('packer').startup(function(use)
     }
     -- Completion
     ---- Snippets
-    use { 'SirVer/ultisnips',
-    config = function()
-        vim.cmd 'let g:UltiSnipsExpandTrigger="<S-tab>"'
-        vim.cmd 'let g:UltiSnipsJumpForwardTrigger="<Tab>"'
-        vim.cmd 'let g:UltiSnipsJumpBackwardTrigger="<S-Tab>"'
-        vim.cmd 'let g:UltiSnipsEditSplit="vertical"'
-        vim.cmd 'let g:UltiSnipsNoPythonWarning = 1'
-        vim.cmd 'let g:UltiSnipsSnippetDirectories=["mysnippets"]'
-        vim.cmd 'noremap <silent> <Leader>ult :UltiSnipsEdit!<CR>2<CR>'
-    end
-}
-    use 'honza/vim-snippets'
+    use {
+        "L3MON4D3/LuaSnip",
+        config = [[require('config.snippets')]],
+    }
+    use 'saadparwaiz1/cmp_luasnip'
+    -- use "rafamadriz/friendly-snippets"
+    -- use { 'SirVer/ultisnips',
+    -- config = function()
+    --     vim.cmd 'let g:UltiSnipsExpandTrigger="<S-tab>"'
+    --     vim.cmd 'let g:UltiSnipsJumpForwardTrigger="<Tab>"'
+    --     vim.cmd 'let g:UltiSnipsJumpBackwardTrigger="<S-Tab>"'
+    --     vim.cmd 'let g:UltiSnipsEditSplit="vertical"'
+    --     vim.cmd 'let g:UltiSnipsNoPythonWarning = 1'
+    --     vim.cmd 'let g:UltiSnipsSnippetDirectories=["mysnippets"]'
+    --     vim.cmd 'noremap <silent> <Leader>ult :UltiSnipsEdit!<CR>2<CR>'
+    -- end
+    -- }
+    -- use 'honza/vim-snippets'
 	use 'onsails/lspkind-nvim'
     use {
         'hrsh7th/nvim-cmp',
         requires = {
             {'hrsh7th/cmp-buffer', after = 'nvim-cmp'},
-            {'quangnguyen30192/cmp-nvim-ultisnips', after = 'nvim-cmp'},
+            -- {'quangnguyen30192/cmp-nvim-ultisnips', after = 'nvim-cmp'},
             'hrsh7th/cmp-nvim-lsp',
             {'hrsh7th/cmp-path', after = 'nvim-cmp'},
             {'octaltree/cmp-look', after = 'nvim-cmp'},
@@ -326,6 +338,8 @@ require('packer').startup(function(use)
     use {'liuchengxu/vista.vim', cmd = "Vista"}
     use {'simrat39/symbols-outline.nvim', cmd = {"SymbolsOutline"}}
     use {'stevearc/aerial.nvim'}
+
+    use {'IMOKURI/line-number-interval.nvim'}
 
 -- ---- REPL
 -- Plug 'jpalardy/vim-slime'
@@ -554,7 +568,10 @@ require('packer').startup(function(use)
     }
     use {
         'mechatroner/rainbow_csv',
+        opt = true
     }
+
+
     -- use {
     --     "folke/which-key.nvim",
     --     config = function()

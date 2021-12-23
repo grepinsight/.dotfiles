@@ -315,7 +315,7 @@ nnoremap [4 :lua require("harpoon.term").gotoTerminal(4)<CR>
 
 " Ctrl <C-***>
 nnoremap <C-e> :lua require("harpoon.ui").toggle_quick_menu()<CR>
-nnoremap <C-y> :lua require("harpoon.cmd-ui").toggle_quick_menu()<CR>
+" nnoremap <C-y> :lua require("harpoon.cmd-ui").toggle_quick_menu()<CR>
 
 
 nnoremap <C-t> :Files<CR>

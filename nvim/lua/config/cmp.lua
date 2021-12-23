@@ -1,3 +1,10 @@
+local has_words_before = function()
+  local line, col = unpack(vim.api.nvim_win_get_cursor(0))
+  return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
+end
+
+local luasnip = require("luasnip")
+
 vim.cmd [[
 " gray
 highlight! CmpItemAbbrDeprecated guibg=NONE gui=strikethrough guifg=#808080
@@ -78,7 +85,8 @@ require('config.cmp_sources.rst_glossary')
 cmp.setup {
 	snippet = {
 		expand = function(args)
-			vim.fn["UltiSnips#Anon"](args.body)
+			-- vim.fn["UltiSnips#Anon"](args.body)
+            require('luasnip').lsp_expand(args.body)
 		end,
 	},
 	mapping = {
@@ -86,7 +94,7 @@ cmp.setup {
 		['<C-j>'] = cmp.mapping.select_next_item(),
 		['<C-d>'] = cmp.mapping.scroll_docs(-4),
 		['<C-f>'] = cmp.mapping.scroll_docs(4),
-		["<c-y>"] = cmp.mapping.confirm {
+		["<C-y>"] = cmp.mapping.confirm {
 			behavior = cmp.ConfirmBehavior.Insert,
 			select = true,
 		},
@@ -96,21 +104,37 @@ cmp.setup {
 		},
 		['<C-Space>'] = cmp.mapping.complete(),
 		['<C-e>'] = cmp.mapping.close(),
-		['<CR>'] = cmp.mapping.confirm {
-			behavior = cmp.ConfirmBehavior.Replace,
-			select = true,
-		},
+		-- ['<CR>'] = cmp.mapping.confirm {
+		-- 	behavior = cmp.ConfirmBehavior.Replace,
+		-- 	select = true,
+		-- },
 		-- ['<CR>'] = cmp.mapping.confirm(),
 		--
-		['<Tab>'] = cmp.mapping(function(fallback)
-			-- if vim.fn.pumvisible() > 0 then
-			print("pumvisible(): " .. vim.fn.pumvisible())
-			-- cmp.mapping.select_next_item()
-			-- else
-			-- cmp.mapping.complete()
-			vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Tab>", true, false, true), "n", true)
-			-- end
-		end, {"i", "s"}),
+         ["<Tab>"] = cmp.mapping(function(fallback)
+              if cmp.visible() then
+                cmp.select_next_item()
+              elseif luasnip.expand_or_jumpable() then
+                luasnip.expand_or_jump()
+              elseif has_words_before() then
+                cmp.complete()
+              else
+                fallback()
+              end
+            end, { "i", "s" }),
+        ["<S-Tab>"] = cmp.mapping(function(fallback)
+          if cmp.visible() then
+            cmp.select_prev_item()
+          elseif luasnip.jumpable(-1) then
+            luasnip.jump(-1)
+          else
+            fallback()
+          end
+        end, { "i", "s" }),
+---
+
+
+
+
 	},
 	-- formatting = {
 	--   format = function(entry, vim_item)
@@ -130,7 +154,7 @@ cmp.setup {
 			with_text = true,
 			menu = {
 				nvim_lsp = "[LSP]",
-				ultisnips = "[snip]",
+				-- ultisnips = "[snip]",
 				path = "[path]",
 				buffer = "[buf]",
 				gh_issues = "[issues]",
@@ -144,7 +168,8 @@ cmp.setup {
         { name = "rst_glossary" },
         { name = 'orgmode' },
         { name = 'nvim_lsp' },
-        { name = 'ultisnips', keyword_length = 2 },
+        -- { name = 'ultisnips', keyword_length = 2 },
+        { name = 'luasnip'},
         { name = "path" },
         { name = "buffer",
         keyword_length = 3,
