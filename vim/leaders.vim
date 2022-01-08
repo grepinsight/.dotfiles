@@ -268,6 +268,13 @@ nnoremap ,f :Rg! <C-R><C-W><CR>
 nnoremap ,g :GV!<CR>
 nnoremap ,h :History<CR>
 nnoremap ,i :e <C-R>=resolve(expand("%:h"))<CR>/
+imap ,S <Plug>luasnip-expand-or-jump
+imap <silent><expr> <C-j> luasnip#choice_active() ? '<Plug>luasnip-next-choice' : '<C-j>'
+smap <silent><expr> <C-j> luasnip#choice_active() ? '<Plug>luasnip-next-choice' : '<C-j>'
+imap <silent><expr> <C-k> luasnip#choice_active() ? '<Plug>luasnip-prev-choice' : '<C-k>'
+smap <silent><expr> <C-k> luasnip#choice_active() ? '<Plug>luasnip-prev-choice' : '<C-k>'
+imap <silent><expr> <C-y> luasnip#choice_active() ? '<Plug>luasnip-expand-or-jump' : '<C-y>'
+smap <silent><expr> <C-y> luasnip#choice_active() ? '<Plug>luasnip-expand-or-jump' : '<C-y>'
 "nnoremap ,j
 nnoremap ,k :lua require("harpoon.mark").add_file()<CR>
 nmap ,l yor

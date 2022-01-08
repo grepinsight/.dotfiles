@@ -19,6 +19,18 @@ local fmta = require("luasnip.extras.fmt").fmta
 local types = require("luasnip.util.types")
 local conds = require("luasnip.extras.expand_conditions")
 
+
+
+-- Make sure to not pass an invalid command, as io.popen() may write over nvim-text.
+local function bash(_, _, command)
+	local file = io.popen(command, "r")
+	local res = {}
+	for line in file:lines() do
+		table.insert(res, line)
+	end
+	return res
+end
+
 -- If you're reading this file for the first time, best skip to around line 190
 -- where the actual snippet-definitions start.
 
@@ -147,15 +159,6 @@ local function jdocsnip(args, _, old_state)
 	return snip
 end
 
--- Make sure to not pass an invalid command, as io.popen() may write over nvim-text.
-local function bash(_, _, command)
-	local file = io.popen(command, "r")
-	local res = {}
-	for line in file:lines() do
-		table.insert(res, line)
-	end
-	return res
-end
 
 -- Returns a snippet_node wrapped around an insert_node whose initial
 -- text value is set to the current date in the desired format.
@@ -209,18 +212,65 @@ ls.snippets = {
 	--     - luasnip.c
 	--     - luasnip.all
 	-- are searched in that order.
+    --
 	all = {
+		-- Example(choice): Alternative printf-like notation for defining snippets. It uses format
+		-- string with placeholders similar to the ones used with Python's .format().
+		s(
+			"fmt1",
+			fmt("To {title} {} {}.", {
+				i(2, "Name"),
+				i(3, "Surname"),
+				title = c(1, { t("Mr."), t("Ms.") }),
+			})
+		),
+		-- When regTrig is set, trig is treated like a pattern, this snippet will expand after any number.
+		ls.parser.parse_snippet({ trig = "%d", regTrig = true }, "A Number!!"),
+
+		-- Example(regex trigger): It's possible to use capture-groups inside regex-triggers.
+		s(
+			{ trig = "b(%d)", regTrig = true },
+			f(function(_, snip)
+				return "Captured Text: " .. snip.captures[1] .. "."
+			end, {})
+		),
+        -- Example: choice node
+        s("trig", c(1, {
+            t("Ugh boring, a text node"),
+            i(nil, "At least I can edit something now..."),
+            f(function(args) return "Still only counts as text!!" end, {})
+        })),
+        s("ann", c(1, {
+            t("We’re thrilled to announce that"),
+            i(nil, "At least I can edit something now..."),
+            f(function(args) return "Still only counts as text!!" end, {})
+        })),
+		-- Exmaple: Use a function to execute any shell command and print its text.
+		s("ls", f(bash, {}, "ls")),
+		-- there's some built-in conditions in "luasnip.extras.expand_conditions".
+		s("cond2", {
+			t("will only expand at the beginning of the line"),
+		}, {
+			condition = conds.line_begin,
+		}),
+		-- Shorthand for repeating the text in a given node.
+		s("repeat", { i(1, "text"), t({ "", "" }), rep(1) }),
+		-- Directly insert the ouput from a function evaluated at runtime.
+		s("part", p(os.date, "%Y")),
+		-- Use a dynamic_node to interpolate the output of a
+		-- function (see date_input above) into the initial
+		-- value of an insert_node.
+		s("novel", {
+			t("It was a dark and stormy night on "),
+			d(1, date_input, {}, "%A, %B %d of %Y"),
+			t(" and the clocks were striking thirteen."),
+		}),
         s("trigger", {
             t({"", "After expanding, the cursor is here ->"}), i(1),
             t({"After jumping forward once, cursor is here ->"}), i(2),
             t({"", "After jumping once more, the snippet is exited there ->"}), i(0),
         }),
         s("trigger2", i(1, "This text is SELECTed after expanding the snippet.")),
-        s("trig", c(1, {
-            t("Ugh boring, a text node"),
-            i(nil, "At least I can edit something now..."),
-            f(function(args) return "Still only counts as text!!" end, {})
-        })),
 		-- trigger is fn.
 		s("fn", {
 			-- Simple static text.
@@ -271,16 +321,6 @@ ls.snippets = {
 			i(0),
 			t({ "", "}" }),
 		}),
-		-- Alternative printf-like notation for defining snippets. It uses format
-		-- string with placeholders similar to the ones used with Python's .format().
-		s(
-			"fmt1",
-			fmt("To {title} {} {}.", {
-				i(2, "Name"),
-				i(3, "Surname"),
-				title = c(1, { t("Mr."), t("Ms.") }),
-			})
-		),
 		-- To escape delimiters use double them, e.g. `{}` -> `{{}}`.
 		-- Multi-line format strings by default have empty first/last line removed.
 		-- Indent common to all lines is also removed. Use the third `opts` argument
@@ -323,14 +363,6 @@ ls.snippets = {
 			"fmt6",
 			fmt("use {} only", { t("this"), t("not this") }, { strict = false })
 		),
-		-- Use a dynamic_node to interpolate the output of a
-		-- function (see date_input above) into the initial
-		-- value of an insert_node.
-		s("novel", {
-			t("It was a dark and stormy night on "),
-			d(1, date_input, {}, "%A, %B %d of %Y"),
-			t(" and the clocks were striking thirteen."),
-		}),
 		-- Parsing snippets: First parameter: Snippet-Trigger, Second: Snippet body.
 		-- Placeholders are parsed into choices with 1. the placeholder text(as a snippet) and 2. an empty string.
 		-- This means they are not SELECTed like in other editors/Snippet engines.
@@ -345,8 +377,6 @@ ls.snippets = {
 			"${1:cond} ? ${2:true} : ${3:false}"
 		),
 
-		-- When regTrig is set, trig is treated like a pattern, this snippet will expand after any number.
-		ls.parser.parse_snippet({ trig = "%d", regTrig = true }, "A Number!!"),
 		-- Using the condition, it's possible to allow expansion only in specific cases.
 		s("cond", {
 			t("will only expand in c-style comments"),
@@ -356,24 +386,11 @@ ls.snippets = {
 				return line_to_cursor:match("%s*//")
 			end,
 		}),
-		-- there's some built-in conditions in "luasnip.extras.expand_conditions".
-		s("cond2", {
-			t("will only expand at the beginning of the line"),
-		}, {
-			condition = conds.line_begin,
-		}),
 		-- The last entry of args passed to the user-function is the surrounding snippet.
 		s(
 			{ trig = "a%d", regTrig = true },
 			f(function(_, snip)
 				return "Triggered with " .. snip.trigger .. "."
-			end, {})
-		),
-		-- It's possible to use capture-groups inside regex-triggers.
-		s(
-			{ trig = "b(%d)", regTrig = true },
-			f(function(_, snip)
-				return "Captured Text: " .. snip.captures[1] .. "."
 			end, {})
 		),
 		s({ trig = "c(%d+)", regTrig = true }, {
@@ -383,8 +400,6 @@ ls.snippets = {
 				return tonumber(captures[1]) % 2 == 0
 			end,
 		}),
-		-- Use a function to execute any shell command and print its text.
-		s("bash", f(bash, {}, "ls")),
 		-- Short version for applying String transformations using function nodes.
 		s("transform", {
 			i(1, "initial text"),
@@ -418,10 +433,6 @@ ls.snippets = {
 			t("</a>"),
 			i(0),
 		}),
-		-- Shorthand for repeating the text in a given node.
-		s("repeat", { i(1, "text"), t({ "", "" }), rep(1) }),
-		-- Directly insert the ouput from a function evaluated at runtime.
-		s("part", p(os.date, "%Y")),
 		-- use matchNodes to insert text based on a pattern/function/lambda-evaluation.
 		s("mat", {
 			i(1, { "sample_text" }),

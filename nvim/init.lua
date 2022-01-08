@@ -225,6 +225,11 @@ require('packer').startup(function(use)
 		config = [[require('config.lsp')]],
 	}
 
+    use {
+        'jose-elias-alvarez/null-ls.nvim',
+		config = [[require('config.nullls')]],
+    }
+
 	use { 'folke/lsp-colors.nvim' }
 
     use {
@@ -395,37 +400,37 @@ require('packer').startup(function(use)
     use { 'tpope/vim-dispatch', cmd = { 'Dispatch', 'Make', 'Focus', 'Start' } }
 
     -- https://alpha2phi.medium.com/neovim-dap-enhanced-ebc730ff498b
-    use {
-        'mfussenegger/nvim-dap',
-        -- opt = true,
-        ft = {"python","lua"},
-        config = [[require('config.dap')]],
-        requires = {
-            'jbyuki/one-small-step-for-vimkind',
-            'mfussenegger/nvim-dap-python',
-            'rcarriga/nvim-dap-ui',
-        },
-        wants = 'one-small-step-for-vimkind',
-    }
+    -- use {
+    --     'mfussenegger/nvim-dap',
+    --     -- opt = true,
+    --     ft = {"python","lua"},
+    --     config = [[require('config.dap')]],
+    --     requires = {
+    --         'jbyuki/one-small-step-for-vimkind',
+    --         'mfussenegger/nvim-dap-python',
+    --         'rcarriga/nvim-dap-ui',
+    --     },
+    --     wants = 'one-small-step-for-vimkind',
+    -- }
 
 
-    use {
-        'theHamsta/nvim-dap-virtual-text',
-        opt = true,
-        ft = "python",
-        config = [[ require("nvim-dap-virtual-text").setup() ]],
-        requires = {
-            'mfussenegger/nvim-dap',
-        }
-
-
-    }
-    use {
-        'nvim-telescope/telescope-dap.nvim',
-        opt = true,
-        ft = "python",
-        after = "telescope.nvim"
-    }
+    -- use {
+    --     'theHamsta/nvim-dap-virtual-text',
+    --     opt = true,
+    --     ft = "python",
+    --     config = [[ require("nvim-dap-virtual-text").setup() ]],
+    --     requires = {
+    --         'mfussenegger/nvim-dap',
+    --     }
+    --
+    --
+    -- }
+    -- use {
+    --     'nvim-telescope/telescope-dap.nvim',
+    --     opt = true,
+    --     ft = "python",
+    --     after = "telescope.nvim"
+    -- }
     use {
         "rcarriga/vim-ultest",
         opt = true,
