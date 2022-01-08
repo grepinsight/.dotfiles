@@ -80,3 +80,6 @@ use_symbol_for_status = true
 disabled = false
 show_always = true
 
+[kubernetes]
+format = 'on [⛵ $context \($namespace\)](dimmed green) '
+disabled = false
