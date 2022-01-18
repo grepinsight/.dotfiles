@@ -97,7 +97,7 @@ require('packer').startup(function(use)
 	use 'sgur/vim-editorconfig'
     use {
         'lukas-reineke/indent-blankline.nvim',
-        ft= {"python"},
+        ft= {"python", "yaml"},
         config = function()
             require("indent_blankline").setup({buftype_exclude = {"terminal"} })
         end
@@ -221,10 +221,9 @@ require('packer').startup(function(use)
 	use {
 		'neovim/nvim-lspconfig',
         opt = true,
-        ft = {"python", "lua", "rust"},
+        ft = {"python", "lua", "rust", "vue"},
 		config = [[require('config.lsp')]],
 	}
-
     use {
         'jose-elias-alvarez/null-ls.nvim',
 		config = [[require('config.nullls')]],
@@ -269,7 +268,6 @@ require('packer').startup(function(use)
         "L3MON4D3/LuaSnip",
         config = [[require('config.snippets')]],
     }
-    use 'saadparwaiz1/cmp_luasnip'
     -- use "rafamadriz/friendly-snippets"
     -- use { 'SirVer/ultisnips',
     -- config = function()
@@ -294,6 +292,7 @@ require('packer').startup(function(use)
             {'octaltree/cmp-look', after = 'nvim-cmp'},
             {'hrsh7th/cmp-nvim-lua', after = 'nvim-cmp'},
             {'tjdevries/complextras.nvim', after = 'nvim-cmp'},
+            {'saadparwaiz1/cmp_luasnip', after = 'nvim-cmp'},
         },
         config = [[require('config.cmp')]],
         event = 'InsertEnter *',

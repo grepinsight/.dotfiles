@@ -192,3 +192,5 @@ function _G.toggle_diagnostics()
 end
 
 vim.api.nvim_set_keymap('n', '<leader>tt', ':call v:lua.toggle_diagnostics()<CR>',  {noremap = true, silent = true})
+
+require'lspconfig'.tailwindcss.setup{}
