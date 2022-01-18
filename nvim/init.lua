@@ -305,7 +305,7 @@ require('packer').startup(function(use)
 
     ------ Org
     use {
-        'kristijanhusak/orgmode.nvim',
+        'nvim-orgmode/orgmode',
         config = [[require('config.org')]],
         requires = {
             {'akinsho/org-bullets.nvim'},
