@@ -74,10 +74,10 @@ require('packer').startup(function(use)
 	end}
 	use 'mhinz/vim-startify'
 
-    use {
-        'sunjon/shade.nvim',
-        config = [[ require'shade'.setup({})]]
-    }
+    -- use {
+    --     'sunjon/shade.nvim',
+    --     config = [[ require'shade'.setup({})]]
+    -- }
 
    -- Files
     use {
@@ -86,8 +86,17 @@ require('packer').startup(function(use)
 		config = [[require('config.dirvish')]]
 	}
     use 'tpope/vim-eunuch'
-    use 'kyazdani42/nvim-tree.lua'
-    use 'kyazdani42/nvim-web-devicons'  -- for file icons
+    use {
+        'kyazdani42/nvim-tree.lua',
+        opt = true,
+        requires = {
+          'kyazdani42/nvim-web-devicons', -- optional, for file icon
+        },
+        config = function() require'nvim-tree'.setup {
+            update_to_buf_dir = false
+        } end,
+		cmd =  {'NvimTreeToggle', 'NvimTreeOpen'},
+    }
 
 	-- Editing
 	use 'tpope/vim-surround'              -- surround text objects with whatever
@@ -221,7 +230,7 @@ require('packer').startup(function(use)
 	use {
 		'neovim/nvim-lspconfig',
         opt = true,
-        ft = {"python", "lua", "rust", "vue"},
+        ft = {"python", "lua", "rust", "vue", "typescriptreact"},
 		config = [[require('config.lsp')]],
 	}
     use {
@@ -268,6 +277,8 @@ require('packer').startup(function(use)
         "L3MON4D3/LuaSnip",
         config = [[require('config.snippets')]],
     }
+    use "rafamadriz/friendly-snippets"
+
     -- use "rafamadriz/friendly-snippets"
     -- use { 'SirVer/ultisnips',
     -- config = function()
