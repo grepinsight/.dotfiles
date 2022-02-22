@@ -48,6 +48,7 @@ command! PY :FloatermNew --width=0.5 --wintype=normal --name=repl --position=rig
 
 nnoremap   <leader>ts   :FloatermSend<CR>
 vnoremap   <leader>ts   :FloatermSend<CR>
+nnoremap   <leader>tt   :NvimTreeToggle<CR>
 
 nnoremap <Leader>pyan :!pyan % --dot -c -e \| dot -Tpng > <C-R>=expand('%:r')<CR>.png && open <C-R>=expand('%:r')<CR>.png <CR>
 nnoremap <Leader>tgf :!pyan % --tgf -c -e  > <C-R>=expand('%:r')<CR>.tgf<CR>
@@ -291,7 +292,7 @@ nmap S :HopChar2BC<CR>
 nnoremap ,t :sp<CR><Esc>:lua require("harpoon.term").gotoTerminal(1)<CR>
 nnoremap ,,t :call ChooseTerm("term-slider2", 1)<CR>
 nnoremap ,u :GundoToggle<CR>
-nnoremap ,v :call fzf#run(fzf#wrap({'source': 'fd $FD_OPTS . $HOME/org', 'sink': 'split'}))<CR>
+nnoremap ,v :call fzf#run(fzf#wrap({'source': 'fd $FD_OPTS . $HOME/Thoughts', 'sink': 'split'}))<CR>
 nnoremap ,w :NvimTreeToggle<CR>
 nnoremap ,x :Focus<CR>
 "nnoremap ,y :call ChooseTerm("term-pane", 0)<CR>
@@ -404,3 +405,4 @@ nmap <Leader>wd <Plug>(grammarous-disable-rule)
 nmap <Leader>wn <Plug>(grammarous-move-to-next-error)
 nmap <Leader>wp <Plug>(grammarous-move-to-previous-error)
 
+xmap s S

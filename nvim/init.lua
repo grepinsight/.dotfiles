@@ -93,7 +93,8 @@ require('packer').startup(function(use)
           'kyazdani42/nvim-web-devicons', -- optional, for file icon
         },
         config = function() require'nvim-tree'.setup {
-            update_to_buf_dir = false
+            update_to_buf_dir = false,
+            update_cwd = true,
         } end,
 		cmd =  {'NvimTreeToggle', 'NvimTreeOpen'},
     }
@@ -127,7 +128,7 @@ require('packer').startup(function(use)
 	use {
 		'kkoomen/vim-doge',
 		run = ':call doge#install()',
-		ft = {"python"},
+		ft = {"python", "typescriptreact", "javascript", "typescript"},
         config = function()
             vim.cmd [[ let g:doge_doc_standard_python = 'google' ]]
         end
@@ -334,15 +335,15 @@ require('packer').startup(function(use)
     -- -- IDE Like Featues
     use 'szw/vim-maximizer'
     -- Navigation
-    -- use 'ggandor/lightspeed.nvim'
-    use {
-        'phaazon/hop.nvim',
-        branch = 'v1', -- optional but strongly recommended
-        config = function()
-            -- you can configure Hop the way you like here; see :h hop-config
-            require'hop'.setup { keys = 'etovxqpdygfblzhckisuran' }
-        end
-    }
+    use 'ggandor/lightspeed.nvim'
+    -- use {
+    --     'phaazon/hop.nvim',
+    --     branch = 'v1', -- optional but strongly recommended
+    --     config = function()
+    --         -- you can configure Hop the way you like here; see :h hop-config
+    --         require'hop'.setup { keys = 'etovxqpdygfblzhckisuran' }
+    --     end
+    -- }
     -- use {'ray-x/navigator.lua', requires = {'ray-x/guihua.lua', run = 'cd lua/fzy && make'}}
     use {
         'glacambre/firenvim',
