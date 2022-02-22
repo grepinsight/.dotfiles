@@ -119,9 +119,11 @@ require('packer').startup(function(use)
     end
     }
 	use 'kana/vim-textobj-user'
+    use 'Julian/vim-textobj-variable-segment'
 	use 'vim-scripts/BufOnly.vim'
 	-- use 'machakann/vim-highlightedyank'
 	use 'sbdchd/neoformat'
+    use 'goerz/jupytext.vim'
 	use {
 		'kkoomen/vim-doge',
 		run = ':call doge#install()',
@@ -163,7 +165,7 @@ require('packer').startup(function(use)
 	use {
 		'nvim-treesitter/nvim-treesitter',
         opt = true,
-        ft = {"python", "org", "lua", "markdown"},
+        ft = {"python", "org", "lua", "markdown", "rmd", "r"},
 		requires = {
 			'nvim-treesitter/nvim-treesitter-textobjects',
 			'nvim-treesitter/playground',
@@ -174,7 +176,7 @@ require('packer').startup(function(use)
 	use {
         'romgrk/nvim-treesitter-context',
         opt = true,
-        ft = {"python"},
+        ft = {"python", "r", "rmd"},
         requires = 'nvim-treesitter/nvim-treesitter',
         after = "nvim-treesitter",
         config = function ()
@@ -230,7 +232,7 @@ require('packer').startup(function(use)
 	use {
 		'neovim/nvim-lspconfig',
         opt = true,
-        ft = {"python", "lua", "rust", "vue", "typescriptreact"},
+        ft = {"python", "lua", "rust", "vue", "typescriptreact", "rmd", "r"},
 		config = [[require('config.lsp')]],
 	}
     use {
@@ -278,6 +280,7 @@ require('packer').startup(function(use)
         config = [[require('config.snippets')]],
     }
     use "rafamadriz/friendly-snippets"
+    use "~/mysnippets"
 
     -- use "rafamadriz/friendly-snippets"
     -- use { 'SirVer/ultisnips',

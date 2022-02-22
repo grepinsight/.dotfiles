@@ -11,6 +11,7 @@ augroup syntax_setup
     autocmd BufNewFile,BufRead *.snk setfiletype snakemake
     autocmd BufNewFile,BufRead Snakefile* setfiletype snakemake
     autocmd BufNewFile,BufRead Jenkinsfile setfiletype groovy
+    autocmd BufNewFile,BufRead .envrc setfiletype envrc
 augroup END
 
 autocmd BufEnter *.png,*.jpg,*gif exec "!open ".expand("%") | bw

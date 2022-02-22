@@ -67,6 +67,8 @@ confidence=
 # no Warning level messages displayed, use "--disable=all --enable=classes
 # --disable=W".
 disable=
+        unsubscriptable-object
+        no-member
         unspecified-encoding,
         line-too-long,
         too-few-public-methods,
