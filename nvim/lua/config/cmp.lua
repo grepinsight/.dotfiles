@@ -167,13 +167,11 @@ cmp.setup {
         { name = "gh_issues" },
         { name = "rst_glossary" },
         { name = 'orgmode' },
-        { name = 'nvim_lsp' },
+        { name = 'nvim_lsp', keyword_length = 2,},
         -- { name = 'ultisnips', keyword_length = 2 },
-        { name = 'luasnip'},
+        { name = 'luasnip', keyword_length = 2},
         { name = "path" },
-        { name = "buffer",
-        keyword_length = 3,
-        get_bufnrs = function()
+        { name = "buffer", keyword_length = 3, get_bufnrs = function()
             local filter = vim.tbl_filter
             local bufnrs = filter(function(b)
                 if 1 ~= vim.fn.buflisted(b) then

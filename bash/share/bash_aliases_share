@@ -302,6 +302,10 @@ alias gpom="git push origin master"
 
 ## Git Commit
 alias gc="git commit"
+_gw() {
+    git commit -m "$@"
+}
+alias gw=_gw
 alias gcom="git commit"
 alias sv="git commit -m"
 alias gm="git commit -m"

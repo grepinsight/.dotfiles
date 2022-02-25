@@ -1,0 +1,4 @@
+snippet conda
+    __conda_setup="$('${1}' 'shell.bash' 'hook' 2> /dev/null)"
+    eval "$__conda_setup"
+    conda activate ${2}

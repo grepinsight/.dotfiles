@@ -118,6 +118,7 @@ nnoremap <leader>pv :call fzf#vim#gitfiles('', fzf#vim#with_preview('right'))<CR
 nnoremap <leader>s  :ToggleGStatus<CR>
 nnoremap <leader>ss :ToggleGStatus<CR>
 nnoremap <leader>sv :source $MYVIMRC<CR>
+nnoremap <leader>sn :luafile ~/.dotfiles/nvim/lua/config/snippets.lua<CR>
 nnoremap <leader>vd :Gvdiff<CR>
 nnoremap <leader>ut :Ultest<CR>
 nnoremap <leader>un :UltestNearest<CR>
@@ -260,7 +261,6 @@ noremap <silent> <LocalLeader>cl :wincmd l<CR>:close<CR>
 "nnoremap ,a :CtrlPMRUFiles<CR>
 " nnoremap ,a :lua require("telescope.builtin").oldfiles {path_display = {"shorten"}}<CR>
 nnoremap ,a :Telescope oldfiles<CR>
-
 nnoremap ,b :Telescope buffers<CR>
 nnoremap ,c :GitGutterQuickFix<CR> <bar> :copen <CR> /<C-R>=bufname(winbufnr(1))<CR><CR>
 nnoremap ,d :DogeGenerate<CR>

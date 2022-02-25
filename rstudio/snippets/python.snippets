@@ -1,0 +1,12 @@
+snippet defopt
+    from typing import List
+    import sys
+
+    import defopt
+
+    def ${1}(*):
+        ${0:pass}
+
+    def main(argv: List[str] = sys.argv[1:]) -> None:
+        """Entrypoint for ${1}"""
+        defopt.run(${1}, argv=argv)
