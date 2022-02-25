@@ -63,6 +63,7 @@ endif
 autocmd BufWritePre *.js execute ':Prettier'
 autocmd BufWritePre *.tsx execute ':Prettier'
 autocmd BufWritePre *.css execute ':Prettier'
+" autocmd BufWritePre *.html execute ':Prettier'
 
 " When editing a file, always jump to the last known cursor position.
 " Don't do it when the position is invalid, when inside an event handler

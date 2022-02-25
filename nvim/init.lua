@@ -164,7 +164,7 @@ require('packer').startup(function(use)
 	use {
 		'nvim-treesitter/nvim-treesitter',
         opt = true,
-        ft = {"python", "org", "lua", "markdown"},
+        ft = {"python", "org", "lua", "markdown", "html"},
 		requires = {
 			'nvim-treesitter/nvim-treesitter-textobjects',
 			'nvim-treesitter/playground',
@@ -231,7 +231,7 @@ require('packer').startup(function(use)
 	use {
 		'neovim/nvim-lspconfig',
         opt = true,
-        ft = {"python", "lua", "rust", "vue", "typescriptreact"},
+        ft = {"python", "lua", "rust", "vue", "typescriptreact", "htmldjango", "css"},
 		config = [[require('config.lsp')]],
 	}
     use {
@@ -487,7 +487,7 @@ require('packer').startup(function(use)
     }
     use {
         'prettier/vim-prettier',
-        ft = {"javascript", "react", "typescript", "typescriptreact"},
+        ft = {"javascript", "react", "typescript", "typescriptreact", "htmldjango"},
         cmd = {"Prettier"}
     }
     use {
