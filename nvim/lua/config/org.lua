@@ -38,6 +38,7 @@ require('orgmode').setup({
         }
     }
 })
+require('orgmode').setup_ts_grammar()
 vim.cmd [[
 nnoremap <silent> <Plug>MyMap :lua require('orgmode').action('org_mappings.archive')<CR>
 silent! call repeat#set("\<Plug>MyMap",-1)

@@ -281,7 +281,6 @@ require('packer').startup(function(use)
         config = [[require('config.snippets')]],
     }
     use "rafamadriz/friendly-snippets"
-    use "~/mysnippets"
 
     -- use "rafamadriz/friendly-snippets"
     -- use { 'SirVer/ultisnips',
@@ -374,6 +373,16 @@ require('packer').startup(function(use)
         },
         config = function()
             require('gitsigns').setup()
+        end
+    }
+
+    use {
+        'hoschi/yode-nvim',
+        requires = {
+            'nvim-lua/plenary.nvim'
+        },
+        config = function()
+            require('yode-nvim').setup({})
         end
     }
 
