@@ -16,6 +16,8 @@ augroup END
 
 autocmd BufEnter *.png,*.jpg,*gif exec "!open ".expand("%") | bw
 autocmd BufEnter *.pdf exec "!open -a 'PDF Expert' "."\"".expand("%")."\"" | bw
+" somehow setthing this up normal doesn't work
+autocmd BufEnter * set laststatus=3
 
 
 autocmd FileType gitcommit set foldlevelstart=10 "open's all folds

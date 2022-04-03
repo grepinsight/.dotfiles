@@ -141,6 +141,11 @@ vnoremap <leader>Ac :center<cr>
 vnoremap <leader>Ar :right<cr>
 nnoremap <Leader>dot :!cat % \| dot -Tpng > <C-R>=expand('%:r')<CR>.png && open <C-R>=expand('%:r')<CR>.png<CR>
 
+" Escape
+inoremap jj <C-[>
+inoremap jk <C-[>
+" vnoremap jj <C-[>
+" vnoremap jk <C-[>
 "insert file name : \fn in insert mode
 inoremap \fn <C-R>=expand("%:t")<CR>
 inoremap <Leader>fn <C-R>=expand("%:t")<CR>

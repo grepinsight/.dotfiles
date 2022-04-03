@@ -121,6 +121,8 @@ require('packer').startup(function(use)
     }
 	use 'kana/vim-textobj-user'
     use 'Julian/vim-textobj-variable-segment'
+    use 'glts/vim-textobj-comment'
+    use 'kana/vim-textobj-entire'
 	use 'vim-scripts/BufOnly.vim'
 	-- use 'machakann/vim-highlightedyank'
 	use 'sbdchd/neoformat'
@@ -597,6 +599,10 @@ require('packer').startup(function(use)
     use {
         'mechatroner/rainbow_csv',
         opt = true
+    }
+
+    use {
+        'chrisbra/csv.vim'
     }
 
 

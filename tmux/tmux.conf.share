@@ -134,6 +134,7 @@ set -g @plugin 'fcsonline/tmux-thumbs'
 set -g @plugin 'tmux-plugins/tmux-urlview'
 set -g @plugin 'robhurring/tmux-spotify'
 set -g @plugin 'tmux-plugins/tmux-sensible'
+set -g @plugin 'sainnhe/tmux-fzf'
 #set -g @plugin 'christoomey/vim-tmux-navigator'
 
 set -g @thumbs-key F

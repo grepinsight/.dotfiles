@@ -50,7 +50,21 @@ ls.config.set_config({
 	ext_base_prio = 300,
 	-- minimal increase in priority.
 	ext_prio_increase = 1,
+
 	enable_autosnippets = true,
+
+    -- This one is cool cause if you have dynamic snippets, it updates as you type!
+    updateevents = "TextChanged,TextChangedI",
+    ext_opts = {
+        [types.choiceNode] = {
+            active = {
+                virt_text = { { " <- Current Choice", "NonTest" } },
+            },
+        },
+    },
+
+
+
 })
 
 -- args is a table, where 1 is the text in Placeholder 1, 2 the text in
@@ -209,12 +223,15 @@ ls.snippets = {
 	-- When trying to expand a snippet, luasnip first searches the tables for
 	-- each filetype specified in 'filetype' followed by 'all'.
 	-- If ie. the filetype is 'lua.c'
-	--     - luasnip.lua
-	--     - luasnip.c
-	--     - luasnip.all
-	-- are searched in that order.
-    --
-	all = {
+
+    all = {
+        s("todo", {
+            c(1, {
+                t "TODO(allee): ",
+                t "FIXME(allee): ",
+                t "TODONT(allee): ",
+            }),
+        }),
 		-- Example(choice): Alternative printf-like notation for defining snippets. It uses format
 		-- string with placeholders similar to the ones used with Python's .format().
 		s(
@@ -545,6 +562,9 @@ ls.snippets = {
             -- \item as necessary by utilizing a choiceNode.
             s("ipdb", {
                 t({ "import ipdb; ipdb.set_trace()" }),
+            }),
+            s("dag", {
+                t({"from airflow.models import DAG"})
             }),
         },
 }

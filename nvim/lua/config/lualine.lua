@@ -21,9 +21,10 @@ require('lualine').setup {
 		lualine_b = {
 				{ "branch" },
 				{ "diff", colored = true, color_added = "#a7c080", color_modified = "#ffdf1b", color_removed = "#ff6666" },
+                { "filename" }
 		},
 		lualine_c = {nvim_gps},
-		lualine_x = {lualine_orgmode}
+		lualine_x = {lualine_orgmode, 'encoding', 'fileformat', 'filetype'}
 	}
 }
 
