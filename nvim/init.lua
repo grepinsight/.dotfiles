@@ -121,6 +121,8 @@ require('packer').startup(function(use)
     }
 	use 'kana/vim-textobj-user'
     use 'Julian/vim-textobj-variable-segment'
+    use 'glts/vim-textobj-comment'
+    use 'kana/vim-textobj-entire'
 	use 'vim-scripts/BufOnly.vim'
 	-- use 'machakann/vim-highlightedyank'
 	use 'sbdchd/neoformat'
@@ -610,6 +612,10 @@ require('packer').startup(function(use)
         opt = true
     }
 
+    use {
+        'chrisbra/csv.vim'
+    }
+
 
     -- use {
     --     "folke/which-key.nvim",
@@ -630,6 +636,9 @@ require('packer').startup(function(use)
             vim.g["grammarous#languagetool_cmd"] = vim.fn.stdpath('data')..'/site/pack/packer/opt/vim-grammarous/misc/LanguageTool-5.5/languagetool'
         end
     }
+
+    -- experimental
+    use {'kevinhwang91/nvim-bqf', ft='qf'}
 
 
 

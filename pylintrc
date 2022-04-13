@@ -24,7 +24,7 @@ ignore-patterns=
 
 # Python code to execute, usually for sys.path manipulation such as
 # pygtk.require().
-#init-hook=
+init-hook="from pylint.config import find_pylintrc; import os, sys; sys.path.append(os.path.dirname(find_pylintrc()))"
 
 # Use multiple processes to speed up Pylint. Specifying 0 will auto-detect the
 # number of processors available to use.
@@ -67,8 +67,9 @@ confidence=
 # no Warning level messages displayed, use "--disable=all --enable=classes
 # --disable=W".
 disable=
-        unsubscriptable-object
-        no-member
+        expression-not-assigned,
+        unsubscriptable-object,
+        no-member,
         unspecified-encoding,
         line-too-long,
         too-few-public-methods,

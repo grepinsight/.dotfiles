@@ -50,7 +50,21 @@ ls.config.set_config({
 	ext_base_prio = 300,
 	-- minimal increase in priority.
 	ext_prio_increase = 1,
+
 	enable_autosnippets = true,
+
+    -- This one is cool cause if you have dynamic snippets, it updates as you type!
+    updateevents = "TextChanged,TextChangedI",
+    ext_opts = {
+        [types.choiceNode] = {
+            active = {
+                virt_text = { { " <- Current Choice", "NonTest" } },
+            },
+        },
+    },
+
+
+
 })
 
 -- args is a table, where 1 is the text in Placeholder 1, 2 the text in
@@ -209,12 +223,15 @@ ls.snippets = {
 	-- When trying to expand a snippet, luasnip first searches the tables for
 	-- each filetype specified in 'filetype' followed by 'all'.
 	-- If ie. the filetype is 'lua.c'
-	--     - luasnip.lua
-	--     - luasnip.c
-	--     - luasnip.all
-	-- are searched in that order.
-    --
-	all = {
+
+    all = {
+        s("todo", {
+            c(1, {
+                t "TODO(allee): ",
+                t "FIXME(allee): ",
+                t "TODONT(allee): ",
+            }),
+        }),
 		-- Example(choice): Alternative printf-like notation for defining snippets. It uses format
 		-- string with placeholders similar to the ones used with Python's .format().
 		s(
@@ -546,6 +563,9 @@ ls.snippets = {
             s("ipdb", {
                 t({ "import ipdb; ipdb.set_trace()" }),
             }),
+            s("dag", {
+                t({"from airflow.models import DAG"})
+            }),
         },
 }
 
@@ -556,6 +576,57 @@ ls.autosnippets = {
 			t("autosnippet"),
 		}),
 	},
+    python = {
+            s(";idag", {
+                t({"from airflow.models import DAG"})
+            }),
+            s(";inp", {
+                t({"import numpy as np"})
+            }),
+            s(";ipa", {
+                t({"import pandas as pd"})
+            }),
+            s("import nu", {
+                t({"import numpy as np"})
+            }),
+            s("import pan", {
+                t({"import pandas as pd"})
+            }),
+            s(";ipdb", {
+                t({"import ipdb; ipdb.set_trace()"})
+            }),
+            s(";idum", {
+                t({"from airflow.operators.dummy import DummyOperator"})
+            }),
+            s(";wdag",
+            fmt([[
+                with DAG(
+                    "{}",
+                    start_date=pendulum.datetime(2021, 1, 1, tz="UTC"),
+                    schedule_interval="{}",
+                    catchup=False,
+                    default_args={{
+                        "owner": "albert",
+                        "depends_on_past": False,
+                        "start_date": datetime(2021, 5, 18),
+                        "email_on_failure": False,
+                        "email_on_retry": False,
+                        "retries": 0,
+                        "retry_delay": timedelta(minutes=5),
+                    }},
+                ) as dag:
+                    op = DummyOperator(task_id="task")
+    ]], {
+        i(1, "wow"),
+        c(2, {
+            t "@daily",
+            t "@weekly",
+            t "@monthly",
+        }),
+    })
+
+            ),
+        },
 }
 
 
