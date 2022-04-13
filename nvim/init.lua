@@ -626,6 +626,9 @@ require('packer').startup(function(use)
         end
     }
 
+    -- experimental
+    use {'kevinhwang91/nvim-bqf', ft='qf'}
+
 
 
 end)
