@@ -143,6 +143,8 @@ nnoremap <Leader>dot :!cat % \| dot -Tpng > <C-R>=expand('%:r')<CR>.png && open 
 
 "insert file name : \fn in insert mode
 inoremap \fn <C-R>=expand("%:t")<CR>
+" git last commit message
+inoremap \gl <Esc>:r !git log -1 --pretty=\%B<CR>kA
 inoremap <Leader>fn <C-R>=expand("%:t")<CR>
 inoremap <Leader>dn <C-R>=expand("%:p:h:t")<CR>
 
@@ -417,3 +419,6 @@ map <C-W>r :YodeLayoutShiftWinDown<CR>
 map <C-W>R :YodeLayoutShiftWinUp<CR>
 map <C-W>J :YodeLayoutShiftWinBottom<CR>
 map <C-W>K :YodeLayoutShiftWinTop<CR>
+
+vnoremap > >gv
+vnoremap < <gv
