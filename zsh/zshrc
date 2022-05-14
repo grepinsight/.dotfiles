@@ -133,7 +133,7 @@ eval "$(starship init zsh)"
 # alias
 alias h='hsearch'
 
-export LEDGER_FILE=$HOME/Dropbox/vimwiki/personal/.hledger.journal
+export LEDGER_FILE=$HOME/Thoughts/.hledger.journal
 alias hla='hledger add'
 alias hl='hledger'
 alias hle="$EDITOR $LEDGER_FILE"
@@ -152,25 +152,12 @@ command -v direnv  > /dev/null 2>&1 && eval "$(direnv hook zsh)"
 command -v hsearch > /dev/null 2>&1 && eval "$(hsearch init zsh)"
 command -v zoxide  > /dev/null 2>&1 && eval "$(zoxide init zsh)"
 
-# # >>> conda initialize >>>
-# # !! Contents within this block are managed by 'conda init' !!
-# __conda_setup="$('/Users/allee/miniconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
-# if [ $? -eq 0 ]; then
-#     eval "$__conda_setup"
-# else
-#     if [ -f "/Users/allee/miniconda3/etc/profile.d/conda.sh" ]; then
-#         . "/Users/allee/miniconda3/etc/profile.d/conda.sh"
-#     else
-#         export PATH="/Users/allee/miniconda3/bin:$PATH"
-#     fi
-# fi
-# unset __conda_setup
-# # <<< conda initialize <<<
-# source $HOME/antigen.zsh
-# antigen bundle soimort/translate-shell
-# antigen apply
 export FZF_CTRL_T_COMMAND='rg --files --hidden --glob "!.git/*" --glob "!node_modules/*"'
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+if [[ -e ~/conda_init ]]; then
+    source ~/conda_init
+fi

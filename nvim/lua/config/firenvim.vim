@@ -12,7 +12,6 @@ if exists('g:started_by_firenvim')
     let g:startify_disable_at_vimenter = 1
     let g:airline_extensions = []
     set guifont=Monaco:h15
-    nnoremap ,l set lines=10
     set lines=30
     augroup firenvim_setting
       autocmd!

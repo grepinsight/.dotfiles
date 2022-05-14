@@ -168,7 +168,7 @@ require('packer').startup(function(use)
 	use {
 		'nvim-treesitter/nvim-treesitter',
         opt = true,
-        ft = {"python", "org", "lua", "markdown", "html", "rmd", "r"},
+        ft = {"python", "org", "lua", "markdown", "html", "rmd", "r", "rust"},
 		requires = {
 			'nvim-treesitter/nvim-treesitter-textobjects',
 			'nvim-treesitter/playground',
@@ -530,10 +530,9 @@ require('packer').startup(function(use)
     }
 
     ------ Rust
-    use { 'rust-lang/rust.vim', opt = true, ft = {"rust"}}
+    use { 'rust-lang/rust.vim', ft = {"rust"}}
     use {
         'simrat39/rust-tools.nvim',
-        opt = true,
         ft = {"rust"},
 		config = [[require('config.rust_tools')]]
     }

@@ -427,3 +427,11 @@ map <C-W>K :YodeLayoutShiftWinTop<CR>
 
 vnoremap > >gv
 vnoremap < <gv
+
+
+nnoremap ,l10 :set lines=10<CR>
+nnoremap ,l20 :set lines=20<CR>
+nnoremap ,l30 :set lines=30<CR>
+nnoremap ,s10 :set guifont=Monaco:h10<CR>
+nnoremap ,s15 :set guifont=Monaco:h15<CR>
+nnoremap ,s20 :set guifont=Monaco:h20<CR>

@@ -9,8 +9,8 @@ local opts = {
         inlay_hints = {
             only_current_line = false,
             show_parameter_hints = true,
-            parameter_hints_prefix = "<- ",
-            other_hints_prefix = "=> ",
+            parameter_hints_prefix = " <- ",
+            other_hints_prefix = " => ",
             highlight = "Comment",
         },
     },
