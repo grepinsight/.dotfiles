@@ -437,14 +437,8 @@ nnoremap ,s10 :set guifont=Monaco:h10<CR>
 nnoremap ,s15 :set guifont=Monaco:h15<CR>
 nnoremap ,s20 :set guifont=Monaco:h20<CR>
 
-<<<<<<< HEAD
 nnoremap ,,ep :s/\|/\| \\\r   /g<CR>
 nnoremap ,,el :!listify<cr>
 nnoremap ,,ee :!equalify<cr>
-=======
 
 nmap zip vip\\c^
-
-
-
->>>>>>> 30cd50b4565f4add35632cb52604fb58b193d316
