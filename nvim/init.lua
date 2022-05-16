@@ -140,7 +140,7 @@ require('packer').startup(function(use)
 	-- Color Schemes
 	-- use {'morhetz/gruvbox', config = function() vim.cmd [[ autocmd vimenter * ++nested colorscheme gruvbox ]] end}
 	-- use { 'arcticicestudio/nord-vim', config = function() vim.cmd [[ autocmd vimenter * ++nested colorscheme nord ]] end}
-	use {'arcticicestudio/nord-vim'}
+	-- use {'arcticicestudio/nord-vim'}
     use {'folke/tokyonight.nvim', config = function() vim.cmd [[ autocmd vimenter * ++nested colorscheme tokyonight]] end}
 
 
@@ -636,8 +636,11 @@ require('packer').startup(function(use)
         end
     }
 
-    -- experimental
-    use {'kevinhwang91/nvim-bqf', ft='qf'}
+
+    use {
+        'mg979/vim-visual-multi',
+        config = [[require('config.multi')]],
+    }
 
 
 
