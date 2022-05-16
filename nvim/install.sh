@@ -22,8 +22,10 @@ if cd $HOME/src/$NEOVIM_DIST; then
   sudo cp -r share/* /usr/share/
 elif [[ -n $IS_MAC ]]; then
   if cd $HOME/src/nvim-osx64; then
-    sudo cp -r bin/* /usr/local/bin/
+    sudo cp -r bin/*   /usr/local/bin/
     sudo cp -r share/* /usr/local/share/
+    sudo cp -r lib/*   /usr/local/lib/
+    sudo cp -r libs/*    /usr/local/libs/
   fi
 fi
 

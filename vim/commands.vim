@@ -26,3 +26,6 @@ command! PreWrite          :split ~/.prewrite
 command! PreWriteRead          :r ~/.prewrite
 command! ChoreEqualer execute "normal! ^yw$a = p^"
 command! PrCheck           execute "normal! \<esc>:lua require('pr_check').pr_check()<CR>"
+
+command! Equalify          execute "normal! yyA =pkJ^"
+silent! call repeat#set("Equalify", v:count)

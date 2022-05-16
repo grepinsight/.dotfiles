@@ -310,6 +310,7 @@ nnoremap ,z :Focus2<CR>
 vnoremap <silent> ,e :'<,'>!equalify<CR><CR>
 vnoremap <silent> ,i :'<,'>!itemify<CR><CR>
 vnoremap <silent> ,l :'<,'>!listify<CR><CR>
+vnoremap <silent> ,l :'<,'>!listify<CR><CR>
 
 " Unimparied style
 " nnoremap [t :tabprevious<CR>
@@ -435,3 +436,9 @@ nnoremap ,l30 :set lines=30<CR>
 nnoremap ,s10 :set guifont=Monaco:h10<CR>
 nnoremap ,s15 :set guifont=Monaco:h15<CR>
 nnoremap ,s20 :set guifont=Monaco:h20<CR>
+
+
+nmap zip vip\\c^
+
+
+
