@@ -293,8 +293,8 @@ nnoremap ,O :BOnly<CR>
 nnoremap ,p :e <C-R>=resolve(expand("%"))<CR>
 nnoremap ,q :Rg! <C-R>=expand("%:t")<CR>
 nnoremap ,r :BTags<CR>
-nmap s :HopChar2AC<CR>
-nmap S :HopChar2BC<CR>
+" nmap s :HopChar2AC<CR>
+" nmap S :HopChar2BC<CR>
 " nnoremap ,t :call ChooseTerm("term-slider", 1)<CR>
 nnoremap ,t :sp<CR><Esc>:lua require("harpoon.term").gotoTerminal(1)<CR>
 nnoremap ,,t :call ChooseTerm("term-slider2", 1)<CR>

@@ -336,7 +336,13 @@ require('packer').startup(function(use)
     -- -- IDE Like Featues
     use 'szw/vim-maximizer'
     -- Navigation
-    use 'ggandor/lightspeed.nvim'
+    -- use 'ggandor/lightspeed.nvim'
+    use {
+        'ggandor/leap.nvim',
+        config = function()
+            require('leap').set_default_keymaps()
+        end
+    }
     -- use {
     --     'phaazon/hop.nvim',
     --     branch = 'v1', -- optional but strongly recommended
@@ -640,6 +646,10 @@ require('packer').startup(function(use)
     use {
         'mg979/vim-visual-multi',
         config = [[require('config.multi')]],
+    }
+
+    use {
+        'christoomey/vim-titlecase'
     }
 
 
