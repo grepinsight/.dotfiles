@@ -485,7 +485,12 @@ require('packer').startup(function(use)
 -- ------ Writing/Markdown/Rst
     use { 'masukomi/vim-markdown-folding', opt = true, ft = "markdown"}
     use 'dhruvasagar/vim-table-mode'
-    use 'tpope/vim-abolish'
+    use { 'tpope/vim-abolish',
+
+          config = function()
+            vim.cmd 'source ~/.dotfiles/nvim/shortcuts.vim'
+          end
+}
     use {
         'junegunn/goyo.vim',
         opt = true,
@@ -672,7 +677,6 @@ end)
 vim.cmd 'source ~/.dotfiles/vim/leaders.vim'
 vim.cmd 'source ~/.dotfiles/vim/remaps.vim'
 vim.cmd 'source ~/.dotfiles/vim/functions.vim'
--- vim.cmd 'source ~/.dotfiles/nvim/shortcuts.vim'
 vim.cmd 'source ~/.dotfiles/nvim/autocmds.vim'
 vim.cmd 'source ~/.dotfiles/vim/commands.vim'
 
