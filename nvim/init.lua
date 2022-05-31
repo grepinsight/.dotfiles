@@ -336,7 +336,13 @@ require('packer').startup(function(use)
     -- -- IDE Like Featues
     use 'szw/vim-maximizer'
     -- Navigation
-    use 'ggandor/lightspeed.nvim'
+    -- use 'ggandor/lightspeed.nvim'
+    use {
+        'ggandor/leap.nvim',
+        config = function()
+            require('leap').set_default_keymaps()
+        end
+    }
     -- use {
     --     'phaazon/hop.nvim',
     --     branch = 'v1', -- optional but strongly recommended
@@ -479,7 +485,12 @@ require('packer').startup(function(use)
 -- ------ Writing/Markdown/Rst
     use { 'masukomi/vim-markdown-folding', opt = true, ft = "markdown"}
     use 'dhruvasagar/vim-table-mode'
-    use 'tpope/vim-abolish'
+    use { 'tpope/vim-abolish',
+
+          config = function()
+            vim.cmd 'source ~/.dotfiles/nvim/shortcuts.vim'
+          end
+}
     use {
         'junegunn/goyo.vim',
         opt = true,
@@ -642,6 +653,10 @@ require('packer').startup(function(use)
         config = [[require('config.multi')]],
     }
 
+    use {
+        'christoomey/vim-titlecase'
+    }
+
 
 
 end)
@@ -662,7 +677,6 @@ end)
 vim.cmd 'source ~/.dotfiles/vim/leaders.vim'
 vim.cmd 'source ~/.dotfiles/vim/remaps.vim'
 vim.cmd 'source ~/.dotfiles/vim/functions.vim'
--- vim.cmd 'source ~/.dotfiles/nvim/shortcuts.vim'
 vim.cmd 'source ~/.dotfiles/nvim/autocmds.vim'
 vim.cmd 'source ~/.dotfiles/vim/commands.vim'
 

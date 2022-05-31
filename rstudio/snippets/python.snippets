@@ -10,3 +10,12 @@ snippet defopt
     def main(argv: List[str] = sys.argv[1:]) -> None:
         """Entrypoint for ${1}"""
         defopt.run(${1}, argv=argv)
+
+
+snippet object_methods
+    obj = # choose
+    object_methods = [
+        method_name
+        for method_name in dir(obj)
+        if callable(getattr(obj, method_name))
+    ]

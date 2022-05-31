@@ -35,3 +35,5 @@ augroup END
 
 
 silent exec ":UpdateRemotePlugins"
+
+" autoflake --in-place --remove-unused-variables %

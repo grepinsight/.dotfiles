@@ -293,8 +293,8 @@ nnoremap ,O :BOnly<CR>
 nnoremap ,p :e <C-R>=resolve(expand("%"))<CR>
 nnoremap ,q :Rg! <C-R>=expand("%:t")<CR>
 nnoremap ,r :BTags<CR>
-nmap s :HopChar2AC<CR>
-nmap S :HopChar2BC<CR>
+" nmap s :HopChar2AC<CR>
+" nmap S :HopChar2BC<CR>
 " nnoremap ,t :call ChooseTerm("term-slider", 1)<CR>
 nnoremap ,t :sp<CR><Esc>:lua require("harpoon.term").gotoTerminal(1)<CR>
 nnoremap ,,t :call ChooseTerm("term-slider2", 1)<CR>
@@ -310,7 +310,7 @@ nnoremap ,z :Focus2<CR>
 vnoremap <silent> ,e :'<,'>!equalify<CR><CR>
 vnoremap <silent> ,i :'<,'>!itemify<CR><CR>
 vnoremap <silent> ,l :'<,'>!listify<CR><CR>
-vnoremap <silent> ,l :'<,'>!listify<CR><CR>
+vnoremap <silent> ,p :s/\|/\| \\\r   /g<CR><CR>
 
 " Unimparied style
 " nnoremap [t :tabprevious<CR>
@@ -437,8 +437,8 @@ nnoremap ,s10 :set guifont=Monaco:h10<CR>
 nnoremap ,s15 :set guifont=Monaco:h15<CR>
 nnoremap ,s20 :set guifont=Monaco:h20<CR>
 
+nnoremap ,,ep :s/\|/\| \\\r   /g<CR>
+nnoremap ,,el :!listify<cr>
+nnoremap ,,ee :!equalify<cr>
 
 nmap zip vip\\c^
-
-
-
