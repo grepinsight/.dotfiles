@@ -238,10 +238,10 @@ require('packer').startup(function(use)
         ft = {"python", "lua", "rust", "vue", "typescriptreact", "htmldjango", "css", "rmd", "r"},
 		config = [[require('config.lsp')]],
 	}
-    use {
-        'jose-elias-alvarez/null-ls.nvim',
-		config = [[require('config.nullls')]],
-    }
+  --   use {
+  --       'jose-elias-alvarez/null-ls.nvim',
+		-- config = [[require('config.nullls')]],
+  --   }
 
 	use { 'folke/lsp-colors.nvim' }
 
