@@ -14,5 +14,4 @@ configure:
 	# link vimrc
 	mkdir -p $$HOME/.config/nvim/
 	mkdir -p $$HOME/.config/nvim/lua
-	ln -sf $$HOME/.dotfiles/nvim/init.vim $$HOME/.config/nvim/init.vim
 	ln -sf $$HOME/.dotfiles/nvim/init.lua $$HOME/.config/nvim/lua/init.lua
