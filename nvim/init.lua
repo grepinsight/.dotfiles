@@ -1,5 +1,16 @@
+-- make loading faster
 require('impatient')
--- require'impatient'.enable_profile()
+require'impatient'.enable_profile()
+
+require "insight.disable_builtins"
+
+
+-- Filetype using lua only
+vim.g.maplocalleader = " "
+
+vim.g.do_filetype_lua = 1
+vim.g.did_load_filetypes = 0
+
 vim.opt.autoread       = true           -- automatically read changed file again
 vim.opt.autowrite      = true -- Write the contents of the file, if it has been modified
 vim.opt.cursorline     = true           --highlight current line
@@ -344,6 +355,27 @@ require('packer').startup(function(use)
             require('leap').set_default_keymaps()
         end
     }
+
+    -- use {
+    --     'kevinhwang91/nvim-hlslens',
+    --     config = function()
+    --         local kopts = {noremap = true, silent = true}
+    --         vim.api.nvim_set_keymap('n', 'n',
+    --             [[<Cmd>execute('normal! ' . v:count1 . 'n')<CR><Cmd>lua require('hlslens').start()<CR>]],
+    --             kopts)
+    --         vim.api.nvim_set_keymap('n', 'N',
+    --             [[<Cmd>execute('normal! ' . v:count1 . 'N')<CR><Cmd>lua require('hlslens').start()<CR>]],
+    --             kopts)
+    --         vim.api.nvim_set_keymap('n', '*', [[*<Cmd>lua require('hlslens').start()<CR>]], kopts)
+    --         vim.api.nvim_set_keymap('n', '#', [[#<Cmd>lua require('hlslens').start()<CR>]], kopts)
+    --         vim.api.nvim_set_keymap('n', 'g*', [[g*<Cmd>lua require('hlslens').start()<CR>]], kopts)
+    --         vim.api.nvim_set_keymap('n', 'g#', [[g#<Cmd>lua require('hlslens').start()<CR>]], kopts)
+    --
+    --         vim.api.nvim_set_keymap('n', '<Leader>l', ':noh<CR>', kopts)
+    --     end
+    -- }
+
+
     -- use {
     --     'phaazon/hop.nvim',
     --     branch = 'v1', -- optional but strongly recommended
@@ -554,14 +586,14 @@ require('packer').startup(function(use)
     use {'fatih/vim-go', opt = true, ft = {"go"}}
 
     ------ Latex
-    use {
-        'lervag/vimtex',
-        opt = true,
-        ft = {"tex", "latex"},
-        config = function()
-            vim.cmd 'let g:tex_flavor = "latex"'
-        end
-    }
+    -- use {
+    --     'lervag/vimtex',
+    --     opt = true,
+    --     ft = {"tex", "latex"},
+    --     config = function()
+    --         vim.cmd 'let g:tex_flavor = "latex"'
+    --     end
+    -- }
 
     ------ Snakemake
     use { 'burneyy/vim-snakemake', opt = true, ft = {"snakemake" }}
@@ -660,6 +692,11 @@ require('packer').startup(function(use)
 
     use {
         'github/copilot.vim'
+    }
+
+
+    use {
+        'vim-scripts/ReplaceWithRegister'
     }
 
 
