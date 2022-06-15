@@ -125,9 +125,11 @@ export EDITOR="nvim"
 export PATH=$PATH:$HOME/src/productivity
 alias v="$EDITOR"
 
-export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$($HOME/.pyenv/bin/pyenv init -)"
+if [[ -z $PYENV_ROOT ]]; then
+    export PYENV_ROOT="$HOME/.pyenv"
+    export PATH="$PYENV_ROOT/bin:$PATH"
+    eval "$($HOME/.pyenv/bin/pyenv init -)"
+fi
 eval "$(starship init zsh)"
 
 # alias

@@ -168,7 +168,7 @@ require('packer').startup(function(use)
 	use {
 		'nvim-treesitter/nvim-treesitter',
         opt = true,
-        ft = {"python", "org", "lua", "markdown", "html", "rmd", "r", "rust"},
+        ft = {"python", "org", "lua", "markdown", "html", "rmd", "r", "rust", "go"},
 		requires = {
 			'nvim-treesitter/nvim-treesitter-textobjects',
 			'nvim-treesitter/playground',
@@ -235,7 +235,7 @@ require('packer').startup(function(use)
 	use {
 		'neovim/nvim-lspconfig',
         opt = true,
-        ft = {"python", "lua", "rust", "vue", "typescriptreact", "htmldjango", "css", "rmd", "r"},
+        ft = {"python", "lua", "rust", "vue", "typescriptreact", "htmldjango", "css", "rmd", "r", "go"},
 		config = [[require('config.lsp')]],
 	}
   --   use {
@@ -309,6 +309,7 @@ require('packer').startup(function(use)
             {'hrsh7th/cmp-nvim-lua', after = 'nvim-cmp'},
             {'tjdevries/complextras.nvim', after = 'nvim-cmp'},
             {'saadparwaiz1/cmp_luasnip', after = 'nvim-cmp'},
+            {'hrsh7th/cmp-copilot', after = 'nvim-cmp'},
         },
         config = [[require('config.cmp')]],
         event = 'InsertEnter *',
@@ -418,7 +419,7 @@ require('packer').startup(function(use)
     use {
         'vim-test/vim-test',
         opt = true,
-        ft= {"python", "rust", "r"},
+        ft= {"python", "rust", "r", "go"},
         config = function ()
             vim.cmd [[
             let test#python#runner = 'pytest'
@@ -655,6 +656,10 @@ require('packer').startup(function(use)
 
     use {
         'christoomey/vim-titlecase'
+    }
+
+    use {
+        'github/copilot.vim'
     }
 
 

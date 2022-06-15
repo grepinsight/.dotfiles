@@ -22,6 +22,7 @@ reload:  ## Reload configs
 	cd zsh && make
 	cd git && make
 	cd jupyter && make
+	cd ripgrep && make
 
 
 update_brew:
