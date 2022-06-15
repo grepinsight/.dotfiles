@@ -104,7 +104,7 @@ nvim_lsp.pylsp.setup ({
 				},
 				flake8 = {
 					enabled = true,
-					ignore = {"W503"}
+					ignore = {"W503", "E221"}
 				},
 				jedi_completion = {enabled = true},
 				jedi_hover = {enabled = true},

@@ -1,6 +1,7 @@
 [MASTER]
 
 
+
 # A comma-separated list of package or module names from where C extensions may
 # be loaded. Extensions are loading into the active Python interpreter and may
 # run arbitrary code.
@@ -67,6 +68,7 @@ confidence=
 # no Warning level messages displayed, use "--disable=all --enable=classes
 # --disable=W".
 disable=
+        import-error,
         expression-not-assigned,
         unsubscriptable-object,
         no-member,

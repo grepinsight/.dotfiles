@@ -5,7 +5,10 @@ omap af :normal Vaf<CR>
 
 
 " Make a string f-string ; here I use '@z' as a placeholder register
-"nnoremap <LocalLeader>f mzF"if`zl
+nnoremap ,,f mzF"if`zl
+inoremap xxf <C-[>mzF"if`zlli
+let b:surround_{char2nr('f')} = "f\"\r\""
+
 
 " Set updatetime for CursorHold
 " 300ms of no cursor movement to trigger CursorHold
