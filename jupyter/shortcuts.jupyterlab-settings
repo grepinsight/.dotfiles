@@ -96,7 +96,13 @@
             "selector": "body",
             "title": "Activate Quick Open",
             "category": "Main Area"
+        },
+        {
+            "command": "docmanager:rename",
+            "keys": [
+                "Ctrl R"
+            ],
+            "selector": "body"
         }
-
     ]
 }

@@ -46,12 +46,10 @@ command! R :FloatermNew --width=0.5 --wintype=normal --name=repl --position=righ
 command! Py :FloatermNew --width=0.5 --wintype=normal --name=repl --position=right ipython --TerminalInteractiveShell.editing_mode=vi
 command! PY :FloatermNew --width=0.5 --wintype=normal --name=repl --position=right ipython --TerminalInteractiveShell.editing_mode=vi
 
-nnoremap   <leader>ts   :FloatermSend<CR>
-vnoremap   <leader>ts   :FloatermSend<CR>
-nnoremap   <leader>tt   :NvimTreeToggle<CR>
+" Leader
+" tab to space
+nnoremap <localleader>tt   :NvimTreeToggle<CR>
 
-nnoremap <Leader>pyan :!pyan % --dot -c -e \| dot -Tpng > <C-R>=expand('%:r')<CR>.png && open <C-R>=expand('%:r')<CR>.png <CR>
-nnoremap <Leader>tgf :!pyan % --tgf -c -e  > <C-R>=expand('%:r')<CR>.tgf<CR>
 
 
 " vim: set foldmethod=marker foldlevel=0 nomodeline:
@@ -125,6 +123,11 @@ nnoremap <leader>un :UltestNearest<CR>
 nnoremap <leader>us :UltestSummary<CR>
 nnoremap <leader>uo :UltestOutput<CR>
 nnoremap <leader>x :!chmod 750 %<CR>
+nnoremap <Leader>tts :%s/\t/    /g<CR>
+nnoremap <leader>ts   :FloatermSend<CR>
+vnoremap <leader>ts   :FloatermSend<CR>
+nnoremap <Leader>pyan :!pyan % --dot -c -e \| dot -Tpng > <C-R>=expand('%:r')<CR>.png && open <C-R>=expand('%:r')<CR>.png <CR>
+nnoremap <Leader>tgf :!pyan % --tgf -c -e  > <C-R>=expand('%:r')<CR>.tgf<CR>
 
 " Copy and Paste : https://vi.stackexchange.com/questions/84/how-can-i-copy-text-to-the-system-clipboard-from-vim
 "noremap <Leader>y "*y
