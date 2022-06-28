@@ -104,7 +104,7 @@ require('packer').startup(function(use)
           'kyazdani42/nvim-web-devicons', -- optional, for file icon
         },
         config = function() require'nvim-tree'.setup {
-            update_to_buf_dir = false,
+            update_to_buf_dir = {enable = false},
             update_cwd = true,
         } end,
 		cmd =  {'NvimTreeToggle', 'NvimTreeOpen'},
