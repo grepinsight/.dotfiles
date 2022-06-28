@@ -4,7 +4,6 @@
     "font_size_points": 14,
     "editor_theme": "Dracula",
     "default_project_location": "~",
-    "pdf_previewer": "rstudio",
     "restore_source_documents": false,
     "save_workspace": "never",
     "always_save_history": false,
@@ -30,7 +29,8 @@
             "Plots",
             "Packages",
             "Help",
-            "Viewer"
+            "Viewer",
+            "Presentations"
         ],
         "console_left_on_top": false,
         "console_right_on_top": true

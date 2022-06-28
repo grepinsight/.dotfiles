@@ -1,5 +1,5 @@
 let g:copilot_filetypes = {
-      \ '*': v:false,
+      \ '*': v:true,
       \ 'python': v:true,
       \ 'go': v:true,
       \ }

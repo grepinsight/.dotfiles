@@ -442,3 +442,5 @@ nnoremap ,,el :!listify<cr>
 nnoremap ,,ee :!equalify<cr>
 
 nmap zip vip\\c^
+nnoremap <D-v> "+p
+inoremap <D-v> <esc>"+p

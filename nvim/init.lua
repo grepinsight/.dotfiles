@@ -246,13 +246,13 @@ require('packer').startup(function(use)
 	use {
 		'neovim/nvim-lspconfig',
         opt = true,
-        ft = {"python", "lua", "rust", "vue", "typescriptreact", "htmldjango", "css", "rmd", "r", "go"},
+        ft = {"python", "lua", "rust", "vue", "typescriptreact", "htmldjango", "css", "svelte", "rmd", "r", "go"},
 		config = [[require('config.lsp')]],
 	}
-  --   use {
-  --       'jose-elias-alvarez/null-ls.nvim',
-		-- config = [[require('config.nullls')]],
-  --   }
+    use {
+        'jose-elias-alvarez/null-ls.nvim',
+		config = [[require('config.nullls')]],
+    }
 
 	use { 'folke/lsp-colors.nvim' }
 
@@ -556,12 +556,14 @@ require('packer').startup(function(use)
     }
     use {
         'prettier/vim-prettier',
-        ft = {"javascript", "react", "typescript", "typescriptreact", "htmldjango"},
+        ft = {"javascript", "react", "typescript", "typescriptreact", "htmldjango", "svelte"},
         cmd = {"Prettier"}
     }
     use {
         'mattn/emmet-vim',
-        ft = {"javascript", "react", "typescript", "typescriptreact", "html"},
+        ft = {"javascript", "react", "typescript", "typescriptreact", "html", "svelte"},
+		config = [[require('config.emmet')]]
+
     }
 
 -- ------ Python
@@ -698,6 +700,19 @@ require('packer').startup(function(use)
     use {
         'vim-scripts/ReplaceWithRegister'
     }
+
+    use {
+        'ap/vim-css-color'
+    }
+
+    use {
+        'evanleck/vim-svelte'
+    }
+
+  --   use {
+  --       "ziontee113/syntax-tree-surfer",
+		-- config = [[require('config.surfer')]]
+  --   }
 
 
 

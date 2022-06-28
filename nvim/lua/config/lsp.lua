@@ -35,10 +35,10 @@ local on_attach = function(client, bufnr)
 	buf_set_keymap('n', 'gN', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
 	-- buf_set_keymap('n', 'gN', "<cmd>lua require('lspsaga.rename').rename()<CR>", opts)
 	buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-	buf_set_keymap('n', '<space>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
-	buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
-	buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
-	buf_set_keymap('n', '<space>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
+	buf_set_keymap('n', '<space>e', '<cmd>lua vim.diagnostic.show_line_diagnostics()<CR>', opts)
+	buf_set_keymap('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts)
+	buf_set_keymap('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
+	buf_set_keymap('n', '<space>q', '<cmd>lua vim.diagnostic.set_loclist()<CR>', opts)
 
 
 	-- Set some keybinds conditional on server capabilities
@@ -203,13 +203,14 @@ vim.g.diagnostics_active = true
 function _G.toggle_diagnostics()
   if vim.g.diagnostics_active then
     vim.g.diagnostics_active = false
-    vim.lsp.diagnostic.disable()
+    vim.diagnostic.disable()
   else
     vim.g.diagnostics_active = true
-    vim.lsp.diagnostic.enable()
+    vim.diagnostic.enable()
   end
 end
 
 vim.api.nvim_set_keymap('n', '<leader>tt', ':call v:lua.toggle_diagnostics()<CR>',  {noremap = true, silent = true})
 
+require'lspconfig'.svelte.setup{}
 require'lspconfig'.tailwindcss.setup{}
