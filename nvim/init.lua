@@ -495,14 +495,34 @@ require('packer').startup(function(use)
     --     ft = "python",
     --     after = "telescope.nvim"
     -- }
+  --   use {
+  --       "rcarriga/vim-ultest",
+  --       opt = true,
+  --       config = "require('config.ultest').post()",
+  --       requires = {"vim-test/vim-test"},
+  --       cmd = {"Ultest", "UltestNearest"},
+		-- run = ':UpdateRemotePlugins',
+  --   }
+
+
     use {
-        "rcarriga/vim-ultest",
-        opt = true,
-        config = "require('config.ultest').post()",
-        requires = {"vim-test/vim-test"},
-        cmd = {"Ultest", "UltestNearest"},
-		run = ':UpdateRemotePlugins',
+        "nvim-neotest/neotest",
+        requires = {
+            "nvim-lua/plenary.nvim",
+            "nvim-treesitter/nvim-treesitter",
+            "antoinemadec/FixCursorHold.nvim",
+            "nvim-neotest/neotest-python"
+        },
+        config = function()
+            require("neotest").setup({
+                adapters = {
+                    require("neotest-python")
+                }
+            })
+        end
     }
+
+
 
 
 

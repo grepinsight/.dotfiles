@@ -60,19 +60,22 @@ vim.opt.completeopt = { "menu", "menuone", "noselect" }
 vim.opt.shortmess:append "c"
 
 -- Complextras.nvim configuration
-vim.api.nvim_set_keymap(
-"i",
-"<C-x><C-m>",
-[[<c-r>=luaeval("require('complextras').complete_matching_line()")<CR>]],
-{ noremap = true }
+local keymap = vim.api.nvim_set_keymap
+keymap("i",
+     "<C-x><C-m>",
+    [[<c-r>=luaeval("require('complextras').complete_matching_line()")<CR>]],
+    { noremap = true }
 )
 
 vim.api.nvim_set_keymap(
-"i",
-"<C-x><C-d>",
-[[<c-r>=luaeval("require('complextras').complete_line_from_cwd()")<CR>]],
-{ noremap = true }
+    "i",
+    "<C-x><C-d>",
+    [[<c-r>=luaeval("require('complextras').complete_line_from_cwd()")<CR>]],
+    { noremap = true }
 )
+
+
+
 
 local check_back_space = function()
 	local col = vim.fn.col '.' - 1
@@ -86,7 +89,11 @@ cmp.setup {
 	snippet = {
 		expand = function(args)
 			-- vim.fn["UltiSnips#Anon"](args.body)
-            require('luasnip').lsp_expand(args.body)
+            --            local luasnip = prequire("luasnip")
+            if not luasnip then
+                return
+            end
+            luasnip.lsp_expand(args.body)
 		end,
 	},
 	mapping = {
