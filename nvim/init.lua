@@ -582,7 +582,6 @@ require('packer').startup(function(use)
     use {
         'mattn/emmet-vim',
         ft = {"javascript", "react", "typescript", "typescriptreact", "html", "svelte"},
-		config = [[require('config.emmet')]]
 
     }
 
