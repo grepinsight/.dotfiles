@@ -20,6 +20,10 @@ local d = ls.dynamic_node
 local r = ls.restore_node
 local l = require("luasnip.extras").lambda
 
+
+require("luasnip.loaders.from_lua").load({ paths = "~/.dotfiles/nvim/lua/config/snippets/" })
+vim.cmd([[command! LuaSnipEdit :lua require("luasnip.loaders.from_lua").edit_snippet_files()]])
+
 -- Make sure to not pass an invalid command, as io.popen() may write over nvim-text.
 local function bash(_, _, command)
 	local file = io.popen(command, "r")
@@ -54,12 +58,20 @@ ls.config.set_config({
     -- 	updateevents = "TextChanged,TextChangedI",
     -- This one is cool cause if you have dynamic snippets, it updates as you type!
     updateevents = "TextChanged,TextChangedI",
+    enable_autosnippets = true,
 
     ext_opts = {
-        [types.choiceNode] = {
-            active = {virt_text = {{"choiceNode", "Comment"}}}
-        }
-    },
+		[types.choiceNode] = {
+			active = {
+				virt_text = { { "●", "GruvboxOrange" } },
+			},
+		},
+		-- [types.insertNode] = {
+		-- 	active = {
+		-- 		virt_text = { { "●", "GruvboxBlue" } },
+		-- 	},
+		-- },
+	},
     -- 	-- treesitter-hl has 100, use something higher (default is 200).
     ext_base_prio = 300,
     -- 	-- minimal increase in priority.
@@ -69,6 +81,8 @@ ls.config.set_config({
 
 
 local date = function() return {os.date('%Y-%m-%d')} end
+
+
 
 ls.add_snippets(nil, {
     all = {
@@ -124,6 +138,9 @@ ls.add_snippets(nil, {
 
         import altair as alt
           ]], {})),
+        s({trig = "import plotl", namr = "science statck", desc = "science statck"}, fmt([[
+        import plotly.express as px
+          ]], {})),
         s({trig = "ds", namr = "science statck", desc = "science statck"}, fmt([[
         """{}"""
           ]], {i(1)})),
@@ -143,6 +160,8 @@ ls.add_snippets(nil, {
 require("luasnip.loaders.from_snipmate").load({
     path = {"~/.config/nvim/mysnippets"}
 }) -- Load snippets from my-snippets folder
+
+vim.keymap.set("n", "<Leader><CR>", "<cmd>LuaSnipEdit<cr>", { silent = true, noremap = true })
 
 --
 --
@@ -862,3 +881,4 @@ require("luasnip.loaders.from_snipmate").load({
 -- au User LuasnipChangeChoice lua update_choice_popup(require("luasnip").session.event_node)
 -- augroup END
 -- ]])
+--
