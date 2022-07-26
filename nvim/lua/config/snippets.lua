@@ -77,6 +77,9 @@ ls.add_snippets(nil, {
                    {t "TODO(allee): ", t "FIXME(allee): ", t "TODONT(allee): "}),
             insert(0)
         }),
+        s({trig = "mamba", namr = "mamba", desc = "mamba"}, fmt([[
+           mamba create -n {} python=3.10 python-lsp-server lab_black jupyter jupyterlab numpy pandas matplotlib altair
+          ]], {insert(1, "condition")})),
         snip(
             {
                 trig = "date",

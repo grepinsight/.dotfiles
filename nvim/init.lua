@@ -728,6 +728,22 @@ require('packer').startup(function(use)
     use {
         'evanleck/vim-svelte'
     }
+    use {
+        'norcalli/nvim-colorizer.lua',
+        config = function()
+            require'colorizer'.setup()
+        end
+
+    }
+
+    use {
+        "quarto-dev/quarto-vim",
+        requires = {
+            {"vim-pandoc/vim-pandoc-syntax"},
+        },
+        ft = {"quarto"},
+    }
+
 
   --   use {
   --       "ziontee113/syntax-tree-surfer",
