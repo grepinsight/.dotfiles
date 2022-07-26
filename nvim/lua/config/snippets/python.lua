@@ -90,6 +90,12 @@ for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1]))
 ]], {}))
 table.insert(snippets, for_each_annotation)
 
+local toy_data = s("toy", fmt([[
+import pandas as pd
+df = pd.DataFrame({{'a': [1, 2,3]}})
+]], {}))
+table.insert(snippets, toy_data)
+
 
 
 -- End Refactoring --
