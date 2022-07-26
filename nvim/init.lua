@@ -289,11 +289,6 @@ require('packer').startup(function(use)
     }
     -- Completion
     ---- Snippets
-    use {
-        "L3MON4D3/LuaSnip",
-        config = [[require('config.snippets')]],
-    }
-    use "rafamadriz/friendly-snippets"
 
     -- use "rafamadriz/friendly-snippets"
     -- use { 'SirVer/ultisnips',
@@ -314,6 +309,11 @@ require('packer').startup(function(use)
         requires = {
             {'hrsh7th/cmp-buffer', after = 'nvim-cmp'},
             -- {'quangnguyen30192/cmp-nvim-ultisnips', after = 'nvim-cmp'},
+            {
+                "L3MON4D3/LuaSnip",
+                config = [[require('config.snippets')]],
+            },
+            "rafamadriz/friendly-snippets",
             'hrsh7th/cmp-nvim-lsp',
             {'hrsh7th/cmp-path', after = 'nvim-cmp'},
             {'octaltree/cmp-look', after = 'nvim-cmp'},
