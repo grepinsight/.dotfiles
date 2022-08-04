@@ -1,7 +1,8 @@
 let g:copilot_filetypes = {
-      \ '*': v:true,
+      \ '*': v:false,
       \ 'python': v:true,
       \ 'go': v:true,
+      \ 'rust': v:true,
       \ }
 
 imap <silent><script><expr> <C-c> copilot#Accept("\<CR>")

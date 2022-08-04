@@ -313,6 +313,8 @@ nnoremap ,z :Focus2<CR>
 vnoremap <silent> ,e :'<,'>!equalify<CR><CR>
 vnoremap <silent> ,i :'<,'>!itemify<CR><CR>
 vnoremap <silent> ,l :'<,'>!listify<CR><CR>
+vnoremap <silent> ,q :'<,'>!quotify<CR><CR>
+vnoremap <silent> ,n :'<,'>!linify<CR><CR>
 vnoremap <silent> ,p :s/\|/\| \\\r   /g<CR><CR>
 
 " Unimparied style
@@ -443,6 +445,9 @@ nnoremap ,s20 :set guifont=Monaco:h20<CR>
 nnoremap ,,ep :s/\|/\| \\\r   /g<CR>
 nnoremap ,,el :!listify<cr>
 nnoremap ,,ee :!equalify<cr>
+nnoremap ,,ei :!itemify<CR><CR>
+nnoremap ,,eq :!quotify<CR><CR>
+nnoremap ,,en :!linify<CR><CR>
 
 nmap zip vip\\c^
 nnoremap <D-v> "+p
