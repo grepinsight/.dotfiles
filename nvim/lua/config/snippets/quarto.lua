@@ -68,33 +68,6 @@ local function cs(trigger, nodes, opts) -- {{{
 end -- }}}
 
 -- Start Refactoring --
-local my_snippets = s("wowzi", {t("WWWZZZZHOW THE HELL")})
-
-table.insert(snippets, my_snippets)
-
-local wo = s({trig = "wo", namr = "with open", desc = "with open"}, fmt([[
-        with open({}, "r") as f:
-            {}
-          ]], {c(1, {t "\"file\"", t "file"}), i(2, "body")}))
-table.insert(snippets, wo)
-
-local watermark = s("watermark", fmt([[
-%load_ext watermark
-%watermark -n -u -v -iv -w
-]], {}))
-table.insert(snippets, watermark)
-
--- For Plotly
-local for_each_annotation = s("fea", fmt([[
-for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1]))
-]], {}))
-table.insert(snippets, for_each_annotation)
-
-local toy_data = s("toy", fmt([[
-import pandas as pd
-df = pd.DataFrame({{'a': [1, 2,3]}})
-]], {}))
-table.insert(snippets, toy_data)
 
 local start = s("start", fmt([[
 title: "title"
