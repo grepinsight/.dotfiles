@@ -32,12 +32,15 @@
             "Viewer",
             "Presentations"
         ],
+        "hiddenTabSet": [],
         "console_left_on_top": false,
-        "console_right_on_top": true
+        "console_right_on_top": true,
+        "additional_source_columns": 0
     },
     "posix_terminal_shell": "zsh",
     "source_with_echo": true,
     "jobs_tab_visibility": "shown",
     "rmd_preferred_template_path": "/Library/Frameworks/R.framework/Versions/4.0/Resources/library/mwhat/rmarkdown/templates/mwh_analysis_basic",
-    "document_author": "Albert Lee"
+    "document_author": "Albert Lee",
+    "initial_working_directory": "~"
 }

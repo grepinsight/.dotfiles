@@ -750,6 +750,11 @@ require('packer').startup(function(use)
   --   }
 
 
+    use({
+      'mrjones2014/dash.nvim',
+       run = 'make install',
+	   cmd =  {'Dash'},
+    })
 
 end)
 
