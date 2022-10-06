@@ -86,18 +86,8 @@ end
 -- Extra sources
 require('config.cmp_sources.rst_glossary')
 
-cmp.setup {
-	snippet = {
-		expand = function(args)
-			-- vim.fn["UltiSnips#Anon"](args.body)
-            --            local luasnip = prequire("luasnip")
-            if not luasnip then
-                return
-            end
-            luasnip.lsp_expand(args.body)
-		end,
-	},
-	mapping = {
+
+local my_mapping = cmp.mapping.preset.insert({
 		['<C-k>'] = cmp.mapping.select_prev_item(),
 		['<C-j>'] = cmp.mapping.select_next_item(),
 		['<C-d>'] = cmp.mapping.scroll_docs(-4),
@@ -142,8 +132,19 @@ cmp.setup {
 
 
 
-
+})
+cmp.setup {
+	snippet = {
+		expand = function(args)
+			-- vim.fn["UltiSnips#Anon"](args.body)
+            --            local luasnip = prequire("luasnip")
+            if not luasnip then
+                return
+            end
+            luasnip.lsp_expand(args.body)
+		end,
 	},
+	mapping = my_mapping,
 	-- formatting = {
 	--   format = function(entry, vim_item)
 	--     vim_item.kind = lspkind.presets.default[vim_item.kind] .. ' ' .. vim_item.kind
@@ -202,5 +203,18 @@ cmp.setup {
 		ghost_text = true,
 	},
 }
+
+require'cmp'.setup.cmdline(':', {
+    mapping = cmp.mapping.preset.cmdline(),
+  sources = {
+    { name = 'cmdline' }
+  }
+})
+require'cmp'.setup.cmdline('/', {
+    mapping = cmp.mapping.preset.cmdline(),
+  sources = {
+    { name = 'buffer' }
+  }
+})
 
 

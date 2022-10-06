@@ -1,0 +1,5 @@
+--langdef=qmd
+--langmap=qmd:.qmd
+--regex-qmd=/^(#+[ \t]+.*)/\1/h,heading,headings/
+--regex-qmd=/([A-Za-z0-9_]+)[ ]*<-[ ]*function/\1/f,function,functions/
+--regex-qmd=/^(```){r ([A-Za-z0-9_\-]+)/\1\2/s,section,sections/
