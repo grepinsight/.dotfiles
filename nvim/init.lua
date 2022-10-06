@@ -321,6 +321,7 @@ require('packer').startup(function(use)
             {'tjdevries/complextras.nvim', after = 'nvim-cmp'},
             {'saadparwaiz1/cmp_luasnip', after = 'nvim-cmp'},
             {'hrsh7th/cmp-copilot', after = 'nvim-cmp'},
+            {'hrsh7th/cmp-cmdline', after = 'nvim-cmp'},
         },
         config = [[require('config.cmp')]],
         event = 'InsertEnter *',

@@ -95,6 +95,11 @@ format:
 table.insert(snippets, start)
 
 
+local callout = s("callout", fmt([[
+hello
+]], {}))
+table.insert(snippets, callout)
+
 -- End Refactoring --
 
 return snippets, autosnippets
