@@ -179,7 +179,7 @@ require('packer').startup(function(use)
 	use {
 		'nvim-treesitter/nvim-treesitter',
         opt = true,
-        ft = {"python", "org", "lua", "markdown", "html", "rmd", "r", "rust", "go"},
+        ft = {"python", "org", "lua", "markdown", "html", "rmd", "r", "rust", "go", "cpp"},
 		requires = {
 			'nvim-treesitter/nvim-treesitter-textobjects',
 			'nvim-treesitter/playground',
@@ -190,7 +190,7 @@ require('packer').startup(function(use)
 	use {
         'romgrk/nvim-treesitter-context',
         opt = true,
-        ft = {"python", "r", "rmd"},
+        ft = {"python", "r", "rmd", "cpp"},
         requires = 'nvim-treesitter/nvim-treesitter',
         after = "nvim-treesitter",
         config = function ()
@@ -246,13 +246,13 @@ require('packer').startup(function(use)
 	use {
 		'neovim/nvim-lspconfig',
         opt = true,
-        ft = {"python", "lua", "rust", "vue", "typescriptreact", "htmldjango", "css", "svelte", "rmd", "r", "go"},
+        ft = {"python", "cpp", "lua", "rust", "vue", "typescriptreact", "htmldjango", "css", "svelte", "rmd", "r", "go"},
 		config = [[require('config.lsp')]],
 	}
-    use {
-        'jose-elias-alvarez/null-ls.nvim',
-		config = [[require('config.nullls')]],
-    }
+  --   use {
+  --       'jose-elias-alvarez/null-ls.nvim',
+		-- config = [[require('config.nullls')]],
+  --   }
 
 	use { 'folke/lsp-colors.nvim' }
 
@@ -396,7 +396,7 @@ require('packer').startup(function(use)
     ---- Metaview
     use {'liuchengxu/vista.vim', cmd = "Vista"}
     use {'simrat39/symbols-outline.nvim', cmd = {"SymbolsOutline"}}
-    use {'stevearc/aerial.nvim'}
+    -- use {'stevearc/aerial.nvim'}
 
     use {'IMOKURI/line-number-interval.nvim'}
 

@@ -9,7 +9,7 @@ handlers["textDocument/signatureHelp"] = lsp.with(handlers.signature_help, pop_o
 local nvim_lsp = require('lspconfig')
 local on_attach = function(client, bufnr)
     -- setup aerial
-    require('aerial').on_attach(client, bufnr)
+    -- require('aerial').on_attach(client, bufnr)
 
 	local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
 	local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
