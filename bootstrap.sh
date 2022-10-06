@@ -161,7 +161,7 @@ if which git 2>/dev/null >&2 ; then
     mkdir -p $HOME/src
     if [[ ! -e $HOME/src/gitstats ]]; then
         echo "installing gitstats"
-        cd $HOME/src && git clone git://github.com/hoxu/gitstats.git && cd -
+        cd $HOME/src && git clone https://github.com/hoxu/gitstats.git && cd -
     fi
 
     if [[ ! -e $HOME/src/git-radar ]]; then

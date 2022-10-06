@@ -84,6 +84,12 @@ local watermark = s("watermark", fmt([[
 ]], {}))
 table.insert(snippets, watermark)
 
+local po= s(";po", fmt([[
+plotly.offline.init_notebook_mode(connected=True)
+]], {}))
+table.insert(snippets, po)
+
+
 -- For Plotly
 local for_each_annotation = s("fea", fmt([[
 for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1]))
@@ -96,15 +102,32 @@ df = pd.DataFrame({{'a': [1, 2,3]}})
 ]], {}))
 table.insert(snippets, toy_data)
 
+local sci = s("sci", fmt([[
+%load_ext lab_black
+
+# Base
+from pathlib import Path
+
+# Science
+import numpy as np
+import pandas as pd
+
+# Plots
+import plotly.express as px
+
+]], {}))
+table.insert(snippets, sci)
+
 local start = s("start", fmt([[
+---
 title: "title"
 author: "Albert Lee"
 date: ""
-tags:
+categories:
   - quarto
   - visualization
 execute:
-  echo: false
+  echo: true
 format:
   html:
     theme: cyborg
@@ -118,6 +141,7 @@ format:
     code-line-numbers: true
     #code-fold: true
     #code-tools: true
+---
 ]], {}))
 table.insert(snippets, start)
 
