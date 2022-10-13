@@ -757,6 +757,31 @@ require('packer').startup(function(use)
 	   cmd =  {'Dash'},
     })
 
+
+    use { "anuvyklack/windows.nvim",
+   requires = "anuvyklack/middleclass",
+   config = function()
+      require('windows').setup()
+   end
+}
+
+
+  use {
+      'sunjon/shade.nvim',
+      config = function()
+          require'shade'.setup({
+              overlay_opacity = 50,
+              opacity_step = 1,
+              keys = {
+                  brightness_up    = '<C-Up>',
+                  brightness_down  = '<C-Down>',
+                  toggle           = '<Leader>s',
+              }
+          })
+
+      end
+  }
+
 end)
 
 

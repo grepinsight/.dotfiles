@@ -607,3 +607,5 @@ alias fd-data='fd "\.(tsv|txt|csv|tar.gz|csv.gz)$"'
 alias fd-plots='fd "\.(png|jpeg|pdf|html)$"'
 
 alias xt="xsv table"
+
+alias fd1="fd --maxdepth 1"
