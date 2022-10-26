@@ -757,6 +757,14 @@ require('packer').startup(function(use)
 	   cmd =  {'Dash'},
     })
 
+    use {
+        "fisadev/vim-isort",
+        ft = {"python", "text"},
+        config = function()
+            vim.cmd 'let g:vim_isort_python_version = "python3"'
+        end
+    }
+
 end)
 
 
