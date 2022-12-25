@@ -49,6 +49,7 @@ command! PY :FloatermNew --width=0.5 --wintype=normal --name=repl --position=rig
 " Leader
 " tab to space
 nnoremap <localleader>tt   :NvimTreeToggle<CR>
+nnoremap <localleader>tf   :NvimTreeFindFileToggle<CR>
 
 
 
@@ -313,6 +314,7 @@ nnoremap ,z :Focus2<CR>
 vnoremap <silent> ,e :'<,'>!equalify<CR><CR>
 vnoremap <silent> ,i :'<,'>!itemify<CR><CR>
 vnoremap <silent> ,l :'<,'>!listify<CR><CR>
+vnoremap <silent> ,j :'<,'>!myconvert yaml2json --stdin --json \| jq -r '.' <CR><CR>
 vnoremap <silent> ,q :'<,'>!quotify<CR><CR>
 vnoremap <silent> ,n :'<,'>!linify<CR><CR>
 vnoremap <silent> ,p :s/\|/\| \\\r   /g<CR><CR>

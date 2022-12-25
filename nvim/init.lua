@@ -8,8 +8,8 @@ require "insight.disable_builtins"
 -- Filetype using lua only
 vim.g.maplocalleader = " "
 
-vim.g.do_filetype_lua = 1
-vim.g.did_load_filetypes = 0
+-- vim.g.do_filetype_lua = 0
+-- vim.g.did_load_filetypes = 0
 
 vim.opt.autoread       = true           -- automatically read changed file again
 vim.opt.autowrite      = true -- Write the contents of the file, if it has been modified
@@ -107,7 +107,7 @@ require('packer').startup(function(use)
             update_to_buf_dir = {enable = false},
             update_cwd = true,
         } end,
-		cmd =  {'NvimTreeToggle', 'NvimTreeOpen'},
+		cmd =  {'NvimTreeToggle', 'NvimTreeOpen', 'NvimTreeFindFileToggle'},
     }
 
 	-- Editing
@@ -759,11 +759,20 @@ require('packer').startup(function(use)
 
     use {
         "fisadev/vim-isort",
-        ft = {"python", "text"},
         config = function()
             vim.cmd 'let g:vim_isort_python_version = "python3"'
         end
     }
+
+    use {
+        "LintaoAmons/scratch.nvim",
+        -- tag = "v0.4.0" -- use tag for stability, or without this to have latest fixed and functions
+        config = function()
+            vim.keymap.set("n", "<M-C-n>", function() require("scratch").scratch() end)
+        end
+    }
+
+    use "nullchilly/fsread.nvim"
 
 end)
 
@@ -796,3 +805,6 @@ end
 
 vim.cmd 'let g:airline#extensions#tabline#enabled = 1'
 vim.cmd "let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6 } }"
+
+
+require "config.globals"
