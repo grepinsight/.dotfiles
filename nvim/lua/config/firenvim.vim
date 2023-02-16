@@ -19,6 +19,7 @@ if exists('g:started_by_firenvim')
       autocmd BufEnter dbc*. set lines=10
       autocmd BufEnter dbc*. ALEDisable
       autocmd BufEnter *cloud.databricks.com* set ft=python
+      autocmd BufEnter *firenvim*ana* set ft=python
       autocmd BufEnter *cloud.databricks.com* nnoremap <C-c><C-c> :wq!<CR>
 
       " autocmd BufEnter dbc* set updatetime=500

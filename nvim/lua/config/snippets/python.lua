@@ -103,7 +103,9 @@ df = pd.DataFrame({{'a': [1, 2,3]}})
 table.insert(snippets, toy_data)
 
 local sci = s("sci", fmt([[
-%load_ext lab_black
+%reload_ext lab_black
+%reload_ext autoreload
+%autoreload 2
 
 # Base
 from pathlib import Path
@@ -111,6 +113,7 @@ from pathlib import Path
 # Science
 import numpy as np
 import pandas as pd
+from scipy.special import logit
 
 # Plots
 import plotly.express as px
