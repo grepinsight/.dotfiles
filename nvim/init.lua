@@ -76,13 +76,10 @@ require('packer').startup(function(use)
 		opt = false,
 		config = [[require('config.bufferline')]]
 	}
-	use {'airblade/vim-rooter', config= function()
-		vim.cmd [[ let g:rooter_silent_chdir = 1
-		let g:startify_change_to_dir = 0
-		let g:rooter_change_directory_for_non_project_files = "current"
-		let g:rooter_patterns = [".git", "Makefile", ".prjroot", ".hg"]
-		]]
-	end}
+	use {
+        'airblade/vim-rooter',
+		config = [[require('config.rooter')]]
+    }
 	use 'mhinz/vim-startify'
 
     -- use {
@@ -99,7 +96,6 @@ require('packer').startup(function(use)
     use 'tpope/vim-eunuch'
     use {
         'kyazdani42/nvim-tree.lua',
-        opt = true,
         requires = {
           'kyazdani42/nvim-web-devicons', -- optional, for file icon
         },
@@ -131,7 +127,6 @@ require('packer').startup(function(use)
     end
     }
 	use 'kana/vim-textobj-user'
-    use 'Julian/vim-textobj-variable-segment'
     use 'glts/vim-textobj-comment'
     use 'kana/vim-textobj-entire'
 	use 'vim-scripts/BufOnly.vim'

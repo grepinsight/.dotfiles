@@ -64,3 +64,5 @@ tags
 # Snakemake
 .snakemake
 
+Untitled*.ipynb
+Untitled*.md
