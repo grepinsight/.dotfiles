@@ -23,16 +23,20 @@ tnoremap   <silent>   <F9>   <C-\><C-n>:FloatermToggle<CR>
 nnoremap BB :call BufferSmartDelete()<CR>
 " nnoremap BB :Sayonara!<CR>
 
-nnoremap TA :Telescope aerial<CR>
 nnoremap TB :lua require('telescope.builtin').buffers()<CR>
+nnoremap TL :lua require('telescope.builtin').builtin()<CR>
 nnoremap TC :lua require('telescope.builtin').commands()<CR>
+nnoremap TD :lua require('telescope.builtin').lsp_definitions()<CR>
 nnoremap TF :lua require('telescope.builtin').find_files()<CR>
+nnoremap TZ :lua require('telescope.builtin').resume()<CR>
 nnoremap TG :lua require('telescope.builtin').grep_string { search = vim.fn.expand("<cword>") }<CR>
+nnoremap TH :Telescope help_tags<CR>
+nnoremap TI :lua require('telescope.builtin').git_status()<CR>
+nnoremap TJ :lua require('telescope.builtin').jumplist({path_display = "hidden"})<CR>
 nnoremap TM :Telescope marks<CR>
-nnoremap TO :Telescope oldfiles path_display=shorten<CR>
+nnoremap TO :lua require('telescope.builtin').oldfiles({path_display="absolute", previewer=false})<CR>
 nnoremap TR :Telescope lsp_references<CR>
 nnoremap TS :lua require('telescope.builtin').grep_string({ search = vim.fn.input("Grep For > ")})<CR>
-nnoremap TH :Telescope help_tags<CR>
 nnoremap TT :lua require('telescope').extensions.git_worktree.create_git_worktree()
 nnoremap TW :lua require('telescope').extensions.git_worktree.git_worktrees()<CR>
 

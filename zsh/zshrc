@@ -186,3 +186,8 @@ if [ -f "$HOME/miniconda3/etc/profile.d/mamba.sh" ]; then
 fi
 # <<< conda initialize <<<
 export ODBCINI=$HOME/.odbc.ini
+
+# pnpm
+export PNPM_HOME="$HOME/Library/pnpm"
+export PATH="$PNPM_HOME:$PATH"
+# pnpm end
