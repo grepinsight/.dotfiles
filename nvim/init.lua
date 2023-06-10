@@ -533,6 +533,7 @@ require('packer').startup(function(use)
 -- ---- Languages
 -- ------ Writing/Markdown/Rst
     use { 'masukomi/vim-markdown-folding', opt = true, ft = "markdown"}
+    use { 'preservim/vim-markdown', opt = true, ft = "markdown"}
     use 'dhruvasagar/vim-table-mode'
     use { 'tpope/vim-abolish',
 
@@ -768,6 +769,55 @@ require('packer').startup(function(use)
     }
 
     use "nullchilly/fsread.nvim"
+
+    use {
+        'epwalsh/obsidian.nvim',
+        requires = {
+            'nvim-lua/plenary.nvim'
+        },
+		config = [[require('config.obsidian')]]
+    }
+
+    use {
+        'kevinhwang91/nvim-ufo',
+        requires = 'kevinhwang91/promise-async',
+		config = [[require('config.ufo')]]
+    }
+
+    use {
+        "chrisgrieser/nvim-various-textobjs",
+        config = function ()
+            require("various-textobjs").setup({ useDefaultKeymaps = true })
+        end,
+    }
+
+    use {
+        "SmiteshP/nvim-navbuddy",
+        requires = {
+            "neovim/nvim-lspconfig",
+            "SmiteshP/nvim-navic",
+            "MunifTanjim/nui.nvim",
+            "numToStr/Comment.nvim",        -- Optional
+            "nvim-telescope/telescope.nvim" -- Optional
+        }
+    }
+
+    use {
+        'willothy/flatten.nvim',
+    }
+
+    use({
+  "jackMort/ChatGPT.nvim",
+    config = function()
+      require("chatgpt").setup()
+    end,
+    requires = {
+      "MunifTanjim/nui.nvim",
+      "nvim-lua/plenary.nvim",
+      "nvim-telescope/telescope.nvim"
+    }
+})
+
 
 end)
 

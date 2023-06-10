@@ -7,8 +7,13 @@ let s:fc['.*'] = { 'selector': 'textarea, div[role="textbox"]', 'priority': 0, '
 
 
 if exists('g:started_by_firenvim')
-    autocmd vimenter * ++nested colorscheme nord
-    colorscheme nord
+    " autocmd vimenter * ++nested colorscheme tokyonight
+    echom("bye")
+    " colorscheme tokyonight
+
+
+    set background=light
+    colorscheme PaperColor
     let g:startify_disable_at_vimenter = 1
     let g:airline_extensions = []
     set guifont=Monaco:h15

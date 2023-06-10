@@ -1,4 +1,8 @@
+local cmp = require('cmp')
+local lspkind = require('lspkind')
 local luasnip = require("luasnip")
+-- print to vim "hi"
+vim.cmd [[ echom "hi" ]]
 
 local has_words_before = function()
   local line, col = unpack(vim.api.nvim_win_get_cursor(0))
@@ -53,8 +57,6 @@ local cmp_kinds = {
   TypeParameter = '  ',
 }
 
-local cmp = require 'cmp'
-local lspkind = require('lspkind')
 lspkind.init()
 
 vim.opt.completeopt = { "menu", "menuone", "noselect" }
