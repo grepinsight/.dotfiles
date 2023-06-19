@@ -28,7 +28,17 @@ return {
                     -- local linters = require("plugins.linting.linters")
                     local tool_names = {}
                     for _, server in pairs(langueage_servers) do
-                        table.insert(tool_names, server.name)
+                        -- if server has the field disabled and is true,
+                        -- then don't include it
+                        if server.disabled then
+                            if server.disabled == true then
+                                -- empty
+                            else
+                                table.insert(tool_names, server.name)
+                            end
+                        else
+                            table.insert(tool_names, server.name)
+                        end
                     end
                     for _, formatter in pairs(formatters) do
                         table.insert(tool_names, formatter.name)

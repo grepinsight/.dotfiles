@@ -74,7 +74,7 @@ return {
     },
     r_language_server = {
         name = "r-languageserver",
-        disabled = false,
+        disabled = true,
     },
     tailwindcss = {
         name = "tailwindcss-language-server",
