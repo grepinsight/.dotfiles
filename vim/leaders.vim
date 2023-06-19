@@ -24,21 +24,21 @@ nnoremap BB :call BufferSmartDelete()<CR>
 " nnoremap BB :Sayonara!<CR>
 
 nnoremap TB :lua require('telescope.builtin').buffers()<CR>
-nnoremap TL :lua require('telescope.builtin').builtin()<CR>
 nnoremap TC :lua require('telescope.builtin').commands()<CR>
 nnoremap TD :lua require('telescope.builtin').lsp_definitions()<CR>
 nnoremap TF :lua require('telescope.builtin').find_files()<CR>
-nnoremap TZ :lua require('telescope.builtin').resume()<CR>
 nnoremap TG :lua require('telescope.builtin').grep_string { search = vim.fn.expand("<cword>") }<CR>
 nnoremap TH :Telescope help_tags<CR>
 nnoremap TI :lua require('telescope.builtin').git_status()<CR>
 nnoremap TJ :lua require('telescope.builtin').jumplist({path_display = "hidden"})<CR>
+nnoremap TL :lua require('telescope.builtin').live_grep()<CR>
 nnoremap TM :Telescope marks<CR>
 nnoremap TO :lua require('telescope.builtin').oldfiles({path_display="absolute", previewer=false})<CR>
 nnoremap TR :Telescope lsp_references<CR>
 nnoremap TS :lua require('telescope.builtin').grep_string({ search = vim.fn.input("Grep For > ")})<CR>
 nnoremap TT :lua require('telescope').extensions.git_worktree.create_git_worktree()
 nnoremap TW :lua require('telescope').extensions.git_worktree.git_worktrees()<CR>
+nnoremap TZ :lua require('telescope.builtin').resume()<CR>
 
 nnoremap ]s :GitGutterStageHunk<CR>
 nnoremap [s :GitGutterUndoHunk<CR>
@@ -105,7 +105,8 @@ nmap <F8> :TagbarToggle<CR>
 nnoremap <leader><leader>s :ToggleGStatus<CR>
 nnoremap <leader>b :call BlameToggle()<CR>
 nnoremap <leader>es :vsplit ~/.vim/plugged/mysnippets/UltiSnips<CR>
-nnoremap <leader>ev :e $HOME/.dotfiles/nvim/init.lua<CR>
+nnoremap <leader>ev :e $HOME/.config/nvim/init.lua<CR>
+nnoremap <leader>ps :PackerSync<CR>
 nnoremap <leader>el :e $HOME/.dotfiles/vim/leaders.vim<CR><bar>:lua vim.api.nvim_buf_set_option(buf, 'bufhidden', 'wipe')<CR>
 nnoremap <leader>eo :e $HOME/org/notes.org<CR>
 nnoremap <leader>eO :e $HOME/.dotfiles/nvim/after/plugin/org.lua<CR>
@@ -468,3 +469,4 @@ nnoremap ,,en :!linify<CR><CR>
 nmap zip vip\\c^
 nnoremap <D-v> "+p
 inoremap <D-v> <esc>"+p
+

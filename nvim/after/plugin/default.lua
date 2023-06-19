@@ -1,0 +1,6 @@
+-- 2023-02-21: use ufo instead
+--
+-- local opt = vim.opt
+-- opt.foldlevel = 20
+-- opt.foldmethod = "expr"
+-- opt.foldexpr = "nvim_treesitter#foldexpr()"

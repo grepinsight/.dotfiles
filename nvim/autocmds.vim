@@ -9,9 +9,15 @@ augroup syntax_setup
     autocmd FileType json set foldmethod=indent
     autocmd BufNewFile,BufRead *.org setfiletype org
     autocmd BufNewFile,BufRead *.snk setfiletype snakemake
+    autocmd BufNewFile,BufRead justfile setfiletype justfile
+    autocmd BufNewFile,BufRead Justfile setfiletype justfile
     autocmd BufNewFile,BufRead Snakefile* setfiletype snakemake
     autocmd BufNewFile,BufRead Jenkinsfile setfiletype groovy
     autocmd BufNewFile,BufRead .envrc setfiletype envrc
+    autocmd BufNewFile,BufRead .rules setfiletype rules
+
+    " set foldmethod to marker if ft is rules
+    autocmd BufNewFile,BufRead *.rules set foldmethod=marker
 augroup END
 
 autocmd BufEnter *.png,*.jpg,*gif exec "!open ".expand("%") | bw
