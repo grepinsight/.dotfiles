@@ -294,6 +294,7 @@ local M = {
     {
         "tpope/vim-fugitive",
         cmd = { "Git" },
+        ft = { "makrdown", "python", "rust" },
     },
     "tpope/vim-rhubarb",
     {
@@ -386,6 +387,26 @@ local M = {
         config = function()
             vim.cmd 'source ~/.dotfiles/nvim/shortcuts.vim'
         end
+    },
+    {
+        'dhruvasagar/vim-table-mode',
+        ft = { "markdown", "svelte" },
+    },
+    {
+        'tpope/vim-projectionist',
+        ft = { "python", "rust", "r", "go" },
+    },
+    {
+        'vim-test/vim-test',
+        ft = { "python", "rust", "r", "go" },
+        config = function()
+            vim.cmd [[
+            let test#python#runner = 'pytest'
+            let g:test_extra = ''
+            let test#python#pytest#options = g:test_extra . '-s -v'
+            ]]
+        end
+
     },
     {
         "folke/edgy.nvim",

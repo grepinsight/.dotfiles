@@ -27,3 +27,8 @@ abbreviate scalble scalable
 abbreviate scopped scoped
 abbreviate lanauage language
 Abolish respositories repositories
+Abolish Abbrivation{,s}  Abbreviation{}
+Abolish Abbreivation{,s} Abbreviation{}
+Abolish abbreiviation{,s}  Abbreviation{}
+
+
