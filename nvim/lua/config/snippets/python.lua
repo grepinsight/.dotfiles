@@ -13,7 +13,7 @@ local rep = require("luasnip.extras").rep
 
 local snippets, autosnippets = {}, {} -- }}}
 
-local group = vim.api.nvim_create_augroup("Lua Snippets", {clear = true})
+local group = vim.api.nvim_create_augroup("Lua Snippets", { clear = true })
 local file_pattern = "*.lua"
 
 local function cs(trigger, nodes, opts) -- {{{
@@ -32,7 +32,7 @@ local function cs(trigger, nodes, opts) -- {{{
             if opts == "auto" then
                 target_table = autosnippets
             else
-                table.insert(keymaps, {"i", opts})
+                table.insert(keymaps, { "i", opts })
             end
         end
 
@@ -40,7 +40,7 @@ local function cs(trigger, nodes, opts) -- {{{
         if opts ~= nil and type(opts) == "table" then
             for _, keymap in ipairs(opts) do
                 if type(keymap) == "string" then
-                    table.insert(keymaps, {"i", keymap})
+                    table.insert(keymaps, { "i", keymap })
                 else
                     table.insert(keymaps, keymap)
                 end
@@ -55,9 +55,9 @@ local function cs(trigger, nodes, opts) -- {{{
                     group = group,
                     callback = function()
                         vim.keymap.set(keymap[1], keymap[2],
-                                       function()
-                            ls.snip_expand(snippet)
-                        end, {noremap = true, silent = true, buffer = true})
+                            function()
+                                ls.snip_expand(snippet)
+                            end, { noremap = true, silent = true, buffer = true })
                     end
                 })
             end
@@ -65,17 +65,17 @@ local function cs(trigger, nodes, opts) -- {{{
     end
 
     table.insert(target_table, snippet) -- insert snippet into appropriate table
-end -- }}}
+end                                     -- }}}
 
 -- Start Refactoring --
-local my_snippets = s("wowzi", {t("WWWZZZZHOW THE HELL")})
+local my_snippets = s("wowzi", { t("WWWZZZZHOW THE HELL") })
 
 table.insert(snippets, my_snippets)
 
-local wo = s({trig = "wo", namr = "with open", desc = "with open"}, fmt([[
+local wo = s({ trig = "wo", namr = "with open", desc = "with open" }, fmt([[
         with open({}, "r") as f:
             {}
-          ]], {c(1, {t "\"file\"", t "file"}), i(2, "body")}))
+          ]], { c(1, { t "\"file\"", t "file" }), i(2, "body") }))
 table.insert(snippets, wo)
 
 local watermark = s("watermark", fmt([[
@@ -84,7 +84,7 @@ local watermark = s("watermark", fmt([[
 ]], {}))
 table.insert(snippets, watermark)
 
-local po= s(";po", fmt([[
+local po = s(";po", fmt([[
 plotly.offline.init_notebook_mode(connected=True)
 ]], {}))
 table.insert(snippets, po)
@@ -139,7 +139,6 @@ format:
     toc-depth: 5
     number-sections: true
     self-contained: true
-    smooth-scroll: true
     smooth-scroll: true
     code-line-numbers: true
     #code-fold: true

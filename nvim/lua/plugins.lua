@@ -406,7 +406,37 @@ local M = {
             let test#python#pytest#options = g:test_extra . '-s -v'
             ]]
         end
+    },
+    {
+        "svermeulen/text-to-colorscheme.nvim",
+        lazy = false,
+        config = function()
+            require("text-to-colorscheme").setup({
+                ai = {
+                    openai_api_key = os.getenv("OPENAI_API_KEY"),
+                },
+                hex_palettes = {
+                    {
+                        name = "feeling_punk",
+                        background_mode = "dark",
+                        background = "#1c1c1c",
+                        foreground = "#f5f5f5",
+                        accents = {
+                            "#ff4d4d",
+                            "#ff9a00",
+                            "#f7e600",
+                            "#00d95a",
+                            "#00baff",
+                            "#ff00ff",
+                            "#ff007a",
+                        }
+                    }
+                }
 
+
+            }
+            )
+        end
     },
     {
         "folke/edgy.nvim",
