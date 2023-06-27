@@ -1,14 +1,14 @@
 local M = {
     {
-        'projekt0n/github-nvim-theme',
+        "projekt0n/github-nvim-theme",
         lazy = false,    -- make sure we load this during startup if it is your main colorscheme
         priority = 1000, -- make sure to load this before all the other start plugins
         config = function()
-            require('github-theme').setup({
+            require("github-theme").setup({
                 -- ...
             })
 
-            vim.cmd('colorscheme github_dark')
+            vim.cmd("colorscheme github_dark")
         end,
     },
     -- {
@@ -20,24 +20,23 @@ local M = {
     --         vim.cmd([[colorscheme tokyonight]])
     --     end,
     -- },
-    { 'NLKNguyen/papercolor-theme',    lazy = false },
+    { "NLKNguyen/papercolor-theme",    lazy = false },
     -- Reading
     {
         "nullchilly/fsread.nvim",
         cmd = { "FSRead", "FSClear", "FSToggle" },
-
     },
     {
-        'SmiteshP/nvim-gps',
-        dependencies = 'nvim-treesitter/nvim-treesitter',
+        "SmiteshP/nvim-gps",
+        dependencies = "nvim-treesitter/nvim-treesitter",
         ft = { "python", "rust", "json" },
     },
     {
-        'romgrk/nvim-treesitter-context',
+        "romgrk/nvim-treesitter-context",
         ft = { "python", "r", "rmd", "cpp" },
-        dependencies = 'nvim-treesitter/nvim-treesitter',
+        dependencies = "nvim-treesitter/nvim-treesitter",
         config = function()
-            require 'treesitter-context'.setup {
+            require("treesitter-context").setup({
                 enable = true,   -- Enable this plugin (Can be enabled/disabled later via commands)
                 throttle = true, -- Throttles plugin updates (may improve performance)
                 max_lines = 0,   -- How many lines the window should span. Values <= 0 mean no limit.
@@ -47,9 +46,9 @@ local M = {
                     -- By setting the 'default' entry below, you can control which nodes you want to
                     -- appear in the context window.
                     default = {
-                        'class',
-                        'function',
-                        'method',
+                        "class",
+                        "function",
+                        "method",
                         -- 'for', -- These won't appear in the context
                         -- 'while',
                         -- 'if',
@@ -62,84 +61,84 @@ local M = {
                     --       'impl_item',
                     --   },
                 },
-            }
-        end
+            })
+        end,
     },
 
     {
         -- folding plugin
-        'kevinhwang91/nvim-ufo',
+        "kevinhwang91/nvim-ufo",
         lazy = false,
-        dependencies = 'kevinhwang91/promise-async',
-        config = [[require('config.ufo')]]
+        dependencies = "kevinhwang91/promise-async",
+        config = [[require('config.ufo')]],
     },
-    { 'masukomi/vim-markdown-folding', ft = "markdown" },
-    { 'preservim/vim-markdown',        ft = "markdown" },
+    { "masukomi/vim-markdown-folding", ft = "markdown" },
+    { "preservim/vim-markdown",        ft = "markdown" },
     -- Overview
-    { 'liuchengxu/vista.vim',          cmd = "Vista" },
-    { 'simrat39/symbols-outline.nvim', cmd = { "SymbolsOutline" } },
+    { "liuchengxu/vista.vim",          cmd = "Vista" },
+    { "simrat39/symbols-outline.nvim", cmd = { "SymbolsOutline" } },
 
     {
-        'code-biscuits/nvim-biscuits',
+        "code-biscuits/nvim-biscuits",
         ft = { "python", "rust", "go", "json" },
         config = function()
-            require('nvim-biscuits').setup({
+            require("nvim-biscuits").setup({
                 toggle_keybind = "<leader>cb",
                 cursor_line_only = true,
                 default_config = {
                     max_length = 12,
                     min_distance = 5,
-                    prefix_string = " 📎 "
+                    prefix_string = " 📎 ",
                 },
                 language_config = {
                     html = {
-                        prefix_string = " 🌐 "
+                        prefix_string = " 🌐 ",
                     },
                     javascript = {
                         prefix_string = " ✨ ",
-                        max_length = 80
+                        max_length = 80,
                     },
                     python = {
                         -- disabled = true
                         prefix_string = " ✨ ",
-                    }
-                }
+                    },
+                },
             })
         end,
-        dependencies = 'nvim-treesitter/nvim-treesitter',
+        dependencies = "nvim-treesitter/nvim-treesitter",
     },
 
     -- Project Overview
     {
-        'kyazdani42/nvim-tree.lua',
-        dependencies = {
-            'kyazdani42/nvim-web-devicons', -- optional, for file icon
-        },
+        "kyazdani42/nvim-tree.lua",
+        -- dependencies = {
+        --     "kyazdani42/nvim-web-devicons", -- optional, for file icon
+        -- },
         config = function()
-            require 'nvim-tree'.setup {
+            require("nvim-tree").setup({
                 update_cwd = true,
                 hijack_directories = {
                     enable = false,
                 },
-            }
+            })
         end,
-        cmd = { 'NvimTreeToggle', 'NvimTreeOpen', 'NvimTreeFindFileToggle' },
-        ft = { "svelte", "typescript" }
+        cmd = { "NvimTreeToggle", "NvimTreeOpen", "NvimTreeFindFileToggle" },
+        ft = { "svelte", "typescript" },
     },
 
     -- Editing
     {
-        'numToStr/Comment.nvim',
+        "numToStr/Comment.nvim",
         lazy = false,
         config = function()
-            require('Comment').setup()
-        end
+            require("Comment").setup()
+        end,
     },
     {
         "folke/zen-mode.nvim",
         cmd = "ZenMode",
         config = function()
-            require("zen-mode").setup {
+            require("zen-mode").setup({
                 -- your configuration comes here
                 -- or leave it empty to use the default settings
                 -- refer to the configuration section below
@@ -163,82 +162,81 @@ local M = {
                         -- list = false, -- disable whitespace characters
                     },
                 },
-
-            }
-        end
+            })
+        end,
     },
     {
-        'junegunn/goyo.vim',
+        "junegunn/goyo.vim",
         dependencies = {
-            'junegunn/limelight.vim'
+            "junegunn/limelight.vim",
         },
-        cmd = "Goyo"
+        cmd = "Goyo",
     },
     { "tpope/vim-unimpaired", lazy = false },
     {
-        'mg979/vim-visual-multi',
+        "mg979/vim-visual-multi",
         config = function()
             vim.g.VM_maps = {
-                ["Add Cursor Down"] = '<M-C-j>',
-                ["Add Cursor Up"]   = '<M-C-k>',
+                ["Add Cursor Down"] = "<M-C-j>",
+                ["Add Cursor Up"] = "<M-C-k>",
             }
             vim.g.VM_mouse_mappings = 1
-        end
+        end,
     },
     {
-        'junegunn/fzf',
-        build = './install --all',
-        dir = '~/.fzf',
-        lazy = false
+        "junegunn/fzf",
+        build = "./install --all",
+        dir = "~/.fzf",
+        lazy = false,
     },
     {
-        'junegunn/fzf.vim',
-        lazy = false
+        "junegunn/fzf.vim",
+        lazy = false,
     },
     {
-        'akinsho/bufferline.nvim',
+        "akinsho/bufferline.nvim",
         lazy = false,
         config = function()
-            require('config.bufferline')
-        end
+            require("config.bufferline")
+        end,
     },
-    {
-        'hoob3rt/lualine.nvim',
-        lazy = false,
-        config = function()
-            require('config.lualine')
-        end
-    },
+    -- {
+    --     "hoob3rt/lualine.nvim",
+    --     lazy = false,
+    --     config = function()
+    --         require("config.lualine")
+    --     end,
+    -- },
 
     {
-        'nvim-treesitter/nvim-treesitter',
+        "nvim-treesitter/nvim-treesitter",
         ft = { "python", "org", "lua", "markdown", "html", "rmd", "r", "rust", "go", "cpp", "svelte" },
         dependencies = {
-            'nvim-treesitter/nvim-treesitter-textobjects',
-            'nvim-treesitter/playground',
+            "nvim-treesitter/nvim-treesitter-textobjects",
+            "nvim-treesitter/playground",
         },
         config = [[require('config.treesitter')]],
-        build = ':TSUpdate',
+        build = ":TSUpdate",
     },
     {
-        'airblade/vim-rooter',
+        "airblade/vim-rooter",
         lazy = false,
         config = function()
-            vim.cmd [[
+            vim.cmd([[
                 let g:rooter_silent_chdir = 1
                 let g:startify_change_to_dir = 0
                 let g:rooter_change_directory_for_non_project_files = "current"
                 let g:rooter_patterns = [".git", "Makefile", ".prjroot", ".hg", "justfile"]
-            ]]
-        end
+            ]])
+        end,
     },
     { "mhinz/vim-startify",   lazy = false },
     { "github/copilot.vim",   lazy = false },
     { "tpope/vim-surround",   lazy = false }, -- surround text objects with whatever
     { "tpope/vim-repeat",     lazy = false },
-    { "tpope/vim-dispatch",   cmd = { 'Dispatch', 'Make', 'Focus', 'Start' } },
+    { "tpope/vim-dispatch",   cmd = { "Dispatch", "Make", "Focus", "Start" } },
     "AndrewRadev/splitjoin.vim",
-    { "junegunn/vim-easy-align",      lazy = false }, -- perform alignment easier,
+    { "junegunn/vim-easy-align", lazy = false }, -- perform alignment easier,
     --{
     --    "L3MON4D3/LuaSnip",
     --    ft = {"python", "org", "lua", "markdown", "html", "rmd", "r", "rust", "go", "cpp"},
@@ -247,10 +245,10 @@ local M = {
     --    end,
     --},
     {
-        'justinmk/vim-dirvish',
+        "justinmk/vim-dirvish",
         lazy = false,
         config = function()
-            vim.cmd [[
+            vim.cmd([[
             call dirvish#add_icon_fn({p -> p[-1:]=='/'?'📂':'📄'})
             " How to unmap things
             " augroup dirvish_config
@@ -263,32 +261,32 @@ local M = {
             autocmd FileType dirvish
             \ nnoremap <silent><buffer> t ddO<Esc>:let @"=substitute(@", '\n', '', 'g')<CR>:r ! find "<C-R>"" -maxdepth 1 -print0 \| xargs -0 ls -Fd<CR>:silent! keeppatterns %s/\/\//\//g<CR>:silent! keeppatterns %s/[^a-zA-Z0-9\/]$//g<CR>:silent! keeppatterns g/^$/d<CR>:noh<CR>
             augroup END
-            ]]
-        end
+            ]])
+        end,
     },
     {
-        'chipsenkbeil/distant.nvim',
+        "chipsenkbeil/distant.nvim",
         lazy = false,
-        branch = 'v0.2',
+        branch = "v0.2",
         config = function()
-            require('distant').setup {
+            require("distant").setup({
                 -- Applies Chip's personal settings to every machine you connect to
                 --
                 -- 1. Ensures that distant servers terminate with no connections
                 -- 2. Provides navigation bindings for remote directories
                 -- 3. Provides keybinding to jump into a remote file's parent directory
-                ['*'] = require('distant.settings').chip_default(),
+                ["*"] = require("distant.settings").chip_default(),
                 {
                     ssh = {
-                        idendity_files = { '~/.ssh/id_rsa' },
-                        user = { 'allee' },
-                    }
-                }
-            }
-        end
+                        idendity_files = { "~/.ssh/id_rsa" },
+                        user = { "allee" },
+                    },
+                },
+            })
+        end,
     },
-    { "tpope/vim-eunuch",             lazy = false },
-    { 'kyazdani42/nvim-web-devicons', lazy = false }, -- optional, for file icon
+    { "tpope/vim-eunuch",        lazy = false },
+    -- { 'kyazdani42/nvim-web-devicons', lazy = false }, -- optional, for file icon
 
     -- Git
     {
@@ -302,23 +300,23 @@ local M = {
     },
     {
         "junegunn/gv.vim",
-        cmd = "GV"
+        cmd = "GV",
     },
     "rhysd/git-messenger.vim",
     {
         "pwntester/octo.nvim",
         config = [[require('config.octo')]],
-        cmd = { "Octo" }
+        cmd = { "Octo" },
     },
 
     -- Magic
     {
-        'glacambre/firenvim',
+        "glacambre/firenvim",
         lazy = false,
-        build = ':call firenvim#install(0)',
+        build = ":call firenvim#install(0)",
         config = function()
-            vim.cmd 'source ~/.dotfiles/nvim/lua/config/firenvim.vim'
-        end
+            vim.cmd("source ~/.dotfiles/nvim/lua/config/firenvim.vim")
+        end,
     },
     {
         "dstein64/vim-startuptime",
@@ -358,34 +356,34 @@ local M = {
     { "ThePrimeagen/harpoon",    ft = { "svelte", "python", "rust" } },
     -- syntax highlights
     { "vmchale/just-vim",        ft = "just" },
-    { 'burneyy/vim-snakemake',   ft = { "snakemake" } },
+    { "burneyy/vim-snakemake",   ft = { "snakemake" } },
     { "pest-parser/pest.vim",    ft = "pest" },
     { "mechatroner/rainbow_csv", ft = "csv" },
     { "snakemake/snakefmt",      ft = "snakemake" },
-    { 'evanleck/vim-svelte',     ft = "svelte" },
-    { 'ap/vim-css-color',        ft = { "svelte", "css", "python", "javascript" } },
+    { "evanleck/vim-svelte",     ft = "svelte" },
+    { "ap/vim-css-color",        ft = { "svelte", "css", "python", "javascript", "lua" } },
     {
-        'folke/twilight.nvim',
+        "folke/twilight.nvim",
         cmd = "Twilight",
         config = function()
             require("twilight").setup({
                 exclude = { "lua" },
-                treesitter = true
+                treesitter = true,
             })
-        end
+        end,
     },
-    { 'vim-scripts/BufOnly.vim', cmd = "BOnly" },
+    { "vim-scripts/BufOnly.vim", cmd = "BOnly" },
     {
-        'prettier/vim-prettier',
+        "prettier/vim-prettier",
         ft = { "javascript", "react", "typescript", "typescriptreact", "htmldjango", "svelte" },
-        cmd = { "Prettier" }
+        cmd = { "Prettier" },
     },
     {
-        'tpope/vim-abolish',
+        "tpope/vim-abolish",
         lazy = false,
         config = function()
-            vim.cmd 'source ~/.dotfiles/nvim/shortcuts.vim'
-        end
+            vim.cmd("source ~/.dotfiles/nvim/shortcuts.vim")
+        end,
     },
     {
         "svermeulen/text-to-colorscheme.nvim",
@@ -409,89 +407,61 @@ local M = {
                             "#00baff",
                             "#ff00ff",
                             "#ff007a",
-                        }
-                    }
-                }
-
-
-            }
-            )
-        end
+                        },
+                    },
+                },
+            })
+        end,
     },
     {
-        "folke/edgy.nvim",
-        event = "VeryLazy",
-        init = function()
-            vim.opt.laststatus = 3
-            vim.opt.splitkeep = "screen"
+        "HampusHauffman/block.nvim",
+        cmd = "Block",
+        config = function()
+            require("block").setup({})
         end,
-        opts = {
-            bottom = {
-                -- toggleterm / lazyterm at the bottom with a height of 40% of the screen
-                {
-                    ft = "toggleterm",
-                    size = { height = 0.4 },
-                    -- exclude floating windows
-                    filter = function(buf, win)
-                        return vim.api.nvim_win_get_config(win).relative == ""
-                    end,
-                },
-                {
-                    ft = "lazyterm",
-                    title = "LazyTerm",
-                    size = { height = 0.4 },
-                    filter = function(buf)
-                        return not vim.b[buf].lazyterm_cmd
-                    end,
-                },
-                "Trouble",
-                { ft = "qf",            title = "QuickFix" },
-                {
-                    ft = "help",
-                    size = { height = 20 },
-                    -- only show help buffers
-                    filter = function(buf)
-                        return vim.bo[buf].buftype == "help"
-                    end,
-                },
-                { ft = "spectre_panel", size = { height = 0.4 } },
+    },
+    {
+        "folke/flash.nvim",
+        event = "VeryLazy",
+        ---@type Flash.Config
+        opts = {},
+        keys = {
+            {
+                "s",
+                mode = { "n", "x", "o" },
+                function()
+                    -- default options: exact mode, multi window, all directions, with a backdrop
+                    require("flash").jump()
+                end,
+                desc = "Flash",
             },
-            left = {
-                -- Neo-tree filesystem always takes half the screen height
-                {
-                    title = "Neo-Tree",
-                    ft = "neo-tree",
-                    filter = function(buf)
-                        return vim.b[buf].neo_tree_source == "filesystem"
-                    end,
-                    size = { height = 0.5 },
-                },
-                {
-                    title = "Neo-Tree Git",
-                    ft = "neo-tree",
-                    filter = function(buf)
-                        return vim.b[buf].neo_tree_source == "git_status"
-                    end,
-                    pinned = true,
-                    open = "Neotree position=right git_status",
-                },
-                {
-                    title = "Neo-Tree Buffers",
-                    ft = "neo-tree",
-                    filter = function(buf)
-                        return vim.b[buf].neo_tree_source == "buffers"
-                    end,
-                    pinned = true,
-                    open = "Neotree position=top buffers",
-                },
-                {
-                    ft = "Outline",
-                    pinned = true,
-                    open = "SymbolsOutlineOpen",
-                },
-                -- any other neo-tree windows
-                "neo-tree",
+            {
+                "S",
+                mode = { "n", "o", "x" },
+                function()
+                    -- show labeled treesitter nodes around the cursor
+                    require("flash").treesitter()
+                end,
+                desc = "Flash Treesitter",
             },
+            {
+                "r",
+                mode = "o",
+                function()
+                    -- jump to a remote location to execute the operator
+                    require("flash").remote()
+                end,
+                desc = "Remote Flash",
+            },
+            {
+                "R",
+                mode = { "n", "o", "x" },
+                function()
+                    -- show labeled treesitter nodes around the search matches
+                    require("flash").treesitter_search()
+                end,
+                desc = "Treesitter Search",
+            }
         },
     }
 }
