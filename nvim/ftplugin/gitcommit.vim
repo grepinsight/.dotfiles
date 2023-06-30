@@ -6,3 +6,5 @@ setlocal nolist
 
 nnoremap <C-c><C-c> :wq<CR>
 inoremap <C-c><C-c> <ESC>:wq<CR>
+
+" when open this type start with insert mode

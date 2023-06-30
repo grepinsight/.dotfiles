@@ -1,19 +1,8 @@
---
-local parser_config = require "nvim-treesitter.parsers".get_parser_configs()
-parser_config.org = {
-  install_info = {
-    url = 'https://github.com/milisims/tree-sitter-org',
-    revision = 'main',
-    files = {'src/parser.c', 'src/scanner.cc'},
-  },
-  filetype = 'org',
-}
-
 -- require'sniprun'.setup({})
 require'nvim-treesitter.configs'.setup {
     highlight = {
         enable = true,
-        disable = {'org'}, -- Remove this to use TS highlighter for some of the highlights (Experimental)
+        disable = {'org', 'html'}, -- Remove this to use TS highlighter for some of the highlights (Experimental)
         additional_vim_regex_highlighting = {'org'}, -- Required since TS highlighter doesn't support all syntax features (conceal)
     },
     ensure_installed = {'org', 'rust', 'python'}, -- Or run :TSUpdate org
@@ -105,15 +94,5 @@ require'nvim-treesitter.configs'.setup {
             node_decremental = '<TAB>'
         }
     }
-}
-
-local parser_config = require "nvim-treesitter.parsers".get_parser_configs()
-parser_config.org = {
-  install_info = {
-    url = 'https://github.com/milisims/tree-sitter-org',
-    revision = 'main',
-    files = {'src/parser.c', 'src/scanner.cc'},
-  },
-  filetype = 'org',
 }
 

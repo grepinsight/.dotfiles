@@ -28,6 +28,9 @@ autocmd BufEnter * set laststatus=3
 
 autocmd FileType gitcommit set foldlevelstart=10 "open's all folds
 autocmd FileType gitcommit set foldlevel=10 "open's all folds
+" start insert mode if ft is gitcommit
+autocmd FileType gitcommit startinsert
+
 
 autocmd FileType make set foldlevelstart=1 "open's all folds
 autocmd FileType make set foldlevel=1 "open's all folds

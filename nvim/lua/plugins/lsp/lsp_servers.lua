@@ -1,7 +1,15 @@
 return {
+    ruff_lsp = {
+        name = "ruff-lsp", -- for mason installer
+        disabled = false,
+    },
+    html = {
+        name = "html-lsp", -- for mason installer
+        disabled = false,
+    },
     pyright = {
         name = "pyright",
-        disabled = false,
+        disabled = true,
         config = {
             settings = {
                 python = {

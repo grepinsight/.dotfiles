@@ -70,7 +70,9 @@ local M = {
         "kevinhwang91/nvim-ufo",
         lazy = false,
         dependencies = "kevinhwang91/promise-async",
-        config = [[require('config.ufo')]],
+        config = function()
+            require('config.ufo')
+        end
     },
     { "masukomi/vim-markdown-folding", ft = "markdown" },
     { "preservim/vim-markdown",        ft = "markdown" },
@@ -215,7 +217,9 @@ local M = {
             "nvim-treesitter/nvim-treesitter-textobjects",
             "nvim-treesitter/playground",
         },
-        config = [[require('config.treesitter')]],
+        config = function()
+            require('config.treesitter')
+        end,
         build = ":TSUpdate",
     },
     {
@@ -292,7 +296,7 @@ local M = {
     {
         "tpope/vim-fugitive",
         cmd = { "Git" },
-        ft = { "makrdown", "python", "rust" },
+        ft = { "makrdown", "python", "rust", "html", "css", "rmd", "r", "go", "cpp" },
     },
     "tpope/vim-rhubarb",
     {
@@ -325,8 +329,8 @@ local M = {
         cmd = "StartupTime",
         -- init is called during startup. Configuration for vim plugins typically should be set in an init function
         init = function()
-            vim.g.startuptime_tries = 10
-        end,
+    vim.g.startuptime_tries = 10
+    end,
     },
     -- {
     --     "jackMort/ChatGPT.nvim",
@@ -381,7 +385,7 @@ local M = {
     },
     {
         "tpope/vim-abolish",
-        lazy = false,
+        ft = {"markdown"},
         config = function()
             vim.cmd("source ~/.dotfiles/nvim/shortcuts.vim")
         end,
@@ -404,34 +408,6 @@ local M = {
             let test#python#pytest#options = g:test_extra . '-s -v'
             ]]
         end
-    },
-    {
-        "svermeulen/text-to-colorscheme.nvim",
-        lazy = false,
-        config = function()
-            require("text-to-colorscheme").setup({
-                ai = {
-                    openai_api_key = os.getenv("OPENAI_API_KEY"),
-                },
-                hex_palettes = {
-                    {
-                        name = "feeling_punk",
-                        background_mode = "dark",
-                        background = "#1c1c1c",
-                        foreground = "#f5f5f5",
-                        accents = {
-                            "#ff4d4d",
-                            "#ff9a00",
-                            "#f7e600",
-                            "#00d95a",
-                            "#00baff",
-                            "#ff00ff",
-                            "#ff007a",
-                        },
-                    },
-                },
-            })
-        end,
     },
     {
         "HampusHauffman/block.nvim",
