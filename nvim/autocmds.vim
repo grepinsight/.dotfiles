@@ -43,6 +43,8 @@ autocmd FileType rbrowser let g:golden_ratio_autocommand = 0
 let g:direnv_loaded = {}
 fun! DirenvReload()
     " Don't strip on these filetypes
+    if !system('test -f .envrc')
+        return
     if &ft =~ 'fzf'
         return
     endif

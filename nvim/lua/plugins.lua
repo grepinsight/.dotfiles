@@ -1,5 +1,23 @@
 local M = {
     {
+        'voldikss/vim-floaterm',
+        cmd = { "FloatermNew", "NNN", "LL" },
+        config = function()
+            vim.cmd [[command! NNN FloatermNew nnn]]
+            vim.cmd [[command! LL FloatermNew --height=0.9 --width=0.9 lazygit]]
+            vim.cmd [[command! LG FloatermNew lazygit]]
+            vim.cmd [[nnoremap   <silent>   <F7>    :FloatermNew<CR>]]
+            vim.cmd [[tnoremap   <silent>   <F7>    <C-\><C-n>:FloatermNew<CR>]]
+            vim.cmd [[nnoremap   <silent>   <F8>    :FloatermPrev<CR>]]
+            vim.cmd [[tnoremap   <silent>   <F8>    <C-\><C-n>:FloatermPrev<CR>]]
+            vim.cmd [[nnoremap   <silent>   <F9>    :FloatermNext<CR>]]
+            vim.cmd [[tnoremap   <silent>   <F9>    <C-\><C-n>:FloatermNext<CR>]]
+            vim.cmd [[nnoremap   <silent>   <F12>   :FloatermToggle<CR>]]
+            vim.cmd [[tnoremap   <silent>   <F12>   <C-\><C-n>:FloatermToggle<CR>]]
+        end
+    },
+
+    {
         "projekt0n/github-nvim-theme",
         lazy = false,    -- make sure we load this during startup if it is your main colorscheme
         priority = 1000, -- make sure to load this before all the other start plugins
@@ -177,6 +195,7 @@ local M = {
     { "tpope/vim-unimpaired", lazy = false },
     {
         "mg979/vim-visual-multi",
+        lazy = false,
         config = function()
             vim.g.VM_maps = {
                 ["Add Cursor Down"] = "<M-C-j>",
@@ -270,7 +289,7 @@ local M = {
     },
     {
         "chipsenkbeil/distant.nvim",
-        lazy = false,
+        lazy = true,
         branch = "v0.2",
         config = function()
             require("distant").setup({
@@ -417,6 +436,11 @@ local M = {
         end,
     },
     {
+        'mattn/emmet-vim',
+        ft = { "javascript", "react", "typescript", "typescriptreact", "html", "svelte" },
+
+    },
+    {
         "folke/flash.nvim",
         event = "VeryLazy",
         ---@type Flash.Config
@@ -459,7 +483,24 @@ local M = {
                 desc = "Treesitter Search",
             }
         },
-    }
+    },
+    {
+        "stefanlogue/hydrate.nvim",
+        -- This installs the latest stable release.
+        -- Set to false or omit to install the latest development version
+        version = "*",
+        opts = {
+            -- The interval between notifications in minutes
+            minute_interval = 1,
+
+            -- Accepted values are "default", "minimal", "simple" or "compact"
+            render_style = "default",
+            -- Loads time of last drink on startup
+            -- Useful if you don't have long-running neovim instances
+            -- or if you tend to have multiple instances running at a time
+            persist_timer = false
+        }
+    },
 }
 
 return M

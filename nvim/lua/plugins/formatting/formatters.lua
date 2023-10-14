@@ -4,24 +4,24 @@ local default_config_dir = vim.fn.stdpath("config") .. "/lua/plugins/formatting/
 -- See https://github.com/jose-elias-alvarez/null-ls.nvim/blob/main/doc/BUILTINS.md
 -- for a list of available built-in sources
 return {
-    -- isort = {
-    --     name = "isort", -- for mason installer
-    --     disabled = false,
-    --     to_register_wrap = function()
-    --         return require("null-ls").builtins.formatting.isort.with({
-    --             filetypes = { "python" },
-    --         })
-    --     end,
-    -- },
-    -- autoflake = {
-    --     name = "autoflake", -- for mason installer
-    --     disabled = false,
-    --     to_register_wrap = function()
-    --         return require("null-ls").builtins.formatting.autoflake.with({
-    --             filetypes = { "python" },
-    --         })
-    --     end,
-    -- },
+    isort = {
+        name = "isort", -- for mason installer
+        disabled = false,
+        to_register_wrap = function()
+            return require("null-ls").builtins.formatting.isort.with({
+                filetypes = { "python" },
+            })
+        end,
+    },
+    autoflake = {
+        name = "autoflake", -- for mason installer
+        disabled = false,
+        to_register_wrap = function()
+            return require("null-ls").builtins.formatting.autoflake.with({
+                filetypes = { "python" },
+            })
+        end,
+    },
     black = {
         name = "black", -- for mason installer
         disabled = false,
@@ -45,8 +45,16 @@ return {
         disabled = false,
         to_register_wrap = function()
             return require("null-ls").builtins.formatting.prettier.with({
-                filetypes = { "html", "css", "scss" },
+                filetypes = { "css", "scss" },
                 extra_args = { "--print-width", "120" },
+            })
+        end,
+    },
+    djlint = {
+        name = "djlint",
+        disabled = false,
+        to_register_wrap = function()
+            return require("null-ls").builtins.formatting.djlint.with({
             })
         end,
     },

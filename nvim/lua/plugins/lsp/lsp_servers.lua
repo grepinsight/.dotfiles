@@ -9,7 +9,7 @@ return {
     },
     pyright = {
         name = "pyright",
-        disabled = true,
+        disabled = false,
         config = {
             settings = {
                 python = {
@@ -23,7 +23,7 @@ return {
         },
     },
     -- pylsp = {
-    --     name = "pylsp",
+    --     name = "python-lsp-server",
     --     disabled = false,
     --     config = {
     --         settings = {
