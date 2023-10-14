@@ -1,5 +1,13 @@
 local M = {
     {
+        'voldikss/vim-floaterm',
+        cmd = { "FloatermNew", "NNN", "LL" },
+        config = function()
+            vim.cmd [[command! NNN FloatermNew nnn]]
+            vim.cmd [[command! LL FloatermNew lazygit]]
+        end
+    },
+    {
         "projekt0n/github-nvim-theme",
         lazy = false,    -- make sure we load this during startup if it is your main colorscheme
         priority = 1000, -- make sure to load this before all the other start plugins
@@ -29,11 +37,11 @@ local M = {
     {
         "SmiteshP/nvim-gps",
         dependencies = "nvim-treesitter/nvim-treesitter",
-        ft = { "python", "rust", "json" },
+        ft = { "python", "rust", "json", "yaml" },
     },
     {
         "romgrk/nvim-treesitter-context",
-        ft = { "python", "r", "rmd", "cpp" },
+        ft = { "python", "r", "rmd", "cpp", "yaml" },
         dependencies = "nvim-treesitter/nvim-treesitter",
         config = function()
             require("treesitter-context").setup({
@@ -210,7 +218,7 @@ local M = {
 
     {
         "nvim-treesitter/nvim-treesitter",
-        ft = { "python", "org", "lua", "markdown", "html", "rmd", "r", "rust", "go", "cpp", "svelte" },
+        ft = { "python", "org", "lua", "markdown", "html", "rmd", "r", "rust", "go", "cpp", "svelte", "yaml" },
         dependencies = {
             "nvim-treesitter/nvim-treesitter-textobjects",
             "nvim-treesitter/playground",
@@ -291,7 +299,7 @@ local M = {
     -- Git
     {
         "tpope/vim-fugitive",
-        cmd = { "Git" },
+        cmd = { "Git", "Gwrite" },
         ft = { "makrdown", "python", "rust" },
     },
     "tpope/vim-rhubarb",
