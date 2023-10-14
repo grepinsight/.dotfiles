@@ -28,6 +28,9 @@ autocmd BufEnter * set laststatus=3
 
 autocmd FileType gitcommit set foldlevelstart=10 "open's all folds
 autocmd FileType gitcommit set foldlevel=10 "open's all folds
+" start insert mode if ft is gitcommit
+autocmd FileType gitcommit startinsert
+
 
 autocmd FileType make set foldlevelstart=1 "open's all folds
 autocmd FileType make set foldlevel=1 "open's all folds
@@ -40,6 +43,8 @@ autocmd FileType rbrowser let g:golden_ratio_autocommand = 0
 let g:direnv_loaded = {}
 fun! DirenvReload()
     " Don't strip on these filetypes
+    if !system('test -f .envrc')
+        return
     if &ft =~ 'fzf'
         return
     endif

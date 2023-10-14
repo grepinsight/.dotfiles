@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
 NEOVIM_DIST="nvim-linux64"
-NEOVIM_VERSION="v0.9.1"
+NEOVIM_VERSION="v0.9.2"
+# NEOVIM_VERSION="nightly"
 set -x
 
 IS_MAC=$(uname -a | grep Darwin)

@@ -610,3 +610,5 @@ alias xt="xsv table"
 alias fd1="fd --maxdepth 1"
 alias bpython="stty -ixon && bpython"
 alias fdi="fd -i"
+
+alias dr="direnv reload"

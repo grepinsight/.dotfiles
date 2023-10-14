@@ -306,7 +306,7 @@ smap <silent><expr> <C-y> luasnip#choice_active() ? '<Plug>luasnip-expand-or-jum
 nnoremap ,k :lua require("harpoon.mark").add_file()<CR>
 nmap ,l yor
 nnoremap ,m :Magit<CR>
-nnoremap ,n <cmd>lua require'telescope.builtin'.live_grep{}<CR>
+nnoremap ,n :Navbuddy<CR>
 nnoremap ,o  :only<CR>
 nnoremap ,O :BOnly<CR>
 nnoremap ,p :e <C-R>=resolve(expand("%"))<CR>
