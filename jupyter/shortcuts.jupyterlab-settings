@@ -1,5 +1,12 @@
 {
     "shortcuts": [
+         {
+            "command": "notebook:run-in-console",
+            "keys": [
+                "Shift Ctrl Enter"
+            ],
+            "selector": ".jp-Notebook.jp-mod-editMode"
+        },
         {
             "command": "notebook:run-all-above",
             "keys": [
@@ -9,9 +16,17 @@
             "args": {}
         },
         {
+            "command": "notebook:run-all-below",
+            "keys": [
+                "Shift Alt Cmd N"
+            ],
+            "selector": "[data-jp-code-runner]",
+            "args": {}
+        },
+        {
             "command": "runmenu:run-all",
             "keys": [
-                "Ctrl F9"
+                "Ctrl F9",
             ],
             "selector": "body",
             "args": {}

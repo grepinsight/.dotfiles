@@ -612,3 +612,6 @@ alias bpython="stty -ixon && bpython"
 alias fdi="fd -i"
 
 alias dr="direnv reload"
+alias mcn="mamba create -n"
+alias glow="glow -p"
+alias gr="glow -p README.md"

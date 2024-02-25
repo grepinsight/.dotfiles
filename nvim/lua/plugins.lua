@@ -501,6 +501,10 @@ local M = {
             persist_timer = false
         }
     },
+    {
+        "goerz/jupytext.vim",
+        lazy = false
+    }
 }
 
 return M
