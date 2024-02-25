@@ -8,7 +8,6 @@ disabled = true
 show_percentage = true
 show_swap = true
 threshold = -1
-symbol = " "
 separator = "/"
 style = "bold dimmed green"
 
@@ -25,7 +24,6 @@ renamed = "👅"
 deleted = "🗑"
 
 [git_branch]
-symbol = "🌲"
 
 [git_commit]
 commit_hash_length = 7
@@ -68,13 +66,9 @@ utc_time_offset = "-8"
 
 
 [jobs]
-symbol = "+ "
-threshold = 0
 
 [character]
-symbol = "-> "
 error_symbol = "✗"
-use_symbol_for_status = true
 
 [username]
 disabled = false
