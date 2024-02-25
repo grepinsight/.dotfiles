@@ -46,44 +46,44 @@ set listchars=tab:→\ ,eol:↲,nbsp:␣,trail:•,extends:⟩,precedes:⟨
 
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
-    vim.fn.system({
-        "git",
-        "clone",
-        "--filter=blob:none",
-        "https://github.com/folke/lazy.nvim.git",
-        "--branch=stable", -- latest stable release
-        lazypath,
-    })
+  vim.fn.system({
+    "git",
+    "clone",
+    "--filter=blob:none",
+    "https://github.com/folke/lazy.nvim.git",
+    "--branch=stable", -- latest stable release
+    lazypath,
+  })
 end
 vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
-    -- {
-    --     "LazyVim/LazyVim",
-    --     import = "lazyvim.plugins",
-    -- },
-    -- { import = "lazyvim.plugins.extras.ui.edgy" },
-    -- { import = "lazyvim.plugins.extras.editor.flash" },
-    { import = "plugins" },
+  -- {
+  --     "LazyVim/LazyVim",
+  --     import = "lazyvim.plugins",
+  -- },
+  -- { import = "lazyvim.plugins.extras.ui.edgy" },
+  -- { import = "lazyvim.plugins.extras.editor.flash" },
+  { import = "plugins" },
 }, {
-    defaults = { lazy = true },
-    install = { colorscheme = { "tokyonight" } },
-    checker = { enabled = false },
-    performance = {
-        rtp = {
-            disabled_plugins = {
-                "gzip",
-                "matchit",
-                "matchparen",
-                "netrwPlugin",
-                "tarPlugin",
-                "tohtml",
-                "tutor",
-                "zipPlugin",
-            },
-        },
+  defaults = { lazy = true },
+  install = { colorscheme = { "tokyonight" } },
+  checker = { enabled = false },
+  performance = {
+    rtp = {
+      disabled_plugins = {
+        "gzip",
+        "matchit",
+        "matchparen",
+        "netrwPlugin",
+        "tarPlugin",
+        "tohtml",
+        "tutor",
+        "zipPlugin",
+      },
     },
-    -- debug = true,
+  },
+  -- debug = true,
 })
 
 vim.cmd("source ~/.dotfiles/vim/leaders.vim")
@@ -93,7 +93,7 @@ vim.cmd("source ~/.dotfiles/nvim/autocmds.vim")
 vim.cmd("source ~/.dotfiles/vim/commands.vim")
 
 if vim.fn.filereadable("~/.vimrc_work") then
-    vim.cmd("source ~/.vimrc_work")
+  vim.cmd("source ~/.vimrc_work")
 end
 
 vim.cmd("let g:airline#extensions#tabline#enabled = 1")
