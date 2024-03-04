@@ -62,13 +62,18 @@ format = """[(docker)]($style)"""
 disabled = false
 format = "🕙 [\\[ $time \\]]($style) "
 time_format = "%T"
-utc_time_offset = "-8"
 
 
 [jobs]
+symbol = "+ "
+symbol_threshold = 1
+number_threshold = 2
 
 [character]
+success_symbol = "✓"
 error_symbol = "✗"
+vimcmd_symbol = '[❮](bold green)'
+
 
 [username]
 disabled = false

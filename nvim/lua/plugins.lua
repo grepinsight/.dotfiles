@@ -526,6 +526,10 @@ local M = {
       -- refer to the configuration section below
     },
   },
+{
+    "goerz/jupytext.vim",
+    lazy = false
+}
 }
 
 return M
