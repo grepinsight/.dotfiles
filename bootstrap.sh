@@ -159,15 +159,6 @@ if which git 2>/dev/null >&2 ; then
     fi
 
     mkdir -p $HOME/src
-    if [[ ! -e $HOME/src/gitstats ]]; then
-        echo "installing gitstats"
-        cd $HOME/src && git clone https://github.com/hoxu/gitstats.git && cd -
-    fi
-
-    if [[ ! -e $HOME/src/git-radar ]]; then
-        echo "installing git-radar"
-        cd $HOME/src && git clone https://github.com/michaeldfallen/git-radar && cd -
-    fi
 
     if [[ ! -e $HOME/src/productivity ]]; then
         echo "installing productivity"
