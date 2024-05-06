@@ -18,6 +18,8 @@ matches:
     replace: 📊
   - trigger: ;qq
     replace: ❓
+  - trigger: ;ans
+    replace: 📢
   - trigger: ;morning
     replace: |
       - [ ] Vitamin
@@ -199,12 +201,10 @@ matches:
     replace: |
       # DRAFT:
       $|$
-  - trigger: ;ju-pre
+  - trigger: ;reload
     replace: |
       %load_ext autoreload
       %autoreload 2
-      %load_ext nb_black
-      %load_ext lab_black
   - trigger: ;ju-s-ld
     replace: |
       import os
@@ -357,6 +357,12 @@ matches:
     vars:
       - name: "clipboard"
         type: "clipboard"
+  - trigger: ";configj"
+    replace: |-
+      %config InteractiveShell.ast_node_interactivity="last_expr_or_assign"
+    vars:
+      - name: "clipboard"
+        type: "clipboard"
   - trigger: ";greet"
     form: |
       Hey [[name]],
@@ -396,3 +402,25 @@ matches:
 
       ## Progress Tracking
       - **Updates and Notes**: [[progress_notes]]
+  - trigger: ;tyc
+    replace: Thank you for clarification
+  - trigger: ;journal
+    replace: |
+
+      ## Best Thing That Happend Today
+
+      ## What I am Thankful for
+
+      ## Today I Learned
+
+      ## Today I helped
+
+      #gratitude #thankful #감사노트 #journal
+
+
+  - trigger: ;sf
+    replace: SELECT * FROM $|$
+  - trigger: ;sc
+    replace: SELECT COUNT(*) as N FROM $|$
+  - trigger: ;sgc
+    form: SELECT [[column]], COUNT(*) as N FROM [[table]] GROUP BY ALL

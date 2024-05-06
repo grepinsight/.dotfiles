@@ -221,7 +221,8 @@ nnoremap <Leader>mg :Magit<CR>
 "nnoremap <LocalLeader>c :ccl<CR>
 nnoremap <LocalLeader><LocalLeader> <C-^>
 "nnoremap <LocalLeader>a :A <CR>
-nnoremap <LocalLeader>af :lua require("harpoon.mark").add_file()<CR>
+nnoremap <leader>hp :lua require("harpoon.mark").add_file()<CR>
+nnoremap <Leader>hl :lua require("harpoon.ui").toggle_quick_menu()<CR>
 nnoremap <leader>aa :A <CR>
 nnoremap <LocalLeader>1 :lua require("harpoon.ui").nav_file(1)<CR>
 nnoremap <LocalLeader>2 :lua require("harpoon.ui").nav_file(2)<CR>
@@ -322,13 +323,15 @@ nnoremap ,v :call fzf#run(fzf#wrap({'source': 'fd $FD_OPTS . $HOME/Thoughts', 's
 nnoremap ,w :NvimTreeToggle<CR>
 nnoremap ,x :Focus<CR>
 "nnoremap ,y :call ChooseTerm("term-pane", 0)<CR>
-vnoremap <silent> ,y :'<,'>w !rpbcopy<CR><CR>
+" vnoremap <silent> ,y :'<,'>w !rpbcopy<CR><CR>
+vnoremap <silent> ,y "0y :new<CR>P:%!strip.pl<CR>:%!rpbcopy<CR>:bwipe!<CR>
 nnoremap <silent> ,y :!echo <C-R>=expand("<cword>")<CR> \| rpbcopy <CR><CR>
 nnoremap ,z :Focus2<CR>
 
 vnoremap <silent> ,e :'<,'>!equalify<CR><CR>
 vnoremap <silent> ,i :'<,'>!itemify<CR><CR>
 vnoremap <silent> ,l :'<,'>!listify<CR><CR>
+vnoremap <silent> ,b :'<,'>!command_formatter<CR><CR>
 vnoremap <silent> ,,l :'<,'>!listify --single-quote<CR><CR>
 vnoremap <silent> ,j :'<,'>!myconvert yaml2json --stdin --json \| jq -r '.' <CR><CR>
 vnoremap <silent> ,q :'<,'>!quotify<CR><CR>
@@ -353,7 +356,6 @@ nnoremap [4 :lua require("harpoon.term").gotoTerminal(4)<CR>
 
 
 " Ctrl <C-***>
-nnoremap <C-e> :lua require("harpoon.ui").toggle_quick_menu()<CR>
 " nnoremap <C-y> :lua require("harpoon.cmd-ui").toggle_quick_menu()<CR>
 
 
@@ -471,3 +473,12 @@ nmap zip vip\\c^
 nnoremap <D-v> "+p
 inoremap <D-v> <esc>"+p
 
+
+
+cabbrev ㅊㅂ cq
+cabbrev ㅈㅂ wq
+nnoremap ㅎㅎ gg
+nnoremap ㅓ j
+nnoremap ㅗ h
+nnoremap ㅏ k
+nnoremap ㅣ l

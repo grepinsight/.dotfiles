@@ -150,6 +150,11 @@ bindkey '^G' fzf-cd-widget
 
 
 export PATH="$HOME/.poetry/bin:$PATH"
+
+if [[ -e $HOME/.cargo/env ]]; then
+    source "$HOME/.cargo/env"
+fi
+
 command -v direnv  > /dev/null 2>&1 && eval "$(direnv hook zsh)"
 command -v hsearch > /dev/null 2>&1 && eval "$(hsearch init zsh)"
 command -v zoxide  > /dev/null 2>&1 && eval "$(zoxide init zsh)"

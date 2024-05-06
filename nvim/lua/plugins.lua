@@ -204,13 +204,15 @@ local M = {
     end,
   },
   {
-    "junegunn/fzf",
-    build = "./install --all",
-    dir = "~/.fzf",
-    lazy = false,
-  },
-  {
     "junegunn/fzf.vim",
+    dependencies = {
+      {
+        "junegunn/fzf",
+        dir = "~/.fzf",
+        build = "./install --all",
+        lazy = false,
+      },
+    },
     lazy = false,
   },
   {
@@ -392,6 +394,7 @@ local M = {
       require("twilight").setup({
         exclude = { "lua" },
         treesitter = true,
+        context = 0,
       })
     end,
   },
@@ -526,10 +529,14 @@ local M = {
       -- refer to the configuration section below
     },
   },
-{
+  {
     "goerz/jupytext.vim",
-    lazy = false
-}
+    lazy = false,
+  },
+  {
+    "tommcdo/vim-exchange",
+    lazy = false,
+  },
 }
 
 return M
