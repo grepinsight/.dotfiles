@@ -537,6 +537,21 @@ local M = {
     "tommcdo/vim-exchange",
     lazy = false,
   },
+  {
+    "chrisgrieser/nvim-various-textobjs",
+    lazy = false,
+    opts = { useDefaultKeymaps = true },
+  },
+  {
+    "stevearc/overseer.nvim",
+    ft = { "python", "cpp" },
+    config = function()
+        require('overseer').setup({
+            templates = { "builtin", "user.cpp_build" },
+        })
+
+    end,
+  },
 }
 
 return M
