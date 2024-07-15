@@ -546,11 +546,22 @@ local M = {
     "stevearc/overseer.nvim",
     ft = { "python", "cpp" },
     config = function()
-        require('overseer').setup({
-            templates = { "builtin", "user.cpp_build" },
-        })
-
+      require("overseer").setup({
+        templates = { "builtin", "user.cpp_build" },
+      })
     end,
+  },
+  {
+    "OXY2DEV/markview.nvim",
+    ft = "markdown",
+
+    dependencies = {
+      -- You may not need this if you don't lazy load
+      -- Or if the parsers are in your $RUNTIMEPATH
+      "nvim-treesitter/nvim-treesitter",
+
+      "nvim-tree/nvim-web-devicons",
+    },
   },
 }
 

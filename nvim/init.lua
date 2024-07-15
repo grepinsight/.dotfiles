@@ -100,3 +100,4 @@ vim.cmd("let g:airline#extensions#tabline#enabled = 1")
 vim.cmd("let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6 } }")
 
 require("config.globals")
+require("config.keymaps")

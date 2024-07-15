@@ -64,7 +64,6 @@ nmap <silent> t<C-f> :TestFile<CR>
 nmap <silent> t<C-s> :TestSuite<CR>
 nmap <silent> t<C-l> :TestLast<CR>
 nmap <silent> t<C-g> :TestVisit<CR>
-nnoremap <silent> <C-p> :Telescope find_files<CR>
 
 " # Bracket Leader keys
 nnoremap <silent> ]j :call NextClosedFold('j')<cr>
