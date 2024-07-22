@@ -5,6 +5,7 @@ vim.g.maplocalleader = " "
 -- vim.g.do_filetype_lua = 0
 -- vim.g.did_load_filetypes = 0
 
+vim.g.editorconfig = true
 vim.opt.autoread = true -- automatically read changed file again
 vim.opt.autowrite = true -- Write the contents of the file, if it has been modified
 vim.opt.cursorline = true --highlight current line

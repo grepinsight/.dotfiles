@@ -69,3 +69,4 @@ Untitled*.md
 pytestdebug.log
 
 .metaflow
+*null-ls*
