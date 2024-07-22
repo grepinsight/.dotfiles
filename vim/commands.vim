@@ -12,7 +12,7 @@ command! Kanban            execute "normal! \<esc>:e  ~/Dropbox/vimwiki/shared/k
 command! Meeting           execute "normal! \<esc>:sp ~/Dropbox/vimwiki/shared/meeting--\<C-R>=strftime(\"%Y-%m-%d\")\<CR>.md\<CR>"
 command! Month             execute "normal! \<esc>:e  ~/Dropbox/vimwiki/shared/diary/\<C-R>=strftime(\"%Y-%m\")\<CR>.md\<CR>"
 command! Stats             execute "normal! \<esc>:e  ~/Dropbox/vimwiki/shared/statistics.org\<CR>"
-command! Today             execute "normal! \<esc>:e  ~/Dropbox/vimwiki/shared/diary/\<C-R>=strftime(\"%Y-%m-%d\")\<CR>.md\<CR>"
+command! Today             execute "normal! \<esc>:e  ~/Thoughts/02-Calendar/Daily/\<C-R>=strftime(\"%Y-%m-%d\")\<CR>.md\<CR>"
 command! Topics            execute "normal! \<esc>:e  ~/Dropbox/vimwiki/shared/topics.org\<CR>"
 command! Week              execute "normal! \<esc>:e  ~/Dropbox/vimwiki/shared/diary/\<C-R>=strftime(\"%Y-week%V\")\<CR>.md\<CR>"
 command! Work              execute "normal! \<esc>:e  ~/Dropbox/vimwiki/shared/work.org\<CR>"

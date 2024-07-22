@@ -428,3 +428,6 @@ matches:
     form: SELECT [[column]], COUNT(*) as N FROM [[table]] GROUP BY ALL
   - trigger: diffbw
     replace: difference between $|$
+  - trigger: pd.Dat
+    replace: pd.DataFrame($|$)
+
