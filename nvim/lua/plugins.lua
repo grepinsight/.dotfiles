@@ -255,7 +255,17 @@ local M = {
     end,
   },
   { "mhinz/vim-startify", lazy = false },
-  { "github/copilot.vim", lazy = false },
+  {
+    "zbirenbaum/copilot.lua",
+    cmd = "Copilot",
+    event = "InsertEnter",
+    config = function()
+      require("copilot").setup({
+        suggestion = { enabled = true },
+        panel = { enabled = true, auto_refresh = true },
+      })
+    end,
+  },
   { "tpope/vim-surround", lazy = false }, -- surround text objects with whatever
   { "tpope/vim-repeat", lazy = false },
   { "tpope/vim-dispatch", cmd = { "Dispatch", "Make", "Focus", "Start" } },
