@@ -26,3 +26,8 @@ set signcolumn=yes
 
 
 let g:rustfmt_autosave = 1
+
+
+syntax keyword Normal function conceal cchar=λ
+syntax keyword rustMacro println conceal cchar=프린트엘렌
+syntax keyword Keyword return conceal cchar=>

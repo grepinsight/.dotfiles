@@ -5,6 +5,11 @@ trim_trailing_whitespace = true
 indent_style = space
 indent_size = 4
 
+[*.sql]
+indent_style = space
+indent_size = 4
+trim_trailing_whitespace = true
+
 [*.org]
 trim_trailing_whitespace = false
 
