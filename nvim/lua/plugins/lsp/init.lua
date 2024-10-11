@@ -190,7 +190,7 @@ local lsp_config_setup = function()
       vim.lsp.buf.execute_command(params)
     end
 
-    nvim_lsp.tsserver.setup {
+    nvim_lsp.ts_ls.setup {
         on_attach = on_attach,
         -- capabilities = capabilities,
         commands = {

@@ -23,12 +23,6 @@ matches:
   - trigger: ;morning
     replace: |
       - [ ] Vitamin
-  - trigger: ;ghtest
-    replace: GuardantLUNAR-2 Test
-  - trigger: ;ghtr
-    replace: GuardantLUNAR-2 Test Result
-  - trigger: ;ghmr
-    replace: GuardantLUNAR-2 Test MR Score
   - trigger: ;ai
     replace: "%reload_ext jupyter_ai"
   - trigger: ;tt
@@ -428,6 +422,110 @@ matches:
     form: SELECT [[column]], COUNT(*) as N FROM [[table]] GROUP BY ALL
   - trigger: diffbw
     replace: difference between $|$
-  - trigger: pd.Dat
+  - trigger: Difference b
+    replace: Difference between $|$
+  - trigger: pd.df
     replace: pd.DataFrame($|$)
-
+  - trigger: \tex
+    replace: \text{$|$}
+  - trigger: ;question
+    replace: |
+        - what:
+        - who:
+        - where:
+        - when:
+        - why:
+        - how:
+  - trigger: "pv\t"
+    replace: print(f"{$|$ = }")
+  - trigger: ";pv"
+    replace: print(f"{$|$ = }")
+  - trigger: "pvv\t"
+    replace: rint(f"{$|$ = }")
+  - trigger: .ct
+    replace: .count()
+  - trigger: .dd
+    replace: .drop_duplicates()
+  - trigger: .dc
+    replace: .drop(columns=["$|$"])
+  - trigger: .nu
+    replace: .nunique()
+  - trigger: .iv
+    replace: .index.get_level_values("$|$")
+  - trigger: .iglv
+    replace: .index.get_level_values("$|$")
+  - trigger: .glv
+    replace: .get_level_values("$|$")
+  - trigger: .mn
+    replace: .mean()
+  - trigger: .ri
+    replace: .reset_index()
+  - trigger: .rdi
+    replace: .reset_index(drop=True)
+  - trigger: .gb
+    replace: .groupby(["$|$"])
+  - trigger: .si
+    replace: .set_index(["$|$"])
+  - trigger: .set_i
+    replace: .set_index(["$|$"])
+  - trigger: .drop
+    replace: .drop(columns=["$|$"])
+  - trigger: .res
+    replace: .reset_index()
+  - trigger: .qr
+    replace: .query("$|$")
+  - trigger: .rnac
+    replace: .rename_axis(columns=None)
+  - trigger: .rna
+    replace: .rename_axis($|$)
+  - trigger: .rc
+    replace: .rename(columns={"$|$"})
+  - trigger: .rnc
+    replace: .rename(columns={"$|$"})
+  - trigger: .hd
+    replace: .head()
+  - trigger: .sk
+    replace: .stack(future_stack=True)
+  - trigger: .sv
+    replace: .sort_values()
+  - trigger: .tl
+    replace: .tail()
+  - trigger: .us
+    replace: .unstack()
+  - trigger: .vc
+    replace: .value_counts()
+  - trigger: .db
+    replace: .describe()
+  - trigger: .ds
+    replace: .describe()
+  - trigger: .lc
+    replace: .loc[:, ["$|$"]]
+  - trigger: ":localip"
+    replace: "{{output}}"
+    vars:
+      - name: output
+        type: shell
+        params:
+          cmd: "curl https://ipinfo.io/ip"
+  - trigger: ":pyscript"
+    replace: "{{output}}"
+    vars:
+      - name: output
+        type: script
+        params:
+          args:
+            - /Users/allee/miniforge3/bin/python
+            - /Users/allee/test.py
+  - trigger: "wi\t"
+    replace: "What is $|$?"
+  - trigger: "wiq\t"
+    replace: 'What is "$|$"?'
+  - trigger: "wm\t"
+    replace: 'What does $|$ mean?'
+  - trigger: "wmq\t"
+    replace: 'What does "$|$" mean?'
+  - trigger: "wd\t"
+    form: |-
+      What is the difference between [[field1]] and [[field2]]?
+  - trigger: ;pt
+    replace: print('test')
