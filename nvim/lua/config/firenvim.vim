@@ -8,16 +8,19 @@ let s:fc['.*'] = { 'selector': 'textarea, div[role="textbox"]', 'priority': 0, '
 
 if exists('g:started_by_firenvim')
     " autocmd vimenter * ++nested colorscheme tokyonight
-    echom("bye")
+    echom("Reloaded")
+    echom("Current time: " . strftime("%H:%M:%S"))
+    echom(strftime("%A, %I:%M%p, %Y-%m-%d"))
     " colorscheme tokyonight
 
 
-    set background=light
-    colorscheme PaperColor
+    " set background=light
+    " colorscheme PaperColor
     let g:startify_disable_at_vimenter = 1
     let g:airline_extensions = []
     set guifont=Monaco:h15
     set lines=30
+    set columns=110
     augroup firenvim_setting
       autocmd!
       autocmd BufEnter dbc*. nnoremap ZZ :wq!

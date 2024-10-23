@@ -561,18 +561,18 @@ local M = {
       })
     end,
   },
-  {
-    "OXY2DEV/markview.nvim",
-    ft = "markdown",
-
-    dependencies = {
-      -- You may not need this if you don't lazy load
-      -- Or if the parsers are in your $RUNTIMEPATH
-      "nvim-treesitter/nvim-treesitter",
-
-      "nvim-tree/nvim-web-devicons",
-    },
-  },
+  -- {
+  --   "OXY2DEV/markview.nvim",
+  --   ft = "markdown",
+  --
+  --   dependencies = {
+  --     -- You may not need this if you don't lazy load
+  --     -- Or if the parsers are in your $RUNTIMEPATH
+  --     "nvim-treesitter/nvim-treesitter",
+  --
+  --     "nvim-tree/nvim-web-devicons",
+  --   },
+  -- },
   {
     "vim-pandoc/vim-rmarkdown",
     ft = { "rmd", "rmarkdown" },
@@ -614,6 +614,229 @@ local M = {
   --     },
   --   },
   -- },
+  {
+    "yetone/avante.nvim",
+    event = "VeryLazy",
+    lazy = false,
+    version = false, -- set this if you want to always pull the latest change
+    opts = {
+      -- add any opts here
+    },
+    -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
+    build = "make",
+    -- build = "powershell -ExecutionPolicy Bypass -File Build.ps1 -BuildFromSource false" -- for windows
+    dependencies = {
+      "nvim-treesitter/nvim-treesitter",
+      "stevearc/dressing.nvim",
+      "nvim-lua/plenary.nvim",
+      "MunifTanjim/nui.nvim",
+      --- The below dependencies are optional,
+      "nvim-tree/nvim-web-devicons", -- or echasnovski/mini.icons
+      "zbirenbaum/copilot.lua", -- for providers='copilot'
+      {
+        -- support for image pasting
+        "HakonHarnes/img-clip.nvim",
+        event = "VeryLazy",
+        opts = {
+          -- recommended settings
+          default = {
+            embed_image_as_base64 = false,
+            prompt_for_file_name = false,
+            drag_and_drop = {
+              insert_mode = true,
+            },
+            -- required for Windows users
+            use_absolute_path = true,
+          },
+        },
+      },
+      {
+        -- Make sure to set this up properly if you have lazy=true
+        "MeanderingProgrammer/render-markdown.nvim",
+        opts = {
+          file_types = { "markdown", "Avante" },
+        },
+        ft = { "markdown", "Avante" },
+      },
+    },
+  },
+  {
+    {
+      "benlubas/molten-nvim",
+      version = "^1.0.0", -- use version <2.0.0 to avoid breaking changes
+      ft = { "python" },
+      dependencies = { "3rd/image.nvim" },
+      build = ":UpdateRemotePlugins",
+      init = function()
+        -- these are examples, not defaults. Please see the readme
+        vim.g.molten_image_provider = "image.nvim"
+        vim.g.molten_output_win_max_height = 20
+      end,
+      config = function()
+        vim.keymap.set("n", "<localleader>mi", ":MoltenInit<CR>", { silent = true, desc = "Initialize the plugin" })
+        vim.keymap.set(
+          "n",
+          "<localleader>e",
+          ":MoltenEvaluateOperator<CR>",
+          { silent = true, desc = "run operator selection" }
+        )
+        vim.keymap.set("n", "<localleader>rl", ":MoltenEvaluateLine<CR>", { silent = true, desc = "evaluate line" })
+        vim.keymap.set(
+          "n",
+          "<localleader>rr",
+          ":MoltenReevaluateCell<CR>",
+          { silent = true, desc = "re-evaluate cell" }
+        )
+        vim.keymap.set(
+          "v",
+          "<localleader>r",
+          ":<C-u>MoltenEvaluateVisual<CR>gv",
+          { silent = true, desc = "evaluate visual selection" }
+        )
+      end,
+    },
+    {
+      -- see the image.nvim readme for more information about configuring this plugin
+      "3rd/image.nvim",
+      opts = {
+        backend = "kitty", -- whatever backend you would like to use
+        max_width = 100,
+        max_height = 12,
+        max_height_window_percentage = math.huge,
+        max_width_window_percentage = math.huge,
+        window_overlap_clear_enabled = true, -- toggles images when windows are overlapped
+        window_overlap_clear_ft_ignore = { "cmp_menu", "cmp_docs", "" },
+      },
+    },
+  },
+  {
+    "vhyrro/luarocks.nvim",
+    priority = 1000, -- Very high priority is required, luarocks.nvim should run as the first plugin in your config.
+    config = true,
+    opts = {
+      rocks = { "fzy", "magick" }, -- specifies a list of rocks to install
+      -- luarocks_build_args = { "--with-lua=/my/path" }, -- extra options to pass to luarocks's configuration script
+    },
+  },
+  {
+    "christoomey/vim-tmux-navigator",
+    cmd = {
+      "TmuxNavigateLeft",
+      "TmuxNavigateDown",
+      "TmuxNavigateUp",
+      "TmuxNavigateRight",
+      "TmuxNavigatePrevious",
+    },
+    keys = {
+      { "<c-h>", "<cmd><C-U>TmuxNavigateLeft<cr>" },
+      { "<c-j>", "<cmd><C-U>TmuxNavigateDown<cr>" },
+      { "<c-k>", "<cmd><C-U>TmuxNavigateUp<cr>" },
+      { "<c-l>", "<cmd><C-U>TmuxNavigateRight<cr>" },
+      { "<c-\\>", "<cmd><C-U>TmuxNavigatePrevious<cr>" },
+    },
+  },
+  {
+    "kiyoon/python-import.nvim",
+    -- build = "pipx install . --force",
+    build = "uv tool install . --force --reinstall",
+    keys = {
+      {
+        "<M-CR>",
+        function()
+          require("python_import.api").add_import_current_word_and_notify()
+        end,
+        mode = { "i", "n" },
+        silent = true,
+        desc = "Add python import",
+        ft = "python",
+      },
+      {
+        "<M-CR>",
+        function()
+          require("python_import.api").add_import_current_selection_and_notify()
+        end,
+        mode = "x",
+        silent = true,
+        desc = "Add python import",
+        ft = "python",
+      },
+      {
+        "<space>i",
+        function()
+          require("python_import.api").add_import_current_word_and_move_cursor()
+        end,
+        mode = "n",
+        silent = true,
+        desc = "Add python import and move cursor",
+        ft = "python",
+      },
+      {
+        "<space>i",
+        function()
+          require("python_import.api").add_import_current_selection_and_move_cursor()
+        end,
+        mode = "x",
+        silent = true,
+        desc = "Add python import and move cursor",
+        ft = "python",
+      },
+      {
+        "<space>tr",
+        function()
+          require("python_import.api").add_rich_traceback()
+        end,
+        silent = true,
+        desc = "Add rich traceback",
+        ft = "python",
+      },
+    },
+    opts = {
+      -- Example 1:
+      -- Default behaviour for `tqdm` is `from tqdm.auto import tqdm`.
+      -- If you want to change it to `import tqdm`, you can set `import = {"tqdm"}` and `import_from = {tqdm = nil}` here.
+      -- If you want to change it to `from tqdm import tqdm`, you can set `import_from = {tqdm = "tqdm"}` here.
+
+      -- Example 2:
+      -- Default behaviour for `logger` is `import logging`, ``, `logger = logging.getLogger(__name__)`.
+      -- If you want to change it to `import my_custom_logger`, ``, `logger = my_custom_logger.get_logger()`,
+      -- you can set `statement_after_imports = {logger = {"import my_custom_logger", "", "logger = my_custom_logger.get_logger()"}}` here.
+      extend_lookup_table = {
+        ---@type string[]
+        import = {
+          -- "tqdm",
+        },
+
+        ---@type table<string, string>
+        import_as = {
+          -- These are the default values. Here for demonstration.
+          -- np = "numpy",
+          -- pd = "pandas",
+        },
+
+        ---@type table<string, string>
+        import_from = {
+          -- tqdm = nil,
+          -- tqdm = "tqdm",
+        },
+
+        ---@type table<string, string[]>
+        statement_after_imports = {
+          -- logger = { "import my_custom_logger", "", "logger = my_custom_logger.get_logger()" },
+        },
+      },
+
+      ---Return nil to indicate no match is found and continue with the default lookup
+      ---Return a table to stop the lookup and use the returned table as the result
+      ---Return an empty table to stop the lookup. This is useful when you want to add to wherever you need to.
+      ---@type fun(winnr: integer, word: string, ts_node: TSNode?): string[]?
+      custom_function = function(winnr, word, ts_node)
+        -- if vim.endswith(word, "_DIR") then
+        --   return { "from my_module import " .. word }
+        -- end
+      end,
+    },
+  },
+  "rcarriga/nvim-notify",
 }
 
 return M

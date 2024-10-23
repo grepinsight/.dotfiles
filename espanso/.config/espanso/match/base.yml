@@ -12,10 +12,6 @@ matches:
       # ---- Scratch Pad Start
       $|$
       # ---- Scratch Pad End
-  - trigger: ;table
-    replace: 📜
-  - trigger: ;fig
-    replace: 📊
   - trigger: ;qq
     replace: ❓
   - trigger: ;ans
@@ -203,9 +199,32 @@ matches:
     replace: |
       import os
       next(os.walk('.'))[1]
-  - trigger: ;row
+  # Pandas
+  - triggers: [";df-e", ";df1"]
+    replace: |
+      import pandas as pd
+      df = pd.DataFrame({'n': [1, 2, 3, 4, 5], 's': ["a", "b", "c", "d", "e"]})$|$
+  - triggers: [";df_show_all", ";df-show-all"]
     replace: |
       with pd.option_context('display.max_rows', None, 'display.max_columns', None):
+  - trigger: ";py-version"
+    replace: |-
+      import sys
+      print(sys.version)
+  - trigger: ";dp"
+    replace: display({{clipboard}})
+    vars:
+      - name: "clipboard"
+        type: "clipboard"
+  - triggers: [";all_cols", ";max_cols", ";all-cols", ";max-cols"]
+    replace: |-
+      with pd.option_context("display.max_columns", None):
+      $|$
+  - triggers: [";all_rows", ";max_rows", ";all-rows", ";max-rows"]
+    replace: |-
+      with pd.option_context("display.max_rows", 2000):
+      $|$
+
   - trigger: ;ju-init
     replace: |
       from pathlib import Path
@@ -312,10 +331,6 @@ matches:
   - trigger: ;ex-arr
     replace: |
       arr = [1, 2, 3, 4, 5]$|$
-  - trigger: ;ex-df
-    replace: |
-      import pandas as pd
-      df = pd.DataFrame({'n': [1, 2, 3, 4, 5], 's': ["a", "b", "c", "d", "e"]})$|$
   - trigger: ;gpt-rewrite
     replace: |
       Rewrite this more attractively and clearly:
@@ -424,6 +439,8 @@ matches:
     replace: difference between $|$
   - trigger: Difference b
     replace: Difference between $|$
+  - trigger: pd.Df
+    replace: pd.DataFrame($|$)
   - trigger: pd.df
     replace: pd.DataFrame($|$)
   - trigger: \tex
@@ -527,5 +544,69 @@ matches:
   - trigger: "wd\t"
     form: |-
       What is the difference between [[field1]] and [[field2]]?
-  - trigger: ;pt
+  - trigger: ;print
     replace: print('test')
+  - trigger: ;h1
+    replace: "# "
+  - trigger: ;h2
+    replace: "## "
+  - trigger: ;h3
+    replace: "### "
+  - trigger: ;h4
+    replace: "#### "
+  - trigger: ;meta
+    replace: "## ℹ️ Metadata"
+  - trigger: ;setup
+    replace: "## 🏗️ Setup"
+  - trigger: ;data
+    replace: "### 🗂️ Data"
+  - trigger: ;part1
+    replace: "## 1️⃣ Part 1: "
+  - trigger: ;part2
+    replace: "## 2️⃣ Part 2: "
+  - trigger: ;part3
+    replace: "## 3️⃣ Part 3: "
+  - trigger: ;jt-hide
+    replace: '# + jupyter={"source_hidden": true}'
+  - trigger: :water
+    replace: "💧"
+  - trigger: ";.task"
+    replace: "#### Task"
+  - trigger: ";.data"
+    replace: "#### Data"
+  - trigger: ";prep"
+    replace: "#### 🛠️ Preprocessing: "
+  - trigger: ;table
+    replace: "## 📜 Table: "
+  - trigger: ;fig
+    replace: "## 📊 Figure: "
+  - trigger: ;appendix
+    replace: "## ➕ Appendix"
+  - trigger: ;reso
+    replace: "## 🎨 Resources"
+  - trigger: ;mpl
+    replace: import matplotlib.pyplot as plt
+  - trigger: ;fax
+    replace: fig, ax = plt.subplots(figsize=(14, 8))
+  - trigger: ;xlab
+    replace: ax.set_xlabel('$|$')
+  - trigger: ;ylab
+    replace: ax.set_ylabel('$|$')
+  - trigger: ;savf
+    replace: fig.savefig('$|$.png', dpi=300)
+  - trigger: ;pscatter
+    replace: ax.scatter(x, y, marker='o')
+  - trigger: ;ptitle
+    replace: ax.set_title('$|$')
+  - trigger: ;pbar
+    replace: ax.bar(x, height)
+  - trigger: ;phist
+    replace: ax.hist(data, bins=10)
+  - trigger: ;ptight
+    replace: plt.tight_layout()
+  - trigger: -mkd
+    replace: Put the result in a Markdown code fence.
+
+
+
+

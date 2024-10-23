@@ -350,3 +350,5 @@ ghce() {
 
 	GH_DEBUG="$GH_DEBUG" gh copilot explain "$@"
 }
+
+[[ -s "/Users/allee/.gvm/scripts/gvm" ]] && source "/Users/allee/.gvm/scripts/gvm"
