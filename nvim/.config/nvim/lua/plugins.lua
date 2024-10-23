@@ -350,7 +350,7 @@ local M = {
     lazy = false,
     build = ":call firenvim#install(0)",
     config = function()
-      vim.cmd("source ~/.dotfiles/nvim/lua/config/firenvim.vim")
+      vim.cmd("source lua/config/firenvim.vim")
     end,
   },
   {
@@ -418,7 +418,7 @@ local M = {
     "tpope/vim-abolish",
     ft = { "markdown" },
     config = function()
-      vim.cmd("source ~/.dotfiles/nvim/shortcuts.vim")
+      vim.cmd("source shortcuts.vim")
     end,
   },
   {
