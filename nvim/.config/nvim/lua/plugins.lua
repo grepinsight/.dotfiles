@@ -350,7 +350,7 @@ local M = {
     lazy = false,
     build = ":call firenvim#install(0)",
     config = function()
-      vim.cmd("source lua/config/firenvim.vim")
+      vim.cmd("source ~/.config/nvim/lua/config/firenvim.vim")
     end,
   },
   {
@@ -418,7 +418,7 @@ local M = {
     "tpope/vim-abolish",
     ft = { "markdown" },
     config = function()
-      vim.cmd("source shortcuts.vim")
+      vim.cmd("source ~/.config/nvim/shortcuts.vim")
     end,
   },
   {
@@ -714,7 +714,7 @@ local M = {
     priority = 1000, -- Very high priority is required, luarocks.nvim should run as the first plugin in your config.
     config = true,
     opts = {
-      rocks = { "fzy", "magick" }, -- specifies a list of rocks to install
+      rocks = { "fzy", "magick", "luasocket" }, -- specifies a list of rocks to install
       -- luarocks_build_args = { "--with-lua=/my/path" }, -- extra options to pass to luarocks's configuration script
     },
   },
@@ -837,6 +837,15 @@ local M = {
     },
   },
   "rcarriga/nvim-notify",
+
+  {
+    "meznaric/key-analyzer.nvim",
+    cmd = "KeyAnalyzer",
+    lazy = false,
+    config = function()
+      require("key-analyzer").setup()
+    end,
+  },
 }
 
 return M

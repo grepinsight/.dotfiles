@@ -22,7 +22,7 @@ bind M set -g mouse off
 # passthrouh
 set -g allow-passthrough on
 #
-# set -g set-clipboard on
+set -g set-clipboard on
 #
 # # set-option -g set-titles on
 # set -g allow-rename off
