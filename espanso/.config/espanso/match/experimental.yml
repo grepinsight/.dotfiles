@@ -1,0 +1,9 @@
+matches:
+- regex: ":notes/(?P<date>.*)/(?P<hashtag>.*)/"
+  replace: "{{output}}"
+  vars:
+    - name: output
+      type: shell
+      params:
+        cmd: "grep -rh \"#{{hashtag}}\" ~/notes | awk -v d=\"{{date}}\" '$0 > d'"
+        shell: bash

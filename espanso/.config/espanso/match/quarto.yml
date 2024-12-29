@@ -1,0 +1,78 @@
+
+matches:
+  - trigger: ;quarto-callout
+    label: "Note"
+    replace: |-
+      ::: {.callout-note title="Note"}
+      {{clipboard}}
+      :::
+    vars:
+      - name: clipboard
+        type: clipboard
+  - trigger: ;quarto-callout
+    label: "Tip"
+    replace: |-
+      ::: {.callout-tip title="Tip"}
+      {{clipboard}}
+      :::
+    vars:
+      - name: clipboard
+        type: clipboard
+  - trigger: ;quarto-callout
+    label: "Quote"
+    replace: |-
+      ::: {.callout-tip title="From: {{form1.person_name}} on {{mydate}}"}
+      *"{{clipboard}}"*
+      :::
+    vars:
+      - name: clipboard
+        type: clipboard
+      - name: mydate
+        type: date
+        params:
+          format: "%Y-%m-%d"
+      - name: "form1"
+        type: form
+        params:
+          layout: "Person Name: [[person_name]]"
+  - trigger: ;quarto-meta
+    replace: |-
+        ---
+        title: "{{form1.title}}"
+        author: "Albert Lee"
+        date: "{{mydate}}"
+        categories:
+          - Guardant
+        tags:
+          - Analytical Validation
+        execute:
+          echo: true
+        abstract-title: "Abstract"
+        abstract: "TBD"
+        title-block-banner: true
+        format:
+          html:
+            theme: materia
+            page-layout: full
+            toc: true
+            toc-depth: 5
+            number-sections: true
+            self-contained: true
+            smooth-scroll: true
+            code-line-numbers: true
+            code-fold: true
+            code-tools: true
+            code-summary: "</>"
+            toc-location: left
+            toc-expand: true
+            lightbox: true
+        ---
+    vars:
+      - name: "form1"
+        type: form
+        params:
+          layout: "Title: [[title]]"
+      - name: mydate
+        type: date
+        params:
+          format: "%Y-%m-%d"

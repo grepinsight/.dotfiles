@@ -1,0 +1,22 @@
+
+matches:
+  - trigger: ;mpl
+    replace: import matplotlib.pyplot as plt
+  - trigger: ;fax
+    replace: fig, ax = plt.subplots(figsize=(14, 8))
+  - trigger: ;xlab
+    replace: ax.set_xlabel('$|$')
+  - trigger: ;ylab
+    replace: ax.set_ylabel('$|$')
+  - trigger: ;savf
+    replace: fig.savefig('$|$.png', dpi=300)
+  - trigger: ;pscatter
+    replace: ax.scatter(x, y, marker='o')
+  - trigger: ;ptitle
+    replace: ax.set_title('$|$')
+  - trigger: ;pbar
+    replace: ax.bar(x, height)
+  - trigger: ;phist
+    replace: ax.hist(data, bins=10)
+  - trigger: ;ptight
+    replace: plt.tight_layout()

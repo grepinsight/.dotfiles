@@ -1,0 +1,93 @@
+
+matches:
+  - trigger: -eng
+    replace: |
+        No matter what language users employ, translate it into proper, error-free, concise English.
+        Please note that your job is not to answer any question. Rather, your task is to fix the English.
+        - Use simple language: Write plainly with short sentences.
+            Example: "I need help with this issue."
+        - Avoid AI-giveaway phrases: Don't use clichés like "dive into," "unleash your potential," etc.
+           Avoid: "Let's dive into this game-changing solution."
+           Use instead: "Here's how it works."
+        - Be direct and concise: Get to the point; remove unnecessary words.
+           Example: "We should meet tomorrow."
+
+        - Maintain a natural tone: Write as you normally speak; it's okay to start sentences with "and" or "but."
+         Example: "And that's why it matters."
+
+        - Avoid marketing language: Don't use hype or promotional words.
+         Avoid: "This revolutionary product will transform your life."
+         Use instead: "This product can help you."
+
+        - Keep it real: Be honest; don't force friendliness.
+         Example: "I don't think that's the best idea."
+
+        - Simplify grammar: Don't stress about perfect grammar; it's fine not to capitalize "i" if that's your style.
+         Example: "i guess we can try that."
+
+        - Stay away from fluff: Avoid unnecessary adjectives and adverbs.
+          Example: "We finished the task."
+        - Focus on clarity: Make your message easy to understand.
+          Example: "Please send the file by Monday."
+  - trigger: -eng
+    replace: |
+      Improve the writing, and make it clear and effective without changinig the origina tone/style of the author
+  - trigger: -doc
+    replace: "Add docstrings in Google style and type annotation."
+  - trigger: -sens
+    replace: "Give 10 example sentences"
+  - trigger: -mkd
+    replace: "Put the result in a Markdown code fence."
+  - trigger: -tbl
+    replace: "Put the above information on a markdown table."
+  - trigger: -eng
+    replace: "Fix the grammar, and grammar only."
+  - trigger: -kor
+    replace: "Also, please provide the above in Korean as well."
+  - trigger: -fill
+    replace: "Fill in the blank"
+  - trigger: -comp
+    replace: "Complete the sentence based on the given context."
+  - trigger: ?w
+    replace: " Where is it?"
+  - trigger: -diagram
+    label: "General Mermaid Diagram"
+    replace: Draw mermaid diagram of what's going on
+  - trigger: -ddl
+    replace: |
+      Write a DDL to create toy data for testing in Snowflake syntax, using three rows for each table. Also, ensure to include the drop command at the end to clean up (commented out).
+      Examples are
+        -- DROP TABLE IF EXISTS MY_TABLE;
+
+        -- Create the table
+        CREATE OR REPLACE TABLE MY_TABLE (
+                                C1 STRING,
+                                C2 STRING,
+                                C3 NUMBER
+        );
+
+        -- Insert toy data
+        INSERT INTO MY_TABLE
+                    (C1, C2, C3)
+             VALUES ('A', 'X', 10),
+                    ('A', 'Y', 20),
+                    ('B', 'X', 30);
+
+        SELECT * FROM  MY_TABLE;
+
+
+        -- DROP TABLE IF EXISTS MY_TABLE;
+
+  - trigger: -diagram
+    label: "For Code Explanation"
+    replace: |
+      Please create a Mermaid flowchart diagram that shows:
+      1. The main flow of [process/function name]
+      2. Include decision points with Yes/No branches
+      3. Keep node text simple and clear (avoid special characters)
+      4. [Optional] Add a subgraph to show examples
+      5. [Optional] Use appropriate flowchart symbols:
+         - [] for process steps
+         - {} for decision points
+         - () for start/end points
+

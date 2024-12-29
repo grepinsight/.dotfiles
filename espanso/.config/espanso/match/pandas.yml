@@ -1,0 +1,90 @@
+
+matches:
+  - triggers: [";df_show_all", ";df-show-all"]
+    replace: |
+      with pd.option_context('display.max_rows', None, 'display.max_columns', None):
+  - trigger: pd.Df
+    replace: pd.DataFrame($|$)
+  - trigger: pd.df
+    replace: pd.DataFrame($|$)
+  - trigger: .ct
+    replace: .count()
+  - trigger: .dd
+    replace: .drop_duplicates()
+  - trigger: .dc
+    replace: .drop(columns=["$|$"])
+  - trigger: .nu
+    replace: .nunique()
+  - trigger: .iv
+    replace: .index.get_level_values("$|$")
+  - trigger: .iglv
+    replace: .index.get_level_values("$|$")
+  - trigger: .glv
+    replace: .get_level_values("$|$")
+  - trigger: .mn
+    replace: .mean()
+  - trigger: .ri
+    replace: .reset_index()
+  - triggers: [".rdi", ".dri"]
+    replace: .reset_index(drop=True)
+  - trigger: .gb
+    replace: .groupby(["$|$"])
+  - trigger: .si
+    replace: .set_index(["$|$"])
+  - trigger: .si
+    replace: .sort_index()
+  - trigger: .set_i
+    replace: .set_index(["$|$"])
+  - trigger: .drop
+    replace: .drop(columns=["$|$"])
+  - trigger: .res
+    replace: .reset_index()
+  - trigger: .qr
+    replace: .query("$|$")
+  - trigger: .rnac
+    replace: .rename_axis(columns=None)
+  - trigger: .rna
+    replace: .rename_axis($|$)
+  - trigger: .rc
+    replace: .rename(columns={"$|$"})
+  - trigger: .rnc
+    replace: .rename(columns={"$|$"})
+  - trigger: .hd
+    replace: .head()
+  - trigger: .sk
+    replace: .stack(future_stack=True)
+  - trigger: .sv
+    replace: .sort_values()
+  - trigger: .tl
+    replace: .tail()
+  - trigger: .us
+    replace: .unstack()
+  - trigger: .vc
+    replace: .value_counts()
+  - trigger: .nvc
+    replace: .value_counts(normalize=True)
+  - triggers:
+      - .nc
+      - .nullcheck
+      - .null_check
+    replace: .isnull().sum()
+  - trigger: .db
+    replace: .describe()
+  - trigger: .ds
+    replace: .describe()
+  - trigger: .lc
+    replace: .loc[:, ["$|$"]]
+  - trigger: ;who
+    replace: |-
+      %whos list
+      print("\n")
+      %whos str
+      print("\n")
+      %whos PosixPath
+      print("\n")
+      %whos DataFrame
+  - trigger: ";version"
+    label: "Python Version"
+    replace: |-
+      import sys
+      print(sys.version)

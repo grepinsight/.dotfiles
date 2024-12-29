@@ -1,0 +1,7 @@
+
+
+matches:
+  - triggers: [";example", ";toy"]
+    replace: |
+      import pandas as pd
+      df = pd.DataFrame({'n': [1, 2, 3, 4, 5], 's': ["a", "b", "c", "d", "e"]})$|$
