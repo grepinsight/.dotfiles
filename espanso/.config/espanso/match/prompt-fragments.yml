@@ -91,3 +91,6 @@ matches:
          - {} for decision points
          - () for start/end points
 
+  - trigger: -narrative
+    replace: |
+      Explain this above in a way that helps a smart beginner understand not only the data but also the broader context. Include an explanation of key vocabulary, connections between elements, and how to interpret similar objects in the future. Additionally, provide multiple possible narratives based on the observations, emphasizing critical thinking and diverse perspectives
