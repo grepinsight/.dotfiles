@@ -1,5 +1,7 @@
 
 matches:
+  - trigger: -output
+    replace: "Do not output any warnings or errors or notes—just the output"
   - trigger: -eng
     replace: |
         No matter what language users employ, translate it into proper, error-free, concise English.
