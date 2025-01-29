@@ -2,6 +2,7 @@
 
 VERSION="1.0"
 INSTALL_DIR="$HOME/src/nvim"
+PURGE=false
 
 # Colors for echo output
 RED='\033[0;31m'
@@ -30,6 +31,8 @@ Options:
     --nightly          Install nightly version of Neovim
     --stable-latest    Install latest stable version of Neovim
     --check-exists     Check if download links are valid without installing
+    --install-dir DIR  Specify custom installation directory (default: ~/src/nvim)
+    --purge           Remove existing installation before installing
 
 Default installation path: ~/src/nvim
 EOF
@@ -64,6 +67,13 @@ while [[ $# -gt 0 ]]; do
         --check-exists)
             CHECK_ONLY=true
             ;;
+        --install-dir)
+            INSTALL_DIR="$2"
+            shift
+            ;;
+        --purge)
+            PURGE=true
+            ;;
         *)
             echo_ts "${RED}" "Unknown option: $1"
             print_help
@@ -71,6 +81,26 @@ while [[ $# -gt 0 ]]; do
     esac
     shift
 done
+
+# Check if installation directory exists and handle purge
+if [ -d "${INSTALL_DIR}" ]; then
+    if [ "$PURGE" = true ]; then
+        echo_ts "${YELLOW}" "Existing installation found at ${INSTALL_DIR}"
+        read -p "Are you sure you want to remove it? [y/N] " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Yy]$ ]]; then
+            echo_ts "${BLUE}" "Removing existing installation..."
+            rm -rf "${INSTALL_DIR}"
+        else
+            echo_ts "${RED}" "Aborting installation"
+            exit 1
+        fi
+    elif [ "$(ls -A "${INSTALL_DIR}")" ]; then
+        echo_ts "${RED}" "Installation directory ${INSTALL_DIR} exists and is not empty"
+        echo_ts "${RED}" "Use --purge to remove existing installation"
+        exit 1
+    fi
+fi
 
 # Create installation directory if not just checking
 if [ "$CHECK_ONLY" = false ]; then
