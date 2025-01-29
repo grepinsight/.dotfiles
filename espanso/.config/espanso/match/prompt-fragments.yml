@@ -7,6 +7,8 @@ matches:
       Your job is to work backwards from the future state to the present before developing a plan, detailing the actions, strategies, and resources needed to reach each milestone.
   - trigger: -more
     replace: Review your last response and search for areas of improvement. Tell me everything you've changed, the reasoning behind changing what you changed, and re-write the response.
+  - trigger: -output
+    replace: "Do not output any warnings or errors or notes—just the output"
   - trigger: -eng
     replace: |
         No matter what language users employ, translate it into proper, error-free, concise English.
