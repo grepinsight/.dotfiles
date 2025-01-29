@@ -24,9 +24,12 @@ Install Neovim script ${VERSION}
 Usage: ./install_nvim.sh [options]
 
 Options:
-    -v, --version     Print script version
-    -h, --help        Print this help message
-    -V VERSION        Install specific Neovim version (e.g. v0.9.4)
+    -v, --version       Print script version
+    -h, --help          Print this help message
+    -V VERSION          Install specific Neovim version (e.g. v0.9.4)
+    --nightly          Install nightly version of Neovim
+    --stable-latest    Install latest stable version of Neovim
+    --check-exists     Check if download links are valid without installing
 
 Default installation path: ~/src/nvim
 EOF
@@ -39,6 +42,7 @@ print_version() {
 }
 
 # Parse command line arguments
+CHECK_ONLY=false
 while [[ $# -gt 0 ]]; do
     case $1 in
         -h|--help)
@@ -51,6 +55,15 @@ while [[ $# -gt 0 ]]; do
             NVIM_VERSION="$2"
             shift
             ;;
+        --nightly)
+            NVIM_VERSION="nightly"
+            ;;
+        --stable-latest)
+            NVIM_VERSION="stable"
+            ;;
+        --check-exists)
+            CHECK_ONLY=true
+            ;;
         *)
             echo_ts "${RED}" "Unknown option: $1"
             print_help
@@ -59,38 +72,71 @@ while [[ $# -gt 0 ]]; do
     shift
 done
 
-# Create installation directory
-mkdir -p "${INSTALL_DIR}"
-cd "${INSTALL_DIR}" || exit 1
+# Create installation directory if not just checking
+if [ "$CHECK_ONLY" = false ]; then
+    mkdir -p "${INSTALL_DIR}"
+    cd "${INSTALL_DIR}" || exit 1
+fi
 
 # Detect OS
 OS="$(uname -s)"
 ARCH="$(uname -m)"
 
+echo_ts "${BLUE}" "OS: ${OS}"
+
+# Function to check URL exists
+check_url() {
+    local url="$1"
+    if curl --output /dev/null --silent --head --fail "$url"; then
+        echo_ts "${GREEN}" "Download link is valid: $url"
+        return 0
+    else
+        echo_ts "${RED}" "Download link is invalid: $url"
+        return 1
+    fi
+}
+
 # Download and install Neovim
 case "${OS}" in
     Darwin)
-        if [ "${ARCH}" = "arm64" ]; then
-            ARCH="aarch64"
-        fi
-        if [ -n "${NVIM_VERSION}" ]; then
-            echo_ts "${BLUE}" "Downloading Neovim ${NVIM_VERSION} for macOS ${ARCH}"
-            curl -LO "https://github.com/neovim/neovim/releases/download/${NVIM_VERSION}/nvim-macos-${ARCH}.tar.gz"
+        if [ "${NVIM_VERSION}" = "nightly" ]; then
+            URL="https://github.com/neovim/neovim/releases/download/nightly/nvim-macos-${ARCH}.tar.gz"
+        elif [ "${NVIM_VERSION}" = "stable" ]; then
+            URL="https://github.com/neovim/neovim/releases/latest/download/nvim-macos-${ARCH}.tar.gz"
+        elif [ -n "${NVIM_VERSION}" ]; then
+            URL="https://github.com/neovim/neovim/releases/download/${NVIM_VERSION}/nvim-macos-${ARCH}.tar.gz"
         else
-            echo_ts "${BLUE}" "Downloading latest Neovim for macOS ${ARCH}"
-            curl -LO "https://github.com/neovim/neovim/releases/latest/download/nvim-macos-${ARCH}.tar.gz"
+            URL="https://github.com/neovim/neovim/releases/latest/download/nvim-macos-${ARCH}.tar.gz"
         fi
+        
+        if [ "$CHECK_ONLY" = true ]; then
+            check_url "$URL"
+            exit $?
+        fi
+        
+        echo_ts "${BLUE}" "Downloading Neovim for macOS ${ARCH}"
+        curl -LO "$URL"
         tar xzf "nvim-macos-${ARCH}.tar.gz"
         rm "nvim-macos-${ARCH}.tar.gz"
         ;;
     Linux)
-        if [ -n "${NVIM_VERSION}" ]; then
-            echo_ts "${BLUE}" "Downloading Neovim ${NVIM_VERSION} for Linux"
-            curl -LO "https://github.com/neovim/neovim/releases/download/${NVIM_VERSION}/nvim-linux64.tar.gz"
+        if [ "${NVIM_VERSION}" = "nightly" ]; then
+            URL="https://github.com/neovim/neovim/releases/download/nightly/nvim-linux64.tar.gz"
+        elif [ "${NVIM_VERSION}" = "stable" ]; then
+            URL="https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz"
+        elif [ -n "${NVIM_VERSION}" ]; then
+            URL="https://github.com/neovim/neovim/releases/download/${NVIM_VERSION}/nvim-linux64.tar.gz"
         else
-            echo_ts "${BLUE}" "Downloading latest Neovim for Linux"
-            curl -LO "https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz"
+            URL="https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz"
         fi
+        
+        if [ "$CHECK_ONLY" = true ]; then
+            check_url "$URL"
+            exit $?
+        fi
+        
+        echo_ts "${BLUE}" "Downloading Neovim for Linux"
+        curl -LO "$URL"
         tar xzf nvim-linux64.tar.gz
         rm nvim-linux64.tar.gz
         ;;
