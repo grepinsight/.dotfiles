@@ -972,10 +972,18 @@
         {
             "command": "notebook:show-cell-outputs",
             "keys": [
-                "Cmd Alt Shift L"
+                "Shift H"
             ],
             "selector": ".jp-Notebook:focus",
             "args": {}
+        },
+        {
+            "command": "notebook:hide-cell-outputs",
+            "keys": [
+                "H"
+            ],
+            "selector": ".jp-Notebook:focus",
+            "disabled": false
         },
         {
             "command": "notebook:hide-code-outputs",
