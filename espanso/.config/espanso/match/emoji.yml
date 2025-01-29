@@ -34,3 +34,9 @@ matches:
     replace: 🧭
   - trigger: ;abc
     replace: 🔤
+  - trigger: ;v
+    replace: "✅"
+  - trigger: ;x
+    replace: "❌"
+  - trigger: ;check
+    replace: "- 🧐 Check if "

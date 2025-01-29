@@ -453,5 +453,3 @@ matches:
     replace: ax.hist(data, bins=10)
   - trigger: ;ptight
     replace: plt.tight_layout()
-  - trigger: ;check
-    replace: "- 🧐 Check if "
