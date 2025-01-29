@@ -349,3 +349,5 @@ ghce() {
 }
 
 [[ -s "/Users/allee/.gvm/scripts/gvm" ]] && source "/Users/allee/.gvm/scripts/gvm"
+
+. "$HOME/.local/bin/env"
