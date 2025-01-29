@@ -242,6 +242,7 @@ nnoremap <LocalLeader>fm <cmd>Telescope marks<cr>
 nnoremap <LocalLeader>fr <cmd>Telescope lsp_references<cr>
 
 nnoremap <LocalLeader>K :Lspsaga hover_doc<CR>
+nnoremap <LocalLeader>a :AvanteToggle<CR>
 nnoremap <LocalLeader>g :GV<CR>
 nnoremap <LocalLeader>gf :<c-u>vie <c-r>=findfile(expand('<cfile>'))<cr><cr>
 nnoremap <LocalLeader>gd :Lspsaga preview_definition<CR>
@@ -457,6 +458,7 @@ vnoremap < <gv
 nnoremap ,l10 :set lines=10<CR>
 nnoremap ,l20 :set lines=20<CR>
 nnoremap ,l30 :set lines=30<CR>
+nnoremap ,c130 :set columns=130<CR>
 nnoremap ,s10 :set guifont=Monaco:h10<CR>
 nnoremap ,s15 :set guifont=Monaco:h15<CR>
 nnoremap ,s20 :set guifont=Monaco:h20<CR>

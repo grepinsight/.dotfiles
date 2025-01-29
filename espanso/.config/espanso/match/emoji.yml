@@ -1,0 +1,42 @@
+
+matches:
+  - triggers: [";pray", ";기도", ";rleh"]
+    replace: "🙏"
+  - trigger: ;rocket
+    replace: "🚀"
+  - triggers: [";qq", ";?"]
+    replace: ❓
+  - triggers: [";bulb", ";lightbulb"]
+    replace: "💡"
+  - triggers: [";ms", ";milestone"]
+    replace: "🚩"
+  - triggers: [";hm"]
+    replace: "🤔"
+  - trigger: ;ans
+    replace: 📢
+  - trigger: ;->
+    replace: "➡️"
+  - trigger: ";!"
+    replace: "‼️"
+  - trigger: ;star
+    replace: ⭐
+  - trigger: ":star:"
+    replace: ⭐
+  - trigger: ;joy
+    replace: 😂
+  - trigger: ;exploding
+    replace: 🤯
+  - trigger: ;mindblown
+    replace: 🤯
+  - trigger: :water
+    replace: "💧"
+  - trigger: ;explore
+    replace: 🧭
+  - trigger: ;abc
+    replace: 🔤
+  - trigger: ;v
+    replace: "✅"
+  - trigger: ;x
+    replace: "❌"
+  - trigger: ;check
+    replace: "- 🧐 Check if "

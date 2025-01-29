@@ -1,0 +1,1101 @@
+{
+    "profiles": [
+        {
+            "devices": [
+                {
+                    "identifiers": {
+                        "is_keyboard": true,
+                        "product_id": 832,
+                        "vendor_id": 1452
+                    },
+                    "simple_modifications": [
+                        {
+                            "from": {
+                                "key_code": ".",
+                                "modifiers": { "mandatory": ["right_option"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'zoom.us'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "0",
+                                "modifiers": { "mandatory": ["right_command"] }
+                            },
+                            "to": [{ "consumer_key_code": "al_dictionary" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "1",
+                                "modifiers": { "mandatory": ["right_command"] }
+                            },
+                            "to": [{ "shell_command": "open -aObsidian" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "2",
+                                "modifiers": { "mandatory": ["right_command"] }
+                            },
+                            "to": [{ "shell_command": "open -akitty" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "3",
+                                "modifiers": { "mandatory": ["right_command"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Arc'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "4",
+                                "modifiers": { "mandatory": ["right_command"] }
+                            },
+                            "to": [{ "shell_command": "open -aSuperhuman" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "5",
+                                "modifiers": { "mandatory": ["right_command"] }
+                            },
+                            "to": [{ "shell_command": "open -aslack" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "6",
+                                "modifiers": { "mandatory": ["right_command"] }
+                            },
+                            "to": [
+                                { "shell_command": "open -a 'Google Chrome'" }
+                            ]
+                        },
+                        {
+                            "from": {
+                                "key_code": "7",
+                                "modifiers": { "mandatory": ["right_command"] }
+                            },
+                            "to": [{ "shell_command": "open -aMessages" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "8",
+                                "modifiers": { "mandatory": ["right_command"] }
+                            },
+                            "to": [{ "shell_command": "open -aNotes" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "9",
+                                "modifiers": { "mandatory": ["right_command"] }
+                            },
+                            "to": [{ "shell_command": "open -aReminders" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "a",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Akiflow'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "c",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Cursor'" }]
+                        },
+                        {
+                            "from": { "key_code": "caps_lock" },
+                            "to": [{ "key_code": "left_control" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "d",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Drafts'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "e",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Streaks'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "f",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Finder'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "g",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'ChatGPT'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "h",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Dash'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "i",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [
+                                { "shell_command": "open -a 'SimpleMind Pro'" }
+                            ]
+                        },
+                        {
+                            "from": {
+                                "key_code": "j",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Day One'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "k",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Kakaotalk'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "l",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Logic Pro X'" }]
+                        },
+                        {
+                            "from": { "key_code": "left_control" },
+                            "to": [{ "key_code": "left_option" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "m",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Msty'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "n",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Notion'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "o",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [
+                                {
+                                    "shell_command": "open -a 'Microsoft Outlook'"
+                                }
+                            ]
+                        },
+                        {
+                            "from": {
+                                "key_code": "p",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'PDF Expert'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "q",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [
+                                {
+                                    "shell_command": "open /Users/allee/Downloads"
+                                }
+                            ]
+                        },
+                        {
+                            "from": {
+                                "key_code": "r",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Arc'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "s",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Structured'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "t",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Todoist'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "u",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Rstudio'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "v",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "~/bin/runvim.sh" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "w",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'WaterMinder'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "z",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'zoom.us'" }]
+                        }
+                    ]
+                },
+                {
+                    "identifiers": {
+                        "is_keyboard": true,
+                        "product_id": 256,
+                        "vendor_id": 2131
+                    },
+                    "simple_modifications": [
+                        {
+                            "from": {
+                                "key_code": "0",
+                                "modifiers": { "mandatory": ["right_command"] }
+                            },
+                            "to": [{ "consumer_key_code": "al_dictionary" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "1",
+                                "modifiers": { "mandatory": ["right_command"] }
+                            },
+                            "to": [{ "shell_command": "open -aObsidian" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "2",
+                                "modifiers": { "mandatory": ["right_command"] }
+                            },
+                            "to": [{ "shell_command": "open -akitty" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "3",
+                                "modifiers": { "mandatory": ["right_command"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Arc'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "4",
+                                "modifiers": { "mandatory": ["right_command"] }
+                            },
+                            "to": [{ "shell_command": "open -aSuperhuman" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "5",
+                                "modifiers": { "mandatory": ["right_command"] }
+                            },
+                            "to": [{ "shell_command": "open -aslack" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "6",
+                                "modifiers": { "mandatory": ["right_command"] }
+                            },
+                            "to": [
+                                { "shell_command": "open -a 'Google Chrome'" }
+                            ]
+                        },
+                        {
+                            "from": {
+                                "key_code": "7",
+                                "modifiers": { "mandatory": ["right_command"] }
+                            },
+                            "to": [{ "shell_command": "open -aMessages" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "8",
+                                "modifiers": { "mandatory": ["right_command"] }
+                            },
+                            "to": [{ "shell_command": "open -aNotes" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "9",
+                                "modifiers": { "mandatory": ["right_command"] }
+                            },
+                            "to": [{ "shell_command": "open -aReminders" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "a",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Akiflow'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "c",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Cursor'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "d",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Drafts'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "e",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Streaks'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "f",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Finder'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "g",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'ChatGPT'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "h",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Dash'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "i",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [
+                                { "shell_command": "open -a 'SimpleMind Pro'" }
+                            ]
+                        },
+                        {
+                            "from": {
+                                "key_code": "j",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Day One'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "k",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Kakaotalk'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "l",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Logic Pro X'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "m",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Msty'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "n",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Notion'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "o",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [
+                                {
+                                    "shell_command": "open -a 'Microsoft Outlook'"
+                                }
+                            ]
+                        },
+                        {
+                            "from": {
+                                "key_code": "p",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'PDF Expert'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "q",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [
+                                {
+                                    "shell_command": "open /Users/allee/Downloads"
+                                }
+                            ]
+                        },
+                        {
+                            "from": {
+                                "key_code": "r",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Arc'" }]
+                        },
+                        {
+                            "from": { "key_code": "right_option" },
+                            "to": [{ "key_code": "right_command" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "s",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Structured'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "t",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Todoist'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "u",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Rstudio'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "v",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "~/bin/runvim.sh" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "w",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'WaterMinder'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "z",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'zoom.us'" }]
+                        }
+                    ]
+                },
+                {
+                    "identifiers": { "is_keyboard": true },
+                    "simple_modifications": [
+                        {
+                            "from": {
+                                "key_code": "0",
+                                "modifiers": { "mandatory": ["right_command"] }
+                            },
+                            "to": [{ "consumer_key_code": "al_dictionary" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "1",
+                                "modifiers": { "mandatory": ["right_command"] }
+                            },
+                            "to": [{ "shell_command": "open -aObsidian" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "2",
+                                "modifiers": { "mandatory": ["right_command"] }
+                            },
+                            "to": [{ "shell_command": "open -akitty" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "3",
+                                "modifiers": { "mandatory": ["right_command"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Arc'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "4",
+                                "modifiers": { "mandatory": ["right_command"] }
+                            },
+                            "to": [{ "shell_command": "open -aSuperhuman" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "5",
+                                "modifiers": { "mandatory": ["right_command"] }
+                            },
+                            "to": [{ "shell_command": "open -aslack" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "6",
+                                "modifiers": { "mandatory": ["right_command"] }
+                            },
+                            "to": [
+                                { "shell_command": "open -a 'Google Chrome'" }
+                            ]
+                        },
+                        {
+                            "from": {
+                                "key_code": "7",
+                                "modifiers": { "mandatory": ["right_command"] }
+                            },
+                            "to": [{ "shell_command": "open -aMessages" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "8",
+                                "modifiers": { "mandatory": ["right_command"] }
+                            },
+                            "to": [{ "shell_command": "open -aNotes" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "9",
+                                "modifiers": { "mandatory": ["right_command"] }
+                            },
+                            "to": [{ "shell_command": "open -aReminders" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "a",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Akiflow'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "c",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Cursor'" }]
+                        },
+                        {
+                            "from": { "key_code": "caps_lock" },
+                            "to": [{ "key_code": "left_control" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "d",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Drafts'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "e",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Streaks'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "f",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Finder'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "g",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'ChatGPT'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "h",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Dash'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "i",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [
+                                { "shell_command": "open -a 'SimpleMind Pro'" }
+                            ]
+                        },
+                        {
+                            "from": {
+                                "key_code": "j",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Day One'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "k",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Kakaotalk'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "l",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Logic Pro X'" }]
+                        },
+                        {
+                            "from": { "key_code": "left_control" },
+                            "to": [{ "key_code": "left_option" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "m",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Msty'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "n",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Notion'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "o",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [
+                                {
+                                    "shell_command": "open -a 'Microsoft Outlook'"
+                                }
+                            ]
+                        },
+                        {
+                            "from": {
+                                "key_code": "p",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'PDF Expert'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "q",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [
+                                {
+                                    "shell_command": "open /Users/allee/Downloads"
+                                }
+                            ]
+                        },
+                        {
+                            "from": {
+                                "key_code": "r",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Arc'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "s",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Structured'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "t",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Todoist'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "u",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Rstudio'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "v",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "~/bin/runvim.sh" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "w",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'WaterMinder'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "z",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'zoom.us'" }]
+                        }
+                    ]
+                },
+                {
+                    "identifiers": {
+                        "is_keyboard": true,
+                        "product_id": 541,
+                        "vendor_id": 1452
+                    },
+                    "simple_modifications": [
+                        {
+                            "from": {
+                                "key_code": ".",
+                                "modifiers": { "mandatory": ["right_option"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'zoom.us'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "0",
+                                "modifiers": { "mandatory": ["right_command"] }
+                            },
+                            "to": [{ "consumer_key_code": "al_dictionary" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "1",
+                                "modifiers": { "mandatory": ["right_command"] }
+                            },
+                            "to": [{ "shell_command": "open -aObsidian" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "2",
+                                "modifiers": { "mandatory": ["right_command"] }
+                            },
+                            "to": [{ "shell_command": "open -akitty" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "3",
+                                "modifiers": { "mandatory": ["right_command"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Arc'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "4",
+                                "modifiers": { "mandatory": ["right_command"] }
+                            },
+                            "to": [{ "shell_command": "open -aSuperhuman" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "5",
+                                "modifiers": { "mandatory": ["right_command"] }
+                            },
+                            "to": [{ "shell_command": "open -aslack" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "6",
+                                "modifiers": { "mandatory": ["right_command"] }
+                            },
+                            "to": [
+                                { "shell_command": "open -a 'Google Chrome'" }
+                            ]
+                        },
+                        {
+                            "from": {
+                                "key_code": "7",
+                                "modifiers": { "mandatory": ["right_command"] }
+                            },
+                            "to": [{ "shell_command": "open -aMessages" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "8",
+                                "modifiers": { "mandatory": ["right_command"] }
+                            },
+                            "to": [{ "shell_command": "open -aNotes" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "9",
+                                "modifiers": { "mandatory": ["right_command"] }
+                            },
+                            "to": [{ "shell_command": "open -aReminders" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "a",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Akiflow'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "c",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Cursor'" }]
+                        },
+                        {
+                            "from": { "key_code": "caps_lock" },
+                            "to": [{ "key_code": "left_control" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "d",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Drafts'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "e",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Streaks'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "f",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Finder'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "g",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'ChatGPT'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "h",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Dash'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "i",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [
+                                { "shell_command": "open -a 'SimpleMind Pro'" }
+                            ]
+                        },
+                        {
+                            "from": {
+                                "key_code": "j",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Day One'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "k",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Kakaotalk'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "l",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Logic Pro X'" }]
+                        },
+                        {
+                            "from": { "key_code": "left_control" },
+                            "to": [{ "key_code": "left_option" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "m",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Msty'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "n",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Notion'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "o",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [
+                                {
+                                    "shell_command": "open -a 'Microsoft Outlook'"
+                                }
+                            ]
+                        },
+                        {
+                            "from": {
+                                "key_code": "p",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'PDF Expert'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "q",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [
+                                {
+                                    "shell_command": "open /Users/allee/Downloads"
+                                }
+                            ]
+                        },
+                        {
+                            "from": {
+                                "key_code": "r",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Arc'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "s",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Structured'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "t",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Todoist'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "u",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'Rstudio'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "v",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "~/bin/runvim.sh" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "w",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'WaterMinder'" }]
+                        },
+                        {
+                            "from": {
+                                "key_code": "z",
+                                "modifiers": { "mandatory": ["right_shift"] }
+                            },
+                            "to": [{ "shell_command": "open -a 'zoom.us'" }]
+                        }
+                    ]
+                }
+            ],
+            "fn_function_keys": [
+                {
+                    "from": { "key_code": "f3" },
+                    "to": [{ "key_code": "mission_control" }]
+                },
+                {
+                    "from": { "key_code": "f4" },
+                    "to": [{ "key_code": "launchpad" }]
+                },
+                {
+                    "from": { "key_code": "f5" },
+                    "to": [{ "key_code": "illumination_decrement" }]
+                },
+                {
+                    "from": { "key_code": "f6" },
+                    "to": [{ "key_code": "illumination_increment" }]
+                }
+            ],
+            "name": "Default profile",
+            "selected": true,
+            "virtual_hid_keyboard": {
+                "country_code": 0,
+                "keyboard_type_v2": "ansi"
+            }
+        },
+        {
+            "devices": [
+                {
+                    "identifiers": {
+                        "is_keyboard": true,
+                        "product_id": 615,
+                        "vendor_id": 76
+                    },
+                    "simple_modifications": [
+                        {
+                            "from": { "key_code": "caps_lock" },
+                            "to": [{ "key_code": "left_control" }]
+                        },
+                        {
+                            "from": { "key_code": "left_control" },
+                            "to": [{ "key_code": "left_option" }]
+                        }
+                    ]
+                }
+            ],
+            "name": "Rachel's Keyboard",
+            "virtual_hid_keyboard": { "country_code": 0 }
+        }
+    ]
+}

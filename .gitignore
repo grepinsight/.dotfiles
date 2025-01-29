@@ -10,3 +10,4 @@ dotfiles.sublime-workspace
 dotfiles.sublime-project
 vim/spell/
 doom/doom.d/custom.el
+espanso/.config/espanso/match/base-local.yml

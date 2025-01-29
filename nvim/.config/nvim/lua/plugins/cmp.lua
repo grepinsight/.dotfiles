@@ -1,10 +1,23 @@
+local has_words_before = function()
+  if vim.api.nvim_buf_get_option(0, "buftype") == "prompt" then
+    return false
+  end
+  local line, col = unpack(vim.api.nvim_win_get_cursor(0))
+  return col ~= 0 and vim.api.nvim_buf_get_text(0, line - 1, 0, line - 1, col, {})[1]:match("^%s*$") == nil
+end
+
 return {
   -- Completion
   {
     "hrsh7th/nvim-cmp",
     event = { "InsertEnter", "CmdlineEnter" },
     dependencies = {
-      "hrsh7th/cmp-copilot",
+      {
+        "zbirenbaum/copilot-cmp",
+        config = function()
+          require("copilot_cmp").setup()
+        end,
+      },
       "hrsh7th/cmp-buffer", -- nvim-cmp source for buffer words
       "hrsh7th/cmp-path", -- nvim-cmp source for path words
       "hrsh7th/cmp-nvim-lsp", -- nvim-cmp source for neovim's built-in LSP
@@ -15,7 +28,7 @@ return {
         "L3MON4D3/LuaSnip",
         dependencies = "rafamadriz/friendly-snippets", -- Set of preconfigured snippets for different languages.
         config = function()
-          require('config.snippets')
+          require("config.snippets")
           local luasnip = require("luasnip")
 
           -- forget the current snippet when leaving the insert mode. ref: https://github.com/L3MON4D3/LuaSnip/issues/656#issuecomment-1313310146
@@ -93,35 +106,44 @@ return {
             luasnip.lsp_expand(args.body)
           end,
         },
+
         mapping = cmp.mapping.preset.insert({
-		  ["<C-y>"] = cmp.mapping.confirm {
-		  	behavior = cmp.ConfirmBehavior.Insert,
-		  	select = true,
-		  },
+          ["<C-y>"] = cmp.mapping.confirm({
+            behavior = cmp.ConfirmBehavior.Insert,
+            select = true,
+          }),
           ["<C-k>"] = cmp.mapping.select_prev_item(),
           ["<C-j>"] = cmp.mapping.select_next_item(),
           ["<C-d>"] = cmp.mapping.scroll_docs(4),
           ["<C-u>"] = cmp.mapping.scroll_docs(-4),
           ["<C-Space>"] = cmp.mapping.complete(), -- show completion suggestions. <C-Space> not work in windows terminal
           ["<C-e>"] = cmp.mapping.abort(), -- close completion window
-          ["<Tab>"] = cmp.mapping(function(fallback)
-            if cmp.visible() then
-              cmp.confirm({
-                behavior = cmp.ConfirmBehavior.Replace, -- e.g. console.log -> console.inlog -> console.info
-                select = true, -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
-              })
-            elseif luasnip.expand_or_jumpable() then
-              luasnip.expand_or_jump()
+          ["<Tab>"] = vim.schedule_wrap(function(fallback)
+            if cmp.visible() and has_words_before() then
+              cmp.select_next_item({ behavior = cmp.SelectBehavior.Select })
             else
               fallback()
             end
-          end, { "i", "s" }),
+          end),
+
+          -- ["<Tab>"] = cmp.mapping(function(fallback)
+          --   if cmp.visible() then
+          --     cmp.confirm({
+          --       behavior = cmp.ConfirmBehavior.Replace, -- e.g. console.log -> console.inlog -> console.info
+          --       select = true, -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+          --     })
+          --   elseif luasnip.expand_or_jumpable() then
+          --     luasnip.expand_or_jump()
+          --   else
+          --     fallback()
+          --   end
+          -- end, { "i", "s" }),
         }),
         sources = cmp.config.sources({
           -- ordering is matter
           { name = "nvim_lsp" },
           { name = "luasnip" },
-          { name = "copilot" },
+          { name = "copilot", group_index = 2 },
           { name = "path" },
           { name = "buffer", keyword_length = 5 }, -- show buffer's completion only if type more then keyword_length
         }),
@@ -145,16 +167,16 @@ return {
           format = lspkind.cmp_format({
             mode = "symbol_text", -- options: 'text', 'text_symbol', 'symbol_text', 'symbol'
             maxwidth = 50, -- prevent the popup from showing more than provided characters (e.g 50 will not show more than 50 characters)
-            menu = ({ -- showing type in menu
+            menu = { -- showing type in menu
               luasnip = "[LuaSnip]",
               nvim_lsp = "[LSP]",
-			  copilot = "[copilot]",
-		      path = "[path]",
-			  buffer = "[buf]",
-			  gh_issues = "[issues]",
-			  orgmode = "[orgmode]",
-			  rst_glossary = "[glossary]",
-            }),
+              copilot = "[copilot]",
+              path = "[path]",
+              buffer = "[buf]",
+              gh_issues = "[issues]",
+              orgmode = "[orgmode]",
+              rst_glossary = "[glossary]",
+            },
             before = function(entry, vim_item)
               vim_item.menu = "(" .. vim_item.kind .. ")"
               vim_item.dup = ({

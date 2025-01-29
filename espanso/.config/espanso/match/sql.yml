@@ -1,0 +1,10 @@
+
+matches:
+  - trigger: ;sf
+    replace: SELECT * FROM $|$
+  - trigger: ;asf
+    replace: SELECT * FROM dev.allee.$|$
+  - trigger: ;sc
+    replace: SELECT COUNT(*) as N FROM $|$
+  - trigger: ;sgc
+    form: SELECT [[column]], COUNT(*) as N FROM [[table]] GROUP BY ALL

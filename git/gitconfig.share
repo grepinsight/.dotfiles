@@ -1,4 +1,7 @@
 [alias]
+    recentb = "!r() { refbranch=$1 count=$2; git for-each-ref --sort=-committerdate refs/heads --format='%(refname:short)|%(HEAD)%(color:yellow)%(refname:short)|%(color:bold green)%(committerdate:relative)|%(color:blue)%(subject)|%(color:magenta)%(authorname)%(color:reset)' --color=always --count=${count:-20} | while read line; do branch=$(echo \"$line\" | awk 'BEGIN { FS = \"|\" }; { print $1 }' | tr -d '*'); ahead=$(git rev-list --count \"${refbranch:-origin/master}..${branch}\"); behind=$(git rev-list --count \"${branch}..${refbranch:-origin/master}\"); colorline=$(echo \"$line\" | sed 's/^[^|]*|//'); echo \"$ahead|$behind|$colorline\" | awk -F'|' -vOFS='|' '{$5=substr($5,1,70)}1' ; done | ( echo \"ahead|behind||branch|lastcommit|message|author\\n\" && cat) | column -ts'|';}; r"
+    br = for-each-ref --sort=committerdate refs/heads/ --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(color:red)%(objectname:short)%(color:reset) - %(contents:subject) - %(authorname) (%(color:green)%(committerdate:relative)%(color:reset))'
+
     find = log --date=relative --pretty=\"format:%h %ad %Cgreen%H %Cblue%s\" --name-status --grep
     cp = cherry-pick
     releasenotes = "!git log $(git describe HEAD~ --tags --abbrev=0)..HEAD --pretty='format:* %h %s%n  * %an <%ae>' --no-merges"
@@ -7,12 +10,12 @@
     recentb = "!r() { refbranch=$1 count=$2; git for-each-ref --sort=-committerdate refs/heads --format='%(refname:short)|%(HEAD)%(color:yellow)%(refname:short)|%(color:bold green)%(committerdate:relative)|%(color:blue)%(subject)|%(color:magenta)%(authorname)%(color:reset)' --color=always --count=${count:-20} | while read line; do branch=$(echo \"$line\" | awk 'BEGIN { FS = \"|\" }; { print $1 }' | tr -d '*'); ahead=$(git rev-list --count \"${refbranch:-origin/master}..${branch}\"); behind=$(git rev-list --count \"${branch}..${refbranch:-origin/master}\"); colorline=$(echo \"$line\" | sed 's/^[^|]*|//'); echo \"$ahead|$behind|$colorline\" | awk -F'|' -vOFS='|' '{$5=substr($5,1,70)}1' ; done | ( echo \"ahead|behind||branch|lastcommit|message|author\\n\" && cat) | column -ts'|';}; r"
     recentdev = "!r() { refbranch=$1 count=$2; git for-each-ref --sort=-committerdate refs/heads --format='%(refname:short)|%(HEAD)%(color:yellow)%(refname:short)|%(color:bold green)%(committerdate:relative)|%(color:blue)%(subject)|%(color:magenta)%(authorname)%(color:reset)' --color=always --count=${count:-20} | while read line; do branch=$(echo \"$line\" | awk 'BEGIN { FS = \"|\" }; { print $1 }' | tr -d '*'); ahead=$(git rev-list --count \"${refbranch:-origin/dev}..${branch}\"); behind=$(git rev-list --count \"${branch}..${refbranch:-origin/dev}\"); colorline=$(echo \"$line\" | sed 's/^[^|]*|//'); echo \"$ahead|$behind|$colorline\" | awk -F'|' -vOFS='|' '{$5=substr($5,1,70)}1'; done | ( echo \"ahead|behind||branch|lastcommit|message|author\\n\" && cat) | column -ts'|';}; r"
     br = for-each-ref --sort=committerdate refs/heads/ --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(color:red)%(objectname:short)%(color:reset) - %(contents:subject) - %(authorname) (%(color:green)%(committerdate:relative)%(color:reset))'
->>>>>>> 392d796baf46346a634ff231eb6fdbccdc2c0f00
     tree = log --graph --decorate --pretty=oneline --abbrev-commit
     st = status -sb
     s = status -sb
     prune = fetch --prune
     ci = commit
+    cc = commit
     com = commit
     cm = commit
     co = checkout
@@ -47,11 +50,18 @@
     pblee = !git push -u allee $(git rev-parse --abbrev-ref HEAD)
     pbgrep = !git push -u grepinsight $(git rev-parse --abbrev-ref HEAD)
     plb = !git pull origin $(git rev-parse --abbrev-ref HEAD)
+    plbgrep = !git pull grepinsight $(git rev-parse --abbrev-ref HEAD)
     lol = log --graph --decorate --pretty=oneline --abbrev-commit
     bhist = ! git reflog | egrep -io 'moving from ([^[:space:]]+)' | awk '{ print $3 }' | head
 
     brmr = push origin --delete
     brm = branch -d
+    frbi = "!f() { git rebase -i $(git log --pretty=oneline --color=always | fzf --ansi | cut -d ' ' -f1)^ ; }; f"
+    l = "!. ~/.dotfiles/git/githelpers && pretty_git_log"
+    la = "!git l --all"
+    lr = "!git l -30"
+    lra = "!git lr --all"
+    lg = "!git l -G $1 -- $2"
 [merge]
     tool = vimdiff
 [core]
@@ -88,10 +98,26 @@
     diffFilter = delta --color-only
 
 [delta]
-    features = side-by-side line-numbers decorations navigate
+    features = line-numbers decorations navigate
+    #features = side-by-side line-numbers decorations navigate
     whitespace-error-style = 22 reverse
+    wrap-max-lines = 4
+    navigate = true
 
 [delta "decorations"]
     commit-decoration-style = bold yellow box ul
     file-style = bold yellow ul
     file-decoration-style = none
+[init]
+	defaultBranch = main
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+[credential "https://github.com"]
+	helper =
+	helper = !/opt/homebrew/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper =
+	helper = !/opt/homebrew/bin/gh auth git-credential

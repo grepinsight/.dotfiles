@@ -2,6 +2,12 @@
 # Original file: default.yml
 
 matches:
+  - trigger: ;ll
+    label: "SQL line"
+    replace: "---------------------------"
+  - trigger: ;ll
+    label: "Python Line"
+    replace: "# -------------------------"
   - trigger: ;scratch
     replace: |
       # ---- Scratch Pad Start
@@ -12,23 +18,11 @@ matches:
       # ---- Scratch Pad Start
       $|$
       # ---- Scratch Pad End
-  - trigger: ;table
-    replace: 📜
-  - trigger: ;fig
-    replace: 📊
-  - trigger: ;qq
-    replace: ❓
-  - trigger: ;ans
-    replace: 📢
   - trigger: ;morning
     replace: |
       - [ ] Vitamin
-  - trigger: ;ghtest
-    replace: GuardantLUNAR-2 Test
-  - trigger: ;ghtr
-    replace: GuardantLUNAR-2 Test Result
-  - trigger: ;ghmr
-    replace: GuardantLUNAR-2 Test MR Score
+  - trigger: ";lens"
+    replace: "🔍"
   - trigger: ;ai
     replace: "%reload_ext jupyter_ai"
   - trigger: ;tt
@@ -65,31 +59,6 @@ matches:
         params:
           format: "%Y-%m-%d"
           offset: -86400
-  - trigger: ;date
-    replace: "{{mydate}}"
-    vars:
-      - name: mydate
-        type: date
-        params:
-          format: "%Y-%m-%d"
-  - trigger: ;ㅇㅁㅅㄷ
-    replace: "{{mydate}}"
-    vars:
-      - name: mydate
-        type: date
-        params:
-          format: "%Y-%m-%d"
-  - trigger: ;week
-    replace: "{{mydate}}"
-    vars:
-      - name: mydate
-        type: date
-        params:
-          format: "%Y-W%W"
-  - trigger: ;star
-    replace: ⭐
-  - trigger: ;joy
-    replace: 😂
   - triggers:
       - ;beginal
       - $$b
@@ -152,10 +121,6 @@ matches:
           format: "%a"
   - trigger: "@pgra"
     replace: "@pgrauman-gh"
-  - trigger: ;exploding
-    replace: 🤯
-  - trigger: ;mindblown
-    replace: 🤯
   - trigger: ;smart!
     replace: |
       - Specific:
@@ -209,9 +174,20 @@ matches:
     replace: |
       import os
       next(os.walk('.'))[1]
-  - trigger: ;row
-    replace: |
-      with pd.option_context('display.max_rows', None, 'display.max_columns', None):
+  - trigger: ";dp"
+    replace: display({{clipboard}})
+    vars:
+      - name: "clipboard"
+        type: "clipboard"
+  - triggers: [";all_cols", ";max_cols", ";all-cols", ";max-cols"]
+    replace: |-
+      with pd.option_context("display.max_columns", None):
+      $|$
+  - triggers: [";all_rows", ";max_rows", ";all-rows", ";max-rows"]
+    replace: |-
+      with pd.option_context("display.max_rows", 2000):
+      $|$
+
   - trigger: ;ju-init
     replace: |
       from pathlib import Path
@@ -226,11 +202,6 @@ matches:
       IN_DATA_DIR = DATA_DIR / "input"
       INTERMEDIATE_FILES_DATA_DIR = DATA_DIR / "intermediate_files"
       OUT_DATA_DIR = DATA_DIR / "output"
-  - trigger: ;ju-appendix
-    replace: |
-      # Appendix
-      %whos PosixPath
-      %whos DataFrame
   - trigger: ;alt-int!
     replace: |
       _sel = alt.selection_single(on='mouseover', nearest=True, fields=[COL_TO_AFFECT])
@@ -318,10 +289,6 @@ matches:
   - trigger: ;ex-arr
     replace: |
       arr = [1, 2, 3, 4, 5]$|$
-  - trigger: ;ex-df
-    replace: |
-      import pandas as pd
-      df = pd.DataFrame({'n': [1, 2, 3, 4, 5], 's': ["a", "b", "c", "d", "e"]})$|$
   - trigger: ;gpt-rewrite
     replace: |
       Rewrite this more attractively and clearly:
@@ -418,16 +385,71 @@ matches:
       #gratitude #thankful #감사노트 #journal
 
 
-  - trigger: ;sf
-    replace: SELECT * FROM $|$
-  - trigger: ;asf
-    replace: SELECT * FROM dev.allee.$|$
-  - trigger: ;sc
-    replace: SELECT COUNT(*) as N FROM $|$
-  - trigger: ;sgc
-    form: SELECT [[column]], COUNT(*) as N FROM [[table]] GROUP BY ALL
   - trigger: diffbw
     replace: difference between $|$
-  - trigger: pd.Dat
-    replace: pd.DataFrame($|$)
-
+  - trigger: Difference b
+    replace: Difference between $|$
+  - trigger: \tex
+    replace: \text{$|$}
+  - trigger: ;question
+    replace: |
+        - what:
+        - who:
+        - where:
+        - when:
+        - why:
+        - how:
+  - trigger: "pv\t"
+    replace: print(f"{$|$ = }")
+  - trigger: ";pv"
+    replace: print(f"{$|$ = }")
+  - trigger: "pvv\t"
+    replace: print(f"{$|$ = }")
+  - trigger: ":localip"
+    replace: "{{output}}"
+    vars:
+      - name: output
+        type: shell
+        params:
+          cmd: "curl https://ipinfo.io/ip"
+  - trigger: "wi\t"
+    replace: "What is $|$?"
+  - trigger: "wiq\t"
+    replace: 'What is "$|$"?'
+  - trigger: "wm\t"
+    replace: 'What does $|$ mean?'
+  - trigger: "wmq\t"
+    replace: 'What does "$|$" mean?'
+  - trigger: "wd\t"
+    form: |-
+      What is the difference between [[field1]] and [[field2]]?
+  - trigger: ;print
+    replace: print('test')
+  - trigger: ;jt-hide
+    replace: '# + jupyter={"source_hidden": true}'
+  - trigger: ";.task"
+    replace: "#### Task"
+  - trigger: ";.data"
+    replace: "#### Data"
+  - trigger: ;rocket
+    replace: "## 🚀"
+  - trigger: ;mpl
+    replace: import matplotlib.pyplot as plt
+  - trigger: ;fax
+    replace: fig, ax = plt.subplots(figsize=(14, 8))
+  - trigger: ;xlab
+    replace: ax.set_xlabel('$|$')
+  - trigger: ;ylab
+    replace: ax.set_ylabel('$|$')
+  - trigger: ;savf
+    replace: fig.savefig('$|$.png', dpi=300)
+  - trigger: ;pscatter
+    replace: ax.scatter(x, y, marker='o')
+  - trigger: ;ptitle
+    replace: ax.set_title('$|$')
+  - trigger: ;pbar
+    replace: ax.bar(x, height)
+  - trigger: ;phist
+    replace: ax.hist(data, bins=10)
+  - trigger: ;ptight
+    replace: plt.tight_layout()

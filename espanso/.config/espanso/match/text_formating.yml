@@ -1,0 +1,23 @@
+
+matches:
+  - trigger: ";case"
+    replace: "{{output}}"
+    vars:
+      - name: case_type
+        type: choice
+        params:
+          values:
+            - "title"
+            - "snake"
+            - "kebab"
+            - "camel"
+      - name: clipboard
+        type: clipboard
+      - name: output
+        type: script
+        params:
+          args:
+            - python3
+            - "%CONFIG%/scripts/case_transformer.py"
+            - "{{clipboard}}"
+            - "{{case_type}}"

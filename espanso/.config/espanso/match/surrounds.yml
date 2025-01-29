@@ -1,0 +1,11 @@
+matches:
+  - triggers:
+      - ;beginal
+      - $$b
+    label: "[Latex] Begin align"
+    replace: |
+      $$
+      \begin{align}
+      $|$
+      \end{align}
+      $$

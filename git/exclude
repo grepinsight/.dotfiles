@@ -70,3 +70,6 @@ pytestdebug.log
 
 .metaflow
 *null-ls*
+
+.cursorrules
+.cursorignore

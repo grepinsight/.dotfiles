@@ -128,17 +128,14 @@ alias v="$EDITOR"
 if [[ -z $PYENV_ROOT ]]; then
     export PYENV_ROOT="$HOME/.pyenv"
     export PATH="$PYENV_ROOT/bin:$PATH"
-    eval "$($HOME/.pyenv/bin/pyenv init -)"
+    command -v pyenv > /dev/null 2>&1 && eval "$($HOME/.pyenv/bin/pyenv init -)"
 fi
 eval "$(starship init zsh)"
 
-# alias
-alias h='hsearch'
+command -v direnv   > /dev/null 2>&1 && eval "$(direnv hook zsh)"
+command -v starship > /dev/null 2>&1 && eval "$(starship init zsh)"
 
-export LEDGER_FILE=$HOME/Thoughts/.hledger.journal
-alias hla='hledger add'
-alias hl='hledger'
-alias hle="$EDITOR $LEDGER_FILE"
+# alias
 
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
@@ -350,3 +347,7 @@ ghce() {
 
 	GH_DEBUG="$GH_DEBUG" gh copilot explain "$@"
 }
+
+[[ -s "/Users/allee/.gvm/scripts/gvm" ]] && source "/Users/allee/.gvm/scripts/gvm"
+
+. "$HOME/.local/bin/env"

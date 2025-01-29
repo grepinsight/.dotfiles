@@ -1,0 +1,76 @@
+
+matches:
+  - trigger: ;h1
+    replace: "# "
+  - trigger: ;h2
+    replace: "## "
+  - trigger: ;h3
+    replace: "### "
+  - trigger: ;h4
+    replace: "#### "
+  - trigger: ;motiv
+    replace: "## 📌 Motivation"
+  - trigger: ;goal
+    replace: "## 📌 Goals"
+  - trigger: ;meta
+    replace: "## ℹ️ Metadata"
+  - trigger: ;setup
+    replace: "## 🏗️ Setup"
+  - trigger: ;const
+    replace: "## ♾️ Constants"
+  - triggers: [";action", ";main"]
+    replace: "## 🎬 Main"
+  - trigger: ;data
+    replace: "### 🗂️ Data"
+  - trigger: ;til
+    replace: "#### 💡 TIL: "
+  - trigger: ;mut
+    replace: "#### 🫧 Transformation: "
+  - trigger: ;part1
+    replace: "## 1️⃣ Part 1: "
+  - trigger: ;part2
+    replace: "## 2️⃣ Part 2: "
+  - trigger: ;part3
+    replace: "## 3️⃣ Part 3: "
+  - triggers: [";table", ";tbl"]
+    replace: "### 🆕📜 Table: "
+  - trigger: ";prep"
+    replace: "#### 🛠️ Preprocessing: "
+  - trigger: ;fig
+    replace: "## 📊 Figure: "
+  - trigger: ;summary
+    replace: "### ✔️ Summary "
+  - trigger: ;col
+    replace: "#### 🆕🏛️ Column - "
+  - trigger: ;list
+    replace: "#### 🆕📝 List - "
+  - trigger: ;func
+    replace: "#### 🆕⚙️ Function - "
+  - trigger: ;trig
+    replace: "#### 🆕🔫 Trigger - "
+  - trigger: ;param
+    replace: "#### 🆕🎛 Param - "
+  - triggers: [";th"]
+    replace: "### 🧵"
+  - trigger: ;appendix
+    replace: "## ➕ Appendix"
+  - trigger: ;task
+    replace: "#### Task"
+  - trigger: ;reso
+    replace: "## 🎨 Resources"
+  - trigger: ;log
+    replace: "## 📜 Logs"
+  - trigger: ;eil5
+    replace: "## 👶 Explain Like I am Five"
+  - trigger: ;ex
+    replace: "## 📚 Examples"
+  - trigger: ;rel
+    replace: "## 🖇️ Related"
+  - trigger: ;news
+    replace: "## 📰 News"
+  - trigger: ";conf"
+    replace: "## ⚙ Configuration"
+  - trigger: ";cont"
+    replace: "## ⌨ Contributing"
+  - trigger: ";term"
+    replace: "## 🔤 Terminology"

@@ -144,3 +144,6 @@ excludelist='*.@(o|O|so|SO|so.!(conf)|SO.!(CONF)|a|A|rpm|RPM|deb|DEB|gif|GIF|jp?
 
 complete -F _vim_ctags -f -X "${excludelist}" vi vim gvim rvim view rview rgvim rgview gview nvim
 
+
+command -v just     >/dev/null 2>&1  && eval "$(just --completions bash)"
+
