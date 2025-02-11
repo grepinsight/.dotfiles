@@ -3,6 +3,7 @@ format = """
 [│](bold green)(${custom.docker})$all
 [└─>](bold green) """
 
+
 [memory_usage]
 disabled = true
 show_percentage = true
