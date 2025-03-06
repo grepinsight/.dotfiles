@@ -385,9 +385,13 @@ matches:
       #gratitude #thankful #감사노트 #journal
 
 
-  - trigger: diffbw
+  - triggers:
+      - diffbw
+      - diffb
     replace: difference between $|$
-  - trigger: Difference b
+  - triggers:
+      - Difference b
+      - Diffb
     replace: Difference between $|$
   - trigger: \tex
     replace: \text{$|$}

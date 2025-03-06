@@ -93,7 +93,7 @@ matches:
       Please create a Mermaid flowchart diagram that shows:
       1. The main flow of [process/function name]
       2. Include decision points with Yes/No branches
-      3. Keep node text simple and clear (avoid special characters)
+      3. Keep node text simple and clear (avoid special characters). Always ensure to quote annotations if they contain special characters like parentheses, asterisks
       4. [Optional] Add a subgraph to show examples
       5. [Optional] Use appropriate flowchart symbols:
          - [] for process steps
