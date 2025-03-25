@@ -1,5 +1,9 @@
 
 matches:
+  - triggers: [";dts", "-dts"]
+    replace: "Do the same for "
+  - trigger: --fact
+    replace: Given a short note or explanation that lacks context or clarity, rewrite it into a concise, self-explanatory atomic note. Clearly define terms, provide brief examples, and list any prerequisite knowledge needed to understand the concept. Format your answer in a structured way, using clear headings, bullet points, and examples. Do not repeat my request back to me in your response. Furthermore, do not output any warnings or errors or notes—just the output.
   - triggers: ["-summarize", "-summary"]
     replace: Summarize the key lessons, core principles demonstrated, and significant findings or takeaways from the text, focusing on actionable insights or overarching themes from the above source.
   - trigger: -backward
@@ -55,7 +59,7 @@ matches:
     replace: "Also, please provide the above in Korean as well."
   - trigger: -fill
     replace: "Fill in the blank"
-  - trigger: -comp
+  - trigger: --comp
     replace: "Complete the sentence based on the given context."
   - trigger: ?w
     replace: " Where is it?"
