@@ -89,7 +89,7 @@
         "command": "composerMode.agent"
     },
     {
-        "key": "shift+cmd+f11",
+        "key": "shift+cmd+f10",
         "command": "jupyter.restartkernel",
         "when": "isWorkspaceTrusted && jupyter.interactive.canRestartNotebookKernel || isWorkspaceTrusted && jupyter.notebookeditor.canrestartNotebookkernel && notebookKernel =~ /^ms-toolsai.jupyter\\//"
     }
