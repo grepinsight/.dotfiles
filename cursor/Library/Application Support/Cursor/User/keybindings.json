@@ -1,0 +1,96 @@
+// Place your key bindings in this file to override the defaults
+[
+    {
+        "key": "shift+alt+cmd+p",
+        "command": "notebook.cell.executeCellsAbove",
+        "when": "notebookMissingKernelExtension && notebookCellType == 'code' || notebookCellType == 'code' && notebookKernelCount > 0 || notebookCellType == 'code' && notebookKernelSourceCount > 0"
+    },
+    {
+        "key": "shift+alt+cmd+n",
+        "command": "notebook.cell.executeCellAndBelow",
+        "when": "notebookMissingKernelExtension && notebookCellType == 'code' || notebookCellType == 'code' && notebookKernelCount > 0 || notebookCellType == 'code' && notebookKernelSourceCount > 0"
+    },
+    {
+        "key": "shift+alt+cmd+a",
+        "command": "notebook.execute"
+    },
+    {
+        "key": "h",
+        "command": "notebook.cell.collapseCellOutput",
+        "when": "notebookCellHasOutputs && notebookCellListFocused && !inputFocus && !notebookCellOutputIsCollapsed"
+    },
+    {
+        "key": "cmd+r t",
+        "command": "-notebook.cell.collapseCellOutput",
+        "when": "notebookCellHasOutputs && notebookCellListFocused && !inputFocus && !notebookCellOutputIsCollapsed"
+    },
+    {
+        "key": "shift+h",
+        "command": "notebook.cell.expandCellOutput",
+        "when": "notebookCellListFocused && notebookCellOutputIsCollapsed"
+    },
+    {
+        "key": "cmd+r t",
+        "command": "-notebook.cell.expandCellOutput",
+        "when": "notebookCellListFocused && notebookCellOutputIsCollapsed"
+    },
+    {
+        "key": "shift+m",
+        "command": "notebook.cell.joinBelow",
+        "when": "notebookEditorFocused && !inputFocus && !notebookOutputFocused" 
+    },
+    {
+        "key": "ctrl+alt+j",
+        "command": "-notebook.cell.joinBelow",
+        "when": "notebookEditorFocused"
+    },
+    {
+        "key": "ctrl+shift+m",
+        "command": "notebook.cell.joinAbove",
+        "when": "notebookEditorFocused && !inputFocus && !notebookOutputFocused"
+    },
+    {
+        "key": "ctrl+shift+alt+j",
+        "command": "-notebook.cell.joinAbove",
+        "when": "notebookEditorFocused"
+    },
+    {
+        "key": "alt+q",
+        "command": "outline.focus"
+    },
+    {
+        "key": "alt+-",
+        "command": "workbench.action.splitEditorDown"
+    },
+    {
+        "key": "cmd+r cmd+\\",
+        "command": "-workbench.action.splitEditorDown"
+    },
+    {
+        "key": "alt+1",
+        "command": "workbench.explorer.fileView.focus"
+    },
+    {
+        "key": "alt+3",
+        "command": "workbench.scm.focus"
+    },
+    {
+        "key": "cmd+e",
+        "command": "markdown-preview-enhanced.openPreviewToTheSide",
+        "when": "editorLangId == 'markdown'"
+    },
+    {
+        "key": "cmd+k v",
+        "command": "-markdown-preview-enhanced.openPreviewToTheSide",
+        "when": "editorLangId == 'markdown'"
+    },
+    {
+        "key": "cmd+i",
+        "command": "composerMode.agent"
+    },
+    {
+        "key": "shift+cmd+f11",
+        "command": "jupyter.restartkernel",
+        "when": "isWorkspaceTrusted && jupyter.interactive.canRestartNotebookKernel || isWorkspaceTrusted && jupyter.notebookeditor.canrestartNotebookkernel && notebookKernel =~ /^ms-toolsai.jupyter\\//"
+    }
+]
