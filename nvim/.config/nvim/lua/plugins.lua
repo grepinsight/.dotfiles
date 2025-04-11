@@ -513,10 +513,6 @@ local M = {
 		},
 	},
 	{
-		"henrik/vim-yaml-flattener",
-		ft = { "yaml" },
-	},
-	{
 		-- automatic f-string in python
 		"chrisgrieser/nvim-puppeteer",
 		lazy = false, -- plugin lazy-loads itself. Can also load on filetypes.
@@ -846,6 +842,26 @@ local M = {
 		lazy = false,
 		config = function()
 			require("key-analyzer").setup()
+		end,
+	},
+	{
+		"rgroli/other.nvim",
+		cmd = "Other",
+		config = function()
+			require("other-nvim").setup({
+				mappings = {
+					-- custom mapping
+					{
+						pattern = "/models/(.*)/(.*).sql$",
+						target = "/models/%1/%2.yml",
+					},
+					{
+						pattern = "/models/(.*)/(.*).yml$",
+						target = "/models/%1/%2.sql",
+					},
+
+				}
+			})
 		end,
 	},
 }

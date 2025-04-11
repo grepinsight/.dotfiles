@@ -4,6 +4,10 @@ matches:
     replace: "Explain this in a laymen's term:"
   - trigger: --bullet
     replace: Output your response in the nested list.
+  - triggers: [";dts", "-dts"]
+    replace: "Do the same for "
+  - trigger: --fact
+    replace: Given a short note or explanation that lacks context or clarity, rewrite it into a concise, self-explanatory atomic note. Clearly define terms, provide brief examples, and list any prerequisite knowledge needed to understand the concept. Format your answer in a structured way, using clear headings, bullet points, and examples. Do not repeat my request back to me in your response. Furthermore, do not output any warnings or errors or notes—just the output.
   - triggers: ["-summarize", "-summary"]
     replace: Summarize the key lessons, core principles demonstrated, and significant findings or takeaways from the text, focusing on actionable insights or overarching themes from the above source.
   - trigger: -backward
@@ -97,7 +101,7 @@ matches:
       Please create a Mermaid flowchart diagram that shows:
       1. The main flow of [process/function name]
       2. Include decision points with Yes/No branches
-      3. Keep node text simple and clear (avoid special characters)
+      3. Keep node text simple and clear (avoid special characters). Always ensure to quote annotations if they contain special characters like parentheses, asterisks
       4. [Optional] Add a subgraph to show examples
       5. [Optional] Use appropriate flowchart symbols:
          - [] for process steps

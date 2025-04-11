@@ -6,5 +6,7 @@ matches:
     replace: SELECT * FROM dev.allee.$|$
   - trigger: ;sc
     replace: SELECT COUNT(*) as N FROM $|$
+  - trigger: ;sd
+    replace: SELECT DISTINCT * FROM $|$
   - trigger: ;sgc
     form: SELECT [[column]], COUNT(*) as N FROM [[table]] GROUP BY ALL

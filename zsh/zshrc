@@ -351,3 +351,6 @@ ghce() {
 [[ -s "/Users/allee/.gvm/scripts/gvm" ]] && source "/Users/allee/.gvm/scripts/gvm"
 
 . "$HOME/.local/bin/env"
+
+# added by Snowflake SnowSQL installer v1.2
+export PATH=/Applications/SnowSQL.app/Contents/MacOS:$PATH

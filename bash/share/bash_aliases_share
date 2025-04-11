@@ -348,7 +348,7 @@ alias gri=gri_run
 
 alias vr="vim README*"
 if command -v nvim > /dev/null; then
-    alias v="NVIM_LISTEN_ADDRESS=/tmp/nvimsocket nvim"
+    alias v="nvim"
     alias vim="nvim"
 else
     alias v="vim"

@@ -68,7 +68,7 @@ matches:
       - .nullcheck
       - .null_check
     replace: .isnull().sum()
-  - trigger: .db
+  - trigger: ..db
     replace: .describe()
   - trigger: .ds
     replace: .describe()

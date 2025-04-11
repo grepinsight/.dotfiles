@@ -7,6 +7,13 @@ matches:
         type: date
         params:
           format: "%Y-%m-%d"
+  - trigger: ;month
+    replace: "{{mydate}}"
+    vars:
+      - name: mydate
+        type: date
+        params:
+          format: "%Y-%m"
   - trigger: ;ㅇㅁㅅㄷ
     replace: "{{mydate}}"
     vars:
