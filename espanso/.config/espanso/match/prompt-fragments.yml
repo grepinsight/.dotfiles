@@ -1,5 +1,9 @@
 
 matches:
+  - trigger: -laymen
+    replace: "Explain this in a laymen's term:"
+  - trigger: --bullet
+    replace: Output your response in the nested list.
   - triggers: ["-summarize", "-summary"]
     replace: Summarize the key lessons, core principles demonstrated, and significant findings or takeaways from the text, focusing on actionable insights or overarching themes from the above source.
   - trigger: -backward
@@ -55,7 +59,7 @@ matches:
     replace: "Also, please provide the above in Korean as well."
   - trigger: -fill
     replace: "Fill in the blank"
-  - trigger: -comp
+  - trigger: --comp
     replace: "Complete the sentence based on the given context."
   - trigger: ?w
     replace: " Where is it?"
