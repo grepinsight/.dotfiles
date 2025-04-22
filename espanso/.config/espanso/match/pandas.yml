@@ -35,7 +35,7 @@ matches:
     replace: .sort_index()
   - trigger: .set_i
     replace: .set_index(["$|$"])
-  - trigger: .drop
+  - trigger: .drop(
     replace: .drop(columns=["$|$"])
   - trigger: .res
     replace: .reset_index()
@@ -88,3 +88,5 @@ matches:
     replace: |-
       import sys
       print(sys.version)
+  - regex: "(?P<df>[A-Za-z_0-9]+)\\.(?P<col>[A-Za-z_0-9]+).notin"
+    replace: "{{df}}[~{{df}}[{{col}}].isin($|$)]"
