@@ -1,5 +1,9 @@
 
 matches:
+  - trigger: -laymen
+    replace: "Explain this in a laymen's term:"
+  - trigger: --bullet
+    replace: Output your response in the nested list.
   - triggers: [";dts", "-dts"]
     replace: "Do the same for "
   - trigger: --fact
