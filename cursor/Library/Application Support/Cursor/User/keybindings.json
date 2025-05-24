@@ -92,5 +92,13 @@
         "key": "shift+cmd+f10",
         "command": "jupyter.restartkernel",
         "when": "isWorkspaceTrusted && jupyter.interactive.canRestartNotebookKernel || isWorkspaceTrusted && jupyter.notebookeditor.canrestartNotebookkernel && notebookKernel =~ /^ms-toolsai.jupyter\\//"
+    },
+    {
+        "key": "alt+2",
+        "command": "workbench.view.extension.dbt_view"
+    },
+    {
+        "key": "shift+cmd+d",
+        "command": "workbench.view.extension.dbt_view"
     }
 ]

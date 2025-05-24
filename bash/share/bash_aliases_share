@@ -389,6 +389,7 @@ alias grpe='grep'
 
 alias xcat='xargs cat'
 alias xrm='xargs rm'
+alias xrmf='xargs rm -rf'
 alias cutt='cut -d"	"'
 alias cuts='cut -d" "'
 alias cut1d='cut -f1 -d:'

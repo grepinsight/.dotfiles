@@ -1,5 +1,13 @@
 
 matches:
+  - trigger: ;1
+    replace: 1️⃣
+  - trigger: ;2
+    replace: 2️⃣
+  - trigger: ;3
+    replace: 3️⃣
+  - trigger: ;4
+    replace: 4️⃣
   - triggers: [";pray", ";기도", ";rleh"]
     replace: "🙏"
   - trigger: ;rocket

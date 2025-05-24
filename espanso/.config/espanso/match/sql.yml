@@ -1,5 +1,14 @@
 
 matches:
+
+  - trigger: GROPU BY
+    replace: GROUP BY
+  - trigger: ;gb
+    replace: "GROUP BY "
+  - trigger: ;al
+    replace: "ALL"
+
+
   - trigger: ;sf
     replace: SELECT * FROM $|$
   - trigger: ;asf

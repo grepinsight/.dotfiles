@@ -8,14 +8,14 @@ matches:
     replace: "Do the same for "
   - trigger: --fact
     replace: Given a short note or explanation that lacks context or clarity, rewrite it into a concise, self-explanatory atomic note. Clearly define terms, provide brief examples, and list any prerequisite knowledge needed to understand the concept. Format your answer in a structured way, using clear headings, bullet points, and examples. Do not repeat my request back to me in your response. Furthermore, do not output any warnings or errors or notes—just the output.
-  - triggers: ["-summarize", "-summary"]
+  - triggers: ["@@summarize", "@@summary"]
     replace: Summarize the key lessons, core principles demonstrated, and significant findings or takeaways from the text, focusing on actionable insights or overarching themes from the above source.
   - trigger: -backward
     replace: |
       Your job is to work backwards from the future state to the present before developing a plan, detailing the actions, strategies, and resources needed to reach each milestone.
   - trigger: -more
     replace: Review your last response and search for areas of improvement. Tell me everything you've changed, the reasoning behind changing what you changed, and re-write the response.
-  - trigger: --output
+  - trigger: ---output
     replace: "Do not repeat my request back to me in your response. Furthermore, do not output any warnings or errors or notes—just the output"
   - trigger: -eng
     replace: |

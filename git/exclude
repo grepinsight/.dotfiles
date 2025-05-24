@@ -73,3 +73,5 @@ pytestdebug.log
 
 .cursorrules
 .cursorignore
+
+.cursor/*
