@@ -1,5 +1,5 @@
 # Toggle benchmarking (0 = off, 1 = on)
-BENCHMARK_LOAD=1
+BENCHMARK_LOAD=0
 
 bench_source() {
   local label="$1"

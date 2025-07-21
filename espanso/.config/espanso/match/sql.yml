@@ -19,3 +19,5 @@ matches:
     replace: SELECT DISTINCT * FROM $|$
   - trigger: ;sgc
     form: SELECT [[column]], COUNT(*) as N FROM [[table]] GROUP BY ALL
+  - trigger: ;ij
+    replace: INNER JOIN $|$
