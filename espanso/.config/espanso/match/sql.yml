@@ -11,6 +11,10 @@ matches:
 
   - trigger: ;sf
     replace: SELECT * FROM $|$
+  - trigger: ;dt
+    replace: DESCRIBE TABLE $|$
+  - trigger: ;ob
+    replace: ORDER BY $|$
   - trigger: ;asf
     replace: SELECT * FROM dev.allee.$|$
   - trigger: ;sc

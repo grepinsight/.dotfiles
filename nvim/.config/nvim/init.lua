@@ -103,16 +103,5 @@ vim.cmd("let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6 } }")
 
 require("config.globals")
 require("config.keymaps")
-
-
--- Define a function to call the Lua script
-function SuggestAccounts()
-	local transaction_description = vim.fn.input("Enter transaction description: ")
-	local script_path = "/Users/allee/scratch/2024-11-04--lua-hledger/mapper.lua"
-	local command = string.format("lua %s %q", script_path, transaction_description)
-	os.execute(command)
-end
-
--- Create a Neovim command to trigger the function
-vim.api.nvim_create_user_command('SuggestAccounts', SuggestAccounts, {})
+require("custom_commands")
 
