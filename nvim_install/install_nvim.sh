@@ -1,5 +1,6 @@
 #!/bin/bash
 
+set -x 
 VERSION="1.0"
 INSTALL_DIR="$HOME/src/nvim"
 PURGE=false
