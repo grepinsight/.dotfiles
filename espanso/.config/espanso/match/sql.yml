@@ -1,5 +1,14 @@
 
 matches:
+
+  - trigger: GROPU BY
+    replace: GROUP BY
+  - trigger: ;gb
+    replace: "GROUP BY "
+  - trigger: ;al
+    replace: "ALL"
+
+
   - trigger: ;sf
     replace: SELECT * FROM $|$
   - trigger: ;asf
@@ -10,3 +19,5 @@ matches:
     replace: SELECT DISTINCT * FROM $|$
   - trigger: ;sgc
     form: SELECT [[column]], COUNT(*) as N FROM [[table]] GROUP BY ALL
+  - trigger: ;ij
+    replace: INNER JOIN $|$

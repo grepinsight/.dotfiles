@@ -1,3 +1,21 @@
+# Toggle benchmarking (0 = off, 1 = on)
+BENCHMARK_LOAD=0
+
+bench_source() {
+  local label="$1"
+  local cmd="$2"
+  if [ "$BENCHMARK_LOAD" -eq 1 ]; then
+    local start end duration
+    start=$(gdate +%s%3N)
+    eval "$cmd"
+    end=$(gdate +%s%3N)
+    duration=$(( end - start ))
+    echo "[BENCH] $label took ${duration}ms"
+  else
+    eval "$cmd"
+  fi
+}
+
 if [[ -e /opt/homebrew/bin/brew ]]; then
     eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
@@ -7,7 +25,7 @@ echo $INIT_DIR
 
 # bash welcome
 if [ -e "${SHARED_DIR}/local/bash_welcome" ]; then
-  cat ${SHARED_DIR}/local/bash_welcome
+  bench_source "bash_welcome" "cat ${SHARED_DIR}/local/bash_welcome"
 fi
 
 #---------------SHARE-----------------------------
@@ -19,13 +37,13 @@ fi
 #
 #functions
 if [ -f "${SHARED_DIR}/share/bash_functions_share" ]; then
-   source "${SHARED_DIR}/share/bash_functions_share"
+   bench_source "bash_functions_share" "source ${SHARED_DIR}/share/bash_functions_share"
    echo "bash_functions_share loaded"
 fi
 
 # aliases
 if [ -e "${SHARED_DIR}/share/bash_aliases_share" ]; then
-  source "${SHARED_DIR}/share/bash_aliases_share"
+  bench_source "bash_aliases_share" "source ${SHARED_DIR}/share/bash_aliases_share"
   echo "bash_aliases_share loaded"
 else
 	echo " not there"
@@ -40,7 +58,7 @@ fi
 #colors
 #
 if [ -f "${INIT_DIR}/share/bash_colors_share" ]; then
-   source "${INIT_DIR}/share/bash_colors_share"
+   bench_source "bash_colors_share" "source ${INIT_DIR}/share/bash_colors_share"
    echo "bash_colors_share loaded"
 fi
 
@@ -48,19 +66,19 @@ fi
 #--------------------LOCAL------------------------------
 ##paths
 if [ -f "${SHARED_DIR}/local/bash_paths_local" ]; then
-   source "${SHARED_DIR}/local/bash_paths_local"
+   bench_source "bash_paths_local" "source ${SHARED_DIR}/local/bash_paths_local"
    echo "bash_paths_local loaded"
 fi
 
 ## local bashrc
 if [ -e "${SHARED_DIR}/local/bash_aliases_local" ]; then
-  source "${SHARED_DIR}/local/bash_aliases_local"
+  bench_source "bash_aliases_local" "source ${SHARED_DIR}/local/bash_aliases_local"
   echo "bash_aliases_local loaded"
 fi
 
 ## settings local
 if [ -e "${SHARED_DIR}/local/bash_settings_local" ]; then
-  source "${SHARED_DIR}/local/bash_settings_local"
+  bench_source "bash_settings_local" "source ${SHARED_DIR}/local/bash_settings_local"
   echo "bash_settings_local loaded"
 fi
 

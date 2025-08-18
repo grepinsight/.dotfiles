@@ -1,5 +1,8 @@
 INIT_DIR="${HOME}/.dotfiles/bash" # where init is
 
+# never freezes the terminal
+stty -ixon
+
 [[ "$-" != *i* ]] && return
 
 # bash welcome
