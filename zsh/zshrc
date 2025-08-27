@@ -345,3 +345,8 @@ export PATH="$PATH:/Users/allee/.local/bin"
 
 # dbt aliases
 alias dbtf=/Users/allee/.local/bin/dbt
+
+
+# Task Master aliases added on 8/20/2025
+alias tm='task-master'
+alias taskmaster='task-master'
