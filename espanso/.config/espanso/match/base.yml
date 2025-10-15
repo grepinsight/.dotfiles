@@ -27,6 +27,8 @@ matches:
     replace: "%reload_ext jupyter_ai"
   - trigger: ;tt
     replace: "- [ ] "
+  - trigger: "- tt"
+    replace: "- [ ] "
   - trigger: ;td
     replace: "- [ ] "
   - trigger: "-tt"

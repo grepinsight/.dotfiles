@@ -37,7 +37,7 @@ matches:
     replace: .set_index(["$|$"])
   - trigger: .drop(
     replace: .drop(columns=["$|$"])
-  - trigger: .res
+  - trigger: .reset_
     replace: .reset_index()
   - trigger: .qr
     replace: .query("$|$")

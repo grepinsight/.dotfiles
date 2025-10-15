@@ -42,10 +42,13 @@ function M.config()
         [">"] = { char = "", hl_group = "ObsidianRightArrow" },
         ["~"] = { char = "󰰱", hl_group = "ObsidianTilde" },
         ["!"] = { char = "", hl_group = "ObsidianImportant" },
-        ["/"] = { char = "", hl_group = "ObsidianImportant" },
+        ["/"] = { char = "🏗️", hl_group = "ObsidianImportant" },
         -- Replace the above with this if you don't have a patched font:
         -- [" "] = { char = "☐", hl_group = "ObsidianTodo" },
         ["u"] = { char = "", hl_group = "ObsidianDone" },
+        ["w"] = { char = "🏆", hl_group = "ObsidianDone" },
+        ["*"] = { char = "⭐", hl_group = "ObsidianDone" },
+        ['"'] = { char = "🗣️", hl_group = "ObsidianDone" },
 
         -- You can also add more custom ones...
       },
@@ -90,5 +93,29 @@ function M.config()
   vim.keymap.set("n", "<leader>s", "<cmd>ObsidianQuickSwitch<CR>", { desc = "ObsidianQuickSwitch" })
   vim.keymap.set("n", "<leader>b", "<cmd>ObsidianBacklinks<CR>", { desc = "ObsidianBacklinks" })
   vim.keymap.set("n", "<leader>o", "<cmd>ObsidianTOC<CR>", { desc = "ObsidianTOC" })
+
+  -- Fix double dash in checkboxes (- - [ ] -> - [ ])
+  local fix_double_dash_group = vim.api.nvim_create_augroup("ObsidianFixDoubleDash", { clear = true })
+  vim.api.nvim_create_autocmd({ "BufWritePre", "CursorHold", "CursorHoldI" }, {
+    group = fix_double_dash_group,
+    pattern = "*.md",
+    callback = function()
+      local bufnr = vim.api.nvim_get_current_buf()
+      local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
+      local modified = false
+      
+      for i, line in ipairs(lines) do
+        local fixed_line = line:gsub("^%- %- %[ %]", "- [ ]")
+        if fixed_line ~= line then
+          lines[i] = fixed_line
+          modified = true
+        end
+      end
+      
+      if modified then
+        vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
+      end
+    end,
+  })
 end
 return M

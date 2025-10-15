@@ -350,3 +350,9 @@ alias dbtf=/Users/allee/.local/bin/dbt
 # Task Master aliases added on 8/20/2025
 alias tm='task-master'
 alias taskmaster='task-master'
+
+fpath+=~/.zfunc; autoload -Uz compinit; compinit
+
+zstyle ':completion:*' menu select
+
+alias claude="/Users/allee/.claude/local/claude"
