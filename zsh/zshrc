@@ -356,3 +356,4 @@ fpath+=~/.zfunc; autoload -Uz compinit; compinit
 zstyle ':completion:*' menu select
 
 alias claude="/Users/allee/.claude/local/claude"
+export PATH="$HOME/.local/bin:$PATH"
