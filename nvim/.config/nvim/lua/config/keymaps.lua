@@ -22,3 +22,8 @@ vim.keymap.set("n", "<leader>oc", function()
     vim.fn.system("cursor " .. current_file)
     vim.notify("Opened " .. current_file .. " in Cursor", vim.log.levels.INFO)
 end, { desc = "Open in Cursor" })
+
+-- Alternate file switching (alias for other.nvim)
+vim.api.nvim_create_user_command('A', 'Other', {})
+vim.api.nvim_create_user_command('AS', 'OtherSplit', {})
+vim.api.nvim_create_user_command('AV', 'OtherVSplit', {})

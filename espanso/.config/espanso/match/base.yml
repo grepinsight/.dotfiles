@@ -459,3 +459,11 @@ matches:
     replace: ax.hist(data, bins=10)
   - trigger: ;ptight
     replace: plt.tight_layout()
+  - triggers:
+    - .Emt
+    - . Emt
+    replace: . 뜻
+  - triggers:
+    - ;fixg
+    - ;fixa
+    replace: Fix grammars and awkward phrases.
