@@ -8,6 +8,27 @@
 
 - Do not mention Claude Code authorship in commit messages OR PR messages
 
+## Core Principle: Cache Everything
+
+**Cache as much as possible.** Every LLM call, API response, and computed
+result that can be stored should be stored.  Re-running the same command must
+never redo expensive work.
+
+### Rules
+
+1. **Check cache before calling** any LLM or external API.
+2. **Persist before returning** — store the result immediately after receiving it.
+3. **Always expose a force/overwrite escape hatch:**
+   - CLI commands: `--force` flag
+   - Functions/methods: `force: bool = False` parameter
+4. **Apply TTL based on data volatility** — use judgment:
+   - Immutable data (file content, computed results from immutable inputs): **permanent**
+   - Slowly-changing data (user profiles, metadata): **7 days**
+   - Frequently-changing data (search results, availability, prices): **1–24 hours**
+   - Real-time data (live feeds, stock prices): **no cache**
+5. **Cache keys must be deterministic** — hash the inputs, never use timestamps or
+   mutable fields as keys.
+
 ## Note-Taking Guidelines
 
 ### Keep Notes Focused and Concise
@@ -152,6 +173,18 @@ Break complex work into 3-5 stages. Document in `IMPLEMENTATION_PLAN.md`:
 - Include context for debugging
 - Handle errors at appropriate level
 - Never silently swallow exceptions
+
+### Secrets & Credentials
+
+- **Never display raw secret values** in terminal output, logs, or commits
+- To inspect which keys are present in a `.env` without revealing values:
+  ```bash
+  # Show key names only — mask values
+  grep -E '^(SLACK_|OPENAI_|AWS_|KEY_|TOKEN_|SECRET_)' .env | sed 's/=.*/=...'
+  ```
+- Secrets files (`.env.secret`, `.envrc`) must be in `.gitignore`; `.env` too unless
+  the project explicitly commits it for non-secret config (use `.env.secret` for actual
+  secrets in that case)
 
 ## Decision Framework
 
