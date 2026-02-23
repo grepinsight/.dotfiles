@@ -23,6 +23,7 @@ reload:  ## Reload configs
 	cd git && make
 	cd jupyter && make
 	cd ripgrep && make
+	cd claude && make
 
 
 update_brew:
