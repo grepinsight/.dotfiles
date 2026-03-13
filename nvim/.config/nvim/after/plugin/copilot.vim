@@ -8,6 +8,9 @@ let g:copilot_filetypes = {
       \ 'sh': v:true,
       \ }
 
+" Disable Copilot for .env and .envrc files
+autocmd BufRead,BufNewFile .env,.envrc let b:copilot_enabled = v:false
+
 imap <silent><script><expr> <C-c> copilot#Accept("\<CR>")
 let g:copilot_no_tab_map = v:true
 

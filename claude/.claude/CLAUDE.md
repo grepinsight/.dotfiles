@@ -1,33 +1,12 @@
-# Development Guidelines
-
-> **Scope**: Universal development practices applicable to any project or language.
-> **When to use**: Remote hosts, new projects, non-vault work, general software development.
-> **See also**: Project-specific CLAUDE.md files for context-specific instructions.
-
 ## IMPORTANT
 
+
+- For WORK related general notes(infrastructure, internal), store them in ${OBSIDIAN_VAULT_WORK}
+- For WORK related personal project notes, store them in ${OBSIDIAN_VAULT_WORK_PERSONAL}
+- For NON-WORK related personal/general notes, store them in ${OBSIDIAN_VAULT}
+- For project specific work (i.e. you are in a directory that's none of above, write the notes there
+
 - Do not mention Claude Code authorship in commit messages OR PR messages
-
-## Core Principle: Cache Everything
-
-**Cache as much as possible.** Every LLM call, API response, and computed
-result that can be stored should be stored.  Re-running the same command must
-never redo expensive work.
-
-### Rules
-
-1. **Check cache before calling** any LLM or external API.
-2. **Persist before returning** — store the result immediately after receiving it.
-3. **Always expose a force/overwrite escape hatch:**
-   - CLI commands: `--force` flag
-   - Functions/methods: `force: bool = False` parameter
-4. **Apply TTL based on data volatility** — use judgment:
-   - Immutable data (file content, computed results from immutable inputs): **permanent**
-   - Slowly-changing data (user profiles, metadata): **7 days**
-   - Frequently-changing data (search results, availability, prices): **1–24 hours**
-   - Real-time data (live feeds, stock prices): **no cache**
-5. **Cache keys must be deterministic** — hash the inputs, never use timestamps or
-   mutable fields as keys.
 
 ## Note-Taking Guidelines
 
@@ -103,28 +82,6 @@ Break complex work into 3-5 stages. Document in `IMPLEMENTATION_PLAN.md`:
 4. **Refactor** - Clean up with tests passing
 5. **Commit** - With clear message linking to plan
 
-### 3. When Stuck (After 3 Attempts)
-
-**CRITICAL**: Maximum 3 attempts per issue, then STOP.
-
-1. **Document what failed**:
-   - What you tried
-   - Specific error messages
-   - Why you think it failed
-
-2. **Research alternatives**:
-   - Find 2-3 similar implementations
-   - Note different approaches used
-
-3. **Question fundamentals**:
-   - Is this the right abstraction level?
-   - Can this be split into smaller problems?
-   - Is there a simpler approach entirely?
-
-4. **Try different angle**:
-   - Different library/framework feature?
-   - Different architectural pattern?
-   - Remove abstraction instead of adding?
 
 ## Technical Standards
 
@@ -166,6 +123,12 @@ Break complex work into 3-5 stages. Document in `IMPLEMENTATION_PLAN.md`:
   ```
 
 - **Commit incrementally**: Small, logical commits that compile and pass tests
+
+### Frontend UX
+
+- **Guard destructive actions with confirmation modals** - Any operation that deletes data, cancels a process, removes access, or is otherwise irreversible must require explicit user confirmation via a modal dialog
+- Confirmation modals should clearly describe the consequences (what will be deleted/changed and that it cannot be undone)
+- Use distinct button labels (e.g., "Keep Import" / "Cancel Import") rather than generic "OK" / "Cancel"
 
 ### Error Handling
 

@@ -622,3 +622,6 @@ alias 00="bat README.md"
 alias 000="vim README.md"
 alias ma="mamba activate"
 alias meld='meld_script(){ /Applications/Meld.app/Contents/MacOS/Meld $* 2>/dev/null & };meld_script'
+
+alias ccc="claude"
+alias cccc="claude --allow-dangerously-skip-permissions"
