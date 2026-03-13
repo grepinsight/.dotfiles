@@ -94,6 +94,40 @@ vim.api.nvim_create_user_command("Daily", OpenDaily, {
   desc = "Open daily note for today",
 })
 
+-- Open last N daily notes (skipping dates without files)
+function OpenRecentDailies(opts)
+  local count = tonumber(opts.args) or 5
+  local dir = vim.fn.expand("~/Thoughts/02-Calendar/Daily/")
+  local day_seconds = 86400
+  local now = os.time()
+  local found = 0
+  local days_checked = 0
+  local max_days = 365 -- safety limit
+
+  while found < count and days_checked < max_days do
+    days_checked = days_checked + 1
+    local t = now - (days_checked * day_seconds)
+    local date = os.date("%Y-%m-%d", t)
+    local filepath = dir .. date .. ".md"
+
+    if vim.fn.filereadable(filepath) == 1 then
+      found = found + 1
+      vim.cmd("edit " .. filepath)
+    end
+  end
+
+  if found == 0 then
+    vim.notify("No recent daily notes found", vim.log.levels.WARN)
+  else
+    vim.notify(string.format("Opened %d recent daily note(s)", found), vim.log.levels.INFO)
+  end
+end
+
+vim.api.nvim_create_user_command("RecentDailies", OpenRecentDailies, {
+  nargs = "?",
+  desc = "Open last N daily notes (default 5), skipping missing dates",
+})
+
 vim.api.nvim_create_user_command("Weekly", OpenWeekly, {
   nargs = "?",
   complete = function(ArgLead, CmdLine, CursorPos)

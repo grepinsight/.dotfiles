@@ -93,6 +93,7 @@ function M.config()
   vim.keymap.set("n", "<leader>s", "<cmd>ObsidianQuickSwitch<CR>", { desc = "ObsidianQuickSwitch" })
   vim.keymap.set("n", "<leader>b", "<cmd>ObsidianBacklinks<CR>", { desc = "ObsidianBacklinks" })
   vim.keymap.set("n", "<leader>o", "<cmd>ObsidianTOC<CR>", { desc = "ObsidianTOC" })
+  vim.keymap.set("n", "<leader>y", "<cmd>ObsidianYesterday<CR>", { desc = "ObsidianYesterday" })
 
   -- Fix double dash in checkboxes (- - [ ] -> - [ ])
   local fix_double_dash_group = vim.api.nvim_create_augroup("ObsidianFixDoubleDash", { clear = true })
