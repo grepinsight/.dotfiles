@@ -203,7 +203,19 @@ When multiple valid approaches exist, choose based on:
 - Make assumptions - verify with existing code
 
 **ALWAYS**:
+- Run existing tests before and after making changes
+- Add or update tests when adding features or fixing bugs
 - Commit working code incrementally
 - Update plan documentation as you go
 - Learn from existing implementations
 - Stop after 3 failed attempts and reassess
+
+## Misc
+
+- For Python projects, prefer uv for project setup and dependency management. Default to Python unless another language is specified.
+- When the user asks for text refinement or copywriting, deliver the refined output directly. Do not search the codebase or ask clarifying questions unless explicitly asked.
+- building Docker images, always check the target deployment architecture (amd64 vs arm64) and use --platform flag explicitly.
+    - Never assume the build host architecture matches the deployment target.
+- When working with Confluence pages, always verify you have the correct page ID and content before making edits. Double-check page titles and ADF structure before updating.
+- When using kubernetes always set `--context` flag. If you are unsure of which context to use, ASK
+- When using aws, always set --profile flag. If you are unsure of which profile to use, ASK
