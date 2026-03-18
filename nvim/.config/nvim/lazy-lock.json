@@ -93,6 +93,7 @@
   "vim-markdown-folding": { "branch": "master", "commit": "0592d3efcb9b287fff265aa542872d95478a7536" },
   "vim-prettier": { "branch": "master", "commit": "7dbdbb12c50a9f4ba72390cce2846248e4368fd0" },
   "vim-projectionist": { "branch": "master", "commit": "5ff7bf79a6ef741036d2038a226bcb5f8b1cd296" },
+  "vim-rdf": { "branch": "master", "commit": "e2af9a7614a9fb9c3fc419135d41700426cad0db" },
   "vim-repeat": { "branch": "master", "commit": "65846025c15494983dafe5e3b46c8f88ab2e9635" },
   "vim-rhubarb": { "branch": "master", "commit": "ee69335de176d9325267b0fd2597a22901d927b1" },
   "vim-rmarkdown": { "branch": "master", "commit": "a1787cb55e45b8778eaed7b392648deb4706cd0b" },

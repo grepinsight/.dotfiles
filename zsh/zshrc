@@ -192,7 +192,7 @@ export PNPM_HOME="$HOME/Library/pnpm"
 export PATH="$PNPM_HOME:$PATH"
 # pnpm end
 #
-eval "$(zellij setup --generate-completion zsh)"
+command -v zellij &>/dev/null && eval "$(zellij setup --generate-completion zsh)"
 
 . "$HOME/.cargo/env"
 # >>> conda initialize >>>
