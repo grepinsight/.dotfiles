@@ -1,3 +1,7 @@
+set -g mouse on
+set -g set-clipboard on
+set -g allow-passthrough on
+
 run '/opt/homebrew/opt/tpm/share/tpm/tpm'
 
 
@@ -13,16 +17,13 @@ run-shell ~/.tmux/plugins/tmux-thumbs/tmux-thumbs.tmux
 
 
 # Mouse mode
-set -g mouse on
+
+
 bind m set -g mouse on
 bind M set -g mouse off
 # set-environment -g PATH "/opt/homebrew/bin:/usr/local/bin:/bin:/usr/bin"
 # run '/opt/homebrew/opt/tpm/share/tpm/tpm'
 #
-# passthrouh
-set -g allow-passthrough on
-#
-set -g set-clipboard on
 #
 # # set-option -g set-titles on
 # set -g allow-rename off

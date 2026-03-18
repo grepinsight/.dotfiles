@@ -1,5 +1,7 @@
 
 matches:
+  - trigger: ;frog
+    replace: 🐸
   - trigger: ;1
     replace: 1️⃣
   - trigger: ;2

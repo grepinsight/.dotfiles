@@ -37,7 +37,7 @@
     {
         "key": "shift+m",
         "command": "notebook.cell.joinBelow",
-        "when": "notebookEditorFocused && !inputFocus && !notebookOutputFocused" 
+        "when": "notebookEditorFocused && !inputFocus && !notebookOutputFocused"
     },
     {
         "key": "ctrl+alt+j",
@@ -100,5 +100,13 @@
     {
         "key": "shift+cmd+d",
         "command": "workbench.view.extension.dbt_view"
+    },
+    {
+        "key": "ctrl+shift+l",
+        "command": "workbench.action.closeEditorsToTheRight"
+    },
+    {
+        "key": "ctrl+shift+o",
+        "command": "workbench.action.closeOtherEditors"
     }
 ]
