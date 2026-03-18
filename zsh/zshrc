@@ -354,3 +354,16 @@ ghce() {
 
 # added by Snowflake SnowSQL installer v1.2
 export PATH=/Applications/SnowSQL.app/Contents/MacOS:$PATH
+
+# Task Master aliases added on 10/13/2025
+alias tm='task-master'
+alias taskmaster='task-master'
+
+# opencode
+export PATH=/Users/allee/.opencode/bin:$PATH
+
+# VoiceMode MCP - text-only mode (skip TTS, voice input only)
+export VOICEMODE_SKIP_TTS=true
+
+# OpenClaw Completion (suppress punycode deprecation warning)
+source <(NODE_OPTIONS="--no-deprecation" openclaw completion --shell zsh)
