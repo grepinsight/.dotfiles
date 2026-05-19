@@ -148,6 +148,19 @@ alias v="$EDITOR"
 [ -f $HOME/.cargo/env ] && source $HOME/.cargo/env
 [ -f $HOME/.dotfiles/zsh/zshrc_init ] && source $HOME/.dotfiles/zsh/zshrc_init
 
+# --- Per-host conditional config ---
+# Load extras only when both (a) we're on the named host and (b) the file exists.
+# Naming convention: $HOME/.dotfiles/zsh/zshrc.<short-hostname>
+# Plus an always-checked machine-local override at zshrc.local (gitignore this one).
+_host="${HOST:-$(hostname -s)}"
+for _extra in \
+  "$HOME/.dotfiles/zsh/zshrc.${_host}" \
+  "$HOME/.dotfiles/zsh/zshrc.local"
+do
+  [ -r "$_extra" ] && source "$_extra"
+done
+unset _host _extra
+
 # never freezes the terminal
 stty -ixon
 
