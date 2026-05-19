@@ -1,5 +1,11 @@
 
 matches:
+  - triggers:
+      - ;utk
+      - ;uu
+      - ;tt
+      - ;;;
+    replace: ultrathink
   - trigger: -laymen
     replace: "Explain this in a laymen's term:"
   - trigger: --bullet
