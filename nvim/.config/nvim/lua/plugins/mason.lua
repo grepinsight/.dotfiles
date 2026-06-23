@@ -41,13 +41,19 @@ return {
                         end
                     end
                     for _, formatter in pairs(formatters) do
-                        table.insert(tool_names, formatter.name)
+                        -- honor `disabled` like the language_servers loop above,
+                        -- so a disabled formatter is never handed to the installer
+                        if formatter.disabled ~= true then
+                            table.insert(tool_names, formatter.name)
+                        end
                     end
                     -- for _, adapter in pairs(adapters) do
                     --   table.insert(tool_names, adapter.name)
                     -- end
                     for _, linter in pairs(linters) do
-                        table.insert(tool_names, linter.name)
+                        if linter.disabled ~= true then
+                            table.insert(tool_names, linter.name)
+                        end
                     end
                     require("mason-tool-installer").setup({
                         ensure_installed = tool_names,

@@ -32,8 +32,13 @@ return {
         end,
     },
     rustfmt = {
+        -- rustfmt ships with the Rust toolchain (rustup), not Mason -- the Mason
+        -- registry dropped the `rustfmt` package, so leaving this enabled makes
+        -- mason-tool-installer fail with "Cannot find package rustfmt". Disabled
+        -- here: rust format-on-save falls through to rust-analyzer's LSP formatter,
+        -- which invokes the rustup rustfmt on PATH.
         name = "rustfmt", -- for mason installer
-        disabled = false,
+        disabled = true,
         to_register_wrap = function()
             return require("null-ls").builtins.formatting.rustfmt.with({
                 filetypes = { "rust" },
