@@ -48,5 +48,7 @@ matches:
     replace: "✅"
   - trigger: ;x
     replace: "❌"
+  - trigger: ;ip
+    replace: "⏳"
   - trigger: ;check
     replace: "- 🧐 Check if "

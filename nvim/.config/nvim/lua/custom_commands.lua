@@ -945,3 +945,194 @@ vim.keymap.set("v", "<leader>bm", ":BashMultiline<CR>", {
   desc = "Convert bash to multiline",
   silent = true,
 })
+
+-- Join wrapped URL / long string into a single line.
+-- Removes newlines and any leading whitespace on continuation lines.
+-- Range: visual selection, explicit :Nm,Nn, or the enclosing ``` code block /
+-- paragraph when invoked from normal mode without a range.
+function JoinURL(opts)
+  local bufnr = vim.api.nvim_get_current_buf()
+  local start_line, end_line
+
+  if opts.range == 2 then
+    start_line = opts.line1 - 1
+    end_line = opts.line2
+  else
+    local cur = vim.api.nvim_win_get_cursor(0)[1]
+    local total = vim.api.nvim_buf_line_count(bufnr)
+
+    -- Try to detect surrounding fenced code block ```...```
+    local fence_start, fence_end
+    for i = cur, 1, -1 do
+      local line = vim.api.nvim_buf_get_lines(bufnr, i - 1, i, false)[1] or ""
+      if line:match("^%s*```") then
+        fence_start = i
+        break
+      end
+    end
+    if fence_start then
+      for i = cur, total do
+        local line = vim.api.nvim_buf_get_lines(bufnr, i - 1, i, false)[1] or ""
+        if i > fence_start and line:match("^%s*```") then
+          fence_end = i
+          break
+        end
+      end
+    end
+
+    if fence_start and fence_end and cur > fence_start and cur < fence_end then
+      start_line = fence_start -- exclusive of the opening fence
+      end_line = fence_end - 1 -- exclusive of the closing fence
+    else
+      -- Fallback: current paragraph (run of non-blank lines).
+      local s = cur
+      while s > 1 do
+        local line = vim.api.nvim_buf_get_lines(bufnr, s - 2, s - 1, false)[1] or ""
+        if line:match("^%s*$") then break end
+        s = s - 1
+      end
+      local e = cur
+      while e < total do
+        local line = vim.api.nvim_buf_get_lines(bufnr, e, e + 1, false)[1] or ""
+        if line:match("^%s*$") then break end
+        e = e + 1
+      end
+      start_line = s - 1
+      end_line = e
+    end
+  end
+
+  local lines = vim.api.nvim_buf_get_lines(bufnr, start_line, end_line, false)
+  if #lines == 0 then
+    vim.notify("JoinURL: nothing to join", vim.log.levels.WARN)
+    return
+  end
+
+  local pieces = {}
+  for i, line in ipairs(lines) do
+    local piece
+    if i == 1 then
+      piece = line:gsub("%s+$", "")
+    else
+      piece = line:gsub("^%s+", ""):gsub("%s+$", "")
+    end
+    table.insert(pieces, piece)
+  end
+  local joined = table.concat(pieces, "")
+
+  vim.api.nvim_buf_set_lines(bufnr, start_line, end_line, false, { joined })
+  vim.notify(string.format("JoinURL: joined %d lines", #lines), vim.log.levels.INFO)
+end
+
+vim.api.nvim_create_user_command("JoinURL", JoinURL, {
+  range = true,
+  desc = "Join wrapped URL/string into one line (strips leading whitespace on continuations)",
+})
+
+vim.keymap.set("n", "<leader>uj", ":JoinURL<CR>", {
+  desc = "Join wrapped URL into one line",
+  silent = true,
+})
+
+vim.keymap.set("v", "<leader>uj", ":JoinURL<CR>", {
+  desc = "Join wrapped URL into one line",
+  silent = true,
+})
+
+-- Strip Claude Code console quote markers (▎) and join wrapped prose
+-- into a single line. Unlike JoinURL (which joins without spaces because URLs
+-- can't contain whitespace), this joins with single spaces because the input
+-- is prose: text copied from a Claude/CLI console where long lines have been
+-- soft-wrapped and continuation lines are prefixed with "  ▎ ".
+function JoinClaude(opts)
+  local bufnr = vim.api.nvim_get_current_buf()
+  local start_line, end_line
+
+  if opts.range == 2 then
+    start_line = opts.line1 - 1
+    end_line = opts.line2
+  else
+    local cur = vim.api.nvim_win_get_cursor(0)[1]
+    local total = vim.api.nvim_buf_line_count(bufnr)
+
+    -- Try to detect surrounding fenced code block ```...```
+    local fence_start, fence_end
+    for i = cur, 1, -1 do
+      local line = vim.api.nvim_buf_get_lines(bufnr, i - 1, i, false)[1] or ""
+      if line:match("^%s*```") then
+        fence_start = i
+        break
+      end
+    end
+    if fence_start then
+      for i = cur, total do
+        local line = vim.api.nvim_buf_get_lines(bufnr, i - 1, i, false)[1] or ""
+        if i > fence_start and line:match("^%s*```") then
+          fence_end = i
+          break
+        end
+      end
+    end
+
+    if fence_start and fence_end and cur > fence_start and cur < fence_end then
+      start_line = fence_start -- exclusive of the opening fence
+      end_line = fence_end - 1 -- exclusive of the closing fence
+    else
+      -- Fallback: current paragraph (run of non-blank lines).
+      local s = cur
+      while s > 1 do
+        local line = vim.api.nvim_buf_get_lines(bufnr, s - 2, s - 1, false)[1] or ""
+        if line:match("^%s*$") then break end
+        s = s - 1
+      end
+      local e = cur
+      while e < total do
+        local line = vim.api.nvim_buf_get_lines(bufnr, e, e + 1, false)[1] or ""
+        if line:match("^%s*$") then break end
+        e = e + 1
+      end
+      start_line = s - 1
+      end_line = e
+    end
+  end
+
+  local lines = vim.api.nvim_buf_get_lines(bufnr, start_line, end_line, false)
+  if #lines == 0 then
+    vim.notify("JoinClaude: nothing to join", vim.log.levels.WARN)
+    return
+  end
+
+  local pieces = {}
+  for _, line in ipairs(lines) do
+    -- Strip optional leading "  ▎ " quote marker, then trim ends.
+    local cleaned = line:gsub("^%s*▎%s*", ""):gsub("^%s+", ""):gsub("%s+$", "")
+    if cleaned ~= "" then
+      table.insert(pieces, cleaned)
+    end
+  end
+
+  if #pieces == 0 then
+    vim.notify("JoinClaude: all lines empty after stripping", vim.log.levels.WARN)
+    return
+  end
+
+  local joined = table.concat(pieces, " "):gsub("%s+", " ")
+
+  vim.api.nvim_buf_set_lines(bufnr, start_line, end_line, false, { joined })
+  vim.notify(string.format("JoinClaude: joined %d lines", #lines), vim.log.levels.INFO)
+end
+
+vim.api.nvim_create_user_command("JoinClaude", JoinClaude, {
+  range = true,
+  desc = "Strip Claude console quote markers (▎) and join wrapped prose into one line",
+})
+
+vim.keymap.set("n", "<leader>cj", ":JoinClaude<CR>", {
+  desc = "Join Claude console quoted text into one line",
+  silent = true,
+})
+
+vim.keymap.set("v", "<leader>cj", ":JoinClaude<CR>", {
+  desc = "Join Claude console quoted text into one line",
+  silent = true,
+})
