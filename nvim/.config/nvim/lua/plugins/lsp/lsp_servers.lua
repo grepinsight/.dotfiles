@@ -133,4 +133,13 @@ return {
 	bashls = {
 		name = "bash-language-server",
 	},
+	zls = {
+		-- Zig language server. `name` is the mason package mason-tool-installer
+		-- auto-installs; the lsp_config_setup loop then wires it through lspconfig
+		-- with cmp capabilities + the shared LspAttach keymaps. zls implements
+		-- textDocument/formatting (it shells out to `zig fmt`), so format-on-save
+		-- comes for free via the LspFormatting autocmd in plugins/formatting/init.lua.
+		name = "zls",
+		disabled = false,
+	},
 }
