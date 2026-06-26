@@ -41,7 +41,10 @@ return {
                         end
                     end
                     for _, formatter in pairs(formatters) do
-                        table.insert(tool_names, formatter.name)
+                        -- skip tools that aren't available as Mason packages
+                        if formatter.mason ~= false then
+                            table.insert(tool_names, formatter.name)
+                        end
                     end
                     -- for _, adapter in pairs(adapters) do
                     --   table.insert(tool_names, adapter.name)

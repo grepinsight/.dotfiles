@@ -33,6 +33,9 @@ return {
     },
     rustfmt = {
         name = "rustfmt", -- for mason installer
+        -- rustfmt is no longer a Mason package (it ships with the Rust
+        -- toolchain via rustup), so skip the Mason installer for it.
+        mason = false,
         disabled = false,
         to_register_wrap = function()
             return require("null-ls").builtins.formatting.rustfmt.with({
