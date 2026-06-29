@@ -1136,3 +1136,199 @@ vim.keymap.set("v", "<leader>cj", ":JoinClaude<CR>", {
   desc = "Join Claude console quoted text into one line",
   silent = true,
 })
+
+-- ============================================================================
+-- Nucleobase ASCII diagrams
+-- :Adenine :Guanine :Cytosine :Thymine :Uracil insert an annotated ASCII
+-- structure of the base at the cursor.
+--
+--   Pyrimidines (C / T / U)  -> one 6-membered ring, drawn linearly N1..C6.
+--   Purines     (A / G)      -> fused 6+5 ring (pyrimidine + imidazole).
+--
+-- Annotations flag the substituent that DISTINGUISHES each base: amino (-NH2)
+-- vs carbonyl (=O) vs methyl (-CH3). Structures (standard 9H/keto tautomers):
+--   Cytosine : 2-oxo,            4-amino                  (pyrimidine)
+--   Thymine  : 2-oxo, 4-oxo,     5-methyl                 (pyrimidine)
+--   Uracil   : 2-oxo, 4-oxo,     5-H  (thymine minus CH3) (pyrimidine)
+--   Adenine  : 6-amino                                    (purine)
+--   Guanine  : 6-oxo,            2-amino, N1-H            (purine)
+-- ============================================================================
+
+local NUCLEOBASES = {
+  DNA = {
+    "DNA  (double-stranded, antiparallel)",
+    "",
+    "  5' ─S─P─S─P─S─P─S─P─S─ 3'   ← strand 1 backbone",
+    "          │   │   │   │",
+    "          A   G   C   T       bases point inward",
+    "          ‖   ‖   ‖   ‖       H-bonds hold the strands",
+    "          T   C   G   A",
+    "          │   │   │   │",
+    "  3' ─S─P─S─P─S─P─S─P─S─ 5'   ← strand 2 (complementary)",
+    "",
+    "  pairing:  A = T (2 H-bonds)   G ≡ C (3 H-bonds)",
+    "  sugar:    deoxyribose (2'-H)",
+    "  4th base: thymine (T)",
+  },
+  RNA = {
+    "RNA  (single-stranded)",
+    "",
+    "  5' ─S─P─S─P─S─P─S─P─S─ 3'   ← one strand only",
+    "          │   │   │   │",
+    "          A   G   C   U       U replaces T",
+    "",
+    "  sugar:    ribose (2'-OH)    ← the 'O' DNA lacks",
+    "  4th base: uracil (U)        ← no methyl (T has CH₃)",
+    "  usually single-stranded (folds and self-pairs)",
+  },
+  PyrimidineBackbone = {
+    "N1",
+    "|",
+    "C2",
+    "|",
+    "N3",
+    "|",
+    "C4",
+    "|",
+    "C5",
+    "|",
+    "C6",
+  },
+  Cytosine = {
+    "CYTOSINE  (pyrimidine ring; amino-keto tautomer)",
+    "",
+    "   N1 - H     ← H here (sugar attaches here in DNA/RNA)",
+    "   │",
+    "   C2 = O     ← carbonyl",
+    "   │",
+    "   N3",
+    "   ║          ← N3 = C4 double bond (why C4 has no H)",
+    "   C4 - NH₂   ← amino",
+    "   │",
+    "   C5 - H",
+    "   ║          ← C5 = C6 double bond",
+    "   C6 - H",
+    "   └──► back to N1 (the ring closes)",
+  },
+  MethylCytosine = {
+    "5-METHYLCYTOSINE  (5mC; amino-keto tautomer)",
+    "",
+    "   N1 - H",
+    "   │",
+    "   C2 = O     ← carbonyl",
+    "   │",
+    "   N3",
+    "   ║          ← N3 = C4 double bond",
+    "   C4 - NH₂   ← amino (same as cytosine)",
+    "   │",
+    "   C5 - CH₃   ← methyl! (the epigenetic mark)",
+    "   ║          ← C5 = C6 double bond",
+    "   C6 - H",
+    "   └──► back to N1 (the ring closes)",
+  },
+  Thymine = {
+    "THYMINE  (pyrimidine ring; 2,4-dioxo)",
+    "",
+    "   N1 - H",
+    "   │",
+    "   C2 = O     ← carbonyl",
+    "   │",
+    "   N3 - H     ← N3 also bears H (both ring N's)",
+    "   │",
+    "   C4 = O     ← carbonyl, not amino",
+    "   │",
+    "   C5 - CH₃   ← methyl, not amino",
+    "   ║          ← C5 = C6 (the only ring C=C)",
+    "   C6 - H",
+    "   └──► back to N1 (the ring closes)",
+  },
+  Uracil = {
+    "URACIL  (pyrimidine ring; 2,4-dioxo)",
+    "",
+    "   N1 - H",
+    "   │",
+    "   C2 = O     ← carbonyl",
+    "   │",
+    "   N3 - H     ← N3 also bears H",
+    "   │",
+    "   C4 = O     ← carbonyl, not amino",
+    "   │",
+    "   C5 - H     ← H here (Thymine carries CH₃)",
+    "   ║          ← C5 = C6 double bond",
+    "   C6 - H",
+    "   └──► back to N1 (the ring closes)",
+  },
+  Adenine = {
+    "ADENINE  (purine, fused double ring)",
+    "",
+    "               NH₂         ← 6-amino  (adenine's signature)",
+    "               |",
+    "         N1 == C6",
+    "        /          \\",
+    "    H - C2          C5 ===== N7",
+    "        ||          |          \\",
+    "        N3          |           C8",
+    "         \\          |          /",
+    "          +======= C4 ====== N9",
+    "                               |",
+    "                               H",
+  },
+  Guanine = {
+    "GUANINE  (purine, fused double ring)",
+    "",
+    "               O           ← 6-carbonyl, not amino",
+    "               ||",
+    "        H-N1 == C6",
+    "        /          \\",
+    "  H₂N - C2          C5 ===== N7",
+    "        ||          |          \\",
+    "        N3          |           C8",
+    "         \\          |          /",
+    "          +======= C4 ====== N9",
+    "                               |",
+    "                               H",
+  },
+}
+
+-- Insert a block of lines immediately below the cursor line.
+local function insert_block_below_cursor(lines)
+  local bufnr = vim.api.nvim_get_current_buf()
+  local row = vim.api.nvim_win_get_cursor(0)[1]
+  vim.api.nvim_buf_set_lines(bufnr, row, row, false, lines)
+end
+
+for name, lines in pairs(NUCLEOBASES) do
+  vim.api.nvim_create_user_command(name, function()
+    insert_block_below_cursor(lines)
+  end, {
+    desc = "Insert ASCII structure of " .. name .. " at the cursor",
+  })
+end
+
+-- ============================================================================
+-- Periodic-table position diagrams
+-- :Nitrogen (and future elements) insert a periods 1-3 excerpt with the
+-- element highlighted (▓X▓) so its group/period is read off at a glance.
+-- Transition metals (groups 3-12) are omitted to keep the s/p blocks aligned.
+-- ============================================================================
+
+local ELEMENTS = {
+  Nitrogen = {
+    "  Group  1   2                                   13  14  15  16  17  18",
+    "       ┌───┐                                                        ┌───┐",
+    "  P1   │ H │                                                        │He │",
+    "       ├───┼───┐                                ┌───┬───┬───┬───┬───┼───┤",
+    "  P2   │Li │Be │                                │ B │ C │▓N▓│ O │ F │Ne │  ← here",
+    "       ├───┼───┤                                ├───┼───┼───┼───┼───┼───┤",
+    "  P3   │Na │Mg │  (transition metals omitted)   │Al │Si │ P │ S │Cl │Ar │",
+    "       └───┴───┘                                └───┴───┴───┴───┴───┴───┘",
+  },
+}
+
+for name, lines in pairs(ELEMENTS) do
+  vim.api.nvim_create_user_command(name, function()
+    insert_block_below_cursor(lines)
+  end, {
+    desc = "Insert periodic-table position of " .. name .. " at the cursor",
+  })
+end

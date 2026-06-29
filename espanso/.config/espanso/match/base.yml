@@ -2,6 +2,9 @@
 # Original file: default.yml
 
 matches:
+  - trigger: ;eng
+    label: "Fix English"
+    replace: "First improve my prompt by arranging sentences and fixing grammar and answer. If there is a mix of Korean and English, translate to korean part into English"
   - trigger: ;ll
     label: "SQL line"
     replace: "---------------------------"
