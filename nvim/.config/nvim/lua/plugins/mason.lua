@@ -41,9 +41,10 @@ return {
                         end
                     end
                     for _, formatter in pairs(formatters) do
-                        -- honor `disabled` like the language_servers loop above,
-                        -- so a disabled formatter is never handed to the installer
-                        if formatter.disabled ~= true then
+                        -- honor `disabled` (like the language_servers loop above)
+                        -- and `mason = false` (tool isn't a Mason package); either
+                        -- one keeps the formatter out of the installer
+                        if formatter.disabled ~= true and formatter.mason ~= false then
                             table.insert(tool_names, formatter.name)
                         end
                     end

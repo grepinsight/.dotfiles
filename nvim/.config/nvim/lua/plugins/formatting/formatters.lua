@@ -38,6 +38,10 @@ return {
         -- here: rust format-on-save falls through to rust-analyzer's LSP formatter,
         -- which invokes the rustup rustfmt on PATH.
         name = "rustfmt", -- for mason installer
+        -- `mason = false` also skips the Mason installer (rustfmt ships with the
+        -- Rust toolchain via rustup, not Mason), but we go further and disable it
+        -- entirely so format-on-save falls through to rust-analyzer's LSP formatter.
+        mason = false,
         disabled = true,
         to_register_wrap = function()
             return require("null-ls").builtins.formatting.rustfmt.with({
