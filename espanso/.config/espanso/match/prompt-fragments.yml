@@ -3,7 +3,6 @@ matches:
   - triggers:
       - ;utk
       - ;uu
-      - ;tt
       - ;;;
     replace: ultrathink
   - trigger: -laymen

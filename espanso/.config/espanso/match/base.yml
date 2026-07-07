@@ -30,6 +30,8 @@ matches:
     replace: "%reload_ext jupyter_ai"
   - trigger: ;tt
     replace: "- [ ] "
+  - trigger: ;ti
+    replace: "- [/] "
   - trigger: "- tt"
     replace: "- [ ] "
   - trigger: ;td
