@@ -37,17 +37,7 @@ local M = {
   --         vim.cmd([[colorscheme tokyonight]])
   --     end,
   -- },
-  { "NLKNguyen/papercolor-theme", lazy = false },
   -- Reading
-  {
-    "nullchilly/fsread.nvim",
-    cmd = { "FSRead", "FSClear", "FSToggle" },
-  },
-  {
-    "SmiteshP/nvim-gps",
-    dependencies = "nvim-treesitter/nvim-treesitter",
-    ft = { "python", "rust", "json", "yaml" },
-  },
   {
     "romgrk/nvim-treesitter-context",
     ft = { "python", "r", "rmd", "cpp", "yaml" },
@@ -95,37 +85,7 @@ local M = {
   { "preservim/vim-markdown", ft = "markdown" },
   -- Overview
   { "liuchengxu/vista.vim", cmd = "Vista" },
-  { "simrat39/symbols-outline.nvim", cmd = { "SymbolsOutline" } },
 
-  {
-    "code-biscuits/nvim-biscuits",
-    ft = { "python", "rust", "go", "json" },
-    config = function()
-      require("nvim-biscuits").setup({
-        toggle_keybind = "<leader>cb",
-        cursor_line_only = true,
-        default_config = {
-          max_length = 12,
-          min_distance = 5,
-          prefix_string = " 📎 ",
-        },
-        language_config = {
-          html = {
-            prefix_string = " 🌐 ",
-          },
-          javascript = {
-            prefix_string = " ✨ ",
-            max_length = 80,
-          },
-          python = {
-            -- disabled = true
-            prefix_string = " ✨ ",
-          },
-        },
-      })
-    end,
-    dependencies = "nvim-treesitter/nvim-treesitter",
-  },
 
   -- Project Overview
   {
@@ -183,13 +143,6 @@ local M = {
         },
       })
     end,
-  },
-  {
-    "junegunn/goyo.vim",
-    dependencies = {
-      "junegunn/limelight.vim",
-    },
-    cmd = "Goyo",
   },
   { "tpope/vim-unimpaired", lazy = false },
   {
@@ -298,27 +251,6 @@ local M = {
             ]])
     end,
   },
-  {
-    "chipsenkbeil/distant.nvim",
-    lazy = true,
-    branch = "v0.2",
-    config = function()
-      require("distant").setup({
-        -- Applies Chip's personal settings to every machine you connect to
-        --
-        -- 1. Ensures that distant servers terminate with no connections
-        -- 2. Provides navigation bindings for remote directories
-        -- 3. Provides keybinding to jump into a remote file's parent directory
-        ["*"] = require("distant.settings").chip_default(),
-        {
-          ssh = {
-            idendity_files = { "~/.ssh/id_rsa" },
-            user = { "allee" },
-          },
-        },
-      })
-    end,
-  },
   { "tpope/vim-eunuch", lazy = false },
   -- { 'kyazdani42/nvim-web-devicons', lazy = false }, -- optional, for file icon
 
@@ -345,14 +277,6 @@ local M = {
   },
 
   -- Magic
-  {
-    "glacambre/firenvim",
-    lazy = false,
-    build = ":call firenvim#install(0)",
-    config = function()
-      vim.cmd("source ~/.config/nvim/lua/config/firenvim.vim")
-    end,
-  },
   {
     "dstein64/vim-startuptime",
     -- lazy-load on a command
@@ -441,13 +365,6 @@ local M = {
     end,
   },
   {
-    "HampusHauffman/block.nvim",
-    cmd = "Block",
-    config = function()
-      require("block").setup({})
-    end,
-  },
-  {
     "mattn/emmet-vim",
     ft = { "javascript", "react", "typescript", "typescriptreact", "html", "svelte" },
   },
@@ -493,23 +410,6 @@ local M = {
         end,
         desc = "Treesitter Search",
       },
-    },
-  },
-  {
-    "stefanlogue/hydrate.nvim",
-    -- This installs the latest stable release.
-    -- Set to false or omit to install the latest development version
-    version = "*",
-    opts = {
-      -- The interval between notifications in minutes
-      minute_interval = 1,
-
-      -- Accepted values are "default", "minimal", "simple" or "compact"
-      render_style = "default",
-      -- Loads time of last drink on startup
-      -- Useful if you don't have long-running neovim instances
-      -- or if you tend to have multiple instances running at a time
-      persist_timer = false,
     },
   },
   {
@@ -667,55 +567,6 @@ local M = {
     },
   },
   {
-    {
-      "benlubas/molten-nvim",
-      version = "^1.0.0", -- use version <2.0.0 to avoid breaking changes
-      ft = { "python" },
-      dependencies = { "3rd/image.nvim" },
-      build = ":UpdateRemotePlugins",
-      init = function()
-        -- these are examples, not defaults. Please see the readme
-        vim.g.molten_image_provider = "image.nvim"
-        vim.g.molten_output_win_max_height = 20
-      end,
-      config = function()
-        vim.keymap.set("n", "<localleader>mi", ":MoltenInit<CR>", { silent = true, desc = "Initialize the plugin" })
-        vim.keymap.set(
-          "n",
-          "<localleader>e",
-          ":MoltenEvaluateOperator<CR>",
-          { silent = true, desc = "run operator selection" }
-        )
-        vim.keymap.set("n", "<localleader>rl", ":MoltenEvaluateLine<CR>", { silent = true, desc = "evaluate line" })
-        vim.keymap.set(
-          "n",
-          "<localleader>rr",
-          ":MoltenReevaluateCell<CR>",
-          { silent = true, desc = "re-evaluate cell" }
-        )
-        vim.keymap.set(
-          "v",
-          "<localleader>r",
-          ":<C-u>MoltenEvaluateVisual<CR>gv",
-          { silent = true, desc = "evaluate visual selection" }
-        )
-      end,
-    },
-    {
-      -- see the image.nvim readme for more information about configuring this plugin
-      "3rd/image.nvim",
-      opts = {
-        backend = "kitty", -- whatever backend you would like to use
-        max_width = 100,
-        max_height = 12,
-        max_height_window_percentage = math.huge,
-        max_width_window_percentage = math.huge,
-        window_overlap_clear_enabled = true, -- toggles images when windows are overlapped
-        window_overlap_clear_ft_ignore = { "cmp_menu", "cmp_docs", "" },
-      },
-    },
-  },
-  {
     "vhyrro/luarocks.nvim",
     priority = 1000, -- Very high priority is required, luarocks.nvim should run as the first plugin in your config.
     config = true,
@@ -844,14 +695,6 @@ local M = {
   },
   "rcarriga/nvim-notify",
 
-  {
-    "meznaric/key-analyzer.nvim",
-    cmd = "KeyAnalyzer",
-    lazy = false,
-    config = function()
-      require("key-analyzer").setup()
-    end,
-  },
   {
     "rgroli/other.nvim",
     cmd = "Other",
