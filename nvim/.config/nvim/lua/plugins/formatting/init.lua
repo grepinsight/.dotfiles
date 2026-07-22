@@ -25,7 +25,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
         local bufnr = args.buf
         local client = vim.lsp.get_client_by_id(args.data.client_id)
 
-        if client.supports_method("textDocument/formatting") or client.name == "ruff_lsp" then
+        if client and (client:supports_method("textDocument/formatting") or client.name == "ruff_lsp") then
             vim.api.nvim_create_autocmd("BufWritePre", {
                 group = vim.api.nvim_create_augroup("LspAutoFormat." .. bufnr, {}),
                 buffer = bufnr,
