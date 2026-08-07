@@ -275,6 +275,24 @@ local M = {
 
   -- Magic
   {
+    -- The browser extension launches `nvim --headless --cmd 'let
+    -- g:started_by_firenvim = v:true' -c 'call firenvim#run()'`. If the plugin
+    -- is not on the rtp that call raises "Unknown function" and the extension
+    -- shows "Your plugin manager did not load the Firenvim plugin for neovim."
+    --
+    -- `lazy` must be set explicitly: init.lua passes `defaults = { lazy = true }`
+    -- to lazy.nvim, so a spec with no lazy-load handler would never load at all.
+    -- Keying it off g:started_by_firenvim (set by `--cmd`, i.e. before init.lua
+    -- is sourced) keeps it out of ordinary sessions. `build` still runs on
+    -- install/update regardless of lazy-loading.
+    "glacambre/firenvim",
+    lazy = not vim.g.started_by_firenvim,
+    build = ":call firenvim#install(0)",
+    config = function()
+      vim.cmd("source ~/.config/nvim/lua/config/firenvim.vim")
+    end,
+  },
+  {
     "dstein64/vim-startuptime",
     -- lazy-load on a command
     cmd = "StartupTime",
