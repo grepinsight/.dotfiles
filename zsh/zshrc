@@ -390,3 +390,6 @@ td() {
 # opencode
 export PATH=/Users/allee/.opencode/bin:$PATH
 
+
+# Cortex CLI completion (disable via /settings in cortex)
+[[ -s ~/.zsh/completions/cortex.zsh ]] && source ~/.zsh/completions/cortex.zsh

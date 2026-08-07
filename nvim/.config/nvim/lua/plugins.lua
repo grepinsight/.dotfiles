@@ -185,10 +185,15 @@ local M = {
 
   {
     "nvim-treesitter/nvim-treesitter",
-    ft = { "python", "org", "lua", "markdown", "html", "rmd", "r", "rust", "go", "cpp", "svelte", "yaml" },
+    -- The `master` branch is EOL and does not support Neovim 0.12; its
+    -- directives still expect a single TSNode per capture where 0.12 passes a
+    -- list, which blows up on markdown injections. `main` is the supported
+    -- branch. It has no lazy-loading story: the FileType autocmd in
+    -- config.treesitter has to be registered before any file is opened.
+    branch = "main",
+    lazy = false,
     dependencies = {
-      "nvim-treesitter/nvim-treesitter-textobjects",
-      "nvim-treesitter/playground",
+      { "nvim-treesitter/nvim-treesitter-textobjects", branch = "main" },
     },
     config = function()
       require("config.treesitter")

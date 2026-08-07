@@ -1,3 +1,6 @@
+-- Vault root comes from $OBSIDIAN_VAULT; see lua/util/vault.lua.
+local vault = require("util.vault")
+
 -- Define a function to call the Lua script
 function SuggestAccounts()
   local transaction_description = vim.fn.input("Enter transaction description: ")
@@ -12,10 +15,31 @@ vim.api.nvim_create_user_command("SuggestAccounts", SuggestAccounts, {})
 -- Daily notes command
 function OpenDaily(opts)
   local date = os.date("%Y-%m-%d")
-  local filepath = vim.fn.expand("~/Thoughts/02-Calendar/Daily/" .. date .. ".md")
+  local filepath = vault.path("02-Calendar/Daily", date .. ".md")
 
   -- Create directory if it doesn't exist
-  vim.fn.mkdir(vim.fn.expand("~/Thoughts/02-Calendar/Daily"), "p")
+  vim.fn.mkdir(vault.path("02-Calendar/Daily"), "p")
+
+  -- Open file based on provided argument
+  if opts.args == "vertical" or opts.args == "v" then
+    vim.cmd("vsplit " .. filepath)
+  elseif opts.args == "horizontal" or opts.args == "h" then
+    vim.cmd("split " .. filepath)
+  else
+    vim.cmd("edit " .. filepath)
+  end
+end
+
+-- Yesterday's daily note command
+function OpenYesterday(opts)
+  local t = os.date("*t")
+  t.day = t.day - 1
+  t.hour = 12 -- midday so DST shifts can't roll the date over
+  local date = os.date("%Y-%m-%d", os.time(t))
+  local filepath = vault.path("02-Calendar/Daily", date .. ".md")
+
+  -- Create directory if it doesn't exist
+  vim.fn.mkdir(vault.path("02-Calendar/Daily"), "p")
 
   -- Open file based on provided argument
   if opts.args == "vertical" or opts.args == "v" then
@@ -32,10 +56,10 @@ function OpenWeekly(opts)
   -- Get ISO week number and year
   local year = os.date("%Y")
   local week = os.date("%V")
-  local filepath = vim.fn.expand("~/Thoughts/02-Calendar/Weekly/" .. year .. "-W" .. week .. ".md")
+  local filepath = vault.path("02-Calendar/Weekly", year .. "-W" .. week .. ".md")
 
   -- Create directory if it doesn't exist
-  vim.fn.mkdir(vim.fn.expand("~/Thoughts/02-Calendar/Weekly"), "p")
+  vim.fn.mkdir(vault.path("02-Calendar/Weekly"), "p")
 
   -- Open file based on provided argument
   if opts.args == "vertical" or opts.args == "v" then
@@ -52,10 +76,10 @@ function OpenQuarterly(opts)
   local year = os.date("%Y")
   local month = tonumber(os.date("%m"))
   local quarter = math.ceil(month / 3)
-  local filepath = vim.fn.expand("~/Thoughts/02-Calendar/Quarterly/" .. year .. "-Q" .. quarter .. ".md")
+  local filepath = vault.path("02-Calendar/Quarterly", year .. "-Q" .. quarter .. ".md")
 
   -- Create directory if it doesn't exist
-  vim.fn.mkdir(vim.fn.expand("~/Thoughts/02-Calendar/Quarterly"), "p")
+  vim.fn.mkdir(vault.path("02-Calendar/Quarterly"), "p")
 
   -- Open file based on provided argument
   if opts.args == "vertical" or opts.args == "v" then
@@ -70,10 +94,10 @@ end
 -- Yearly notes command
 function OpenYearly(opts)
   local year = os.date("%Y")
-  local filepath = vim.fn.expand("~/Thoughts/02-Calendar/Yearly/" .. year .. ".md")
+  local filepath = vault.path("02-Calendar/Yearly", year .. ".md")
 
   -- Create directory if it doesn't exist
-  vim.fn.mkdir(vim.fn.expand("~/Thoughts/02-Calendar/Yearly"), "p")
+  vim.fn.mkdir(vault.path("02-Calendar/Yearly"), "p")
 
   -- Open file based on provided argument
   if opts.args == "vertical" or opts.args == "v" then
@@ -94,10 +118,18 @@ vim.api.nvim_create_user_command("Daily", OpenDaily, {
   desc = "Open daily note for today",
 })
 
+vim.api.nvim_create_user_command("Yesterday", OpenYesterday, {
+  nargs = "?",
+  complete = function(ArgLead, CmdLine, CursorPos)
+    return { "vertical", "horizontal", "v", "h" }
+  end,
+  desc = "Open daily note for yesterday",
+})
+
 -- Open last N daily notes (skipping dates without files)
 function OpenRecentDailies(opts)
   local count = tonumber(opts.args) or 5
-  local dir = vim.fn.expand("~/Thoughts/02-Calendar/Daily/")
+  local dir = vault.path("02-Calendar/Daily")
   local day_seconds = 86400
   local now = os.time()
   local found = 0
@@ -108,7 +140,7 @@ function OpenRecentDailies(opts)
     days_checked = days_checked + 1
     local t = now - (days_checked * day_seconds)
     local date = os.date("%Y-%m-%d", t)
-    local filepath = dir .. date .. ".md"
+    local filepath = vim.fs.joinpath(dir, date .. ".md")
 
     if vim.fn.filereadable(filepath) == 1 then
       found = found + 1
@@ -154,7 +186,7 @@ vim.api.nvim_create_user_command("Yearly", OpenYearly, {
 
 -- Todo command to open TODO.md
 vim.api.nvim_create_user_command("Todo", function(opts)
-  local filepath = vim.fn.expand("~/Thoughts/TODO.md")
+  local filepath = vault.path("TODO.md")
 
   -- Open file based on provided argument
   if opts.args == "vertical" or opts.args == "v" then

@@ -255,26 +255,30 @@ return {
               fallback()
             end,
           }),
+          -- Accept the highlighted entry, same as the `/` and `?` mapping above.
+          -- Previously this cycled with select_next_item, so on a single match
+          -- the second <Tab> wrapped back to the raw text you typed and the
+          -- completion looked like it had been undone.
           ["<Tab>"] = cmp.mapping({
             c = function()
               if cmp.visible() then
-                return cmp.select_next_item()
-              else
-                cmp.complete()
-                cmp.select_next_item()
-                return
+                return cmp.confirm({
+                  behavior = cmp.ConfirmBehavior.Replace,
+                  select = true, -- take the first entry when nothing is highlighted yet
+                })
               end
+              cmp.complete()
+              cmp.select_next_item()
             end,
           }),
+          -- Step backwards through the menu; <C-j> / <C-k> step either way.
           ["<S-Tab>"] = cmp.mapping({
             c = function()
               if cmp.visible() then
                 return cmp.select_prev_item()
-              else
-                cmp.complete()
-                cmp.select_next_item()
-                return
               end
+              cmp.complete()
+              cmp.select_prev_item()
             end,
           }),
         }),

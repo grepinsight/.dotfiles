@@ -8,11 +8,30 @@ local M = {
 }
 function M.config()
   require("obsidian").setup({
-    dir = "/Users/allee/Thoughts",
+    dir = require("util.vault").root(),
     mappings = {
+      -- Deliberately not util.smart_action(): when the cursor is not on a link
+      -- it falls straight through to ObsidianToggleCheckbox, which prepends
+      -- "- [ ] " to whatever line you happen to be on -- a heading, prose, even
+      -- frontmatter. One stray <CR> (a second Enter after `:Yesterday`, say)
+      -- silently edits the note. So only act on something that already exists:
+      -- a link, an existing checkbox, or a real list item. Anything else falls
+      -- through to a plain <CR>.
       ["<cr>"] = {
         action = function()
-          return require("obsidian").util.smart_action()
+          local util = require("obsidian").util
+          if util.cursor_on_markdown_link(nil, nil, true) then
+            return "<cmd>ObsidianFollowLink<CR>"
+          end
+          -- Toggle only a checkbox that is already there. Deliberately NOT the
+          -- bullet -> checkbox conversion: daily notes are mostly bullets, so a
+          -- stray <CR> would still rewrite a line. That conversion is still one
+          -- keypress away via <C-Space> or <leader>tc below.
+          -- Pattern mirrors util.toggle_checkbox so this cannot disagree with it.
+          if vim.api.nvim_get_current_line():match("^%s*- %[.%] ") then
+            return "<cmd>ObsidianToggleCheckbox<CR>"
+          end
+          return "<CR>"
         end,
         opts = { buffer = true, expr = true },
       },
@@ -94,29 +113,5 @@ function M.config()
   vim.keymap.set("n", "<leader>b", "<cmd>ObsidianBacklinks<CR>", { desc = "ObsidianBacklinks" })
   vim.keymap.set("n", "<leader>o", "<cmd>ObsidianTOC<CR>", { desc = "ObsidianTOC" })
   vim.keymap.set("n", "<leader>y", "<cmd>ObsidianYesterday<CR>", { desc = "ObsidianYesterday" })
-
-  -- Fix double dash in checkboxes (- - [ ] -> - [ ])
-  local fix_double_dash_group = vim.api.nvim_create_augroup("ObsidianFixDoubleDash", { clear = true })
-  vim.api.nvim_create_autocmd({ "BufWritePre", "CursorHold", "CursorHoldI" }, {
-    group = fix_double_dash_group,
-    pattern = "*.md",
-    callback = function()
-      local bufnr = vim.api.nvim_get_current_buf()
-      local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
-      local modified = false
-      
-      for i, line in ipairs(lines) do
-        local fixed_line = line:gsub("^%- %- %[ %]", "- [ ]")
-        if fixed_line ~= line then
-          lines[i] = fixed_line
-          modified = true
-        end
-      end
-      
-      if modified then
-        vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
-      end
-    end,
-  })
 end
 return M

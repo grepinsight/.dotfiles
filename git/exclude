@@ -75,3 +75,5 @@ pytestdebug.log
 .cursorignore
 
 .cursor/*
+
+**/.claude/settings.local.json
