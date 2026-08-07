@@ -208,17 +208,9 @@ local M = {
     end,
   },
   { "mhinz/vim-startify", lazy = false },
-  {
-    "zbirenbaum/copilot.lua",
-    cmd = "Copilot",
-    event = "InsertEnter",
-    config = function()
-      require("copilot").setup({
-        suggestion = { enabled = true },
-        panel = { enabled = true, auto_refresh = true },
-      })
-    end,
-  },
+  -- Copilot is no longer a plugin. Neovim 0.12 ships vim.lsp.inline_completion, so
+  -- ghost text now comes from copilot-language-server driven directly by vim.lsp.
+  -- Configured in lua/plugins/lsp/init.lua; keys are unchanged (<M-l>/<M-]>/<M-[>).
   { "tpope/vim-surround", lazy = false }, -- surround text objects with whatever
   { "tpope/vim-repeat", lazy = false },
   { "tpope/vim-dispatch", cmd = { "Dispatch", "Make", "Focus", "Start" } },

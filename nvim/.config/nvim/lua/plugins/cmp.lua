@@ -12,12 +12,8 @@ return {
     "hrsh7th/nvim-cmp",
     event = { "InsertEnter", "CmdlineEnter" },
     dependencies = {
-      {
-        "zbirenbaum/copilot-cmp",
-        config = function()
-          require("copilot_cmp").setup()
-        end,
-      },
+      -- copilot-cmp removed 2026-08-07 along with copilot.lua. Copilot is now
+      -- ghost text from vim.lsp.inline_completion, not an entry in this menu.
       "hrsh7th/cmp-buffer", -- nvim-cmp source for buffer words
       "hrsh7th/cmp-path", -- nvim-cmp source for path words
       "hrsh7th/cmp-nvim-lsp", -- nvim-cmp source for neovim's built-in LSP
@@ -143,7 +139,6 @@ return {
           -- ordering is matter
           { name = "nvim_lsp" },
           { name = "luasnip" },
-          { name = "copilot", group_index = 2 },
           { name = "path" },
           { name = "buffer", keyword_length = 5 }, -- show buffer's completion only if type more then keyword_length
         }),
@@ -167,15 +162,12 @@ return {
           format = lspkind.cmp_format({
             mode = "symbol_text", -- options: 'text', 'text_symbol', 'symbol_text', 'symbol'
             maxwidth = 50, -- prevent the popup from showing more than provided characters (e.g 50 will not show more than 50 characters)
+            -- One label per registered source in `sources` above, nothing more.
             menu = { -- showing type in menu
               luasnip = "[LuaSnip]",
               nvim_lsp = "[LSP]",
-              copilot = "[copilot]",
               path = "[path]",
               buffer = "[buf]",
-              gh_issues = "[issues]",
-              orgmode = "[orgmode]",
-              rst_glossary = "[glossary]",
             },
             before = function(entry, vim_item)
               vim_item.menu = "(" .. vim_item.kind .. ")"

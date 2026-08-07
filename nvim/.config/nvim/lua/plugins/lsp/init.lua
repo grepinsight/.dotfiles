@@ -97,6 +97,27 @@ local lsp_config_setup = function()
                 print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
             end, opts)
 
+            -- Copilot ghost text, via nvim 0.12's native vim.lsp.inline_completion.
+            -- Keys match what copilot.lua used (lua/copilot/config/suggestion.lua:30)
+            -- so the migration costs no muscle memory. <Tab> stays owned by nvim-cmp.
+            if
+                client
+                and client:supports_method(vim.lsp.protocol.Methods.textDocument_inlineCompletion, bufnr)
+            then
+                vim.lsp.inline_completion.enable(true, { bufnr = bufnr })
+                vim.keymap.set("i", "<M-l>", vim.lsp.inline_completion.get, {
+                    buffer = bufnr,
+                    silent = true,
+                    desc = "Accept inline completion",
+                })
+                vim.keymap.set("i", "<M-]>", function()
+                    vim.lsp.inline_completion.select({ count = 1 })
+                end, { buffer = bufnr, silent = true, desc = "Next inline completion" })
+                vim.keymap.set("i", "<M-[>", function()
+                    vim.lsp.inline_completion.select({ count = -1 })
+                end, { buffer = bufnr, silent = true, desc = "Previous inline completion" })
+            end
+
             -- ts_ls: preserve the :OrganizeImports command the old config exposed
             if client and client.name == "ts_ls" then
                 vim.api.nvim_buf_create_user_command(
@@ -156,6 +177,25 @@ local lsp_config_setup = function()
     -- (r_language_server is intentionally omitted -- it is disabled in lsp_servers.lua.)
     vim.lsp.enable("ts_ls")
     vim.lsp.enable("svelte")
+
+    -- Copilot. nvim-lspconfig ships lsp/copilot.lua with the cmd, root_markers and
+    -- the :LspCopilotSignIn command, so we only override what we disagree with.
+    --
+    -- UI-gated deliberately. copilot declares no filetypes, so it attaches to any
+    -- buffer inside a git repo -- including under `nvim --headless`, where its node
+    -- server outlives the process as an orphan. That leak is what replaced the
+    -- copilot.lua plugin with this block. See lua/util/headless.lua.
+    if require("util.headless").has_ui() then
+        vim.lsp.config("copilot", {
+            -- Neovim defaults exit_timeout to false, so VimLeavePre waits 0ms for a
+            -- graceful shutdown and a still-booting server is never reaped. A number
+            -- makes Neovim force-stop the client instead of walking away from it.
+            exit_timeout = 500,
+            -- The shipped config sets telemetryLevel = "all". Opt out.
+            settings = { telemetry = { telemetryLevel = "off" } },
+        })
+        vim.lsp.enable("copilot")
+    end
 
     -- Toggle diagnostics with <leader>tt.
     vim.g.diagnostics_active = true
