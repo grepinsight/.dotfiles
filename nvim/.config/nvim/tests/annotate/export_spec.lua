@@ -157,6 +157,48 @@ describe("annotate.export entry rendering", function()
     assert.is_nil(text:find("short...", 1, true))
   end)
 
+  it("clips the quote back to the start of the mark's own sentence", function()
+    -- Raw context would drag in the heading and the previous paragraph.
+    seed("A.md", {
+      mark({
+        prefix = "# Reading Notes\n\nThe team had to ",
+        suffix = " and rewrote the layer.\n\nThroughput coll",
+      }),
+    })
+    export.run()
+    local text = joined()
+    assert.is_truthy(text:find("> The team had to **bite the bullet** and rewrote the layer.", 1, true))
+    assert.is_nil(text:find("Reading Notes The team", 1, true))
+    assert.is_nil(text:find("Throughput", 1, true))
+  end)
+
+  it("starts the quote after the previous sentence rather than mid-thought", function()
+    seed("A.md", {
+      mark({
+        prefix = "Something else entirely. So we had to ",
+        suffix = " today.",
+      }),
+    })
+    export.run()
+    assert.is_truthy(joined():find("> So we had to **bite the bullet** today.", 1, true))
+    assert.is_nil(joined():find("Something else entirely", 1, true))
+  end)
+
+  it("drops a partial word and marks the elision when no boundary exists", function()
+    seed("A.md", {
+      mark({
+        prefix = "oughput collapsed because the consumer had to ",
+        suffix = " before the entire migration effort could fin",
+      }),
+    })
+    export.run()
+    local text = joined()
+    assert.is_truthy(text:find("...collapsed because the consumer had to **bite the bullet**", 1, true))
+    assert.is_nil(text:find("oughput", 1, true))
+    -- The trailing fragment "fin" is dropped and the cut is marked.
+    assert.is_truthy(text:find("before the entire migration effort could...", 1, true))
+  end)
+
   it("includes an attached note", function()
     seed("A.md", { mark({ note = "use when a decision is overdue" }) })
     export.run()

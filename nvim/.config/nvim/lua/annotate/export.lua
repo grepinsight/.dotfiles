@@ -46,29 +46,93 @@ local function source_link(source)
   return ("[%s](%s)"):format(vim.fn.fnamemodify(source, ":t"), source)
 end
 
----The marked phrase in its surrounding sentence, with the phrase emphasised.
+---Clip preceding context back to the start of the mark's own sentence.
 ---
----An ellipsis is added only on a side whose stored context actually hit the configured
----window, so the reader can tell a trimmed context from a real sentence boundary.
+---The stored context is a fixed byte window, so raw it drags in whatever happened to be
+---within 40 bytes: a markdown heading, the tail of the previous paragraph, half a word. A
+---quote is only readable if it starts somewhere a sentence actually starts.
+---
+---A paragraph break is a hard stop; text on the far side belongs to a different block. A
+---sentence boundary inside the paragraph is preferred over both. Only when neither exists
+---does the leading word fragment get dropped and the elision marked.
+---@param prefix string
+---@param truncated boolean True when the stored context filled its byte window
+---@return string text, boolean elided
+local function lead_context(prefix, truncated)
+  local elided = false
+
+  -- Greedy `.*` finds the *last* paragraph break, so we keep only the final block.
+  local after_break = prefix:match(".*\n%s*\n(.*)$")
+  if after_break then
+    prefix, elided, truncated = after_break, false, false
+  end
+
+  local after_sentence = prefix:match(".*[.!?]%s+(.*)$")
+  if after_sentence then
+    prefix, elided, truncated = after_sentence, false, false
+  end
+
+  if truncated then
+    prefix = prefix:match("^%S*%s+(.*)$") or prefix
+    elided = true
+  end
+
+  return prefix, elided
+end
+
+---Clip following context forward to the end of the mark's own sentence. Mirror of
+---`lead_context`, with lazy matching so it stops at the *first* boundary.
+---@param suffix string
+---@param truncated boolean
+---@return string text, boolean elided
+local function trail_context(suffix, truncated)
+  local elided = false
+
+  local before_break = suffix:match("^(.-)\n%s*\n")
+  if before_break then
+    suffix, elided, truncated = before_break, false, false
+  end
+
+  local through_sentence = suffix:match("^(.-[.!?])%s")
+  if through_sentence then
+    suffix, elided, truncated = through_sentence, false, false
+  end
+
+  if truncated then
+    suffix = suffix:match("^(.*%s)%S*$") or suffix
+    elided = true
+  end
+
+  return suffix, elided
+end
+
+---The marked phrase in its own sentence, with the phrase emphasised.
+---
+---An ellipsis appears only on a side that was genuinely cut mid-thought, so the reader
+---can tell a trimmed window from a real sentence boundary.
 ---@param mark annotate.Mark
 ---@param context_chars integer
 ---@return string
 local function context_quote(mark, context_chars)
-  local before = one_line(mark.prefix)
-  local after = one_line(mark.suffix)
-  local body = one_line(mark.text)
+  local prefix = mark.prefix or ""
+  local suffix = mark.suffix or ""
 
-  local head = ""
-  if before ~= "" then
-    head = (#(mark.prefix or "") >= context_chars and "..." or "") .. before
+  local lead, lead_elided = lead_context(prefix, #prefix >= context_chars)
+  local trail, trail_elided = trail_context(suffix, #suffix >= context_chars)
+
+  -- Trim only the outer edges. The inner ones carry the space that separates the
+  -- emphasised phrase from the words either side of it.
+  local head = (one_line(lead):gsub("^%s+", ""))
+  local tail = (one_line(trail):gsub("%s+$", ""))
+
+  if head ~= "" and lead_elided then
+    head = "..." .. head
+  end
+  if tail ~= "" and trail_elided then
+    tail = tail .. "..."
   end
 
-  local tail = ""
-  if after ~= "" then
-    tail = after .. (#(mark.suffix or "") >= context_chars and "..." or "")
-  end
-
-  return head .. "**" .. body .. "**" .. tail
+  return head .. "**" .. one_line(mark.text) .. "**" .. tail
 end
 
 --- Collection ----------------------------------------------------------------------
