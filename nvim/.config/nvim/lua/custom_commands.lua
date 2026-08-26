@@ -1387,3 +1387,29 @@ vim.keymap.set("n", "<leader>tw", "<cmd>Typewriter<CR>", {
   desc = "Toggle typewriter mode",
   silent = true,
 })
+
+-- ============================================================================
+-- ClaudeAsk: send a selection to Claude Code as a background job
+-- Logic lives in lua/util/claude.lua; read that file's header for the flow and
+-- for why this uses jobstart instead of a terminal split.
+-- ============================================================================
+local claude = require("util.claude")
+
+vim.api.nvim_create_user_command("ClaudeAsk", claude.ask, {
+  range = true,
+  nargs = "*",
+  desc = "Send the range to `claude -p` as a background job (prompts when given no args)",
+})
+
+vim.api.nvim_create_user_command("ClaudeLast", claude.last, {
+  desc = "Open the most recently finished Claude reply in a split",
+})
+
+vim.api.nvim_create_user_command("ClaudeJobs", claude.list, {
+  desc = "List this session's Claude background jobs",
+})
+
+vim.keymap.set("v", "<leader>cc", ":ClaudeAsk<CR>", {
+  desc = "Send selection to Claude Code (background)",
+  silent = true,
+})
