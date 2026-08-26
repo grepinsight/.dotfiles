@@ -1413,3 +1413,11 @@ vim.keymap.set("v", "<leader>cc", ":ClaudeAsk<CR>", {
   desc = "Send selection to Claude Code (background)",
   silent = true,
 })
+
+-- Same command, forcing whole-buffer context. The prompt still comes from
+-- vim.ui.input, because an empty prompt after the +full token falls through.
+vim.keymap.set("v", "<leader>cf", ":ClaudeAsk +full<CR>", {
+  desc = "Send selection to Claude Code with whole-buffer context",
+  silent = true,
+})
+
