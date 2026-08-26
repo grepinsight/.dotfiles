@@ -28,8 +28,15 @@
 ---Only command args are parsed. Text typed at the `vim.ui.input` prompt never
 ---is, which is the escape hatch when a prompt really does start with "+1".
 ---
----Replies are NOT stored on disk. `claude://reply/N` is a buffer name, not a
----path: the reply lives in an unlisted scratch buffer and dies with the session.
+---Replies live in an unlisted scratch buffer, not on disk: `claude://reply/N` is
+---a buffer name, not a path, and it dies with the session. To keep one, either
+---`:ClaudeSave {path}` (verbatim) or `:ClaudeExport` (a vault note carrying this
+---vault's frontmatter shape, after a prompt for which of the three vaults).
+---
+---`:ClaudeRaw` is `:ClaudeAsk` with the customisations off. Measured 2026-08-26:
+---`--safe-mode` alone still left 12 skills reachable, so `--disable-slash-commands`
+---is needed to actually reach zero, and `--strict-mcp-config` drops the MCP
+---servers. Use it when the surrounding config would only get in the way.
 ---
 ---Permissions: `--permission-mode auto` is passed so a prompt like "write a note
 ---about this" can actually create the file. Verified 2026-08-26 that a headless
@@ -64,6 +71,14 @@ M.strict_mcp = false
 ---trimmed toward the selection and both the payload and a notify say so. The
 ---selection itself is never trimmed.
 M.max_lines = 2000
+
+---Subfolder inside the chosen vault that `:ClaudeExport` writes into.
+M.export_dir = "03-Resources/Claude"
+
+---Flags for `:ClaudeRaw`. All three are needed: `--safe-mode` on its own still
+---left 12 skills reachable when measured, `--disable-slash-commands` takes skills
+---to zero, and `--strict-mcp-config` drops the MCP servers.
+M.raw_flags = { "--safe-mode", "--disable-slash-commands", "--strict-mcp-config" }
 
 local CLI = "claude"
 
@@ -331,8 +346,9 @@ local function build_payload(prompt, sel)
   return table.concat(parts, "\n")
 end
 
+---@param raw boolean|nil Strip skills, plugins, hooks, CLAUDE.md and MCP
 ---@return string[]
-local function build_cmd()
+local function build_cmd(raw)
   local cmd = {
     CLI,
     "-p",
@@ -343,6 +359,13 @@ local function build_cmd()
     "--model",
     M.model,
   }
+  if raw then
+    -- Nothing but the model: no skills, plugins, hooks, CLAUDE.md or MCP. The
+    -- vault --add-dir is pointless here, since raw mode cannot reach the skills
+    -- that would write a note.
+    vim.list_extend(cmd, M.raw_flags)
+    return cmd
+  end
   if M.strict_mcp then
     table.insert(cmd, "--strict-mcp-config")
   end
@@ -415,7 +438,7 @@ local function render(job)
     "",
     string.format("- source: `%s` lines %d-%d", job.source.path, job.source.first, job.source.last),
     string.format("- context: %s", context_label(job.source)),
-    string.format("- model: %s", M.model),
+    string.format("- model: %s%s", M.model, job.raw and " (raw: no skills, plugins, CLAUDE.md or MCP)" or ""),
     string.format("- exit %d in %.1fs", job.exit_code, job.elapsed),
     "",
   }
@@ -450,18 +473,20 @@ end
 
 ---@param prompt string
 ---@param sel table
-local function start(prompt, sel)
+---@param raw boolean|nil
+local function start(prompt, sel, raw)
   local job = {
     id = #jobs + 1,
     prompt = prompt,
     source = sel,
+    raw = raw or false,
     stdout = {},
     stderr = {},
     started_ns = vim.loop.hrtime(),
     finished = false,
   }
 
-  local chan = vim.fn.jobstart(build_cmd(), {
+  local chan = vim.fn.jobstart(build_cmd(raw), {
     cwd = vim.fn.getcwd(),
     stdout_buffered = true,
     stderr_buffered = true,
@@ -516,14 +541,22 @@ local function start(prompt, sel)
     )
   end
   vim.notify(
-    string.format("Claude #%d started (%d lines, context %s)", job.id, #sel.lines, context_label(sel)),
+    string.format(
+      "Claude #%d started (%d lines, context %s)%s",
+      job.id,
+      #sel.lines,
+      context_label(sel),
+      raw and " [raw]" or ""
+    ),
     vim.log.levels.INFO
   )
 end
 
 ---`:'<,'>ClaudeAsk [+N|+full] [prompt]`
 ---@param opts table
-function M.ask(opts)
+---@param cfg table|nil {raw=boolean}
+function M.ask(opts, cfg)
+  cfg = cfg or {}
   if vim.fn.executable(CLI) ~= 1 then
     vim.notify(string.format("ClaudeAsk: `%s` is not on $PATH", CLI), vim.log.levels.ERROR)
     return
@@ -549,16 +582,16 @@ function M.ask(opts)
   end
 
   if prompt ~= "" then
-    start(prompt, sel)
+    start(prompt, sel, cfg.raw)
     return
   end
 
-  vim.ui.input({ prompt = "Claude: " }, function(input)
+  vim.ui.input({ prompt = cfg.raw and "Claude (raw): " or "Claude: " }, function(input)
     if not input or vim.trim(input) == "" then
       vim.notify("ClaudeAsk: cancelled", vim.log.levels.INFO)
       return
     end
-    start(vim.trim(input), sel)
+    start(vim.trim(input), sel, cfg.raw)
   end)
 end
 
@@ -612,6 +645,186 @@ function M.with_prompt(base, cfg)
     merged.fargs = nil
     M.ask(merged, cfg)
   end
+end
+
+---Vaults that exist on this machine, in the order CLAUDE.md lists them. Only the
+---ones whose directory is really there: the env vars are machine-local, and a
+---GUI-launched Neovim may not have inherited them at all.
+---@return table[] Each {label=string, root=string}
+local function vault_choices()
+  local specs = {
+    { label = "Thoughts (personal / non-work)", root = vault.root() },
+    { label = "Work (infra, internal systems)", root = vim.env.OBSIDIAN_VAULT_WORK },
+    { label = "Work-Personal (work projects)", root = vim.env.OBSIDIAN_VAULT_WORK_PERSONAL },
+  }
+  local found = {}
+  for _, spec in ipairs(specs) do
+    if spec.root and spec.root ~= "" then
+      local root = vim.fs.normalize(spec.root)
+      if vim.fn.isdirectory(root) == 1 then
+        table.insert(found, { label = spec.label, root = root })
+      end
+    end
+  end
+  return found
+end
+
+---The job a save/export acts on: an explicit count (`:3ClaudeSave ...`) or the
+---most recently finished one.
+---@param opts table|nil
+---@return table|nil
+local function target_job(opts)
+  local id = (opts and opts.count and opts.count > 0) and opts.count or last_finished
+  if not id then
+    vim.notify("Claude: no finished job to act on", vim.log.levels.WARN)
+    return nil
+  end
+  local job = jobs[id]
+  if not job then
+    vim.notify(string.format("Claude: no job #%d this session", id), vim.log.levels.WARN)
+    return nil
+  end
+  if not job.finished then
+    vim.notify(string.format("Claude: job #%d is still running", id), vim.log.levels.WARN)
+    return nil
+  end
+  return job
+end
+
+---@param path string
+---@param lines string[]
+---@param force boolean|nil Overwrite an existing file
+---@return boolean ok
+local function write_lines(path, lines, force)
+  if vim.fn.filereadable(path) == 1 and not force then
+    vim.notify(string.format("Claude: %s exists (add ! to overwrite)", path), vim.log.levels.ERROR)
+    return false
+  end
+  local dir = vim.fs.dirname(path)
+  if vim.fn.isdirectory(dir) == 0 and vim.fn.mkdir(dir, "p") == 0 then
+    vim.notify(string.format("Claude: could not create %s", dir), vim.log.levels.ERROR)
+    return false
+  end
+  if vim.fn.writefile(lines, path) ~= 0 then
+    vim.notify(string.format("Claude: could not write %s", path), vim.log.levels.ERROR)
+    return false
+  end
+  return true
+end
+
+---A filename-safe but still readable stand-in for the prompt.
+---@param text string
+---@return string
+local function slugify(text)
+  local out = text:gsub("[/\\:%*%?\"<>|%c]", " ")
+  out = out:gsub("%s+", " "):gsub("^%s+", ""):gsub("%s+$", "")
+  if out == "" then
+    out = "reply"
+  end
+  if #out > 60 then
+    -- Trim back to a word boundary rather than cutting mid-word.
+    out = out:sub(1, 60):gsub("%s+%S*$", "")
+  end
+  return out
+end
+
+---First free `stem.md`, `stem (2).md`, ... so an export never clobbers.
+---@param dir string
+---@param stem string
+---@return string
+local function unique_path(dir, stem)
+  local path = vim.fs.joinpath(dir, stem .. ".md")
+  local n = 2
+  while vim.fn.filereadable(path) == 1 do
+    path = vim.fs.joinpath(dir, string.format("%s (%d).md", stem, n))
+    n = n + 1
+  end
+  return path
+end
+
+---A vault note: this vault's frontmatter shape, then the reply. The draft warning
+---is not decoration -- CLAUDE.md requires generated output to stay labelled until
+---a human has validated it.
+---@param job table
+---@return string[]
+local function render_note(job)
+  local today = os.date("%Y-%m-%d")
+  local lines = {
+    "---",
+    "aliases:",
+    "  - " .. slugify(job.prompt),
+    "tags:",
+    "  - claude-reply",
+    "created_at: " .. today,
+    "modified_at: " .. today,
+    "---",
+    "",
+    "> [!warning] Unreviewed draft",
+    "> Generated by `:ClaudeAsk` in Neovim and not yet reviewed by a human.",
+    "",
+  }
+  vim.list_extend(lines, render(job))
+  return lines
+end
+
+---`:[count]ClaudeSave[!] {path}` -- the reply verbatim, no frontmatter.
+---@param opts table
+function M.save(opts)
+  local job = target_job(opts)
+  if not job then
+    return
+  end
+  local path = vim.fn.expand(vim.trim(opts.args or ""))
+  if path == "" then
+    vim.notify("ClaudeSave: needs a path", vim.log.levels.ERROR)
+    return
+  end
+  if write_lines(path, render(job), opts.bang) then
+    vim.notify(string.format("Claude #%d saved to %s", job.id, path), vim.log.levels.INFO)
+  end
+end
+
+---`:[count]ClaudeExport` -- a vault note, after asking which vault.
+---@param opts table
+function M.export(opts)
+  local job = target_job(opts)
+  if not job then
+    return
+  end
+
+  local choices = vault_choices()
+  if #choices == 0 then
+    vim.notify("ClaudeExport: no vault directory found (check $OBSIDIAN_VAULT*)", vim.log.levels.ERROR)
+    return
+  end
+
+  local function write_to(choice)
+    local dir = vim.fs.joinpath(choice.root, M.export_dir)
+    local stem = string.format("Claude - %s (%s)", slugify(job.prompt), os.date("%Y-%m-%d"))
+    local path = unique_path(dir, stem)
+    -- force: unique_path already guaranteed there is nothing to clobber.
+    if write_lines(path, render_note(job), true) then
+      vim.notify(string.format("Claude #%d exported to %s", job.id, path), vim.log.levels.INFO)
+    end
+  end
+
+  -- One vault leaves nothing to choose, so do not ask.
+  if #choices == 1 then
+    write_to(choices[1])
+    return
+  end
+
+  local labels = {}
+  for _, choice in ipairs(choices) do
+    table.insert(labels, choice.label)
+  end
+  vim.ui.select(labels, { prompt = "Export to which vault?" }, function(_, idx)
+    if not idx then
+      vim.notify("ClaudeExport: cancelled", vim.log.levels.INFO)
+      return
+    end
+    write_to(choices[idx])
+  end)
 end
 
 ---`:ClaudeLast`

@@ -1421,3 +1421,55 @@ vim.keymap.set("v", "<leader>cf", ":ClaudeAsk +full<CR>", {
   silent = true,
 })
 
+-- Same command with every customisation off: no skills, plugins, hooks,
+-- CLAUDE.md or MCP servers. For when the surrounding config is the problem.
+vim.api.nvim_create_user_command("ClaudeRaw", function(o)
+  claude.ask(o, { raw = true })
+end, {
+  range = true,
+  nargs = "*",
+  desc = "Like :ClaudeAsk with skills, plugins, hooks, CLAUDE.md and MCP disabled",
+})
+
+vim.api.nvim_create_user_command("ClaudeSave", claude.save, {
+  count = true,
+  nargs = 1,
+  bang = true,
+  complete = "file",
+  desc = "Write a Claude reply to a path (:[count]ClaudeSave[!] {path})",
+})
+
+vim.api.nvim_create_user_command("ClaudeExport", claude.export, {
+  count = true,
+  desc = "Export a Claude reply to a vault note (:[count]ClaudeExport)",
+})
+
+vim.keymap.set("v", "<leader>cr", ":ClaudeRaw<CR>", {
+  desc = "Send selection to Claude Code, raw (no skills/plugins/CLAUDE.md)",
+  silent = true,
+})
+
+vim.keymap.set("n", "<leader>ce", "<cmd>ClaudeExport<CR>", {
+  desc = "Export the last Claude reply to a vault note",
+  silent = true,
+})
+
+-- ============================================================================
+-- ClaudeAnalyze: break down the English of a selection
+-- Prompt lives in lua/util/english.lua; the job plumbing is the same
+-- util.claude one, so :ClaudeLast / :ClaudeSave / :ClaudeExport all apply.
+-- ============================================================================
+local english = require("util.english")
+
+vim.api.nvim_create_user_command("ClaudeAnalyze", english.analyze, {
+  range = true,
+  nargs = "*",
+  desc = "Break the range's English into verbs, nouns, adjectives, idioms and sentence structures",
+})
+
+-- Visual-mode slot only. Normal-mode <leader>ca is the LSP code action
+-- (lua/plugins/lsp/init.lua), and this command has no normal-mode meaning.
+vim.keymap.set("v", "<leader>ca", ":ClaudeAnalyze<CR>", {
+  desc = "Analyze selection's English (verbs, nouns, adjectives, idioms, structures)",
+  silent = true,
+})
