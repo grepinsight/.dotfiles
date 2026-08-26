@@ -109,6 +109,16 @@ function M.store_path(source)
   return vim.fs.joinpath(cfg.storage.dir, mirrored .. ".json")
 end
 
+---Whether a source has a store, at the cost of one stat.
+---
+---Used to decide whether a buffer is worth loading. Cheap enough to run on every file
+---open, which is what lets marks come back regardless of filetype.
+---@param source string
+---@return boolean
+function M.exists(source)
+  return (vim.uv or vim.loop).fs_stat(M.store_path(source)) ~= nil
+end
+
 ---Path of the index listing every source that has a store.
 ---@return string
 function M.index_path()

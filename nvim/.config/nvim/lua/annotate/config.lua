@@ -43,8 +43,10 @@ local defaults = {
 
   virtual_text = true,
 
-  ---Buffers eligible for marking and for automatic load on BufReadPost. `nil` means all.
-  filetypes = { "markdown", "text", "quarto", "org" },
+  ---Filetypes in which a new mark may be created. `nil` means anywhere, which is the
+  ---default because refusing by default would be a surprise. Loading existing marks is
+  ---deliberately NOT gated on this; see the FileType autocmd in init.lua.
+  filetypes = nil,
 
   prefix = "<leader>a",
 

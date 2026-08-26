@@ -10,6 +10,7 @@ local config = require("annotate.config")
 local export = require("annotate.export")
 local marks = require("annotate.marks")
 local picker = require("annotate.picker")
+local store = require("annotate.store")
 
 local M = {}
 
@@ -146,15 +147,19 @@ end
 
 local function register_autocmds()
   local group = vim.api.nvim_create_augroup("annotate", { clear = true })
-  local filetypes = config.get().filetypes
 
-  -- FileType rather than BufReadPost: at BufReadPost the filetype is not set yet, so a
-  -- filetype-scoped load would never fire.
+  -- Loading is gated on "does this file have marks", not on filetype. Gating it on
+  -- filetype would mean a mark saved in a file outside the list persisted on disk but
+  -- never came back, quietly breaking the one promise the module makes. The guard is a
+  -- single stat, so running it on every file open costs nothing.
+  --
+  -- FileType rather than BufReadPost because at BufReadPost the buffer name is set but
+  -- the filetype is not, and `is_annotatable` wants a settled buffer.
   vim.api.nvim_create_autocmd("FileType", {
     group = group,
-    pattern = filetypes or "*",
+    pattern = "*",
     callback = function(args)
-      if is_annotatable(args.buf) then
+      if is_annotatable(args.buf) and store.exists(vim.api.nvim_buf_get_name(args.buf)) then
         marks.load(args.buf)
       end
     end,

@@ -315,3 +315,56 @@ describe("annotate.marks selection guard", function()
     assert.is_truthy(err:match("no visual selection"))
   end)
 end)
+
+describe("annotate.marks filetype gate", function()
+  before_each(fresh)
+
+  it("marks anywhere by default", function()
+    local dir = vim.fn.tempname()
+    vim.fn.mkdir(dir, "p")
+    local path = dir .. "/script.py"
+    vim.fn.writefile({ "# we just have to bite the bullet and ship it" }, path)
+    vim.cmd("edit " .. vim.fn.fnameescape(path))
+    local bufnr = vim.api.nvim_get_current_buf()
+
+    local record, err = marks.add_range(bufnr, { start = { 0, 18 }, ["end"] = { 0, 33 } }, "idiom")
+    assert.is_nil(err)
+    assert.equals("bite the bullet", record.text)
+  end)
+
+  it("refuses when the filetype is excluded by config", function()
+    config.reset()
+    local dir = vim.fn.tempname()
+    vim.fn.mkdir(dir, "p")
+    local _, errors = config.setup({
+      storage = { dir = dir .. "/store" },
+      export = { path = dir .. "/export.md" },
+      filetypes = { "markdown" },
+    })
+    assert(errors == nil, vim.inspect(errors))
+
+    local path = dir .. "/script.py"
+    vim.fn.writefile({ "# we just have to bite the bullet and ship it" }, path)
+    vim.cmd("edit " .. vim.fn.fnameescape(path))
+    local bufnr = vim.api.nvim_get_current_buf()
+
+    local record, err = marks.add_range(bufnr, { start = { 0, 18 }, ["end"] = { 0, 33 } }, "idiom")
+    assert.is_nil(record)
+    assert.is_truthy(err:match("not enabled for filetype"))
+  end)
+
+  it("reloads marks regardless of filetype, so persistence is not gated", function()
+    local dir = vim.fn.tempname()
+    vim.fn.mkdir(dir, "p")
+    local path = dir .. "/script.py"
+    vim.fn.writefile({ "# we just have to bite the bullet and ship it" }, path)
+    vim.cmd("edit " .. vim.fn.fnameescape(path))
+    local bufnr = vim.api.nvim_get_current_buf()
+    marks.add_range(bufnr, { start = { 0, 18 }, ["end"] = { 0, 33 } }, "idiom")
+
+    assert.is_true(store.exists(path))
+    marks.reset()
+    marks.load(bufnr)
+    assert.equals(1, #marks.state(bufnr).marks)
+  end)
+end)

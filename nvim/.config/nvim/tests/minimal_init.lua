@@ -10,4 +10,11 @@ vim.opt.runtimepath:append(config_root)
 vim.opt.runtimepath:append(plenary)
 vim.opt.swapfile = false
 
+-- The config root has to be on the runtimepath for `require("annotate...")` to resolve,
+-- which also drags in ftplugin/. Those are not under test and some of them call commands
+-- that only exist once plugins are loaded (ftplugin/python.vim runs
+-- :UpdateRemotePlugins), so opening such a file under --clean would error out of an
+-- unrelated test. Keep the harness actually minimal.
+vim.cmd("filetype plugin indent off")
+
 vim.cmd("runtime plugin/plenary.vim")

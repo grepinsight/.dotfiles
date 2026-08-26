@@ -388,6 +388,12 @@ function M.add_range(bufnr, range, category_name, note)
     return nil, ("unknown category %q"):format(category_name)
   end
 
+  local filetype = vim.bo[bufnr].filetype
+  if not config.handles_filetype(filetype) then
+    return nil, ("annotate is not enabled for filetype %q; add it to `filetypes` in setup()")
+      :format(filetype)
+  end
+
   local st, load_err = ensure_loaded(bufnr)
   if not st then
     return nil, load_err
