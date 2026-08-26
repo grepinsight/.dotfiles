@@ -1364,3 +1364,26 @@ for name, lines in pairs(ELEMENTS) do
     desc = "Insert periodic-table position of " .. name .. " at the cursor",
   })
 end
+
+-- ============================================================================
+-- Typewriter mode  (arnamak/stay-centered.nvim)
+-- Keeps the current line vertically centered while writing via `zz` recentering
+-- (not the scrolloff trick), so the active last line stays centered as you type.
+-- The plugin loads disabled (see lua/plugins.lua); this only toggles it.
+-- Caveat: the top ~half-screen of a file can't center (no virtual space above
+-- line 1 in Neovim); centering engages once you're past a half screen.
+-- ============================================================================
+local typewriter_on = false
+
+vim.api.nvim_create_user_command("Typewriter", function()
+  require("stay-centered").toggle()
+  typewriter_on = not typewriter_on
+  vim.notify("Typewriter mode " .. (typewriter_on and "ON" or "OFF"), vim.log.levels.INFO)
+end, {
+  desc = "Toggle typewriter mode (keep the current line vertically centered)",
+})
+
+vim.keymap.set("n", "<leader>tw", "<cmd>Typewriter<CR>", {
+  desc = "Toggle typewriter mode",
+  silent = true,
+})

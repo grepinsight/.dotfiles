@@ -117,17 +117,18 @@ local M = {
     "folke/zen-mode.nvim",
     cmd = "ZenMode",
     config = function()
+      local saved_showmode
       require("zen-mode").setup({
         -- your configuration comes here
         -- or leave it empty to use the default settings
         -- refer to the configuration section below
         window = {
-          backdrop = 0.95, -- shade the backdrop of the Zen window. Set to 1 to keep the same as Normal
+          backdrop = 1, -- match the backdrop/margin to Normal (body) so there is no visible seam
           -- height and width can be:
           -- * an absolute number of cells when > 1
           -- * a percentage of the width / height of the editor when <= 1
           -- * a function that returns the width or the height
-          width = 120, -- width of the Zen window
+          width = 0.75, -- FRACTION of screen width (<=1); margin each side = (1-width)/2, font-independent. Bigger = less margin (0.75 -> 12.5% each side)
           height = 1, -- height of the Zen window
           -- by default, no options are changed for the Zen window
           -- uncomment any of the options below, or add other vim.wo options you want to apply
@@ -141,8 +142,64 @@ local M = {
             -- list = false, -- disable whitespace characters
           },
         },
+        plugins = {
+          -- Font + tab-bar are handled together in on_open/on_close below, because
+          -- hiding the tab bar needs `kitty @ load-config` (a full config reload,
+          -- which resets font_size), so the font bump must be re-applied AFTER the
+          -- reload -- an ordering this built-in plugin can't guarantee. So it's off.
+          kitty = {
+            enabled = false,
+            font = "+4",
+          },
+        },
+        -- Toggled flag read by nvim-cmp's `enabled` so the completion menu is
+        -- suppressed while ZenMode is active (distraction-free prose writing).
+        on_open = function()
+          vim.g.zenmode_active = true
+          -- Hide the "-- INSERT --" mode message in ZenMode. showmode is a GLOBAL
+          -- option, so it can't live in window.options above; save & restore it.
+          saved_showmode = vim.o.showmode
+          vim.o.showmode = false
+          if vim.env.KITTY_WINDOW_ID then
+            -- Hide the kitty tab bar + enlarge the font for ZenMode. kitty has no
+            -- `set-config`; the only runtime config change is `load-config`, which
+            -- re-reads the whole config (so it resets font_size). Hence: reload with
+            -- tab_bar_style overridden to hidden, THEN re-apply the +4 font bump.
+            -- NOTE: tab_bar_style is instance-wide (hides in every window of this
+            -- kitty instance until exit), and this needs kitty actually running the
+            -- newer binary -- restart kitty if it doesn't take effect.
+            vim.fn.system("kitty @ load-config -o tab_bar_style=hidden")
+            vim.fn.system("kitty @ set-font-size +4")
+          end
+        end,
+        on_close = function()
+          vim.g.zenmode_active = false
+          if saved_showmode ~= nil then
+            vim.o.showmode = saved_showmode
+          end
+          if vim.env.KITTY_WINDOW_ID then
+            -- Reset the font, then reload the plain config (--ignore-overrides drops
+            -- the tab_bar_style=hidden override, restoring your `powerline` bar).
+            vim.fn.system("kitty @ set-font-size 0")
+            vim.fn.system("kitty @ load-config --ignore-overrides")
+          end
+        end,
       })
     end,
+  },
+  {
+    -- Typewriter mode: keep the current line vertically centered while writing.
+    -- Uses `zz` recentering (NOT the scrolloff trick), so the active last line
+    -- stays centered as you type. Loads disabled; toggle with :Typewriter /
+    -- <leader>tw (see lua/custom_commands.lua). The top ~half-screen of a file
+    -- still can't center -- a hard Neovim limit (no virtual space above line 1).
+    "arnamak/stay-centered.nvim",
+    event = "VeryLazy",
+    opts = {
+      enabled = false, -- off by default
+      allow_scroll_move = true, -- explicit scrolling may move off-center (recommended)
+      disable_on_mouse = true, -- don't fight mouse clicks
+    },
   },
   { "tpope/vim-unimpaired", lazy = false },
   {
@@ -345,6 +402,23 @@ local M = {
         treesitter = true,
         context = 0,
       })
+
+      -- nvim 0.12 changed vim.treesitter.get_parser to RETURN nil (plus an
+      -- error message) instead of raising when a buffer has no parser.
+      -- twilight guards with pcall(vim.treesitter.get_parser, buf), which now
+      -- succeeds with a nil parser, so get_node's `parser:for_each_tree(...)`
+      -- crashes on parserless buffers -- e.g. the empty [No Name] buffer you
+      -- get from launching nvim with no file, which is what breaks :ZenMode.
+      -- Guard get_node so it bails to twilight's line-based path instead.
+      local tw_view = require("twilight.view")
+      local orig_get_node = tw_view.get_node
+      tw_view.get_node = function(buf, line)
+        local ok, parser = pcall(vim.treesitter.get_parser, buf)
+        if not ok or not parser then
+          return nil
+        end
+        return orig_get_node(buf, line)
+      end
     end,
   },
   { "vim-scripts/BufOnly.vim", cmd = "BOnly" },

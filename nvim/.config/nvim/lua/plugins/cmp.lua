@@ -90,6 +90,19 @@ return {
       end
 
       cmp.setup({
+        -- Suppress the whole completion menu while ZenMode is active, so prose
+        -- writing stays distraction-free. vim.g.zenmode_active is toggled by
+        -- zen-mode's on_open/on_close. The rest mirrors nvim-cmp's default
+        -- `enabled` (off in prompt buffers and while recording/executing macros).
+        enabled = function()
+          if vim.g.zenmode_active then
+            return false
+          end
+          if vim.api.nvim_get_option_value("buftype", { buf = 0 }) == "prompt" then
+            return false
+          end
+          return vim.fn.reg_recording() == "" and vim.fn.reg_executing() == ""
+        end,
         matching = {
           -- disallow_fuzzy_matching = true,
           -- disallow_fullfuzzy_matching = true,
