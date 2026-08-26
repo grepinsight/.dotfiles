@@ -19,6 +19,8 @@
 ---cannot take Korean is not worth having.
 ---
 ---Commands: `:Pilsa` (range or current paragraph), `:PilsaQuit`.
+---In the practice buffer: <Tab> skips the word ahead, <CR> moves to the next line,
+---<C-s> stops early and opens the note, q aborts.
 
 local vault = require("util.vault")
 
@@ -59,6 +61,14 @@ local function byteoff(s, n)
     return #s
   end
   return b
+end
+
+---Whitespace, including the two kinds that ride along with text pasted from the
+---web: U+00A0 (nbsp) and U+3000 (the full-width space common in CJK copy). Lua's
+---`%s` only knows the ASCII ones, and a space the skip refused to step over would
+---read as the key having stopped working.
+local function is_space(c)
+  return c:match("^%s$") ~= nil or c == "\194\160" or c == "\227\128\128"
 end
 
 ---Hard-wrap `lines` so none is wider than `width` display cells.
@@ -160,6 +170,69 @@ local function redraw()
     -- inside one is not safe.
     vim.schedule(M.finish)
   end
+end
+
+---Fill in the source text from the cursor to the start of the next word, as though
+---it had been typed, and leave the cursor there.
+---
+---The point of 필사 is the sentences, not the proper nouns: retyping a long product
+---name one character at a time buys nothing. Skipping writes the real characters
+---rather than marking the span excused, so the index-based alignment everything
+---else depends on is untouched -- a skipped word is indistinguishable from a typed
+---one, including for the completion check.
+local function skip_word()
+  if not state or not vim.api.nvim_buf_is_valid(state.buf) then
+    return
+  end
+  local row, bytecol = unpack(vim.api.nvim_win_get_cursor(state.win))
+  local src = state.src[row]
+  if not src then
+    return
+  end
+
+  local got = vim.api.nvim_buf_get_lines(state.buf, row - 1, row, false)[1] or ""
+  -- `charidx` returns -1 when the byte offset is the length of the string, which in
+  -- insert mode is exactly where the cursor sits at end of line.
+  local i = vim.fn.charidx(got, bytecol)
+  if i < 0 then
+    i = charlen(got)
+  end
+
+  local n = charlen(src)
+  if i >= n then
+    -- Nothing left on this line, so fall through to the next one: the same thing
+    -- <CR> would have done, and less surprising than doing nothing.
+    if row < vim.api.nvim_buf_line_count(state.buf) then
+      vim.api.nvim_win_set_cursor(state.win, { row + 1, 0 })
+    end
+    return
+  end
+
+  -- Leading space, then the word, then the space behind it, so the cursor comes to
+  -- rest on the next non-blank character rather than in the gap before it. Starting
+  -- mid-word finishes that word, which is the case that matters: you usually notice
+  -- a name is long several characters into typing it.
+  local j = i
+  while j < n and is_space(charat(src, j)) do
+    j = j + 1
+  end
+  while j < n and not is_space(charat(src, j)) do
+    j = j + 1
+  end
+  while j < n and is_space(charat(src, j)) do
+    j = j + 1
+  end
+
+  -- Splice rather than append: the cursor may have been moved back into text that
+  -- is already there, and overwriting the span keeps every later character on the
+  -- source index it was judged against.
+  local head = vim.fn.strcharpart(got, 0, i)
+  local tail = charlen(got) > j and vim.fn.strcharpart(got, j) or ""
+  local line = head .. vim.fn.strcharpart(src, i, j - i) .. tail
+
+  vim.api.nvim_buf_set_lines(state.buf, row - 1, row, false, { line })
+  vim.api.nvim_win_set_cursor(state.win, { row, byteoff(line, j) })
+  redraw()
 end
 
 ---A wikilink when the passage came from inside the vault, so Obsidian resolves it
@@ -282,6 +355,9 @@ function M.finish()
   if not state or state.note_buf then
     return
   end
+  -- Completion can land from a keymap that ran in insert mode (<Tab> finishing the
+  -- last word), so leave it explicitly rather than assuming.
+  vim.cmd("stopinsert")
 
   local buf = vim.api.nvim_create_buf(false, true)
   vim.bo[buf].bufhidden = "wipe"
@@ -441,6 +517,11 @@ function M.start(opts)
       vim.api.nvim_win_set_cursor(win, { row + 1, 0 })
     end
   end, { buffer = buf, desc = "필사: next line" })
+
+  -- <Tab> is free to take: `g:copilot_filetypes` is opt-in per filetype and does not
+  -- list `pilsa`, and `g:copilot_no_tab_map` is set regardless. A buffer-local
+  -- mapping would win over a global one in any case.
+  vim.keymap.set({ "i", "n" }, "<Tab>", skip_word, { buffer = buf, desc = "필사: skip this word" })
 
   -- An escape hatch: forgiving mode lets you finish a passage with errors still in
   -- it, but it will not call that complete, so there has to be a way to stop and
