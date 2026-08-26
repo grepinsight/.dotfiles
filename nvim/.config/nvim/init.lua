@@ -105,3 +105,4 @@ require("config.globals")
 require("config.keymaps")
 require("custom_commands")
 
+require("pilsa")
