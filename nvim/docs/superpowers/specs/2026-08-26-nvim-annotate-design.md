@@ -64,7 +64,7 @@ One JSON file per annotated source file.
 ```json
 {
   "version": 1,
-  "source": "/Users/allee/Thoughts/03-Resources/English/Bat a Thousand.md",
+  "source": "~/Thoughts/03-Resources/English/Bat a Thousand.md",
   "marks": [
     {
       "id": "1756240980-3",
@@ -101,7 +101,7 @@ Field decisions:
 Default mode is `central`, path-mirrored so stores stay greppable:
 
 ```
-~/.local/share/nvim/annotate/Users/allee/Thoughts/03-Resources/English/Bat a Thousand.md.json
+~/.local/share/nvim/annotate~/Thoughts/03-Resources/English/Bat a Thousand.md.json
 ```
 
 Chosen over sidecar files because the vault is synced and indexed by Obsidian; sibling

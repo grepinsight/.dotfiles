@@ -58,20 +58,20 @@ end
 describe("annotate.store path mapping", function()
   it("mirrors the absolute source path under the store dir in central mode", function()
     local cfg = configure({ storage = { mode = "central" } })
-    local path = store.store_path("/Users/allee/Thoughts/note.md")
-    assert.equals(cfg.storage.dir .. "/Users/allee/Thoughts/note.md.json", path)
+    local path = store.store_path("/nonexistent/notes/note.md")
+    assert.equals(cfg.storage.dir .. "/nonexistent/notes/note.md.json", path)
   end)
 
   it("writes beside the source in sidecar mode", function()
     configure({ storage = { mode = "sidecar" } })
-    assert.equals("/Users/allee/Thoughts/note.md.json", store.store_path("/Users/allee/Thoughts/note.md"))
+    assert.equals("/nonexistent/notes/note.md.json", store.store_path("/nonexistent/notes/note.md"))
   end)
 
   it("writes into a dot directory in sidecar_hidden mode", function()
     configure({ storage = { mode = "sidecar_hidden" } })
     assert.equals(
-      "/Users/allee/Thoughts/.annotations/note.md.json",
-      store.store_path("/Users/allee/Thoughts/note.md")
+      "/nonexistent/notes/.annotations/note.md.json",
+      store.store_path("/nonexistent/notes/note.md")
     )
   end)
 

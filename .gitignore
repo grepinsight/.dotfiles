@@ -11,3 +11,13 @@ dotfiles.sublime-project
 vim/spell/
 doom/doom.d/custom.el
 espanso/.config/espanso/match/base-local.yml
+
+# Secrets must never be committable here; this repo is public.
+.env
+.env.*
+!.env.example
+.env.secret
+.envrc
+
+# Per-machine Claude Code provider selection, not config worth sharing
+.claude-provider
