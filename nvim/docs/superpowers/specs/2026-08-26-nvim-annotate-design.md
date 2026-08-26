@@ -208,12 +208,31 @@ From a visual selection:
 - **`BufReadPost`** (configured filetypes only): a single `fs_stat` checks whether a store
   exists. If not, do nothing, so unannotated files cost nothing. If yes, load, resolve,
   create extmarks.
-- **`BufWritePost`:** read extmark positions back, refresh each mark's `text`, `prefix`,
-  and `suffix` from the now-current buffer, write JSON.
+- **`BufWritePost`:** for each mark, compare the extmark's current text against
+  `mark.text`. If they match, refresh `prefix`, `suffix`, and `hint` from the current
+  buffer. If they differ, the user edited *inside* the mark: re-run `anchor.resolve`, and
+  orphan the mark if that fails. Never overwrite `mark.text` from the extmark.
 - **`TextChanged`:** nothing. Extmarks track edits themselves.
 
-The `TextChanged` decision rests on documented extmark behavior. **Verify it empirically
-in the first implementation step**, since the whole approach depends on it.
+### Verified extmark behavior (2026-08-26, nvim 0.12.4)
+
+Probed empirically because the whole approach depends on it:
+
+| Edit | Result |
+|---|---|
+| Lines inserted above | extmark moves correctly |
+| Text inserted earlier on the same line | columns shift correctly |
+| Line above deleted | moves correctly |
+| Edit *inside* the marked range | range survives, but its text becomes wrong (`"bite the bullet"` became `" the bullet"`) |
+| Whole marked line deleted | extmark collapses to **zero-width**, it does *not* disappear |
+
+Two consequences, both load-bearing:
+
+1. `BufWritePost` must not blindly refresh `mark.text` from the extmark. Doing so would
+   silently rewrite a good anchor into a corrupt fragment. Hence the compare-first rule
+   above.
+2. Deletion cannot be detected by "extmark is gone". Empty extmark text is the deletion
+   signal, and such a mark is orphaned rather than dropped.
 
 ## Failure handling
 
@@ -227,6 +246,8 @@ in the first implementation step**, since the whole approach depends on it.
 | Export target directory missing | `mkdir -p`, matching existing `OpenDaily` behavior in this repo. |
 | Export vs. manual edits | Generated content lives between `<!-- annotate:begin -->` and `<!-- annotate:end -->`. Only that block is replaced. Anything outside survives regeneration. |
 | Crash mid-write | All writes go to `<path>.tmp` then `fs_rename`, so a store is never truncated. |
+| Marked text edited in place | Re-resolve on save; orphan only if resolution fails. `mark.text` is never overwritten from the buffer. |
+| Marked line deleted | Extmark collapses to zero width; empty text is treated as deletion and the mark is orphaned, not dropped. |
 
 ## Export format
 
