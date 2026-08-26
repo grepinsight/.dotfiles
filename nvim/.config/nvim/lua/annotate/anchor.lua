@@ -74,6 +74,108 @@ local function common_prefix_len(a, b)
   return n
 end
 
+---Collapse whitespace runs, keeping paragraph breaks as a distinct character.
+---
+---This is what makes a reflowed paragraph findable. Obsidian and prettier rewrap prose
+---freely, turning a space into a newline and back without changing a single word, so a
+---literal search for "bite the bullet" fails the moment the wrap point lands inside it.
+---
+---A run containing two or more newlines becomes "\n" rather than a space, so it stays a
+---hard boundary. Without that, "the" at the end of one paragraph and "bullet" at the
+---start of the next would join into a phantom match. Both the needle and the document go
+---through this same function, so a mark that genuinely spans a paragraph break still
+---matches one.
+---@param s string
+---@return string normalized
+---@return integer[] map map[i] = 1-based index in `s` of the byte that produced byte i
+local function normalize_whitespace(s)
+  local out, map = {}, {}
+  local i, n = 1, #s
+
+  while i <= n do
+    local char = s:sub(i, i)
+    if char:match("%s") then
+      local run_start = i
+      local newlines = 0
+      while i <= n do
+        local ws = s:sub(i, i)
+        if not ws:match("%s") then
+          break
+        end
+        if ws == "\n" then
+          newlines = newlines + 1
+        end
+        i = i + 1
+      end
+      out[#out + 1] = newlines >= 2 and "\n" or " "
+      map[#out] = run_start
+    else
+      out[#out + 1] = char
+      map[#out] = i
+      i = i + 1
+    end
+  end
+
+  return table.concat(out), map
+end
+
+--- Candidate scoring --------------------------------------------------------------
+
+---@param mark table
+---@return integer row 0-indexed, 0 when the mark has no usable hint
+local function hint_row_of(mark)
+  if type(mark.hint) == "table" and type(mark.hint.start) == "table" then
+    return mark.hint.start[1] or 0
+  end
+  return 0
+end
+
+---@param index table
+---@param start_offset integer 0-based, inclusive
+---@param end_offset integer 0-based, exclusive
+---@return table range
+local function range_between(index, start_offset, end_offset)
+  local start_row, start_col = to_pos(index, start_offset)
+  local end_row, end_col = to_pos(index, end_offset)
+  return { start = { start_row, start_col }, ["end"] = { end_row, end_col } }
+end
+
+---Best-scoring occurrence of `needle` in `doc`, judged by surviving context.
+---
+---Shared by the literal and the reflow-tolerant search so both rank candidates
+---identically; only the haystack and the index-to-row mapping differ.
+---@param doc string
+---@param needle string
+---@param prefix string
+---@param suffix string
+---@param row_of fun(at: integer): integer Row for a 1-based index into `doc`
+---@param hint_row integer
+---@return integer|nil first, integer|nil last 1-based inclusive bounds
+local function best_match(doc, needle, prefix, suffix, row_of, hint_row)
+  local best_first, best_last, best_score, best_distance
+  local init = 1
+
+  while true do
+    local first, last = doc:find(needle, init, true)
+    if not first then
+      break
+    end
+
+    local before = doc:sub(math.max(1, first - #prefix), first - 1)
+    local after = doc:sub(last + 1, last + #suffix)
+    local score = common_suffix_len(before, prefix) + common_prefix_len(after, suffix)
+    local distance = math.abs(row_of(first) - hint_row)
+
+    if best_first == nil or score > best_score or (score == best_score and distance < best_distance) then
+      best_first, best_last, best_score, best_distance = first, last, score, distance
+    end
+
+    init = first + 1
+  end
+
+  return best_first, best_last
+end
+
 --- Public API ----------------------------------------------------------------------
 
 ---Text currently occupying a stored position, or nil when the position is out of range.
@@ -154,50 +256,61 @@ function M.search(lines, mark)
   end
 
   local index = index_lines(lines)
-  local prefix = mark.prefix or ""
-  local suffix = mark.suffix or ""
-  local hint_row = 0
-  if type(mark.hint) == "table" and type(mark.hint.start) == "table" then
-    hint_row = mark.hint.start[1] or 0
+  local first, last = best_match(index.doc, mark.text, mark.prefix or "", mark.suffix or "", function(at)
+    return to_pos(index, at - 1)
+  end, hint_row_of(mark))
+
+  if first == nil then
+    return nil
   end
+  return range_between(index, first - 1, last)
+end
 
-  local best, best_score, best_distance
-  local init = 1
-  while true do
-    local first, last = index.doc:find(mark.text, init, true)
-    if not first then
-      break
-    end
-
-    local before = index.doc:sub(math.max(1, first - #prefix), first - 1)
-    local after = index.doc:sub(last + 1, last + #suffix)
-    local score = common_suffix_len(before, prefix) + common_prefix_len(after, suffix)
-
-    local row = to_pos(index, first - 1)
-    local distance = math.abs(row - hint_row)
-
-    if best == nil or score > best_score or (score == best_score and distance < best_distance) then
-      best, best_score, best_distance = { first - 1, last }, score, distance
-    end
-
-    init = first + 1
-  end
-
-  if best == nil then
+---Find an anchor whose text survived but whose line wrapping did not.
+---
+---Runs only after `M.search` fails, because a literal match is always more trustworthy
+---than a whitespace-insensitive one. The needle is trimmed so a match can never begin or
+---end on a collapsed whitespace run, which keeps the mapping back to real byte offsets
+---unambiguous.
+---@param lines string[]
+---@param mark table
+---@return table|nil range
+function M.search_reflowed(lines, mark)
+  if type(mark.text) ~= "string" or mark.text == "" then
     return nil
   end
 
-  local start_row, start_col = to_pos(index, best[1])
-  local end_row, end_col = to_pos(index, best[2])
-  return { start = { start_row, start_col }, ["end"] = { end_row, end_col } }
+  local needle = (normalize_whitespace(mark.text):gsub("^[ \n]+", ""):gsub("[ \n]+$", ""))
+  if needle == "" then
+    return nil
+  end
+
+  local index = index_lines(lines)
+  local doc, map = normalize_whitespace(index.doc)
+  local prefix = normalize_whitespace(mark.prefix or "")
+  local suffix = normalize_whitespace(mark.suffix or "")
+
+  local first, last = best_match(doc, needle, prefix, suffix, function(at)
+    return to_pos(index, map[at] - 1)
+  end, hint_row_of(mark))
+
+  if first == nil then
+    return nil
+  end
+  -- map[last] is the 1-based index of the last matched byte, so it is already the
+  -- 0-based exclusive end.
+  return range_between(index, map[first] - 1, map[last])
 end
 
 ---Locate a mark in the current lines.
 ---
 ---Tier 1: the remembered position still holds the remembered text. O(1), and the case
 ---that applies whenever nothing changed.
----Tier 2: search by content, scored by context.
+---Tier 2: literal search by content, scored by context.
+---Tier 3: the same search with whitespace collapsed, for a paragraph that was rewrapped.
 ---
+---Ordered by trustworthiness, not by cost: a literal match is preferred over a
+---whitespace-insensitive one even where both would succeed.
 ---@param lines string[]
 ---@param mark table
 ---@return table|nil range { start = {row, col}, ["end"] = {row, col} }
@@ -210,7 +323,7 @@ function M.resolve(lines, mark)
     }, false
   end
 
-  local found = M.search(lines, mark)
+  local found = M.search(lines, mark) or M.search_reflowed(lines, mark)
   if found == nil then
     return nil, false
   end

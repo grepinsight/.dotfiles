@@ -187,3 +187,68 @@ describe("annotate.anchor.resolve failure", function()
     assert.is_nil(anchor.search(LINES, {}))
   end)
 end)
+
+describe("annotate.anchor.resolve tier 3 (reflow)", function()
+  it("finds a phrase that a rewrap split across two lines", function()
+    local lines = { "we just have to bite the", "bullet and ship it" }
+    local range = anchor.resolve(lines, bullet_mark({ hint = { start = { 9, 0 }, ["end"] = { 9, 15 } } }))
+    assert.same({ 0, 16 }, range.start)
+    assert.same({ 1, 6 }, range["end"])
+  end)
+
+  it("finds a multi-line phrase that a rewrap joined onto one line", function()
+    local mark = {
+      text = "one\nwe just",
+      prefix = "line ",
+      suffix = " have",
+      hint = { start = { 0, 5 }, ["end"] = { 1, 7 } },
+    }
+    local range = anchor.resolve({ "line one we just have" }, mark)
+    assert.same({ 0, 5 }, range.start)
+    assert.same({ 0, 16 }, range["end"])
+  end)
+
+  it("tolerates a rewrap that also changed the indentation", function()
+    local lines = { "prose", "    bite   the", "      bullet", "more" }
+    local range = anchor.search_reflowed(lines, { text = "bite the bullet", prefix = "", suffix = "" })
+    assert.same({ 1, 4 }, range.start)
+    assert.same({ 2, 12 }, range["end"])
+  end)
+
+  it("does not match across a paragraph break", function()
+    -- "the" ends one paragraph and "bullet" starts the next; joining them would be a
+    -- phantom match, so a blank line stays a hard boundary.
+    local range = anchor.search_reflowed({ "ends with the", "", "bullet starts here" }, {
+      text = "the bullet",
+      prefix = "",
+      suffix = "",
+    })
+    assert.is_nil(range)
+  end)
+
+  it("still matches a mark that genuinely spans a paragraph break", function()
+    local lines = { "first para end", "", "second para start" }
+    local mark = { text = "end\n\nsecond", prefix = "", suffix = "" }
+    local range = anchor.search_reflowed(lines, mark)
+    assert.same({ 0, 11 }, range.start)
+    assert.same({ 2, 6 }, range["end"])
+  end)
+
+  it("prefers a literal match over a reflowed one", function()
+    local lines = {
+      "aaa bite the bullet zzz",
+      "and bite the",
+      "bullet again",
+    }
+    local range = anchor.resolve(lines, bullet_mark({ hint = { start = { 9, 0 }, ["end"] = { 9, 15 } } }))
+    assert.same({ 0, 4 }, range.start)
+    assert.same({ 0, 19 }, range["end"])
+  end)
+
+  it("returns nil when the words are gone, not just rewrapped", function()
+    assert.is_nil(anchor.search_reflowed({ "nothing like it here" }, bullet_mark()))
+    local range, relocated = anchor.resolve({ "nothing like it here" }, bullet_mark())
+    assert.is_nil(range)
+    assert.is_false(relocated)
+  end)
+end)

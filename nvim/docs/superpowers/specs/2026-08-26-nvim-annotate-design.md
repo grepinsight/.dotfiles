@@ -183,12 +183,19 @@ automatically.
    because Obsidian and prettier reflow paragraphs, changing line breaks without changing
    a single word, which tier 2 would miss entirely.
 
+   One refinement found while building it: a whitespace run containing **two or more
+   newlines normalizes to `"\n"`, not to a space**, so a paragraph break stays a hard
+   boundary. Collapsing everything to spaces would let `"the"` at the end of one
+   paragraph join `"bullet"` at the start of the next into a phantom match. Needle and
+   document go through the same normalizer, so a mark that genuinely spans a paragraph
+   break still matches one.
+
+   The tiers are ordered by trustworthiness, not by cost: a literal match wins over a
+   whitespace-insensitive one even where both would succeed.
+
 Failing all three sets `orphaned = true`. The mark is kept, not highlighted, and surfaces
 in `:AnnotateOrphans` with its stored context so it can be re-marked or discarded
 deliberately.
-
-**Build order:** tiers 1 and 2 first, confirm the feel on real notes, then add tier 3.
-Tier 3 is the piece most likely to need tuning.
 
 ### Anchor construction
 
