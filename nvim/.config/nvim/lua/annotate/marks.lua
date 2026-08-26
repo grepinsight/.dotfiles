@@ -512,6 +512,9 @@ end
 
 ---@param bufnr integer
 function M.delete_at_cursor(bufnr)
+  if not state[bufnr] then
+    M.load(bufnr)
+  end
   local st = state[bufnr]
   local record = M.at_cursor(bufnr)
   if not record then
@@ -532,6 +535,9 @@ end
 
 ---@param bufnr integer
 function M.note_at_cursor(bufnr)
+  if not state[bufnr] then
+    M.load(bufnr)
+  end
   local st = state[bufnr]
   local record = M.at_cursor(bufnr)
   if not record then
