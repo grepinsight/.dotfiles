@@ -107,3 +107,4 @@ require("custom_commands")
 require("annotate").setup({})
 
 require("pilsa")
+require("pilsa.read")
