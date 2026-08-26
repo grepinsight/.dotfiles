@@ -75,6 +75,20 @@ describe("annotate.store path mapping", function()
     )
   end)
 
+  it("maps a symlinked path and its real path to the same store", function()
+    configure({ storage = { mode = "central" } })
+    local real_dir = tmpdir()
+    write_raw(real_dir .. "/note.md", "prose")
+
+    local link_dir = vim.fn.tempname() .. "-link"
+    assert(uv.fs_symlink(real_dir, link_dir), "could not create symlink for the test")
+
+    assert.equals(
+      store.store_path(real_dir .. "/note.md"),
+      store.store_path(link_dir .. "/note.md")
+    )
+  end)
+
   it("rejects an unknown storage mode at setup", function()
     config.reset()
     local cfg, errors = config.setup({ storage = { mode = "nonsense" } })

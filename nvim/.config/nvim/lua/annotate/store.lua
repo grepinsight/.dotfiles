@@ -75,11 +75,17 @@ M._encode = encode
 
 --- Path mapping --------------------------------------------------------------------
 
----Absolute, normalized form of a source path.
+---Canonical absolute form of a source path.
+---
+---Symlinks are resolved on purpose. `nvim_buf_get_name` already hands back a
+---symlink-resolved path, so without this a file opened through a symlinked directory
+---would map to a different store than the same file opened directly, and its marks
+---would appear to vanish. On macOS this is not hypothetical: `/var` is a symlink to
+---`/private/var`.
 ---@param source string
 ---@return string
 local function normalize(source)
-  return vim.fs.normalize(vim.fn.fnamemodify(source, ":p"))
+  return vim.fs.normalize(vim.fn.resolve(vim.fn.fnamemodify(source, ":p")))
 end
 
 M.normalize = normalize
