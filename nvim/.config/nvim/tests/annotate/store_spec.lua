@@ -109,7 +109,7 @@ describe("annotate.store read and write", function()
   it("round-trips marks", function()
     configure()
     local source = tmpdir() .. "/note.md"
-    local ok, err = store.write(source, { mark(), mark({ id = "1-2", category = "jargon", text = "autopooling" }) })
+    local ok, err = store.write(source, { mark(), mark({ id = "1-2", category = "jargon", text = "backpressure" }) })
     assert.is_true(ok)
     assert.is_nil(err)
 

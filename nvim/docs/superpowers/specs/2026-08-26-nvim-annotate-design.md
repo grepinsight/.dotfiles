@@ -274,8 +274,8 @@ category, idempotently.
 
 ## Jargon
 
-- **autopooling** — [[Titan Architecture]]
-  > ...the autopooling step merges...
+- **backpressure** — [[Distributed Systems]]
+  > ...the backpressure step merges...
 <!-- annotate:end -->
 ```
 

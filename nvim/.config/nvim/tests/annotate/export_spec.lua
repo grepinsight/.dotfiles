@@ -85,7 +85,7 @@ describe("annotate.export grouping", function()
 
   it("groups marks under category headings in configured order", function()
     seed("A.md", {
-      mark({ id = "1-1", category = "jargon", text = "autopooling" }),
+      mark({ id = "1-1", category = "jargon", text = "backpressure" }),
       mark({ id = "1-2", category = "idiom", text = "bite the bullet" }),
     })
 
@@ -201,7 +201,7 @@ describe("annotate.export splicing", function()
   end)
 
   it("is byte-stable across regenerations", function()
-    seed("A.md", { mark(), mark({ id = "1-2", category = "jargon", text = "autopooling" }) })
+    seed("A.md", { mark(), mark({ id = "1-2", category = "jargon", text = "backpressure" }) })
     export.run()
     local first = joined()
     export.run()
