@@ -3,9 +3,11 @@
 ---These exist because `config.semantic.scope` was declared with a full `---@field`
 ---annotation and never read: `M.run` branched on the range flag and otherwise called
 ---`paragraph_range` unconditionally, so `scope = "buffer"` was a config option that did
----nothing. The symptom was "0 semantic findings" on visibly broken prose, because a note
----written as one-line paragraphs has a one-line paragraph under the cursor, and the four
----classes this tier checks cannot fire on one line.
+---nothing. The observed symptom was "0 semantic findings" on visibly broken prose, because a
+---note written as one-line paragraphs has a one-line paragraph under the cursor, and the two
+---classes needing prior context (ARTICLE-DEFINITE for an already-introduced referent, and
+---REFERENCE) have nothing to work with there. These tests pin the range, which is what this
+---module decides; they do not claim a one-line pass can never report anything.
 local semantic = require("albertlint.semantic")
 
 ---A buffer whose paragraphs are single lines separated by blanks, which is the shape that
@@ -145,5 +147,24 @@ describe("semantic scope_range", function()
 
     assert.is_nil(paragraph_warning)
     assert.is_nil(buffer_warning)
+  end)
+end)
+
+describe("semantic scope_range selection edge cases", function()
+  it("falls back when the buffer shrank past BOTH marks", function()
+    -- Clamping only the end is not enough: `first - 1` then lands at or past the line
+    -- count and the range comes back empty, so the pass would send nothing and report no
+    -- findings, which is the exact failure this whole change exists to remove.
+    local buf = one_line_paragraphs()
+    focus(buf, 1)
+    vim.api.nvim_buf_set_mark(buf, "<", 4, 0, {})
+    vim.api.nvim_buf_set_mark(buf, ">", 5, 0, {})
+    vim.api.nvim_buf_set_lines(buf, 1, 5, false, {})
+
+    local s, e = semantic._scope_range(buf, "selection")
+
+    assert.is_true(s >= 0)
+    assert.is_true(e > s, "range must not be empty")
+    assert.is_true(e <= vim.api.nvim_buf_line_count(buf))
   end)
 end)

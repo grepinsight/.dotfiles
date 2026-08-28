@@ -418,3 +418,57 @@ describe("annotate.marks AI lifecycle", function()
     assert.equals(1, #marks.state(bufnr).marks)
   end)
 end)
+
+describe("annotate.marks robustness", function()
+  before_each(fresh)
+
+  it("collects an error for a malformed range instead of aborting the batch", function()
+    -- `anchor.build` indexes the line array directly and throws on a missing or
+    -- out-of-buffer range. Without a pcall the documented partial-success contract was
+    -- false: one bad range from a generated batch killed the whole call.
+    local bufnr = open_fixture()
+
+    local records, errors = marks.add_many(bufnr, {
+      { range = BULLET, category = "idiom" },
+      { range = { start = { 99, 0 }, ["end"] = { 99, 3 } }, category = "phrase" },
+      { range = nil, category = "jargon" },
+    })
+
+    assert.equals(1, #records)
+    assert.equals(2, #errors)
+  end)
+
+  it("does not attach an extmark for a record created non-active", function()
+    -- Attaching one would show the highlight until the next rebuild, which is the opposite
+    -- of what the state means.
+    local bufnr = open_fixture()
+
+    local records = marks.add_many(bufnr, {
+      { range = BULLET, category = "note", note = "x", meta = { author = "llm", state = "dismissed" } },
+    })
+
+    assert.is_nil(marks.state(bufnr).ids[records[1].id])
+  end)
+
+  it("retarget reports failure and rolls back when the store refuses the write", function()
+    -- It used to call index_add up front and return true unconditionally, so a refused
+    -- write left the buffer pointing at a path whose store does not exist, and the source
+    -- index listing it anyway.
+    local bufnr, path = open_fixture()
+    marks.add_range(bufnr, BULLET, "idiom")
+    local original_source = marks.state(bufnr).source
+    local new_path = vim.fn.fnamemodify(path, ":h") .. "/renamed.md"
+    vim.cmd("saveas " .. vim.fn.fnameescape(new_path))
+
+    local real = store.write
+    store.write = function()
+      return false, "simulated write failure"
+    end
+    local ok = marks.retarget(bufnr)
+    store.write = real
+
+    assert.is_false(ok)
+    assert.equals(original_source, marks.state(bufnr).source)
+    assert.is_false(vim.tbl_contains(store.list_sources(), store.normalize(new_path)))
+  end)
+end)

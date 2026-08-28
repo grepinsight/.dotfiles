@@ -36,9 +36,11 @@ end
 ---`config.semantic.scope` was declared in `config.lua` with a full annotation from the
 ---start but never read here, so `scope = "buffer"` was an option that did nothing and the
 ---scope was pinned to the cursor's paragraph. That matters more than it sounds: in a note
----built from one-line paragraphs, the paragraph under the cursor IS one line, and a
----four-class pass over one line reports nothing. "0 semantic findings" on visibly broken
----prose was the symptom.
+---built from one-line paragraphs, the paragraph under the cursor IS one line, and the two
+---classes that need prior context (ARTICLE-DEFINITE for an already-introduced referent, and
+---REFERENCE) have nothing to work with there. The other two can fire inside one sentence, so
+---one line is not literally undiagnosable, but "0 semantic findings" on visibly broken prose
+---was the observed symptom.
 ---
 ---An explicit `:'<,'>` range still wins over the config, because a range typed at the
 ---command line is a direct instruction and the config is only a default.
@@ -60,11 +62,17 @@ local function scope_range(bufnr, scope)
     if first < 1 or last < first then
       return paragraph_range(bufnr)
     end
-    -- Clamp the end: a mark can outlive the lines it pointed at, and returning a range
-    -- past the end of the buffer would make this function's contract "a range that may not
-    -- exist". `nvim_buf_get_lines` tolerates it with strict_indexing off, but the caller
-    -- should not have to know that.
-    return first - 1, math.min(last, vim.api.nvim_buf_line_count(bufnr))
+    -- Clamp BOTH ends. A mark can outlive the lines it pointed at, and clamping only the
+    -- end is not enough: if the buffer shrank past both marks, `first - 1` lands at or
+    -- past the line count and the range comes back empty, which would send nothing and
+    -- report no findings. Clamping the start and falling back on an empty result keeps the
+    -- contract "a non-empty range that exists in this buffer".
+    local count = vim.api.nvim_buf_line_count(bufnr)
+    local s, e = math.min(first - 1, count - 1), math.min(last, count)
+    if s < 0 or e <= s then
+      return paragraph_range(bufnr)
+    end
+    return s, e
   elseif scope == nil or scope == "paragraph" then
     return paragraph_range(bufnr)
   end

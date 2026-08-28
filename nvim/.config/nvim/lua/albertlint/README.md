@@ -74,9 +74,12 @@ require("albertlint").setup({
 `semantic.scope` sets what `:AlbertLintSemantic` sends when you give it no range. It was
 declared but never read until 2026-08-28, which made `"buffer"` a setting that did nothing.
 The default stays `paragraph`, but **`"buffer"` is the one to use for notes written as
-one-line paragraphs**: the paragraph under the cursor is then a single line, and none of
-the four semantic classes can fire on one line, so the pass reports nothing and looks
-broken. An explicit `:'<,'>AlbertLintSemantic` still wins over this setting.
+one-line paragraphs**: the paragraph under the cursor is then a single line, and the two
+classes that need prior context (a missing `the` before an already-introduced referent, and
+an ambiguous pronoun) have nothing to work with, so the pass usually reports nothing and
+looks broken. The other two, a missing `a`/`an` and agreement across an intervening phrase,
+*can* fire within one sentence. An explicit `:'<,'>AlbertLintSemantic` still wins over this
+setting.
 
 Diagnostics use their own namespace, so the display config here cannot fight your global
 one. Default is underline with virtual text on the current line only, because prose is read

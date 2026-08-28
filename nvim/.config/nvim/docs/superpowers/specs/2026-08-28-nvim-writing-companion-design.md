@@ -1,6 +1,7 @@
 # Writing companion: LLM annotations for prose, inside Neovim
 
-Status: draft 3. Steps 1 and 2 of the build sequence are implemented, tested, and committed.
+Status: draft 4. Steps 1, 2, and part of 3 are implemented, tested, and committed. Open items
+from review pass 3 are listed in 15.3 rather than silently closed.
 Date: 2026-08-28
 
 Two adversarial review passes by `codex exec` (`gpt-5.6-sol`, reasoning effort `xhigh`,
@@ -638,10 +639,12 @@ real.
 
 Contract as built, since draft 2 left it unspecified:
 
-- **Entry shape** is `{ range, category, note }` and nothing else. AI metadata (`author`, `kind`,
-  `model`, `analyzer`, `fingerprint`, `state`) is **not** accepted here; the new tier sets those on
-  the returned records before its own commit. Keeping `annotate`'s mutation API ignorant of the AI
-  fields is what stops it growing a second vocabulary.
+- **Entry shape** is `{ range, category, note, meta }`, where `meta` is checked against an
+  explicit allowlist (`author`, `kind`, `model`, `analyzer`, `fingerprint`, `state`) and an unknown
+  key fails that entry loudly. Draft 3 said metadata was *not* accepted and that the tier would set
+  it on returned records instead; that was wrong, because `add_many` persists at the end, so the
+  tier would have had to write a second time and lose the single write this function exists for.
+  An allowlist keeps the vocabulary explicit without reintroducing that cost.
 - **Partial, not atomic.** Bad entries collect into `errors`; good ones are still added. One
   unusable finding in a generated batch must not discard the rest. A caller wanting
   all-or-nothing validates first.
@@ -895,6 +898,53 @@ Also corrected: draft 2's section 15 claimed it had added "budget and backoff se
 not.** Those belong to continuous mode, which is deferred, and they are now listed in step 7 rather
 than asserted as present.
 
+### 15.3 Open after review pass 3
+
+Pass 3 audited draft 3 against the eleven and found five not closed. Fixed in code where the
+defect was in code; the remaining spec-level items are listed honestly rather than marked done.
+
+**Fixed in code** (commit following this one):
+
+| Finding | Fix |
+|---|---|
+| `retarget` called `index_add` before writing and returned `true` unconditionally, so a refused write left the index listing a store that does not exist | `persist` now returns a status; `retarget` rolls `st.source` back and returns false. `index_add` removed, since `store.write` does it after a successful write |
+| `add_many`'s "errors are collected" was false: a malformed range threw inside `anchor.build` and aborted the batch | per-entry `pcall` around the anchor build |
+| `add_many` attached an extmark even for a record created already `dismissed` | attach only when `state == "active"` |
+| The selection clamp only clamped the end, so a buffer shrunk past both marks yielded an empty range | clamp both, fall back to paragraph if the result is empty |
+| The README and two docstrings claimed none of the four semantic classes can fire on one line | corrected: two of the four need prior context, the other two can fire in one sentence. The zero-findings symptom was observed, not derived |
+
+**Still open, spec-level, and to be settled before step 4:**
+
+1. **`scope_key` is not unique.** Two sibling `## Notes` sections under the same parent produce the
+   same key, and `buffer`/`paragraph`/`selection` scopes have no identity defined at all. That
+   breaks fingerprint distinctness (2), stale scope membership (5), and request-generation keying
+   (8.1), all of which key on it. Likely fix: append a stable disambiguator (occurrence index among
+   same-path siblings) plus a scope-kind prefix, e.g. `section:alpha/notes#2`, `selection:12-40`.
+2. **A heading rename leaves an unprunable dismissal.** Its `analyzer` is still current so the
+   prune rule never collects it, and its `scope_key` no longer matches so it is never reachable.
+   Needs either a rename-aware migration or a reachability-based prune.
+3. **A `stale` record has no pruning rule at all** and keeps its historical `scope_key` forever.
+4. **The store-and-ledger transition is two writes with no ordering defined.** "Active in store and
+   dismissed in ledger" is reachable if one write fails, and is outside 6.3's table.
+5. **The ledger sidecar has three holes**: removing the last mark unlinks the base store and leaves
+   `.ai.json` orphaned with no index to find it; `retarget` does not copy it, so a rename loses
+   dismissal history; and `store_path` appends `.json` before the ledger appends `.ai.json`, so the
+   ledger for `/x` collides with the mark store for `/x.json.ai`.
+6. **Extmark gravity at both scope boundaries is unpinned** (8), so an insertion exactly at a
+   boundary may be included or excluded arbitrarily.
+7. **The pane's insert-mode gate is not implementable as written** (13.2): it re-renders only on
+   `AlbertLintStyleChanged`, and clearing decoration extmarks cannot change an already-rendered
+   pane buffer. It needs its own `InsertEnter`/`InsertLeave` handling.
+8. **`marks.lua` line citations throughout this document are stale** after `fd525e6` and later
+   commits. They were accurate when written and are not re-verified per commit.
+
+Items 1 to 5 all trace to one root cause: **`scope_key` was designed as a display-ish path and then
+used as an identity.** Fixing 1 properly is likely to close 2, 3, and part of 5.
+
+Also worth recording: pass 3 noted the dismissed-finding tombstone currently lives as a full record
+in the mark array rather than in the ledger, which contradicts 6.6. That is not a defect in the
+code, it is the ledger simply not being built yet. Step 2b is not finished.
+
 ## 16. Build sequence
 
 Each step compiles, passes tests, and is committed alone. **Steps 1 to 3 involve no network call**
@@ -927,8 +977,10 @@ Pure logic:
   `analyzer` does; whitespace reflow does not.
 - Reconciliation: a finding absent from a later pass over the same scope becomes `resolved`; one
   outside the scanned scope is untouched; a `dismissed` fingerprint is not re-raised.
-- Anchor safety: a span under the minimum length is rejected; a span occurring twice in the scope
-  is dropped, not guessed; a zero-context-score match is rejected.
+- Anchor safety: a span under the minimum length is **expanded to its enclosing clause**, and
+  dropped only when expansion cannot reach the floor; a span occurring twice in the scope is
+  dropped, not guessed; a zero-context-score match is rejected. (Draft 3's plan said "rejected",
+  contradicting 6.5.)
 - Response validation: unknown `kind` dropped; non-substring `quote` dropped; a finding carrying a
   `replacement` field rejected; over-cap response truncated and reported.
 - Store compatibility: a store with no `author`/`state` loads, marks read as `user`/`active`,
@@ -940,7 +992,9 @@ Editor state:
 - A result landing during insert mode creates a position extmark and no decoration; the decoration
   appears on `InsertLeave`.
 - Manual `toggle` and insert suppression are independent.
-- A result whose `changedtick` moved is dropped, not applied.
+- A result whose **scanned region** changed is dropped; a result whose `changedtick` moved
+  because of an edit *outside* the region is still applied. (Draft 3's plan said any changed tick
+  is dropped, contradicting 8 rule 1c.)
 - `:AnnotateExport` omits AI marks; `:AlbertLintStyleExport` includes only them.
 
 Provider `extract` regression tests, all four observed for real during measurement, so these are

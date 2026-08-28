@@ -201,19 +201,23 @@ local function ensure_loaded(bufnr)
 end
 
 ---@param bufnr integer
+---@param bufnr integer
+---@return boolean ok False when the store was not written
 local function persist(bufnr)
   local st = state[bufnr]
   if not st then
-    return
+    return false
   end
   if st.read_only then
     notify("store is from a newer format version; refusing to write", vim.log.levels.ERROR)
-    return
+    return false
   end
   local ok, err = store.write(st.source, st.marks)
   if not ok then
     notify(err or "could not write store", vim.log.levels.ERROR)
+    return false
   end
+  return true
 end
 
 --- Rendering ----------------------------------------------------------------------
@@ -446,9 +450,16 @@ function M.retarget(bufnr)
     return false
   end
 
+  local previous = st.source
   st.source = source
-  store.index_add(source)
-  persist(bufnr)
+  -- No `store.index_add` here: `store.write` adds the source only after the write
+  -- succeeds, so doing it up front would list a source whose store does not exist.
+  if not persist(bufnr) then
+    -- Roll back, or the buffer is left pointing at a path it failed to write and the next
+    -- successful write lands somewhere the caller was told about but never verified.
+    st.source = previous
+    return false
+  end
   return true
 end
 
@@ -535,8 +546,15 @@ function M.add_many(bufnr, entries)
     elseif bad_meta then
       table.insert(errors, ("unknown meta field %q"):format(tostring(bad_meta)))
     else
-      local a = anchor.build(lines, entry.range.start, entry.range["end"], context_chars)
-      if a.text == "" then
+      -- pcall because `anchor.build` indexes the line array directly and throws on a
+      -- missing or out-of-buffer range. Without this the documented "one bad entry does
+      -- not discard the good ones" contract was false: a single malformed range from a
+      -- generated batch aborted the whole call.
+      local built, a = pcall(anchor.build, lines, entry.range and entry.range.start,
+        entry.range and entry.range["end"], context_chars)
+      if not built then
+        table.insert(errors, ("unusable range: %s"):format(tostring(a):gsub("^.-:%d+: ", "")))
+      elseif a.text == "" then
         table.insert(errors, "selection is empty")
       else
         local record = {
@@ -558,7 +576,12 @@ function M.add_many(bufnr, entries)
           end
         end
         table.insert(st.marks, record)
-        attach(bufnr, st, record, entry.range)
+        -- Only active records get an extmark. Attaching one for a record created already
+        -- dismissed or resolved would show its highlight until the next rebuild, which is
+        -- the opposite of what the state means.
+        if record.state == "active" then
+          attach(bufnr, st, record, entry.range)
+        end
         table.insert(records, record)
       end
     end
