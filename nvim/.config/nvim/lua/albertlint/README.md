@@ -65,7 +65,8 @@ require("albertlint").setup({
   severity = {},                  -- e.g. { ["slash-list"] = vim.diagnostic.severity.WARN }
   semantic = {
     enabled = true,
-    cmd = { "claude", "-p", "--output-format", "text" },
+    cmd = { "claude", "-p", "--output-format", "text", "--model", "sonnet" },
+    timeout_ms = 60000,
     scope = "paragraph",          -- paragraph | buffer | selection
   },
 })
@@ -80,6 +81,13 @@ an ambiguous pronoun) have nothing to work with, so the pass usually reports not
 looks broken. The other two, a missing `a`/`an` and agreement across an intervening phrase,
 *can* fire within one sentence. An explicit `:'<,'>AlbertLintSemantic` still wins over this
 setting.
+
+**`--model sonnet` is load-bearing.** Measured 2026-08-28 on a five-line sample containing an
+obvious missing `the`: without the flag the CLI's default model returned `{"findings":[]}`
+twice in a row in 6.6s, while sonnet found the error in 34.6s. A tier that reports nothing on
+flawed prose reads as "your writing is fine", which is the worst failure a linter has
+available. `timeout_ms` is 60000 for the same reason: the old 30000 would have aborted that
+34.6s call.
 
 Diagnostics use their own namespace, so the display config here cannot fight your global
 one. Default is underline with virtual text on the current line only, because prose is read

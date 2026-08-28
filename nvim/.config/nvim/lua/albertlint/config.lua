@@ -44,8 +44,21 @@ local defaults = {
     enabled = true,
     -- Shells out rather than embedding an API key. The CLI already holds credentials,
     -- so the plugin never sees one. `-p` is single-shot print mode.
-    cmd = { "claude", "-p", "--output-format", "text" },
-    timeout_ms = 30000,
+    --
+    -- `--model sonnet` is not optional decoration. Measured 2026-08-28 on a five-line
+    -- sample with an obvious missing `the`: without the flag, the CLI's default model
+    -- returned `{"findings":[]}` twice in a row in 6.6s, while sonnet found the error in
+    -- 34.6s. The tier was reporting nothing on visibly flawed prose, which reads as "your
+    -- writing is fine" and is the worst possible failure for a linter. A slower pass that
+    -- finds things beats a fast one that never does.
+    cmd = { "claude", "-p", "--output-format", "text", "--model", "sonnet" },
+
+    -- 60s, because the measurement above took 34.6s and the previous 30000 would have
+    -- aborted it. Sized at roughly 1.7x the slowest observed run rather than tight to it.
+    timeout_ms = 60000,
+
+    -- "paragraph" | "buffer" | "selection". Read by `semantic.scope_range`; before
+    -- 2026-08-28 it was declared here and never read.
     scope = "paragraph",
   },
 }
