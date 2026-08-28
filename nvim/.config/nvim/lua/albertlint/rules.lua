@@ -358,7 +358,10 @@ M.rules = {
     severity = S.HINT,
     drill_ref = "English Mistake - Hedge & Stance Calibration",
     fn = "hedge_density",
-    message = "Three or more hedges in one paragraph. Did you already check this? Then drop the hedge.",
+    -- "line", not "paragraph": `fns.hedge_density` takes a single line and its own comment
+    -- explains why. The message said paragraph, which overstates the rule's reach and
+    -- misled a design review into treating it as general over-hedging detection.
+    message = "Three or more hedges in one line. Did you already check this? Then drop the hedge.",
   },
 }
 
