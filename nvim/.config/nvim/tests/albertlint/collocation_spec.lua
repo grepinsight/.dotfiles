@@ -40,6 +40,18 @@ be_why: The instruction is what the reader acts on, so it goes first.
 ---
 ]]
 
+-- A *swap* Better English note: its replacement is a phrase, so it is completable. Contrast
+-- LEAD above, a *guidance* note whose replacement is a whole sentence and is correctly dropped.
+local SURFACE = [[---
+title: Surface Whatever Needs My Attention
+be_kind: swap
+be_replacement: "surface whatever needs my attention"
+be_originals:
+  - "discuss something that needs my attention"
+be_why: One verb replaces a four-word circumlocution.
+---
+]]
+
 local function notes(...)
   local out = {}
   for _, text in ipairs({ ... }) do
@@ -131,12 +143,16 @@ describe("collocation build", function()
   end)
 
   it("offers a Better English note's replacement, not its original", function()
-    -- The useful direction: what he decided to write, not what he wrote.
-    local entries = index.build(notes(LEAD))
+    -- The useful direction: what he decided to write, not what he wrote. Uses the SWAP
+    -- fixture, because a guidance note's replacement is a sentence and is correctly dropped
+    -- by the surface cap; that case has its own test below.
+    local entries = index.build(notes(SURFACE))
 
     assert.equals(1, #entries)
-    assert.is_truthy(entries[1].surface:find("^Check the daily notes"))
+    assert.equals("surface whatever needs my attention", entries[1].surface)
     assert.equals("better-english", entries[1].kind)
+    -- The original is carried as the example, not offered as a completion.
+    assert.is_truthy(entries[1].example:find("discuss something", 1, true))
   end)
 
   it("counts words per surface, for ranking", function()
@@ -150,8 +166,13 @@ describe("collocation build", function()
     assert.equals(2, by_surface["push back"].words)
   end)
 
-  it("ignores a note that is neither a phrase nor a Better English note", function()
-    local entries = index.build(notes("---\ntitle: Random\ntags:\n  - x\n---\n"))
+  it("ignores a note with no title", function()
+    -- The real guard, now that the kind comes from the caller rather than from which fields
+    -- happen to be filled in. An index note like `Life Phrases.md` has no frontmatter title
+    -- and must not become a completion.
+    local entries = index.build({
+      { text = "---\ntags:\n  - english\n---\n# Life Phrases\n", path = "/tmp/x.md", kind = "phrase" },
+    })
 
     assert.equals(0, #entries)
   end)
@@ -179,7 +200,7 @@ describe("collocation prefixes", function()
 end)
 
 describe("collocation candidates", function()
-  local entries = index.build(notes(PUSHBACK, ONE_OFF, LEAD))
+  local entries = index.build(notes(PUSHBACK, ONE_OFF, SURFACE))
 
   it("matches a word prefix", function()
     local out = index.candidates(entries, "give me push")
@@ -256,5 +277,63 @@ describe("collocation candidates", function()
     local out = index.candidates(entries, "PUSH")
 
     assert.is_true(#out > 0)
+  end)
+end)
+
+describe("collocation surface eligibility", function()
+  it("rejects a sentence-shaped surface", function()
+    -- The bug this exists for, found by running the real corpus rather than by reasoning: two
+    -- be_replacement values are whole sentences, and the menu would have offered them as
+    -- one-key completions. That is exactly the Copilot behaviour blocked in markdown,
+    -- arriving through a different door.
+    assert.is_false(index._completable("Check the daily notes: when did I ask which skills I have?"))
+    assert.is_false(index._completable("My finger circumference is 6.2 cm."))
+  end)
+
+  it("rejects a surface ending in terminal punctuation even when short", function()
+    assert.is_false(index._completable("push back."))
+    assert.is_false(index._completable("really?"))
+  end)
+
+  it("accepts a phrase at the word limit and rejects one past it", function()
+    assert.is_true(index._completable("surface whatever needs my attention"))
+    assert.is_false(index._completable("absence of evidence is not evidence"))
+  end)
+
+  it("rejects a surface with no letters", function()
+    assert.is_false(index._completable("반박"))
+    assert.is_false(index._completable("---"))
+  end)
+
+  it("drops a Better English note whose replacement is a whole sentence", function()
+    local long = [[---
+title: Lead With the Action
+be_replacement: "Check the daily notes: when did I ask which skills I have for a topic?"
+be_why: The instruction goes first.
+---
+]]
+    assert.equals(0, #index.build({ { text = long, path = "/tmp/x.md", kind = "better-english" } }))
+  end)
+end)
+
+describe("collocation kind hint", function()
+  it("uses a phrase note's title even with no phrase_definition", function()
+    -- Inferring the kind from which fields happen to be filled in dropped 32 of 176 real
+    -- notes. Older phrase notes carry a title and aliases and no definition, and
+    -- `Churn Through` / `Heavy Tail` / `I Buy That` are exactly the vocabulary this source
+    -- exists to surface.
+    local bare = "---\ntitle: Churn Through\naliases:\n  - churn through\n---\n"
+
+    local entries = index.build({ { text = bare, path = "/tmp/x.md", kind = "phrase" } })
+
+    assert.equals(1, #entries)
+    assert.equals("Churn Through", entries[1].surface)
+    assert.is_nil(entries[1].detail)
+  end)
+
+  it("still infers the kind when the caller does not say", function()
+    local entries = index.build(notes(PUSHBACK))
+    assert.is_true(#entries > 0)
+    assert.equals("phrase", entries[1].kind)
   end)
 end)

@@ -96,7 +96,38 @@ end
 ---`be_replacement` notes contribute their replacement as the surface and their originals as
 ---extra match text, which is the useful direction: typing what he *would have* written
 ---should surface what he decided to write instead.
----@param notes table[] Each { text = string, path = string|nil }
+---@param notes table[] Each { text = string, path = string|nil, kind = string|nil }
+---@return table[] entries
+
+---A surface has to be short enough to be *vocabulary* rather than *composition*.
+---
+---This cap is the whole justification for this source existing alongside a blocked Copilot.
+---A word or a short collocation is vocabulary, and choosing one from a menu is an act of
+---judgment. A clause is composition, and accepting it with a keystroke is not. Running the
+---first version over the real corpus surfaced two `be_replacement` values that are entire
+---sentences (`"Check the daily notes: when did I ask which skills I have..."`), which the
+---menu would have offered as one-key completions. That is precisely the Copilot behaviour
+---the author blocked in markdown, arriving through a different door.
+---
+---Five words, and terminal punctuation disqualifies outright: a surface ending in `.`, `?`,
+---or `!` is a sentence or an example, not a phrase. Longer Better English replacements are
+---still valuable, they just belong to the annotation tier rather than the completion menu.
+---@type integer
+local MAX_SURFACE_WORDS = 5
+
+---@param surface string
+---@return boolean
+local function completable(surface)
+  if surface == "" or not surface:match("%a") then
+    return false
+  end
+  if surface:match("[%.%?!]$") then
+    return false
+  end
+  return #vim.split(surface, "%s+", { trimempty = true }) <= MAX_SURFACE_WORDS
+end
+
+---@param notes table[] Each { text = string, path = string|nil, kind = string|nil }
 ---@return table[] entries
 function M.build(notes)
   local entries = {}
@@ -107,13 +138,24 @@ function M.build(notes)
     local surfaces = {}
     local detail, example, source_kind
 
-    if f.be_replacement then
-      -- A Better English note: the replacement is the thing to offer.
+    -- `note.kind` comes from the caller, which knows the directory. Inferring it from which
+    -- frontmatter fields happen to be filled in was too strict and silently dropped 32 of
+    -- 176 real notes: older phrase notes carry a title and aliases but no
+    -- `phrase_definition`, and `AI-Pilled`, `Churn Through`, `Heavy Tail` and `I Buy That`
+    -- are exactly the vocabulary this source exists to surface.
+    local kind = note.kind
+    if not kind then
+      kind = f.be_replacement and "better-english" or "phrase"
+    end
+
+    if kind == "better-english" and f.be_replacement then
+      -- The replacement is the thing to offer, not the original: typing what he WOULD have
+      -- written should surface what he decided to write instead.
       table.insert(surfaces, f.be_replacement)
       detail = f.be_why
       example = type(f.be_originals) == "table" and f.be_originals[1] or f.be_originals
       source_kind = "better-english"
-    elseif f.phrase_definition or f.phrase_id then
+    elseif kind == "phrase" and f.title then
       table.insert(surfaces, f.title)
       for _, alias in ipairs(type(f.aliases) == "table" and f.aliases or {}) do
         table.insert(surfaces, alias)
@@ -126,9 +168,9 @@ function M.build(notes)
     for _, surface in ipairs(surfaces) do
       surface = vim.trim(tostring(surface or ""))
       local key = surface:lower()
-      -- Skip empties, and skip a surface with no letters: an alias field occasionally
-      -- holds a Korean gloss, which is useful to read and useless to complete English on.
-      if surface ~= "" and not seen[key] and surface:match("%a") then
+      -- `completable` drops empties, Korean glosses (an alias field occasionally holds one,
+      -- useful to read and useless to complete English on), and anything sentence-shaped.
+      if not seen[key] and completable(surface) then
         seen[key] = true
         table.insert(entries, {
           surface = surface,
@@ -232,4 +274,6 @@ function M.candidates(entries, before, opts)
   return matches, 0
 end
 
+M._completable = completable
+M._MAX_SURFACE_WORDS = MAX_SURFACE_WORDS
 return M
