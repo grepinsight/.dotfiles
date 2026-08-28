@@ -182,10 +182,11 @@ local lsp_config_setup = function()
     -- the :LspCopilotSignIn command, so we only override what we disagree with.
     --
     -- UI-gated deliberately. copilot declares no filetypes, so it attaches to any
-    -- buffer inside a git repo -- including under `nvim --headless`, where its node
-    -- server outlives the process as an orphan. That leak is what replaced the
-    -- copilot.lua plugin with this block. See lua/util/headless.lua.
+    -- real-file buffer -- including under `nvim --headless`, where its node server
+    -- outlives the process as an orphan. That leak is what replaced the copilot.lua
+    -- plugin with this block. See lua/util/headless.lua.
     if require("util.headless").has_ui() then
+        local copilot_gate = require("plugins.lsp.copilot_gate")
         vim.lsp.config("copilot", {
             -- Neovim defaults exit_timeout to false, so VimLeavePre waits 0ms for a
             -- graceful shutdown and a still-booting server is never reaped. A number
@@ -193,6 +194,13 @@ local lsp_config_setup = function()
             exit_timeout = 500,
             -- The shipped config sets telemetryLevel = "all". Opt out.
             settings = { telemetry = { telemetryLevel = "off" } },
+            -- Skipping `on_dir()` stops the client from starting for that buffer.
+            root_dir = function(bufnr, on_dir)
+                if copilot_gate.is_blocked(bufnr) then
+                    return
+                end
+                on_dir(vim.fs.root(bufnr, { ".git" }))
+            end,
         })
         vim.lsp.enable("copilot")
     end
