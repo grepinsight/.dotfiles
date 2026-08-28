@@ -176,6 +176,24 @@ function source:get_debug_name()
   return "english"
 end
 
+---Byte offsets, not UTF-16 code units.
+---
+---This is not a formality. `cmp.source.get_position_encoding_kind` defaults a source that
+---does not implement this to `UTF16` (`nvim-cmp/lua/cmp/source.lua:275`), and
+---`entry.convert_range_encoding` then feeds the range through `vim.str_byteindex` to
+---translate it. The ranges built in `complete` below are plain Lua byte offsets, so under
+---the default cmp would translate an already-correct offset and land the replacement in the
+---wrong place on any line holding a multibyte character before the cursor. This author
+---writes Korean, and the vault is full of typographic quotes and em dashes, so that is the
+---common case rather than the exotic one.
+---
+---Returns the literal string rather than `cmp.types.lsp.PositionEncodingKind.UTF8` so this
+---module never has to `require("cmp")`, which would make it unloadable in a headless test.
+---@return string
+function source:get_position_encoding_kind()
+  return "utf-8"
+end
+
 function source:is_available()
   return M.config.filetypes[vim.bo.filetype] == true
 end

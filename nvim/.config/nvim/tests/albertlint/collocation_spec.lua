@@ -337,3 +337,48 @@ describe("collocation kind hint", function()
     assert.equals("phrase", entries[1].kind)
   end)
 end)
+
+describe("collocation frontmatter edge cases from the real corpus", function()
+  it("ignores a nested map without letting it swallow later keys", function()
+    -- `Interesting Phrases and Idioms from the Lecture.md` has this shape. The indented keys
+    -- match neither the list-item pattern nor the key pattern, so they are skipped; what
+    -- must not happen is `properties` staying open and eating `tags`.
+    local text = [[---
+title: "Building Kong's View"
+tags:
+  - fabric
+properties:
+  view_count: "25"
+  like_count: "0"
+---
+]]
+    local f = index.parse_frontmatter(text)
+
+    assert.equals("Building Kong's View", f.title)
+    assert.equals(1, #f.tags)
+    assert.equals("fabric", f.tags[1])
+    assert.equals("table", type(f.properties))
+    assert.equals(0, #f.properties)
+    assert.is_nil(f.view_count)
+  end)
+
+  it("keeps a value containing a colon intact", function()
+    -- A URL is the common case, and a naive split on the first colon would truncate it.
+    local f = index.parse_frontmatter('---\nurl: "https://youtube.com/watch?v=abc"\n---\n')
+
+    assert.equals("https://youtube.com/watch?v=abc", f.url)
+  end)
+
+  it("tolerates trailing whitespace after a key that opens a list", function()
+    -- The real note has `tags: ` with a trailing space.
+    local f = index.parse_frontmatter("---\ntags: \n  - fabric\n---\n")
+
+    assert.equals(1, #f.tags)
+  end)
+
+  it("ignores a comment line", function()
+    local f = index.parse_frontmatter("---\n# a comment\ntitle: X\n---\n")
+
+    assert.equals("X", f.title)
+  end)
+end)

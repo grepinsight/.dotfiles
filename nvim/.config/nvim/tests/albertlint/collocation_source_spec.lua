@@ -237,3 +237,38 @@ describe("collocation cmp source", function()
     assert.equals("markdown", items[1].documentation.kind)
   end)
 end)
+
+describe("collocation cmp source position encoding", function()
+  before_each(function()
+    configure(fixture_vault())
+    col.entries(true)
+  end)
+
+  it("declares utf-8, because the ranges it builds are byte offsets", function()
+    -- cmp defaults an unimplemented source to UTF16 (cmp/source.lua:275) and then runs the
+    -- range through vim.str_byteindex. Under the default it would translate an already
+    -- correct byte offset and misplace the edit.
+    assert.equals("utf-8", col.source:get_position_encoding_kind())
+  end)
+
+  it("builds a byte-correct range on a line with multibyte text before the cursor", function()
+    -- The case the default encoding would break. Korean before the cursor, and the range
+    -- must still describe bytes, so byte-slicing the line reproduces exactly what was typed.
+    local before = "그래서 I need push"
+    local items = complete(before)
+
+    assert.is_true(#items > 0)
+    local r = items[1].textEdit.range
+    assert.equals("push", before:sub(r.start.character + 1, r["end"].character))
+    assert.equals("그래서 I need pushback", applied(before, items[1]))
+  end)
+
+  it("keeps the range byte-correct for a multi-word match after multibyte text", function()
+    local before = "음… it was a one"
+    local items = complete(before)
+
+    local r = items[1].textEdit.range
+    assert.equals("a one", before:sub(r.start.character + 1, r["end"].character))
+    assert.equals("음… it was a one-off", applied(before, items[1]))
+  end)
+end)
