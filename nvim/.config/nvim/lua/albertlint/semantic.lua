@@ -60,7 +60,11 @@ local function scope_range(bufnr, scope)
     if first < 1 or last < first then
       return paragraph_range(bufnr)
     end
-    return first - 1, last
+    -- Clamp the end: a mark can outlive the lines it pointed at, and returning a range
+    -- past the end of the buffer would make this function's contract "a range that may not
+    -- exist". `nvim_buf_get_lines` tolerates it with strict_indexing off, but the caller
+    -- should not have to know that.
+    return first - 1, math.min(last, vim.api.nvim_buf_line_count(bufnr))
   elseif scope == nil or scope == "paragraph" then
     return paragraph_range(bufnr)
   end

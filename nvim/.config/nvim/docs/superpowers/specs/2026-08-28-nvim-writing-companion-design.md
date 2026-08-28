@@ -532,8 +532,16 @@ Three further consequences:
 
 ## 8. Concurrency and stale results
 
-Each request carries: buffer handle, source path, `scan_id`, request generation, the `changedtick`
-at dispatch, the exact scope range, and the payload hash.
+Each request carries: buffer handle, source path, `scan_id`, `scope_key`, request generation, the
+`changedtick` at dispatch, the payload hash, and **the scope range held as a pair of extmarks, not
+as line numbers.**
+
+The extmarks matter and are not an optimisation. Line numbers recorded at dispatch stop pointing at
+the same text the moment anything is inserted above the scope, so rule 1(c) below would rehash a
+*different* region, find a mismatch, and discard a result whose own text never changed. Inserting
+one line at the top of the file would invalidate every in-flight pass. Extmarks move with the
+buffer, so the region rehashed at completion is the region that was sent. This is the same reason
+`annotate` holds mark positions in extmarks rather than in the stored `hint`.
 
 Rules:
 
@@ -543,10 +551,12 @@ Rules:
 
    a. The buffer is still valid and still loaded. Fail → drop.
    b. The request generation for this (buffer, group, scope) is still current. Fail → drop.
-   c. **The scanned range still hashes to the payload hash recorded at dispatch.** Buffer
-      `changedtick` is used only as an early-out: if it is unchanged, the range is certainly
-      unchanged and the hash need not be recomputed. If it moved, rehash the range; equal means the
-      edit was elsewhere and the result is still good.
+   c. **The extmark-delimited scope still hashes to the payload hash recorded at dispatch.**
+      Buffer `changedtick` is used only as an early-out: unchanged tick means the region is
+      certainly unchanged and no rehash is needed. If it moved, rehash the region the extmarks now
+      delimit; equal means the edit was outside the scope and the result is still good. Both
+      extmarks are deleted in the completion callback, on every path including error and timeout,
+      or a cancelled pass leaks two extmarks per attempt.
 
    Step (c) is what makes the rule usable. A global `changedtick` test with no retry would discard
    every result whenever the author typed anywhere during a 30-to-80-second `claude` call, which is

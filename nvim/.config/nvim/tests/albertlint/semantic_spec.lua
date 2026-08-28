@@ -107,6 +107,23 @@ describe("semantic scope_range", function()
     assert.is_true(s >= 0)
   end)
 
+  it("clamps a selection whose end mark outlived the lines it pointed at", function()
+    -- A mark can survive the deletion of the line it referenced. Returning a range past
+    -- the last line would make the contract "a range that may not exist"; the caller
+    -- should not have to know that nvim_buf_get_lines tolerates that.
+    local buf = one_line_paragraphs()
+    focus(buf, 1)
+    vim.api.nvim_buf_set_mark(buf, "<", 1, 0, {})
+    vim.api.nvim_buf_set_mark(buf, ">", 5, 0, {})
+    vim.api.nvim_buf_set_lines(buf, 3, 5, false, {})
+
+    local s, e = semantic._scope_range(buf, "selection")
+
+    assert.equals(0, s)
+    assert.equals(3, e)
+    assert.equals(vim.api.nvim_buf_line_count(buf), e)
+  end)
+
   it("warns and falls back to the paragraph on an unknown scope", function()
     local buf = one_line_paragraphs()
     focus(buf, 3)
