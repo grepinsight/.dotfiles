@@ -71,3 +71,33 @@ describe("albertlint attachment", function()
     assert.is_true(count(buf) > 0)
   end)
 end)
+
+describe("albertlint reload", function()
+  before_each(function()
+    albertlint.setup({})
+  end)
+
+  it("clears the semantic and config modules, not only rules and engine", function()
+    -- This exists because it did not, and the omission cost a debugging session: a change
+    -- teaching semantic.lua to read config.semantic.scope could not be picked up by any
+    -- command, so the loaded module kept its old behaviour while the option looked set.
+    require("albertlint.semantic")
+    require("albertlint.config")
+    assert.is_not_nil(package.loaded["albertlint.semantic"])
+
+    vim.cmd("AlbertLintReload")
+
+    -- Reload re-requires config itself, so assert on semantic, which it only clears.
+    assert.is_nil(package.loaded["albertlint.semantic"])
+  end)
+
+  it("keeps the options passed to setup across a reload", function()
+    -- Reloading config resets `options` to the file defaults, which would silently discard
+    -- whatever setup() was given. A reload must be a no-op for configuration.
+    albertlint.setup({ semantic = { scope = "buffer" } })
+
+    vim.cmd("AlbertLintReload")
+
+    assert.equals("buffer", require("albertlint.config").get().semantic.scope)
+  end)
+end)

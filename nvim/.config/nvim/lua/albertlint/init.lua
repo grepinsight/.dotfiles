@@ -190,6 +190,10 @@ end
 
 ---@param opts table|nil
 function M.setup(opts)
+  -- Kept so `:AlbertLintReload` can re-apply them after clearing `albertlint.config`,
+  -- which otherwise resets `options` to the file's defaults and drops these silently.
+  M._opts = opts
+
   config.setup(opts)
 
   -- Namespace-scoped display so the plugin cannot fight his global diagnostic config.
@@ -254,14 +258,32 @@ function M.setup(opts)
   end, { desc = "albertlint: which drilled patterns have rules" })
 
   vim.api.nvim_create_user_command("AlbertLintReload", function()
-    for _, mod in ipairs({ "albertlint.rules", "albertlint.engine" }) do
+    -- `semantic` and `config` are in this list because they were not, and it cost a real
+    -- debugging session: a fix that taught `semantic.lua` to read `config.semantic.scope`
+    -- could not be picked up by any command, so setting the option at runtime wrote to a
+    -- field the loaded module never read, and the pass silently kept its old behaviour.
+    -- A command called Reload should mean "pick up my edits to this plugin".
+    for _, mod in ipairs({
+      "albertlint.rules",
+      "albertlint.engine",
+      "albertlint.semantic",
+      "albertlint.config",
+      "albertlint.collocation.index",
+    }) do
       package.loaded[mod] = nil
     end
+
+    -- Reloading `config` resets `options` to the file's defaults, which would silently
+    -- discard whatever was passed to `setup()`. Re-applying the stored opts is what keeps
+    -- reload a no-op for configuration while still picking up new default values.
+    config = require("albertlint.config")
+    config.setup(M._opts)
+
     engine = require("albertlint.engine")
-    require("albertlint.engine").reset()
+    engine.reset()
     M.lint_all()
-    vim.notify("albertlint: catalogue reloaded", vim.log.levels.INFO)
-  end, { desc = "albertlint: reload the rule catalogue" })
+    vim.notify("albertlint: modules reloaded", vim.log.levels.INFO)
+  end, { desc = "albertlint: reload rules, engine, semantic, and config" })
 
   -- Catch buffers that were already open. Every autocmd above is an event that has
   -- already fired for them, so without this sweep a lazy-loaded or re-sourced setup
