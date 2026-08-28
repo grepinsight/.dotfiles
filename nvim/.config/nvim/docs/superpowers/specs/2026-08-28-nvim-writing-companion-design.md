@@ -156,7 +156,7 @@ simply ships one row in that file.
   kind        = "no-claim",
   model       = "gpt-5.4-nano",
   analyzer    = "discourse@1",      -- group id + prompt version, see 6.4
-  fingerprint = "<sha1>",           -- IMMUTABLE, see 6.1
+  fingerprint = "<16 hex chars>",   -- IMMUTABLE, see 6.1
   state       = "active",           -- see 6.2
   scan_id     = "<uuid>",           -- which pass produced it, see 6.2
 }
@@ -229,8 +229,15 @@ Fix: compute `fingerprint` **once, at creation**, from the anchor as it was obse
 recompute it:
 
 ```
-fingerprint = sha1(kind .. "\0" .. normalize(text) .. "\0" .. analyzer)
+fingerprint = vim.fn.sha256(kind .. "\0" .. normalize(text) .. "\0" .. analyzer):sub(1, 16)
 ```
+
+**`sha256`, not `sha1`.** Draft 1 said `sha1`, which is not implementable here: this Neovim
+reports `exists("*sha256") == 1` and `exists("*sha1") == 0` (and no `md5`), so `sha1` would
+mean shelling out or vendoring a Lua implementation for no benefit. Truncated to 16 hex
+characters, because the fingerprint only has to be collision-free among one file's marks and
+64 bits is far past that; the store is human-readable JSON and a full 64-char digest on every
+record makes it unreadable.
 
 `normalize` collapses whitespace and lowercases, so a reflow does not create a new identity.
 `prefix`/`suffix` are excluded precisely because they are mutable. `analyzer` is included so a

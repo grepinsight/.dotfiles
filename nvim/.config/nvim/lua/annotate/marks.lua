@@ -41,24 +41,34 @@ local function timestamp()
   return os.date("%Y-%m-%dT%H:%M:%S", t) .. offset:sub(1, 3) .. ":" .. offset:sub(4)
 end
 
----A mark id unique within its file: a timestamp plus a session counter.
+---An allocator of mark ids unique within their file: a timestamp plus a session counter.
 ---
----Neovim has no UUID in stdlib. A restarted session resets the counter, so ids are
----checked against the ones already in the file rather than assumed unique.
+---Neovim has no UUID in stdlib. A restarted session resets the counter, so ids are checked
+---against the ones already in the file rather than assumed unique.
+---
+---Returns an allocator rather than a single id because the taken-id set is built by
+---scanning every existing mark. Doing that per id makes adding N marks quadratic in the
+---mark count, which is invisible for a keypress and not for a batch. The allocator scans
+---once and records what it mints, so a batch stays linear.
 ---@param marks annotate.Mark[]
----@return string
-local function next_id(marks)
+---@return fun(): string
+local function id_allocator(marks)
   local taken = {}
   for _, mark in ipairs(marks) do
     taken[mark.id] = true
   end
 
+  -- One timestamp for the whole batch. `seq` disambiguates within it, and sharing the
+  -- second is honest: these marks were created by one action.
   local now = config.get().clock()
-  while true do
-    seq = seq + 1
-    local candidate = ("%d-%d"):format(now, seq)
-    if not taken[candidate] then
-      return candidate
+  return function()
+    while true do
+      seq = seq + 1
+      local candidate = ("%d-%d"):format(now, seq)
+      if not taken[candidate] then
+        taken[candidate] = true
+        return candidate
+      end
     end
   end
 end
@@ -371,6 +381,41 @@ function M.detach_buffer(bufnr)
   state[bufnr] = nil
 end
 
+---Point this buffer's marks at its current file name.
+---
+---`BufState.source` is captured once in `ensure_loaded` and never revisited, and there was
+---no `BufFilePost` handler, so after `:saveas other.md` every later write went to the store
+---keyed by the ORIGINAL path. The marks then described a file the author was no longer
+---editing, and the ones for the file they were editing did not exist.
+---
+---`:saveas` leaves the original file on disk with its original content, so its store stays
+---correct for it and is deliberately left alone. This copies the marks forward to the new
+---path rather than moving them: the same content now lives in two places and both
+---descriptions are true. A caller wanting a move should delete the old store explicitly.
+---@param bufnr integer
+---@return boolean retargeted False when there was nothing to do
+function M.retarget(bufnr)
+  local st = state[bufnr]
+  if not st then
+    return false
+  end
+
+  local name = vim.api.nvim_buf_get_name(bufnr)
+  if name == "" then
+    return false
+  end
+
+  local source = store.normalize(name)
+  if source == st.source then
+    return false
+  end
+
+  st.source = source
+  store.index_add(source)
+  persist(bufnr)
+  return true
+end
+
 --- Mutation -----------------------------------------------------------------------
 
 ---Add a mark over an explicit range.
@@ -383,42 +428,88 @@ end
 ---@param note string|nil
 ---@return annotate.Mark|nil record, string|nil err
 function M.add_range(bufnr, range, category_name, note)
-  local category = config.category(category_name)
-  if not category then
-    return nil, ("unknown category %q"):format(category_name)
+  local records, errors =
+    M.add_many(bufnr, { { range = range, category = category_name, note = note } })
+  if records[1] then
+    return records[1], nil
+  end
+  return nil, errors[1] or "could not add mark"
+end
+
+---Add several marks in one pass, persisting once.
+---
+---`add_range` writes the whole store on every call, which is right for a keypress and
+---quadratic for a batch: N marks means N full atomic rewrites (temp file plus rename) on
+---top of N taken-id scans. A generated batch of a dozen findings would rewrite the store a
+---dozen times. This builds every anchor, attaches every extmark, and writes once.
+---
+---The filetype gate is hoisted ahead of the loop, because N identical "not enabled for
+---filetype" messages is noise when the answer is a single fact about the buffer. One
+---consequence worth naming: for a single entry that is BOTH an unknown category AND in a
+---disabled filetype, the reported error is now the filetype rather than the category.
+---Either is correct and no caller distinguishes them.
+---
+---Errors are collected rather than fatal, so one bad entry in a batch does not discard the
+---good ones. A caller wanting all-or-nothing should validate before calling.
+---@param bufnr integer
+---@param entries table[] Each { range = table, category = string, note = string|nil }
+---@return annotate.Mark[] records Added, in input order, skipping failures
+---@return string[] errors One per entry that could not be added
+function M.add_many(bufnr, entries)
+  if #entries == 0 then
+    return {}, {}
   end
 
   local filetype = vim.bo[bufnr].filetype
   if not config.handles_filetype(filetype) then
-    return nil, ("annotate is not enabled for filetype %q; add it to `filetypes` in setup()")
-      :format(filetype)
+    return {}, {
+      ("annotate is not enabled for filetype %q; add it to `filetypes` in setup()")
+        :format(filetype),
+    }
   end
 
   local st, load_err = ensure_loaded(bufnr)
   if not st then
-    return nil, load_err
+    return {}, { load_err }
   end
 
-  local a = anchor.build(buf_lines(bufnr), range.start, range["end"], config.get().context_chars)
-  if a.text == "" then
-    return nil, "selection is empty"
+  -- Read the buffer and the config once for the whole batch rather than per entry. Safe
+  -- because nothing here modifies the buffer, so every caller-supplied range stays valid.
+  local lines = buf_lines(bufnr)
+  local context_chars = config.get().context_chars
+  local allocate = id_allocator(st.marks)
+  local records, errors = {}, {}
+
+  for _, entry in ipairs(entries) do
+    if not config.category(entry.category) then
+      table.insert(errors, ("unknown category %q"):format(tostring(entry.category)))
+    else
+      local a = anchor.build(lines, entry.range.start, entry.range["end"], context_chars)
+      if a.text == "" then
+        table.insert(errors, "selection is empty")
+      else
+        local record = {
+          id = allocate(),
+          category = entry.category,
+          note = entry.note,
+          text = a.text,
+          prefix = a.prefix,
+          suffix = a.suffix,
+          hint = a.hint,
+          created_at = timestamp(),
+          orphaned = false,
+        }
+        table.insert(st.marks, record)
+        attach(bufnr, st, record, entry.range)
+        table.insert(records, record)
+      end
+    end
   end
 
-  local record = {
-    id = next_id(st.marks),
-    category = category_name,
-    note = note,
-    text = a.text,
-    prefix = a.prefix,
-    suffix = a.suffix,
-    hint = a.hint,
-    created_at = timestamp(),
-    orphaned = false,
-  }
-  table.insert(st.marks, record)
-  attach(bufnr, st, record, range)
-  persist(bufnr)
-  return record, nil
+  if #records > 0 then
+    persist(bufnr)
+  end
+  return records, errors
 end
 
 ---Add a mark over the active visual selection.

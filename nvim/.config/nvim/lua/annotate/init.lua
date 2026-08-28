@@ -173,6 +173,16 @@ local function register_autocmds()
     end,
   })
 
+  -- BufFilePost fires after `:saveas` and `:file` have changed the buffer's name. Without
+  -- it, BufState.source keeps the name captured at load time and every later persist
+  -- writes the store for a file the author is no longer editing.
+  vim.api.nvim_create_autocmd("BufFilePost", {
+    group = group,
+    callback = function(args)
+      marks.retarget(args.buf)
+    end,
+  })
+
   vim.api.nvim_create_autocmd({ "BufDelete", "BufWipeout" }, {
     group = group,
     callback = function(args)
