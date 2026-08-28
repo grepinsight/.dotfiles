@@ -252,6 +252,19 @@ function source:complete(params, callback)
       tail = tail:lower()
     end
 
+    -- `filterText = entry.matched` is correct, and it is worth saying why, because it looks
+    -- wrong: cmp normally matches against the current keyword, and a multi-word `matched`
+    -- would then score 0 and never appear.
+    --
+    -- It works because of `entry._get_offset` in nvim-cmp: when an item carries a `textEdit`,
+    -- cmp derives its matching offset from `insert_range.start.character + 1` rather than
+    -- from the keyword pattern. So the input it matches against starts where this range
+    -- starts, which is exactly `entry.matched`. The two align by construction.
+    --
+    -- And this is the second reason `get_position_encoding_kind` above matters:
+    -- `insert_range` is the value AFTER `convert_range_encoding`. Under cmp's default UTF16
+    -- the offset would be translated and misaligned with `filterText`, so multi-word
+    -- candidates would score 0 and vanish silently rather than land in the wrong column.
     table.insert(items, {
       label = entry.surface,
       filterText = entry.matched,
