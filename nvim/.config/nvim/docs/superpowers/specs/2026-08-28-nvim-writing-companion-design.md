@@ -1,12 +1,20 @@
 # Writing companion: LLM annotations for prose, inside Neovim
 
-Status: draft 2, revised after an adversarial review. No code written yet.
+Status: draft 3. Steps 1 and 2 of the build sequence are implemented, tested, and committed.
 Date: 2026-08-28
 
-Draft 1 was reviewed by `codex exec` (`gpt-5.6-sol`, reasoning effort `xhigh`, read-only, with
-instructions to read the actual modules). It found two decisions that were wrong by construction
-and several week-one problems that were missing. Section 15 records what changed and what I
-declined. Every claim it made that this draft acts on was verified against the source first.
+Two adversarial review passes by `codex exec` (`gpt-5.6-sol`, reasoning effort `xhigh`,
+read-only, instructed to read the modules and verify claims).
+
+- **Pass 1** on the design found two decisions wrong by construction (a fingerprint over mutable
+  fields; insert-mode hiding via a function that destroys position tracking) and one conceptual
+  error (`orphaned` treated as "addressed").
+- **Pass 2** on draft 2 found eleven blocking contradictions, two overstated citations, and a set
+  of contracts missing for the steps about to be implemented. Draft 3 closes all of them.
+  Section 15 is the audit trail.
+
+Every claim either review made that this document acts on was verified against the source before
+acting. Two of pass 2's corrections were to **my** overstatements, recorded in 2.3.
 
 ## 1. Goal and the one hard constraint
 
@@ -73,12 +81,26 @@ source, not taken on report.
 |---|---|---|---|
 | C1 | `sync()` overwrites `record.prefix` and `record.suffix` from current buffer text | `marks.lua:326-336` | A fingerprint derived from those fields is **unstable**. See 6.1. |
 | C2 | `toggle()` clears the namespace **and** does `st.ids, st.rev = {}, {}` | `marks.lua:357` | Cannot be reused for insert-mode hiding: it destroys position tracking mid-edit. See 7. |
-| C3 | `attach()` sets an extmark with `virt_text` unconditionally; `add_range` never checks `st.visible` | `marks.lua:196`, `marks.lua:397` | A result landing during insert mode renders immediately. See 7. |
-| C4 | `best_match()` takes the first candidate unconditionally, with no minimum context score and no ambiguity check; `resolve()` tier 1 accepts matching text at the old byte range with no context check at all | `anchor.lua:154`, `anchor.lua:318` | Safe for human-selected phrases, **unsafe for short machine anchors**. See 6.3. |
+| C3 | `attach()` sets `hl_group` unconditionally and `virt_text` when `config.virtual_text` is on (it defaults on); `add_range` never consults `st.visible` | `marks.lua:195`, `marks.lua:200`, `config.lua:44` | A result landing during insert mode renders immediately, **and the highlight alone is enough to violate the rule**. See 7. |
+| C4 | `best_match()` does rank by context score then hint distance, but **zero is an acceptable best score** and an exact tie silently keeps the earlier candidate; `resolve()` tier 1 accepts matching text at the old byte range with no context check at all | `anchor.lua:164-176`, `anchor.lua:318-324` | Safe for human-selected phrases, **unsafe for short machine anchors**. See 6.5. |
 | C5 | `sync()` sets `record.orphaned = false` whenever the anchor re-resolves, and `resolve()` will happily relocate to another occurrence | `marks.lua:337` | An edited span may relocate rather than orphan. `orphaned` cannot mean "addressed." See 6.2. |
 
-Plus one performance fact: `add_range` calls `persist(bufnr)` per mark (`marks.lua:420`) and
-`next_id` scans all marks (`marks.lua:44`), so committing N findings one at a time is quadratic.
+**C3 and C4 as originally written were wrong, and the corrections are mine to own.** Draft 2 said
+`virt_text` was unconditional (it is gated on `config.virtual_text`) and that `best_match` took the
+first candidate unconditionally (it ranks by score, then distance). Both overstated the defect. The
+*consequences* survive intact and in C4's case the real defect is narrower and more interesting: a
+zero context score is accepted, so a match with no surviving context on either side still wins.
+
+Two further verified constraints, both found in pass 2:
+
+| # | Fact | Location | Consequence |
+|---|---|---|---|
+| C6 | `store.write` rebuilds the payload as `{ version, source, marks }`, discarding any other top-level key, **and unlinks the file entirely when `#marks == 0`** | `store.lua:260`, `store.lua:254` | A ledger cannot live inside the mark store. See 6.6. |
+| C7 | `fns.hedge_density` takes a single line and counts each hedge phrase at most once, from a 15-phrase list; `nominalized-subject` is a narrow whitelist | `engine.lua:264-282`, `rules.lua:337` | Overlap with the proposed sentence classes is **partial, not duplication**. See 4.2. |
+
+Plus one performance fact, now fixed: `add_range` called `persist(bufnr)` per mark and `next_id`
+scanned all marks, so committing N findings one at a time was quadratic. Resolved by `add_many`
+(10.2).
 
 ## 3. Non-goals
 
@@ -87,7 +109,7 @@ Plus one performance fact: `add_range` calls `persist(bufnr)` per mark (`marks.l
 - No three-column layout (14.3).
 - No continuous mode in v1 (see 11).
 - No `fact-check` class in v1 (4.4).
-- No sentence-level class group in v1 (4.2).
+- No sentence-level class group in v1 (4.2), and no Setext headings (5.1).
 - No conversation state. Each pass is stateless; memory lives in the mark store.
 - No new dependency. Telescope stays optional, as in `picker.lua`.
 
@@ -117,25 +139,30 @@ Plus one performance fact: `add_range` calls `persist(bufnr)` per mark (`marks.l
 
 ### 4.2 Why the sentence group is cut from v1
 
-Draft 1 had a second group with `buried-verb`, `hedge`, `coined`, and `vague-verdict`. Three of
-those **duplicate deterministic rules that already exist**:
+Draft 1 had a second group with `buried-verb`, `hedge`, `coined`, and `vague-verdict`. Draft 2 cut
+it on the grounds that three of those duplicate existing deterministic rules. **That was
+overstated** (C7). What the existing rules actually do:
 
-| Proposed class | Existing rule | Location |
+| Proposed class | Nearest existing rule | What it really covers |
 |---|---|---|
-| `hedge` | `hedge-density` ("Three or more hedges in one paragraph") | `rules.lua:356` |
-| `buried-verb` | `nominalized-subject` | `rules.lua:337` |
-| `coined` | `typo` (with a known-words catalogue at `rules.lua:420`) | `rules.lua:345` |
+| `hedge` | `hedge-density` | Three or more hedges **in one line**, each phrase counted once, from a fixed 15-phrase list. Not over-hedging across a passage. |
+| `buried-verb` | `nominalized-subject` | A narrow whitelist of specific nominalizations. Not general nominalization. |
+| `coined` | `typo` | Misspellings against a known-words catalogue. Would catch `tankering`, would not catch a morphologically valid coinage like `motivationless`. |
 
-Shipping both means the author receives the same criticism twice through two different UI systems,
-one as a diagnostic and one as a persistent annotation. That is worse than either alone.
+So the overlap is partial. It is a reason for a **dedupe requirement**, not for a cut: an LLM
+finding whose span overlaps a live `albertlint` diagnostic of a related rule is suppressed, which
+is a span-intersection check in the runner and generalises to any future rule.
 
-The `discourse` group has no such overlap, and that is not a coincidence: `semantic.lua`'s own
-header says those classes exist precisely because "pattern matching cannot detect" them. The four
-discourse classes are the ones where an LLM is the only available detector.
+The sentence group is still deferred, for a reason that survives scrutiny: **v1 proves the fan-out
+machinery with the one group that has measured recall.** The discourse group scored 4/4 twice; the
+sentence classes were measured on a different sample and never on a negative corpus.
 
-`vague-verdict` is the one sentence-level class with no deterministic counterpart. It is deferred
-to v2 rather than shipped alone, so v1 makes exactly one API call and the group machinery is
-proven with one group before a second is added.
+Draft 2 also claimed `semantic.lua`'s header supports the four discourse classes. **It does not.**
+That header names missing definite articles, missing indefinite articles, agreement across an
+intervening phrase, and pronoun ambiguity, which are grammar classes (`semantic.lua:3-8`, and its
+prompt at `semantic.lua:76-95`). The transferable principle is only the general one, that some
+error classes need a model rather than a regex. It is not evidence for `no-claim`, `unlinked`,
+`dangling-ref`, or `abandoned`; the only evidence for those is the measurement in 12.
 
 **The two-group machinery stays** (`groups.lua` is still a data file and the runner still fans
 out), because the measurement that justified it stands: on the author's sample, the 9-class
@@ -200,13 +227,68 @@ adjacent units, and `no-claim` needs the whole argument.
 `section` means the enclosing markdown heading block, falling back to the whole buffer when the
 file has no headings. That is the unit a claim actually belongs to.
 
+### 5.1 Section parsing, pinned
+
+Draft 2 said "the enclosing markdown heading block" and left every real decision open. Pinned:
+
+- **ATX headings only** (`#` through `######`). Setext (`===` / `---` underlines) is not
+  recognised, because `---` is also frontmatter and a horizontal rule and the disambiguation is not
+  worth it for one author's notes. Recorded as a limitation, not an oversight.
+- A heading line inside a fenced code block **is not a heading**. The mask from `engine.lua`
+  (5.2) is applied before headings are scanned, which is the same pass that already tracks fence
+  state.
+- The section runs from its heading line to the line before **the next heading of the same or
+  higher level**, so a `##` block contains its `###` children. This is the reading that matches
+  "the unit a claim belongs to"; the alternative (stop at the next heading of any level) would
+  split an argument from its own subsections.
+- **The heading line is included** in the scanned text, because it is usually the claim the section
+  is supposed to make.
+- For a configured prose filetype with no ATX headings (`text`, `gitcommit`, `mail`), `section`
+  degrades to the whole buffer.
+
+**`scope_key` is the heading path**, not the heading text: the `/`-joined chain of ancestor heading
+texts, each whitespace-collapsed and lowercased, with `""` for a file with no headings.
+
+```
+"## Symptoms" nested under "# 2026-08-28"   ->   "2026-08-28/symptoms"
+```
+
+The path rather than the bare text, so two sections named `Notes` under different parents are
+distinguishable, which is what 6.1 needs from it.
+
+**Renaming a heading changes `scope_key`, which changes every fingerprint in that section**, so
+dismissed findings there can be raised again. That is accepted, and it is the safe direction: a
+renamed section is a different context, and re-raising a finding the author already rejected costs
+one dismissal, while suppressing a finding that has become true again costs a real miss. Changing a
+heading's *level* reshapes boundaries the same way and is treated identically.
+
+### 5.2 Masking, and how the payload keeps its coordinates
+
+`engine.lua:97-163` builds a boolean mask over the **complete line array**, because fence and
+frontmatter state depends on everything above. So the mask is computed for the whole buffer and
+then sliced to the scope; it cannot be computed from the scope alone.
+
+Masked spans are replaced **in place, byte for byte, with spaces** rather than removed. This is the
+part that has to be right: quotes returned by the model are located by byte offset into the text
+that was sent, so the payload must have the same line count and the same byte length per line as
+the buffer. Deleting a code block would shift every subsequent offset and silently misplace every
+finding after it.
+
+Lines that are entirely masked are still sent, as blank lines. A model asked to judge discourse
+across a code block should see that something interrupted the prose.
+
 `min_lines` makes the scope/class interaction declarative rather than an if-chain:
 
 ```
-n = lines in scope
+n = unmasked non-blank prose lines in scope, excluding the heading line
 eligible      = { c : c.min_lines <= n }
 groups_to_call = { g : g.classes ∩ eligible ≠ ∅ }
 ```
+
+**`n` counts prose, not lines.** Raw line count would make a section of one sentence plus a
+20-line code block look like 21 lines of argument and let `no-claim` fire on it. The heading is
+excluded from the count for the same reason, while still being *sent* (5.1): it is context, not
+content the classes judge.
 
 A group with no eligible classes is **not called**. This is the same idea as `tier = "live" |
 "exit"` in `rules.lua` ("a sentence-level rule cannot judge a sentence you have not finished
@@ -229,8 +311,15 @@ Fix: compute `fingerprint` **once, at creation**, from the anchor as it was obse
 recompute it:
 
 ```
-fingerprint = vim.fn.sha256(kind .. "\0" .. normalize(text) .. "\0" .. analyzer):sub(1, 16)
+fingerprint = vim.fn.sha256(table.concat({
+  kind, normalize(text), analyzer, scope_key,
+}, "\0")):sub(1, 16)
 ```
+
+**`scope_key` is in the fingerprint, and has to be.** Without it, the same sentence appearing in
+two sections of one note produces one fingerprint, so reconciliation would "touch" the first mark
+instead of inserting the second and the second finding would silently never exist. Uniqueness
+(6.5) is only checked *within* a scope, so it cannot rescue this. `scope_key` is defined in 5.1.
 
 **`sha256`, not `sha1`.** Draft 1 said `sha1`, which is not implementable here: this Neovim
 reports `exists("*sha256") == 1` and `exists("*sha1") == 0` (and no `md5`), so `sha1` would
@@ -264,12 +353,17 @@ queue with successes.
 
 So AI marks get their own `state`, and `orphaned` is left alone:
 
-| state | Means | Renders | Blocks re-raise |
+| state | Means | Renders | On re-appearance in a later pass |
 |---|---|---|---|
-| `active` | Currently reported | yes | yes |
-| `dismissed` | Author rejected the finding | no | yes, until an `analyzer` bump |
-| `resolved` | A later pass over the same scope no longer reports it | no | no |
-| `stale` | Anchor could not be resolved in the current buffer | no | no |
+| `active` | Currently reported | yes | touched, not duplicated |
+| `dismissed` | Author rejected it | no | stays dismissed (an `analyzer` bump changes the fingerprint, so a revised prompt raises a *different* finding) |
+| `resolved` | A later pass over the same scope stopped reporting it | no | **re-activated**, because the problem came back |
+| `stale` | Its anchor could not be placed in the current buffer | no | **re-activated and re-placed** |
+
+`resolved` and `dismissed` live in the ledger (6.6), keyed by fingerprint. `stale` keeps its full
+record, because it still holds the durable anchor data a later pass needs in order to re-place it.
+`active` records are the only ones that render, which is a single equality check rather than a
+filter over four states.
 
 `orphaned` stays exactly as it is, for user marks, and AI marks that lose their anchor become
 `stale` rather than `orphaned` so they never enter the repair queue.
@@ -279,20 +373,36 @@ So AI marks get their own `state`, and `orphaned` is left alone:
 This replaces the orphan mechanism entirely, and it is a better mechanism because it handles the
 case where the fix happened elsewhere.
 
-Every pass carries a `scan_id` and records the exact scope it covered. On a successful pass:
+Every pass records: `scan_id`, `scope_key`, the set of classes that were **eligible** (5), and the
+set of groups whose calls **succeeded**. Reconciliation is then a total function over five cases,
+so no state is left undefined:
 
-1. Findings in the result whose fingerprint is unknown → insert as `active`.
-2. Findings in the result whose fingerprint exists as `active` → touch, do not duplicate.
-3. Findings in the result whose fingerprint exists as `dismissed` → **stay dismissed**, do not
-   re-raise.
-4. Marks that were `active`, whose anchor lies **inside the scope just scanned**, and whose
-   fingerprint is **absent** from the result → transition to `resolved`.
+| Fingerprint in result? | Existing state | Action |
+|---|---|---|
+| yes | none | insert as `active` |
+| yes | `active` | touch (update `hint` only); never duplicate |
+| yes | `dismissed` | stay dismissed |
+| yes | `resolved` | **re-activate**: the problem returned |
+| yes | `stale` | **re-activate** and re-place the anchor |
+| no | `active`, in scope, class eligible, group succeeded | → `resolved` |
+| no | `active`, otherwise | untouched |
+| no | `stale`, in scope, class eligible, group succeeded | delete: it is gone and unplaceable |
+| no | anything else | untouched |
 
-Step 4 is the signal. Add a concluding sentence, rerun, and the `no-claim` mark resolves itself
-even though its anchor never moved. Nothing about it depends on anchor failure.
+Three qualifiers on the "no" rows, each closing a hole:
 
-Marks outside the scanned scope are never touched, which is why the scope must be recorded on the
-scan and not inferred.
+1. **Class eligibility.** A one-line scope makes `no-claim` ineligible (5), so its absence from
+   that result means nothing. Only marks whose `kind` was eligible for *this* pass can be resolved
+   by it. Without this, running the tier on a one-line selection would resolve every `no-claim`
+   finding in the section.
+2. **Group success.** A group whose call failed or timed out reports nothing, and nothing is not
+   evidence of absence. Only marks belonging to a group that **succeeded** can be resolved.
+3. **Scope membership for a `stale` mark.** A stale mark has no current range, so containment
+   cannot be tested against one. It carries the `scope_key` it was last seen in, and that is what
+   is compared. `active` marks are tested by their live extmark position.
+
+Row 6 is the signal the design turns on: add a concluding sentence, rerun, and the `no-claim` mark
+resolves itself even though its anchor never moved.
 
 ### 6.4 Rechecking after a prompt change
 
@@ -313,11 +423,17 @@ anchor like `it's fine` or a bare `this` it will confidently attach to the wrong
 
 Three mitigations, all on the new tier so `anchor.lua`'s behaviour for user marks is unchanged:
 
-1. **Minimum anchor length.** Reject a finding whose quoted span is shorter than 12 characters or
-   fewer than 3 words unless it is unique in the scope. A `dangling-ref` finding about the word
-   `this` anchors to the *clause containing it*, not to the pronoun.
-2. **Uniqueness requirement at insert time.** Count occurrences of the normalized span in the
-   scanned scope. More than one, and the finding is dropped and counted, not guessed at.
+1. **Minimum anchor length, applied unconditionally.** A span shorter than 12 characters or fewer
+   than 3 words is **expanded** to its enclosing clause (nearest sentence-or-comma boundary on
+   each side), not rejected and not exempted for being unique. Draft 2 exempted unique short spans,
+   which made this gate dead: every span that passed uniqueness passed the length floor too, so a
+   unique bare `this` would have been accepted, which is precisely the case the rule exists to
+   stop. Expansion rather than rejection is what makes a `dangling-ref` finding usable at all,
+   since the pronoun is the *subject* of the finding and the clause is the *anchor* for it. If
+   expansion cannot reach the floor (a one-word line), the finding is dropped.
+2. **Uniqueness, checked on the final span after expansion.** Count occurrences of the normalized
+   span in the scanned scope. More than one, and the finding is dropped and counted, not guessed
+   at. Checking before expansion would test a string that is not the one being stored.
 3. **Ambiguity-aware resolution.** The new tier calls a wrapper that requires a positive context
    score and rejects a tie, rather than calling `anchor.resolve` directly. A mark that cannot be
    placed unambiguously becomes `stale` rather than landing somewhere plausible.
@@ -333,14 +449,40 @@ Suppression records must not live in the anchored-mark array forever: `next_id` 
 `sync` iterates it, `render` walks it, and `store.write` re-encodes it. Full records for every
 dismissed finding make every one of those progressively slower.
 
-`dismissed` and `resolved` AI marks are compacted into a separate ledger in the same store file:
+**The ledger cannot live in the mark store.** C6: `store.write` rebuilds the payload as
+`{ version, source, marks }`, so any extra top-level key is silently discarded on the next write,
+and it `unlink`s the file entirely when `#marks == 0`, so a store holding only a ledger would be
+deleted. Putting it there means data loss with no error.
 
-```json
-{ "version": 1, "marks": [...], "ai_ledger": [ { "fingerprint": "...", "state": "dismissed", "at": 1756... } ] }
+So it is a **sidecar owned by this tier**, beside the mark store, and `annotate`'s format is
+untouched at `FORMAT_VERSION = 1`:
+
+```
+<store_path>            annotate's marks, unchanged
+<store_path>.ai.json    this tier's ledger
 ```
 
-The ledger holds only what dedupe needs. `:AlbertLintStylePrune [days]` (default 30) drops
-`resolved` entries; `dismissed` entries are kept until an `analyzer` bump makes them irrelevant.
+```json
+{
+  "version": 1,
+  "entries": [
+    { "fingerprint": "a1b2c3d4e5f60718", "state": "dismissed", "analyzer": "discourse@1", "at": 1756400000 }
+  ]
+}
+```
+
+`analyzer` is stored **explicitly** rather than left inside the opaque fingerprint. Draft 2 said
+dismissed entries are kept "until an analyzer bump makes them irrelevant", which was unactionable:
+a 16-hex-character digest cannot be asked which analyzer version produced it, so nothing could
+identify the stale entries and the ledger grew without bound.
+
+`:AlbertLintStylePrune [days]` (default 30) drops:
+
+- `resolved` entries older than the cutoff, and
+- `dismissed` entries whose `analyzer` is not in the current set of analyzer versions, at any age,
+  because a prompt revision makes them permanently unmatchable.
+
+Both are now identifiable, so both are collectable.
 
 ## 7. Visibility
 
@@ -354,24 +496,39 @@ every `InsertEnter` would force a full content re-resolve of every mark on every
 which is both slow (C4's whole-document search, per mark) and less reliable than the extmarks
 Neovim was already maintaining for free.
 
-So: **suppress decoration, never the extmark.** Two namespaces:
+So: **suppress decoration, never the position extmark.** Two namespaces, and the split is only
+sound if the position extmark is *completely invisible*:
 
-- `NS_POSITION` holds the position extmark, with `hl_group` only. Never cleared during a session.
-- `NS_DECOR` holds the virtual text. Cleared on `InsertEnter`, rebuilt on `InsertLeave` from the
-  live positions in `NS_POSITION`.
+| Namespace | Carries | Lifecycle |
+|---|---|---|
+| `NS_AI_POS` | position only: `end_row`/`end_col`, **no `hl_group`, no `virt_text`** | created on commit, cleared only by a deliberate `rebuild` |
+| `NS_AI_DECOR` | `hl_group` and `virt_text`, derived from live `NS_AI_POS` ranges | cleared on `InsertEnter`, rebuilt on `InsertLeave` |
 
-This also fixes **C3**: a result landing mid-insert inserts into `NS_POSITION` and simply does not
-get a decoration until insert mode ends. No special case, no queue.
+Draft 2 put `hl_group` on the position extmark. **That does not work**: a highlight is visible, so
+the primary rule ("nothing is presented during insert mode") was violated by the mechanism meant
+to implement it. Every visible attribute belongs to the decoration namespace.
 
-Two further consequences:
+Draft 2 also said `NS_AI_POS` is "never cleared", which contradicted section 8's reliance on
+`rebuild` reminting ids. Corrected: it is never cleared *by the visibility path*, and `rebuild`
+clears and remints both AI namespaces together, which is why nothing may cache extmark ids across
+a callback (8, rule 3).
 
-- Insert suppression applies to **AI marks only**. The existing namespace holds user marks too,
-  and clearing it would hide the author's own annotations, which they never asked for.
-- `st.visible` (the manual toggle) and insert suppression are now genuinely independent, because
-  they act on different namespaces. No second boolean, no interaction to test for.
-- **The pane must obey the same gate.** Otherwise the "non-disruptive" design still changes text
-  beside the sentence being written. New findings are held and published to both surfaces at
-  `InsertLeave`, together.
+This also fixes **C3**: a result landing mid-insert creates a position extmark, which is invisible,
+and acquires its decoration at `InsertLeave`. No queue, no special case.
+
+Three further consequences:
+
+- **Both AI namespaces are separate from `annotate`'s existing one.** Clearing a shared namespace
+  on `InsertEnter` would hide the author's own marks, which they never asked for. User marks and
+  `st.visible` are untouched by this mechanism, so the manual toggle and insert suppression are
+  independent by construction rather than by a second flag.
+- **"Held" was the wrong word, and draft 2 contradicted itself with it.** One model only: a result
+  is committed to the store and to `NS_AI_POS` as soon as it validates, so a crash cannot lose it
+  and dedupe sees one consistent world. **Only presentation is deferred.** Draft 2 said both
+  "immediately creates `NS_AI_POS`" and "new findings are held", which implied two different
+  persistence and cancellation models.
+- **The pane reads the same gate.** It renders from `NS_AI_DECOR`'s existence, not from the store,
+  so it cannot show a finding the buffer is hiding.
 
 ## 8. Concurrency and stale results
 
@@ -380,11 +537,28 @@ at dispatch, the exact scope range, and the payload hash.
 
 Rules:
 
-1. **Validate before mutating.** On completion, re-check that the buffer is still valid, that the
-   generation is current, and that `changedtick` is unchanged for the scanned range. Fail any check
-   and the result is **dropped**, not translated. `semantic.lua` today checks neither buffer
-   validity nor `changedtick` (`semantic.lua:98`, `semantic.lua:117`), which is a latent bug in
-   the existing tier.
+1. **Validate before mutating**, in three steps, cheapest first. Draft 2 said "`changedtick`
+   unchanged for the scanned range", which is not a thing: `changedtick` is per buffer, not per
+   range. Precisely:
+
+   a. The buffer is still valid and still loaded. Fail → drop.
+   b. The request generation for this (buffer, group, scope) is still current. Fail → drop.
+   c. **The scanned range still hashes to the payload hash recorded at dispatch.** Buffer
+      `changedtick` is used only as an early-out: if it is unchanged, the range is certainly
+      unchanged and the hash need not be recomputed. If it moved, rehash the range; equal means the
+      edit was elsewhere and the result is still good.
+
+   Step (c) is what makes the rule usable. A global `changedtick` test with no retry would discard
+   every result whenever the author typed anywhere during a 30-to-80-second `claude` call, which is
+   most of the time, and the tier would appear to do nothing. Editing paragraph 9 must not
+   invalidate a pass over paragraph 2.
+
+   When (c) does fail, v1 **notifies and offers a rerun** rather than failing silently, because the
+   author explicitly asked for this pass and silence would read as "no findings". (Continuous mode
+   will instead just reschedule, which is why this only matters while the trigger is a command.)
+
+   `semantic.lua` today checks none of this (parse at `semantic.lua:102-116`, dispatch at
+   `semantic.lua:158`), which is a latent bug in the existing tier.
 2. **Cancellation is cleanup, not correctness.** Killing a `vim.system` handle does not unschedule
    an already-queued callback, and a remote call may already have been billed. The generation check
    in rule 1 is what provides correctness; the kill only saves resources.
@@ -399,6 +573,23 @@ Rules:
 
 Within one Neovim instance, scheduled Lua callbacks are serialized, so this is not a data race.
 The hazard is committing an obsolete snapshot.
+
+### 8.1 Fan-out granularity, partial failure, and the timeout
+
+- **Request generation is keyed on `(bufnr, group, scope_key)`.** Not per buffer, which would let a
+  pass over one section cancel a pass over another; not per scope alone, which would let two groups
+  over the same scope cancel each other.
+- **Partial failure never resolves anything.** Each group's result is reconciled independently, and
+  only for the classes that group owns (6.3, qualifier 2). If the discourse call succeeds and a
+  future second group times out, the second group's classes are simply not reconciled that pass.
+  Absence of evidence from a call that never returned is not evidence of absence.
+- **The timeout must exceed the observed latency, and today's does not.**
+  `config.semantic.timeout_ms` is 30000 (`config.lua:48`) while every recorded `claude -p` run in
+  section 12 took 32 to 84 seconds. A 30-second timeout would abort essentially every call. The new
+  tier's default is **120000**, chosen as roughly 1.5x the slowest observed run, with its own config
+  key so the existing tier's value is not silently changed under it. That the existing tier is
+  probably mistimed too is noted here and left alone: it is a separate change with its own
+  evidence.
 
 ## 9. Response validation
 
@@ -419,26 +610,55 @@ The hazard is committing an obsolete snapshot.
 
 ### 10.1 Bug: `semantic.scope` is dead config
 
-`config.lua` declares `---@field scope string "paragraph" | "buffer" | "selection"` and
-`semantic.lua`'s `M.run(ns, use_selection)` never reads it, branching on the range flag and
-otherwise calling `paragraph_range` unconditionally. So `scope = "buffer"` does nothing, and the
-scope could not be widened from config. **Ships first, as its own commit.** Likely cause of the
-reported "0 findings" on text with obvious problems.
+**Done, commit `c591b87`.** `config.lua` declared
+`---@field scope string "paragraph" | "buffer" | "selection"` and `semantic.lua`'s
+`M.run(ns, use_selection)` never read it, branching on the range flag and otherwise calling
+`paragraph_range` unconditionally. So `scope = "buffer"` did nothing, and the scope could not be
+widened from config. Likely cause of the reported "0 findings" on text with obvious problems: in a
+note written as one-line paragraphs, the paragraph under the cursor is one line.
+
+Shipped as `scope_range(bufnr, scope)`, extracted so each scope is testable without a request. An
+explicit `:'<,'>` range still wins over the config. An unknown scope warns once and falls back to
+`paragraph`. 8 tests, including the regression itself. README updated, since the option is now
+real.
 
 ### 10.2 `annotate`: batch mutation
 
-Add `marks.add_many(bufnr, entries) -> records, errors`: build every anchor, attach every extmark,
-persist **once**. `add_range` becomes a one-entry wrapper so existing behaviour and tests are
-untouched. Also hoist the `config.handles_filetype` check ahead of the batch so a disabled
-filetype produces one message rather than N.
+**Done, commit `fd525e6`.** `marks.add_many(bufnr, entries) -> records, errors`.
 
-`next_id` currently rebuilds a `taken` set per call by scanning all marks. Batch insertion should
-build that set once per batch.
+Contract as built, since draft 2 left it unspecified:
+
+- **Entry shape** is `{ range, category, note }` and nothing else. AI metadata (`author`, `kind`,
+  `model`, `analyzer`, `fingerprint`, `state`) is **not** accepted here; the new tier sets those on
+  the returned records before its own commit. Keeping `annotate`'s mutation API ignorant of the AI
+  fields is what stops it growing a second vocabulary.
+- **Partial, not atomic.** Bad entries collect into `errors`; good ones are still added. One
+  unusable finding in a generated batch must not discard the rest. A caller wanting
+  all-or-nothing validates first.
+- **`errors` is not index-aligned with `entries`.** It is a list of messages, one per failure, in
+  input order. Nothing needs the mapping today, and a sparse array keyed by index is worse to
+  consume. Stated so no caller assumes otherwise.
+- **Persistence failure is a notification, not a return value**, because `persist` only notifies
+  (`marks.lua:171-183`). The records are in memory and correct; the store write failed and the
+  author was told. Changing `persist` to return a status is a separate change and not required by
+  this tier.
+- **One write for the batch**, and **no write at all** when every entry failed.
+- `id_allocator` replaces `next_id`: it builds the taken-id set once and records what it mints, so
+  a batch is linear rather than quadratic.
+
+17 tests, including a `store.write` spy asserting exactly one write for three marks, which is the
+actual claim.
 
 ### 10.3 `annotate`: AI lifecycle and two namespaces
 
 - `state` field plus the ledger (6.2, 6.6).
-- `NS_POSITION` / `NS_DECOR` split (7).
+- **Legacy normalization happens in `ensure_loaded`, immediately after `store.read`**, not in
+  `store.read` and not in accessors. Every in-memory record therefore carries `author` and `state`
+  before anything reads it, so `state == "active"` is a safe equality test rather than a trap that
+  hides every pre-existing mark. `store.read` is left alone because it is `annotate`'s boundary and
+  should not learn about AI fields; accessors are the wrong place because there are several and one
+  missed call site reintroduces the bug.
+- `NS_AI_POS` / `NS_AI_DECOR`, both separate from `annotate`'s existing namespace (7).
 - `marks.dismiss_at_cursor`, distinct from `delete_at_cursor` which keeps deleting outright for
   user marks.
 - Rendering filters to `state == "active"`.
@@ -617,43 +837,73 @@ would give that group the same "every rule traces to a real slip" property `rule
 one file can lose marks. Pre-existing, not introduced here, and not fixed here. The single-writer
 rule (8, rule 4) contains it within a session.
 
-## 15. What changed from draft 1, and why
+## 15. Review audit trail
 
-Accepted from the review, each verified against source first:
+### Pass 1, on the design
 
-| Change | Driver |
-|---|---|
-| Immutable `fingerprint` excluding `prefix`/`suffix` | C1: `sync()` mutates them |
-| Explicit `state` field; `orphaned` untouched | C5 plus three existing consumers of `orphaned` |
-| Reconciliation replaces orphan-as-resolution | A discourse finding can be fixed without touching its anchor |
-| `NS_POSITION` / `NS_DECOR` split | C2: `toggle()` destroys tracking; also fixes C3 |
-| Anchor length, uniqueness, and ambiguity gates | C4: `best_match` has no minimum score |
-| Sentence group cut from v1 | Three of four classes duplicate existing deterministic rules |
-| Compact inline markers, notes in the pane | `attach()` puts whole notes at EOL; `albertlint` already rejected that pattern |
-| Continuous mode, OpenAI provider, ollama default deferred | Precision unmeasured; two risky changes should not land together |
-| Scope default `section`, not `buffer` | Whole-buffer mixes unrelated topics; paragraph is too narrow |
-| Compact ledger instead of full-record tombstones | Every store operation walks the mark array |
-| Export/picker filtering, `BufFilePost`, response validation, budget and backoff semantics | Week-one problems that draft 1 missed |
-| `changedtick` and generation validation | The existing semantic tier checks neither |
+Accepted, each verified against source first: immutable fingerprint excluding `prefix`/`suffix`
+(C1); explicit `state` with `orphaned` untouched (C5 plus three existing consumers); reconciliation
+instead of orphan-as-resolution; the position/decoration namespace split (C2); anchor length,
+uniqueness and ambiguity gates (C4); compact inline markers instead of whole notes at EOL; scope
+default moved off `buffer`; a compact ledger instead of full-record tombstones; export and picker
+filtering; `BufFilePost`; response validation; `changedtick` validation.
 
-Declined: cutting the quickfix projection (14.2, deferred with the objections answered instead).
+Declined: cutting the quickfix projection. Deferred instead, with the objections answered (14.2).
+
+### Pass 2, on draft 2
+
+Two of my citations were **wrong** and are corrected in 2.3: C3 (`virt_text` is gated on
+`config.virtual_text`, not unconditional) and C4 (`best_match` does rank candidates; the real defect
+is that a zero context score is acceptable and ties keep the earlier candidate). A third
+overstatement is corrected in 4.2: `semantic.lua`'s header names grammar classes, not the discourse
+classes, so it is not evidence for them.
+
+Eleven blocking contradictions, all closed:
+
+| # | Contradiction | Where it is closed |
+|---|---|---|
+| 1 | Minimum anchor length was dead, since uniqueness already rejected everything it would have | 6.5: the floor applies unconditionally and **expands** the span rather than rejecting it |
+| 2 | Identical text in two sections produced one fingerprint, so the second finding vanished | 6.1: `scope_key` is in the fingerprint |
+| 3 | Nothing deleted `dismissed` ledger entries, and the opaque digest could not reveal its analyzer | 6.6: `analyzer` stored explicitly; prune collects both states |
+| 4 | `resolved` and `stale` had no reconciliation cases | 6.3: a total case table over all five states |
+| 5 | A `stale` mark has no range, so scope membership was undefined | 6.3 qualifier 3: it carries `scope_key` and is compared on that |
+| 6 | `NS_POSITION` carried `hl_group`, which is visible, defeating the rule it implemented | 7: the position extmark carries no visible attribute at all |
+| 7 | Results were both "committed immediately" and "held" | 7: one persistence model; only presentation defers |
+| 8 | Strict `changedtick` would drop every result during sustained typing | 8 rule 1: range payload hash, with `changedtick` only as an early-out |
+| 9 | Reconciliation ignored class eligibility | 6.3 qualifier 1 |
+| 10 | "Same scope" was undefined and heading identity unstable | 5.1: `scope_key` is the heading path, and renaming invalidates deliberately |
+| 11 | Build sequence claimed steps 1-4 were network-free while step 4 calls `claude` | 16: steps 1-3 |
+
+Missing contracts, now pinned: store versioning (6.6, via a sidecar, because C6 makes an in-store
+ledger lossy); the `add_many` contract (10.2); the legacy normalization point (10.3); rename
+semantics (10.5); ATX-only section parsing with the same-or-higher-level boundary rule (5.1);
+`min_lines` counting unmasked prose (5); mask-to-payload byte preservation (5.2); request
+generation granularity, partial-fan-out semantics, and the timeout (8.1); and a build step for
+every command named in prose (16).
+
+Also corrected: draft 2's section 15 claimed it had added "budget and backoff semantics". **It had
+not.** Those belong to continuous mode, which is deferred, and they are now listed in step 7 rather
+than asserted as present.
 
 ## 16. Build sequence
 
-Each step compiles, passes tests, and is committed alone. Steps 1-4 involve no network call, which
-means the majority of this is reviewable before prompt quality is in question.
+Each step compiles, passes tests, and is committed alone. **Steps 1 to 3 involve no network call**
+(draft 2 said 1 to 4, which contradicted step 4 invoking `claude`), so the majority of the logic is
+reviewable before prompt quality is in question.
 
-1. **Fix `semantic.scope`** (10.1). Wire the field, test each value. Standalone bug.
-2. **`annotate` foundation**: `add_many`, batch `next_id`, `NS_POSITION`/`NS_DECOR`, `state` field,
-   ledger, `dismiss`, export/picker filtering, `BufFilePost`. All testable headless.
-3. **Data files and pure logic**: `classes.lua`, `groups.lua`, `min_lines` filter, fingerprint,
-   reconciliation, the anchor-safety wrapper, response validation. No network.
-4. **Runner, on demand, `claude` provider only**: `:AlbertLintStyle` over a section or selection,
-   masking via `engine.lua`, `changedtick` validation, commit via `add_many`.
-5. **Inline markers plus `:AlbertLintStyleList` and the hover.**
-6. **Negative-corpus precision run** over the fix log's `After:` text (14.1).
-7. **v2, gated on step 6**: continuous mode, OpenAI provider, `vague-verdict`, the pane, and the
-   location-list projection.
+| # | Step | Status |
+|---|---|---|
+| 1 | **Fix `semantic.scope`** (10.1). Standalone bug. | **done**, `c591b87`, 8 tests |
+| 2a | **`annotate` batch and rename**: `add_many`, `id_allocator`, `retarget` + `BufFilePost`. | **done**, `fd525e6`, 17 tests |
+| 2b | **`annotate` AI lifecycle**: `state` field, legacy normalization in `ensure_loaded`, the sidecar ledger, `dismiss`, `NS_AI_POS`/`NS_AI_DECOR`, export and picker filtering. | next |
+| 3 | **Data files and pure logic**: `classes.lua`, `groups.lua`, section parsing and `scope_key` (5.1), masking-to-payload (5.2), `min_lines`, fingerprint, reconciliation (6.3), anchor-safety wrapper (6.5), response validation (9). No network. | |
+| 4 | **Runner, on demand, `claude` only**: `:AlbertLintStyle` over a section or selection, per-group fan-out, validation (8), commit via `add_many`. | |
+| 5 | **Inline markers, `:AlbertLintStyleList`, the hover, `:AlbertLintStyleDismiss`, `:AlbertLintStylePrune`, `:AlbertLintStyleRecheck`, `:AlbertLintStyleExport`.** | |
+| 6 | **Negative-corpus precision run** over the fix log's `After:` text (14.1). | |
+| 7 | **v2, gated on step 6**: continuous mode with its budget and backoff, OpenAI provider, `vague-verdict`, the pane, the location-list projection. | |
+
+Every command named in prose now has a step. Draft 2 required `prune`, `recheck`, and the AI export
+in text without placing them anywhere in the sequence.
 
 ## 17. Testing
 
