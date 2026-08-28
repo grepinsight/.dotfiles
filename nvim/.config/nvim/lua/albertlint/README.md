@@ -63,9 +63,20 @@ require("albertlint").setup({
   disabled_rules = {},            -- e.g. { "hedge-density" }
   enabled_optional = {},          -- e.g. { "a-vs-an", "brand-caps-ambiguous" }
   severity = {},                  -- e.g. { ["slash-list"] = vim.diagnostic.severity.WARN }
-  semantic = { enabled = true, cmd = { "claude", "-p", "--output-format", "text" } },
+  semantic = {
+    enabled = true,
+    cmd = { "claude", "-p", "--output-format", "text" },
+    scope = "paragraph",          -- paragraph | buffer | selection
+  },
 })
 ```
+
+`semantic.scope` sets what `:AlbertLintSemantic` sends when you give it no range. It was
+declared but never read until 2026-08-28, which made `"buffer"` a setting that did nothing.
+The default stays `paragraph`, but **`"buffer"` is the one to use for notes written as
+one-line paragraphs**: the paragraph under the cursor is then a single line, and none of
+the four semantic classes can fire on one line, so the pass reports nothing and looks
+broken. An explicit `:'<,'>AlbertLintSemantic` still wins over this setting.
 
 Diagnostics use their own namespace, so the display config here cannot fight your global
 one. Default is underline with virtual text on the current line only, because prose is read

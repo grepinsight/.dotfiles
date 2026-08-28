@@ -31,6 +31,43 @@ local function paragraph_range(bufnr)
   return s, e + 1
 end
 
+---Line range for a configured scope.
+---
+---`config.semantic.scope` was declared in `config.lua` with a full annotation from the
+---start but never read here, so `scope = "buffer"` was an option that did nothing and the
+---scope was pinned to the cursor's paragraph. That matters more than it sounds: in a note
+---built from one-line paragraphs, the paragraph under the cursor IS one line, and a
+---four-class pass over one line reports nothing. "0 semantic findings" on visibly broken
+---prose was the symptom.
+---
+---An explicit `:'<,'>` range still wins over the config, because a range typed at the
+---command line is a direct instruction and the config is only a default.
+---
+---An unknown scope falls back to `paragraph` rather than erroring: a typo in config should
+---degrade to the old behaviour, not make the command unusable.
+---@param bufnr integer
+---@param scope string|nil "paragraph" | "buffer" | "selection"
+---@return integer start_lnum, integer end_lnum 0-indexed, end exclusive
+---@return string|nil warning Set when the scope value was not recognised
+local function scope_range(bufnr, scope)
+  if scope == "buffer" then
+    return 0, vim.api.nvim_buf_line_count(bufnr)
+  elseif scope == "selection" then
+    -- The `'<` / `'>` marks survive leaving visual mode, so this is the last selection
+    -- rather than a live one. line("'<") is 0 when no selection was ever made in this
+    -- buffer, and a 0-indexed start of -1 would be an API error, so guard it.
+    local first, last = vim.fn.line("'<"), vim.fn.line("'>")
+    if first < 1 or last < first then
+      return paragraph_range(bufnr)
+    end
+    return first - 1, last
+  elseif scope == nil or scope == "paragraph" then
+    return paragraph_range(bufnr)
+  end
+  local s, e = paragraph_range(bufnr)
+  return s, e, ("unknown scope %q, falling back to paragraph"):format(tostring(scope))
+end
+
 local PROMPT = [[
 You are checking one writer's English for four specific error classes that pattern matching
 cannot detect. He is a fluent Korean L1 speaker; his mechanical slips are already handled
@@ -101,7 +138,11 @@ function M.run(ns, use_selection)
     start_lnum = vim.fn.line("'<") - 1
     end_lnum = vim.fn.line("'>")
   else
-    start_lnum, end_lnum = paragraph_range(bufnr)
+    local warning
+    start_lnum, end_lnum, warning = scope_range(bufnr, opts.scope)
+    if warning then
+      vim.notify("albertlint: " .. warning, vim.log.levels.WARN)
+    end
   end
 
   local lines = vim.api.nvim_buf_get_lines(bufnr, start_lnum, end_lnum, false)
@@ -179,4 +220,5 @@ end
 
 M._parse_response = parse_response
 M._paragraph_range = paragraph_range
+M._scope_range = scope_range
 return M
