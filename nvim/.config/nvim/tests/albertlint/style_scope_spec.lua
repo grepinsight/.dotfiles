@@ -20,7 +20,7 @@ describe("style.scope sections", function()
 
     assert.equals(1, #sections)
     assert.equals(0, sections[1].level)
-    assert.equals("", sections[1].key)
+    assert.equals("preamble:#1", sections[1].key)
     assert.equals(0, sections[1].start_lnum)
     assert.equals(2, sections[1].end_lnum)
   end)
@@ -163,7 +163,7 @@ describe("style.scope scope_key", function()
     local sections = scope.sections(lines, mask)
     local symptoms = sections[#sections]
 
-    assert.equals("2026-08-28/symptoms", symptoms.key)
+    assert.equals("section:2026-08-28/symptoms#1", symptoms.key)
   end)
 
   it("distinguishes two identically named sections under different parents", function()
@@ -185,12 +185,54 @@ describe("style.scope scope_key", function()
 
     assert.equals(2, #notes)
     assert.are_not.equals(notes[1].key, notes[2].key)
-    assert.equals("alpha/notes", notes[1].key)
-    assert.equals("beta/notes", notes[2].key)
+    assert.equals("section:alpha/notes#1", notes[1].key)
+    assert.equals("section:beta/notes#1", notes[2].key)
   end)
 
   it("collapses whitespace and lowercases", function()
-    assert.equals("a b/c d", scope.scope_key({ "A   B", "  c   D  " }))
+    assert.equals("section:a b/c d#1", scope.scope_key("section", { "A   B", "  c   D  " }, 1))
+  end)
+
+  it("distinguishes two SIBLING sections with the same name under one parent", function()
+    -- The collision the ordinal exists for, and the one the path alone did not fix. Without
+    -- it both sections key identically, so a finding in the second hashes the same as one in
+    -- the first, reconciliation "touches" the first mark instead of inserting the second,
+    -- and the second finding silently never exists.
+    local lines, mask = with_mask({
+      "# Day",
+      "## Notes",
+      "a",
+      "## Notes",
+      "b",
+    })
+
+    local notes = vim.tbl_filter(function(s)
+      return s.text == "Notes"
+    end, scope.sections(lines, mask))
+
+    assert.equals(2, #notes)
+    assert.are_not.equals(notes[1].key, notes[2].key)
+    assert.equals("section:day/notes#1", notes[1].key)
+    assert.equals("section:day/notes#2", notes[2].key)
+  end)
+
+  it("always carries an ordinal, so a later duplicate does not renumber the first", function()
+    -- Omitting `#1` for the first occurrence would mean adding a second `## Notes` later
+    -- changed the FIRST section's key, invalidating findings in a section nobody edited.
+    local one = scope.sections(with_mask({ "## Notes", "a" }))
+    local two = scope.sections(with_mask({ "## Notes", "a", "## Notes", "b" }))
+
+    assert.equals(one[1].key, two[1].key)
+    assert.equals("section:notes#1", one[1].key)
+  end)
+
+  it("separates a preamble from a section by kind, not just by path", function()
+    local lines, mask = with_mask({ "loose prose", "# Real" })
+
+    local sections = scope.sections(lines, mask)
+
+    assert.is_truthy(sections[1].key:find("^preamble:"))
+    assert.is_truthy(sections[2].key:find("^section:"))
   end)
 
   it("pops back out to a sibling at a shallower level", function()
@@ -207,7 +249,7 @@ describe("style.scope scope_key", function()
       return s.text == "D"
     end, sections)[1]
 
-    assert.equals("a/d", d.key)
+    assert.equals("section:a/d#1", d.key)
   end)
 end)
 
@@ -233,7 +275,7 @@ describe("style.scope section_at", function()
     local section = scope.section_at(lines, mask, 0)
 
     assert.equals(0, section.level)
-    assert.equals("", section.key)
+    assert.equals("preamble:#1", section.key)
   end)
 end)
 
@@ -320,5 +362,61 @@ describe("style.scope prose_lines", function()
     local lines, mask = with_mask({ "prose", "```", "code", "```" })
 
     assert.equals(1, scope.prose_lines(lines, mask, 0, 4))
+  end)
+end)
+
+describe("style.scope key_at", function()
+  it("keys a finding by the section it sits in, not by what was scanned", function()
+    -- The model change that made the rest simple. A whole-buffer pass produces findings in
+    -- several sections, and each must carry its own section's identity. Keying them on the
+    -- requested scope would give every finding in the pass one key, reintroducing exactly
+    -- the collision the ordinal was added to fix.
+    local lines, mask = with_mask({
+      "# Alpha",
+      "a prose",
+      "# Beta",
+      "b prose",
+    })
+
+    assert.equals("section:alpha#1", scope.key_at(lines, mask, 1))
+    assert.equals("section:beta#1", scope.key_at(lines, mask, 3))
+  end)
+
+  it("keys a position above the first heading as the preamble", function()
+    local lines, mask = with_mask({ "loose", "# Alpha" })
+
+    assert.equals("preamble:#1", scope.key_at(lines, mask, 0))
+  end)
+
+  it("gives two identical sentences in sibling sections different keys", function()
+    -- End to end: this is the scenario the whole change exists for.
+    local lines, mask = with_mask({
+      "# Day",
+      "## Notes",
+      "I feel motivationless.",
+      "## Notes",
+      "I feel motivationless.",
+    })
+
+    assert.are_not.equals(scope.key_at(lines, mask, 2), scope.key_at(lines, mask, 4))
+  end)
+end)
+
+describe("style.scope request_key", function()
+  it("is specific to the range, so two scopes do not cancel each other", function()
+    -- Deliberately not scope_key: a scope key must be stable, a request key must be
+    -- specific. Draft 3 used one value for both, so a pass over lines 1-20 could cancel a
+    -- pass over lines 40-60.
+    assert.are_not.equals(
+      scope.request_key("section", 0, 20),
+      scope.request_key("section", 40, 60)
+    )
+  end)
+
+  it("distinguishes two kinds over the same range", function()
+    assert.are_not.equals(
+      scope.request_key("selection", 0, 10),
+      scope.request_key("paragraph", 0, 10)
+    )
   end)
 end)

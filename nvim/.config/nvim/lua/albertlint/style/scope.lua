@@ -38,21 +38,63 @@ local function normalize(s)
   return (s:gsub("%s+", " "):gsub("^ ", ""):gsub(" $", ""):lower())
 end
 
----`scope_key` for a heading path: the ancestor chain, not just the heading text.
+---Identity of a section, unique within its file.
 ---
----The path rather than the bare text, so two sections both called `Notes` under different
----parents are distinguishable. A finding's fingerprint includes this, and without the
----ancestors the same sentence under two `## Notes` headings would collide.
+---Three parts, and every one of them earns its place:
 ---
----An empty path means the file has no headings, or the position is above the first one.
----@param path string[] Root first
+---  `section:alpha/notes#2`
+---   ^kind   ^path        ^ordinal
+---
+---**Kind**, because a bare path collides with nothing else but says nothing about what it
+---is. `preamble:` is a different kind of thing from `section:a`, and giving them the same
+---shape invited treating one as the other.
+---
+---**Path**, the ancestor chain rather than the bare heading text, so two sections both
+---called `Notes` under different parents are distinguishable.
+---
+---**Ordinal**, the count of earlier sections sharing this exact path. This is the part the
+---first version was missing, and without it two sibling `## Notes` under the SAME parent
+---produce one key. A finding's fingerprint includes this key, so the collision meant the
+---second section's finding hashed identically to the first's and reconciliation "touched"
+---the first mark instead of inserting the second. The second finding silently never
+---existed.
+---
+---The ordinal is always present, never omitted for the first occurrence. Omitting it would
+---mean adding a second `## Notes` later changed the FIRST section's key from `a/notes` to
+---`a/notes#1`, invalidating findings in a section nobody edited.
+---
+---Uniqueness is only needed within a file, because the mark store is already keyed by
+---source path. That is why the key carries no filename.
+---
+---Known instability, accepted: inserting a new `## Notes` *before* an existing one shifts
+---the existing one's ordinal. Any ordinal scheme has this, and content-based alternatives
+---have it worse. It fails in the safe direction, since a changed key re-raises a dismissed
+---finding rather than suppressing a live one.
+---@param kind string "section" | "preamble"
+---@param path string[] Root first, empty for the preamble
+---@param ordinal integer 1-based count among sections sharing this path
 ---@return string
-function M.scope_key(path)
+function M.scope_key(kind, path, ordinal)
   local parts = {}
-  for i, text in ipairs(path) do
+  for i, text in ipairs(path or {}) do
     parts[i] = normalize(text)
   end
-  return table.concat(parts, "/")
+  return ("%s:%s#%d"):format(kind, table.concat(parts, "/"), ordinal or 1)
+end
+
+---Identity of one *request*, for cancelling a superseded pass.
+---
+---Deliberately not `scope_key`. The two answer different questions and want opposite
+---properties: a scope key must be STABLE, so a finding's fingerprint survives ordinary
+---editing, while a request key must be SPECIFIC, so a pass over lines 1 to 20 does not
+---cancel a pass over lines 40 to 60. Draft 3 used one value for both, which meant two
+---distinct scopes could cancel each other's requests.
+---@param kind string "section" | "paragraph" | "selection" | "buffer"
+---@param start_lnum integer
+---@param end_lnum integer
+---@return string
+function M.request_key(kind, start_lnum, end_lnum)
+  return ("%s:%d-%d"):format(kind, start_lnum, end_lnum)
 end
 
 ---Every section of the document, in order.
@@ -86,15 +128,18 @@ function M.sections(lines, mask)
   if first > 0 or #found == 0 then
     table.insert(sections, {
       level = 0,
+      kind = "preamble",
       text = "",
       path = {},
-      key = "",
+      ordinal = 1,
+      key = M.scope_key("preamble", {}, 1),
       start_lnum = 0,
       end_lnum = first,
     })
   end
 
   local stack = {}
+  local seen_paths = {}
   for idx, h in ipairs(found) do
     while #stack > 0 and stack[#stack].level >= h.level do
       table.remove(stack)
@@ -115,11 +160,19 @@ function M.sections(lines, mask)
       end
     end
 
+    -- Ordinal among sections sharing this exact path, which is what makes two sibling
+    -- `## Notes` under one parent distinguishable.
+    local joined = M.scope_key("section", path, 1)
+    seen_paths[joined] = (seen_paths[joined] or 0) + 1
+    local ordinal = seen_paths[joined]
+
     table.insert(sections, {
       level = h.level,
+      kind = "section",
       text = h.text,
       path = path,
-      key = M.scope_key(path),
+      ordinal = ordinal,
+      key = M.scope_key("section", path, ordinal),
       start_lnum = h.lnum,
       end_lnum = end_lnum,
     })
@@ -216,6 +269,28 @@ function M.prose_lines(lines, mask, start_lnum, end_lnum)
     end
   end
   return count
+end
+
+---The scope key a finding at `lnum` belongs to.
+---
+---This is the model change that made the rest simple: **a finding's scope key is a property
+---of where the finding IS, not of what the author asked to scan.** A whole-buffer pass over
+---a note with four sections produces findings in four different scopes, and each one should
+---carry the identity of its own section. Keying findings on the requested scope instead
+---would give every finding in that pass the same key, reintroducing exactly the collision
+---the ordinal was added to fix.
+---
+---It also removes the need to define an identity for `buffer`, `paragraph`, and
+---`selection`: those describe what to *send*, and only sections describe where a finding
+---*lives*. A selection spanning two sections produces findings in both, each correctly
+---keyed, with no special case.
+---@param lines string[]
+---@param mask table|nil
+---@param lnum integer 0-indexed
+---@return string
+function M.key_at(lines, mask, lnum)
+  local section = M.section_at(lines, mask, lnum)
+  return section and section.key or M.scope_key("preamble", {}, 1)
 end
 
 M._heading = heading

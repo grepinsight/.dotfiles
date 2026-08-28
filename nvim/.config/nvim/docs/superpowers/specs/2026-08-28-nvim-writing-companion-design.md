@@ -1,7 +1,11 @@
 # Writing companion: LLM annotations for prose, inside Neovim
 
-Status: draft 4. Steps 1, 2, and part of 3 are implemented, tested, and committed. Open items
-from review pass 3 are listed in 15.3 rather than silently closed.
+Status: draft 5. Steps 1, 2, and 3a are implemented, tested, and committed (220 tests). Open
+items from review pass 3 are listed in 15.3 with their current state; three are now closed.
+
+**Line-number citations in this document are as of commit `7682523`** and are not re-verified per
+commit. They were accurate when written. Treat a mismatch as drift, not as a claim about current
+code.
 Date: 2026-08-28
 
 Two adversarial review passes by `codex exec` (`gpt-5.6-sol`, reasoning effort `xhigh`,
@@ -247,15 +251,47 @@ Draft 2 said "the enclosing markdown heading block" and left every real decision
 - For a configured prose filetype with no ATX headings (`text`, `gitcommit`, `mail`), `section`
   degrades to the whole buffer.
 
-**`scope_key` is the heading path**, not the heading text: the `/`-joined chain of ancestor heading
-texts, each whitespace-collapsed and lowercased, with `""` for a file with no headings.
+**`scope_key` is `kind:path#ordinal`**, implemented in `style/scope.lua`:
 
 ```
-"## Symptoms" nested under "# 2026-08-28"   ->   "2026-08-28/symptoms"
+"## Symptoms" under "# 2026-08-28"  ->  "section:2026-08-28/symptoms#1"
+loose prose above the first heading ->  "preamble:#1"
+the second "## Notes" under "# Day" ->  "section:day/notes#2"
 ```
 
-The path rather than the bare text, so two sections named `Notes` under different parents are
-distinguishable, which is what 6.1 needs from it.
+Draft 3 said "the heading path" and that was **not unique**, which review pass 3 caught: two
+sibling `## Notes` under the *same* parent shared one key, so a finding in the second hashed
+identically to one in the first and reconciliation touched the first mark instead of inserting the
+second. The second finding silently never existed. Three parts now:
+
+- **kind**, because `preamble` is a different sort of thing from a section, and an untagged path
+  invited treating one as the other.
+- **path**, the ancestor chain, so two `Notes` under *different* parents differ.
+- **ordinal**, the count of earlier sections sharing this exact path, which fixes the sibling case.
+  Always present, never omitted for the first occurrence: omitting it would mean adding a second
+  `## Notes` later changed the *first* section's key, invalidating findings in a section nobody
+  edited.
+
+Uniqueness is needed only within a file, since the mark store is already keyed by source path.
+
+### 5.1.1 A finding's key is where it IS, not what was scanned
+
+The model change that removed most of the remaining complexity. **`scope_key` is a property of the
+finding's location, not of the requested scope** (`scope.key_at`). A whole-buffer pass over a
+four-section note produces findings in four scopes, each carrying its own section's identity. Keying
+them on the request instead would give every finding in that pass one key, reintroducing the exact
+collision the ordinal was added to fix.
+
+It also disposes of draft 3's obligation to define an identity for `buffer`, `paragraph`, and
+`selection`: those say what to *send*, and only sections say where a finding *lives*. A selection
+spanning two sections produces correctly-keyed findings in both, with no special case.
+
+### 5.1.2 Request identity is a separate value
+
+`scope.request_key(kind, start, end)` -> `"section:12-40"`. Deliberately not `scope_key`, because
+the two want opposite properties: a scope key must be **stable** so a fingerprint survives ordinary
+editing, and a request key must be **specific** so a pass over lines 1-20 does not cancel a pass
+over lines 40-60. Draft 3 used one value for both (8.1), which allowed exactly that cross-cancel.
 
 **Renaming a heading changes `scope_key`, which changes every fingerprint in that section**, so
 dismissed findings there can be raised again. That is accepted, and it is the safe direction: a
@@ -459,9 +495,15 @@ So it is a **sidecar owned by this tier**, beside the mark store, and `annotate`
 untouched at `FORMAT_VERSION = 1`:
 
 ```
-<store_path>            annotate's marks, unchanged
-<store_path>.ai.json    this tier's ledger
+<dir>/<mirrored source path>.json       annotate's marks, unchanged
+<dir>/ai/<mirrored source path>.json    this tier's ledger
 ```
+
+**A sibling tree, not a suffix.** Review pass 3 found that appending `.ai.json` collides:
+`store_path` already appends `.json`, so the ledger for source `/x` would be byte-identical to the
+mark store for source `/x.ai`. Every suffix scheme has some colliding source name. A separate
+top-level `ai/` tree cannot collide with the marks tree at all, because the two never share a
+root.
 
 ```json
 {
@@ -558,6 +600,13 @@ Rules:
       delimit; equal means the edit was outside the scope and the result is still good. Both
       extmarks are deleted in the completion callback, on every path including error and timeout,
       or a cancelled pass leaks two extmarks per attempt.
+
+      **Gravity is pinned to shrink-on-boundary-insert:** `right_gravity = true` on the start,
+      `end_right_gravity = false` on the end. Text typed exactly at either boundary lands
+      *outside* the tracked region. That is the correct direction: the scanned content is genuinely
+      unchanged, so the hash still matches and the result is kept. The opposite gravity would pull
+      a boundary insertion inside, change the hash, and discard a valid result over an edit that
+      never touched the analysed text.
 
    Step (c) is what makes the rule usable. A global `changedtick` test with no retry would discard
    every result whenever the author typed anywhere during a 30-to-80-second `claude` call, which is
@@ -913,13 +962,18 @@ defect was in code; the remaining spec-level items are listed honestly rather th
 | The selection clamp only clamped the end, so a buffer shrunk past both marks yielded an empty range | clamp both, fall back to paragraph if the result is empty |
 | The README and two docstrings claimed none of the four semantic classes can fire on one line | corrected: two of the four need prior context, the other two can fire in one sentence. The zero-findings symptom was observed, not derived |
 
-**Still open, spec-level, and to be settled before step 4:**
+**Closed since pass 3:**
 
-1. **`scope_key` is not unique.** Two sibling `## Notes` sections under the same parent produce the
-   same key, and `buffer`/`paragraph`/`selection` scopes have no identity defined at all. That
-   breaks fingerprint distinctness (2), stale scope membership (5), and request-generation keying
-   (8.1), all of which key on it. Likely fix: append a stable disambiguator (occurrence index among
-   same-path siblings) plus a scope-kind prefix, e.g. `section:alpha/notes#2`, `selection:12-40`.
+| # | Was | Now |
+|---|---|---|
+| 1 | `scope_key` not unique across sibling headings; no identity for non-section scopes | `kind:path#ordinal`, plus the 5.1.1 model change so non-section scopes need no identity at all. Implemented, 12 tests |
+| 6 | Extmark gravity at scope boundaries unpinned | Pinned to shrink-on-boundary-insert (8, rule 1c), with the reasoning recorded |
+| 5c | Ledger filename could collide with a mark store | Ledger moves to a sibling `ai/` tree; no suffix scheme is collision-free |
+
+Item 1 was the root cause behind items 2, 3, and part of 5, so those are now tractable rather than
+tangled, but they are not themselves closed.
+
+**Still open:**
 2. **A heading rename leaves an unprunable dismissal.** Its `analyzer` is still current so the
    prune rule never collects it, and its `scope_key` no longer matches so it is never reachable.
    Needs either a rename-aware migration or a reachability-based prune.
