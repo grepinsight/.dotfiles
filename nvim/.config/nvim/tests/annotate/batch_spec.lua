@@ -295,3 +295,126 @@ describe("annotate.marks retarget", function()
     assert.is_false(marks.retarget(bufnr))
   end)
 end)
+
+describe("annotate.marks AI lifecycle", function()
+  before_each(fresh)
+
+  it("defaults new marks to author user and state active", function()
+    local bufnr = open_fixture()
+
+    local record = marks.add_range(bufnr, BULLET, "idiom")
+
+    assert.equals("user", record.author)
+    assert.equals("active", record.state)
+  end)
+
+  it("accepts allowlisted meta fields", function()
+    local bufnr = open_fixture()
+
+    local records, errors = marks.add_many(bufnr, {
+      {
+        range = BULLET,
+        category = "note",
+        note = "three facts, no claim",
+        meta = {
+          author = "llm",
+          kind = "no-claim",
+          model = "gpt-5.4-nano",
+          analyzer = "discourse@1",
+          fingerprint = "a1b2c3d4e5f60718",
+        },
+      },
+    })
+
+    assert.equals(0, #errors)
+    assert.equals("llm", records[1].author)
+    assert.equals("no-claim", records[1].kind)
+    assert.equals("discourse@1", records[1].analyzer)
+    -- Not overridden, so the default still applies.
+    assert.equals("active", records[1].state)
+  end)
+
+  it("rejects an unknown meta field loudly", function()
+    -- The only way to hit this is a caller typo, which is exactly when silence is worse
+    -- than a failure.
+    local bufnr = open_fixture()
+
+    local records, errors = marks.add_many(bufnr, {
+      { range = BULLET, category = "idiom", meta = { auther = "llm" } },
+    })
+
+    assert.equals(0, #records)
+    assert.equals(1, #errors)
+    assert.is_truthy(errors[1]:match("unknown meta field"))
+  end)
+
+  it("normalizes a legacy record with no author or state", function()
+    -- A store written before these fields existed must not become invisible under an exact
+    -- state == "active" render test.
+    local bufnr, path = open_fixture()
+    marks.add_range(bufnr, BULLET, "idiom")
+    local stored = store.read(path)
+    stored[1].author = nil
+    stored[1].state = nil
+    store.write(path, stored)
+
+    marks.reset()
+    marks.load(bufnr)
+
+    local record = marks.state(bufnr).marks[1]
+    assert.equals("user", record.author)
+    assert.equals("active", record.state)
+    -- And it still renders: it has an extmark.
+    assert.is_number(marks.state(bufnr).ids[record.id])
+  end)
+
+  it("does not render a dismissed mark", function()
+    local bufnr = open_fixture()
+    local records = marks.add_many(bufnr, {
+      { range = BULLET, category = "note", note = "x", meta = { author = "llm", state = "dismissed" } },
+    })
+
+    marks.rebuild(bufnr)
+
+    assert.is_nil(marks.state(bufnr).ids[records[1].id])
+  end)
+
+  it("dismisses a machine finding and keeps the record as a tombstone", function()
+    local bufnr = open_fixture()
+    local records = marks.add_many(bufnr, {
+      { range = BULLET, category = "note", note = "x", meta = { author = "llm", kind = "no-claim" } },
+    })
+    vim.api.nvim_win_set_cursor(0, { 2, 20 })
+
+    local ok = marks.dismiss_at_cursor(bufnr)
+
+    assert.is_true(ok)
+    -- The record survives, because it is what suppresses the next pass re-raising it.
+    assert.equals(1, #marks.state(bufnr).marks)
+    assert.equals("dismissed", marks.state(bufnr).marks[1].state)
+    assert.is_nil(marks.state(bufnr).ids[records[1].id])
+  end)
+
+  it("refuses to dismiss a user mark", function()
+    -- Nothing to suppress, and the author's own annotation should be deleted or edited.
+    local bufnr = open_fixture()
+    marks.add_range(bufnr, BULLET, "idiom")
+    vim.api.nvim_win_set_cursor(0, { 2, 20 })
+
+    local ok = marks.dismiss_at_cursor(bufnr)
+
+    assert.is_false(ok)
+    assert.equals("active", marks.state(bufnr).marks[1].state)
+  end)
+
+  it("is idempotent when the finding is already dismissed", function()
+    local bufnr = open_fixture()
+    marks.add_many(bufnr, {
+      { range = BULLET, category = "note", note = "x", meta = { author = "llm", state = "dismissed" } },
+    })
+    vim.api.nvim_win_set_cursor(0, { 2, 20 })
+
+    assert.is_false(marks.dismiss_at_cursor(bufnr))
+    assert.equals(1, #marks.state(bufnr).marks)
+  end)
+end)

@@ -193,7 +193,13 @@ end
 ---@field suffix string
 ---@field hint table { start = {row, col}, ["end"] = {row, col} }, 0-indexed
 ---@field created_at string
----@field orphaned boolean
+---@field orphaned boolean Anchor could not be located. Repair state, NOT "addressed".
+---@field author string|nil "user" | "llm". Absent means "user"; normalized on load.
+---@field state string|nil "active" | "dismissed" | "resolved" | "stale". Absent means "active".
+---@field kind string|nil Finding class id, for machine-authored marks only.
+---@field model string|nil Which model produced it.
+---@field analyzer string|nil Group id plus prompt version, e.g. "discourse@1".
+---@field fingerprint string|nil Immutable observation identity; see the writing-companion spec.
 
 ---Read the marks for a source file.
 ---

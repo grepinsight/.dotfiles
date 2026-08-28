@@ -27,6 +27,17 @@ local state = {}
 
 local seq = 0
 
+---Fields `add_many` accepts through `entry.meta`, for marks this module did not author.
+---An allowlist rather than a free-form merge: see `M.add_many`.
+local META_FIELDS = {
+  author = true,       -- "user" | "llm"
+  kind = true,         -- finding class id
+  model = true,        -- which model produced it
+  analyzer = true,     -- group id plus prompt version
+  fingerprint = true,  -- immutable observation identity
+  state = true,        -- "active" | "dismissed" | "resolved" | "stale"
+}
+
 --- Small helpers -------------------------------------------------------------------
 
 local function notify(msg, level)
@@ -140,6 +151,26 @@ end
 
 --- State ---------------------------------------------------------------------------
 
+---Give every record the fields added for machine-authored marks.
+---
+---Runs here, immediately after `store.read`, and deliberately not in `store.read` and not
+---in accessors. `store.read` is annotate's storage boundary and has no business knowing
+---about AI fields. Accessors are the wrong place because there are several of them, and one
+---missed call site would silently reintroduce the bug this prevents: a record written
+---before these fields existed has no `state`, so an exact `state == "active"` render test
+---would hide every pre-existing mark. Normalizing once, at the single point where records
+---enter memory, makes that equality test safe everywhere downstream.
+---
+---Absent `author` reads as `"user"`, never as a falsy AI mark, so a store written by any
+---earlier version keeps behaving exactly as it did.
+---@param marks annotate.Mark[]
+local function normalize_records(marks)
+  for _, record in ipairs(marks) do
+    record.author = record.author or "user"
+    record.state = record.state or "active"
+  end
+end
+
 ---@param bufnr integer
 ---@return annotate.BufState|nil, string|nil err
 local function ensure_loaded(bufnr)
@@ -156,6 +187,7 @@ local function ensure_loaded(bufnr)
   if err then
     notify(err, vim.log.levels.ERROR)
   end
+  normalize_records(marks)
 
   state[bufnr] = {
     source = store.normalize(source),
@@ -238,7 +270,11 @@ function M.render(bufnr)
 
   local lines = buf_lines(bufnr)
   for _, record in ipairs(st.marks) do
-    if record.orphaned then
+    -- `state ~= "active"` covers dismissed and resolved machine findings. Detaching rather
+    -- than merely skipping matters: a record can be dismissed while it already has an
+    -- extmark, and leaving that extmark would keep the highlight on screen after the
+    -- author explicitly said no.
+    if record.orphaned or record.state ~= "active" then
       detach(bufnr, st, record)
     elseif st.ids[record.id] == nil then
       local range = anchor.resolve(lines, record)
@@ -451,8 +487,13 @@ end
 ---
 ---Errors are collected rather than fatal, so one bad entry in a batch does not discard the
 ---good ones. A caller wanting all-or-nothing should validate before calling.
+---`entry.meta` carries provenance for machine-authored marks. It is an explicit allowlist
+---rather than a free-form merge, so this module's vocabulary stays readable and a typo in a
+---caller is a loud error instead of a silently dropped field. An unknown key fails that
+---entry: the only way to hit it is a programming mistake, which is exactly when a loud
+---failure is worth more than a lenient one.
 ---@param bufnr integer
----@param entries table[] Each { range = table, category = string, note = string|nil }
+---@param entries table[] Each { range = table, category = string, note = string|nil, meta = table|nil }
 ---@return annotate.Mark[] records Added, in input order, skipping failures
 ---@return string[] errors One per entry that could not be added
 function M.add_many(bufnr, entries)
@@ -481,8 +522,18 @@ function M.add_many(bufnr, entries)
   local records, errors = {}, {}
 
   for _, entry in ipairs(entries) do
+    local bad_meta = nil
+    for key in pairs(entry.meta or {}) do
+      if not META_FIELDS[key] then
+        bad_meta = key
+        break
+      end
+    end
+
     if not config.category(entry.category) then
       table.insert(errors, ("unknown category %q"):format(tostring(entry.category)))
+    elseif bad_meta then
+      table.insert(errors, ("unknown meta field %q"):format(tostring(bad_meta)))
     else
       local a = anchor.build(lines, entry.range.start, entry.range["end"], context_chars)
       if a.text == "" then
@@ -498,7 +549,14 @@ function M.add_many(bufnr, entries)
           hint = a.hint,
           created_at = timestamp(),
           orphaned = false,
+          author = "user",
+          state = "active",
         }
+        for key in pairs(META_FIELDS) do
+          if entry.meta and entry.meta[key] ~= nil then
+            record[key] = entry.meta[key]
+          end
+        end
         table.insert(st.marks, record)
         attach(bufnr, st, record, entry.range)
         table.insert(records, record)
@@ -628,6 +686,44 @@ function M.delete_at_cursor(bufnr)
   end
   persist(bufnr)
   notify("mark deleted")
+end
+
+---Dismiss the mark under the cursor instead of deleting it.
+---
+---Deliberately separate from `delete_at_cursor`, which keeps deleting outright. The two
+---differ in what has to survive: deleting the author's own mark should leave nothing, while
+---dismissing a machine finding must leave a record behind, because that record is what
+---stops the next pass raising the same finding again. A dismissal that deleted would be
+---undone within seconds.
+---
+---Refuses to dismiss a user mark. Dismissal is meaningless for one: there is no generator
+---to suppress, and the author's own annotation should be deleted or edited, not silenced.
+---@param bufnr integer
+---@return boolean dismissed
+function M.dismiss_at_cursor(bufnr)
+  if not state[bufnr] then
+    M.load(bufnr)
+  end
+  local st = state[bufnr]
+  local record = M.at_cursor(bufnr)
+  if not record then
+    notify("no mark under the cursor", vim.log.levels.WARN)
+    return false
+  end
+  if record.author ~= "llm" then
+    notify("only machine findings can be dismissed; use delete for your own marks", vim.log.levels.WARN)
+    return false
+  end
+  if record.state == "dismissed" then
+    notify("already dismissed")
+    return false
+  end
+
+  record.state = "dismissed"
+  detach(bufnr, st, record)
+  persist(bufnr)
+  notify("finding dismissed")
+  return true
 end
 
 ---@param bufnr integer
