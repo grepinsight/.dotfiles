@@ -56,11 +56,20 @@ position. `:AlbertLintCoverage` prints exactly which patterns fall on which side
 
 | Command | Does |
 |---|---|
-| `:AlbertLint` | full pass on the buffer, both deterministic tiers |
-| `:AlbertLintSemantic` | LLM pass on the paragraph, or on a visual selection |
-| `:AlbertLintToggle` | pause or resume for this buffer |
-| `:AlbertLintCoverage` | which drilled patterns have a rule, and which cannot have one |
-| `:AlbertLintReload` | reload the catalogue after editing `rules.lua` |
+| `:AlbertLintStatus` | **start here.** What is on, which scope, whether `claude` is reachable, how many collocation entries |
+| `:AlbertLint` | the free deterministic checks on this buffer. Not the LLM one |
+| `:AlbertLintSemantic` | LLM grammar check over the configured scope, or a given `:'<,'>` range |
+| `:AlbertLintSemanticCancel` | stop a running LLM check |
+| `:AlbertLintToggle` | pause or resume the automatic diagnostics in this buffer |
+| `:AlbertLintCoverage` | which logged mistake patterns have a rule, and which cannot have one |
+| `:AlbertLintReload` | reload rules, engine, semantic, and config. Not `init.lua`, not the commands |
+| `:AlbertLintCollocationStatus` | collocation entry count, breakdown, and cache path |
+| `:AlbertLintCollocationRebuild` | force a collocation rebuild after bulk-editing notes |
+
+`:AlbertLint` deliberately excludes the semantic tier: that one costs money and takes ~35s, so it
+is never on a path the user did not explicitly ask for. Running a second `:AlbertLintSemantic`
+while one is in flight reports how long the first has been going rather than starting a second
+paid call.
 
 ## Config
 

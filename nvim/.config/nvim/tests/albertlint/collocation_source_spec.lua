@@ -20,6 +20,7 @@ local function fixture_vault()
     "  - push back",
     'phrase_definition: "resistance offered in good faith"',
     'phrase_synonyms: "resistance, objections"',
+    'phrase_canonical_example: "I want the AI to give me pushback, not fix my grammar."',
     "---",
   }, root .. "/Phrases/Pushback.md")
 
@@ -270,5 +271,53 @@ describe("collocation cmp source position encoding", function()
     local r = items[1].textEdit.range
     assert.equals("a one", before:sub(r.start.character + 1, r["end"].character))
     assert.equals("음… it was a one-off", applied(before, items[1]))
+  end)
+end)
+
+describe("collocation menu presentation", function()
+  before_each(function()
+    configure(fixture_vault())
+    col.entries(true)
+  end)
+
+  it("labels the item with what accepting will insert, not the note's title", function()
+    -- A menu that disagrees with its own result teaches the user to distrust it. The note is
+    -- titled `A One-Off`, so the menu used to offer that mid-sentence while accepting
+    -- inserted `a one-off`.
+    local before = "it was a one"
+    local items = complete(before)
+
+    assert.equals("a one-off", items[1].label)
+    assert.equals(applied(before, items[1]), before:sub(1, #before - #items[1].filterText) .. items[1].label)
+  end)
+
+  it("still labels with a capital when the typed text has one", function()
+    local items = complete("Push")
+
+    assert.equals("Pushback", items[1].label)
+  end)
+
+  it("puts no marker on phrase entries and marks only the Better English ones", function()
+    -- "phrase" would repeat on 409 of 416 rows and say nothing.
+    local phrase = complete("I need push")[1]
+    local swap = complete("please sur")[1]
+
+    assert.is_nil(phrase.labelDetails)
+    assert.equals("preferred replacement", swap.labelDetails.description)
+  end)
+
+  it("orders documentation as definition, then example, then synonyms", function()
+    -- Meaning and usage answer "is this the right word here?", which is the question being
+    -- asked mid-sentence. A list of alternatives answers a later one.
+    local doc = complete("I need push")[1].documentation.value
+    local definition = doc:find("resistance offered", 1, true)
+    local example = doc:find("> I want the AI", 1, true)
+    local synonyms = doc:find("**Also:**", 1, true)
+
+    assert.is_truthy(definition, "definition missing")
+    assert.is_truthy(example, "example missing")
+    assert.is_truthy(synonyms, "synonyms missing")
+    assert.is_true(definition < example, "definition must come before the example")
+    assert.is_true(example < synonyms, "example must come before the synonyms")
   end)
 end)

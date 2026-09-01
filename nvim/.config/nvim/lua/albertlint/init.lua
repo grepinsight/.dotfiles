@@ -138,10 +138,10 @@ function M.toggle(bufnr)
   paused[bufnr] = not paused[bufnr]
   if paused[bufnr] then
     M.clear(bufnr)
-    vim.notify("albertlint paused for this buffer", vim.log.levels.INFO)
+    vim.notify("albertlint: automatic diagnostics paused and cleared for this buffer", vim.log.levels.INFO)
   else
     M.lint_all(bufnr)
-    vim.notify("albertlint resumed", vim.log.levels.INFO)
+    vim.notify("albertlint: automatic diagnostics resumed for this buffer", vim.log.levels.INFO)
   end
 end
 
@@ -247,15 +247,15 @@ function M.setup(opts)
 
   vim.api.nvim_create_user_command("AlbertLint", function()
     M.lint_all()
-  end, { desc = "albertlint: full pass on this buffer" })
+  end, { desc = "albertlint: run the free deterministic checks on this buffer (not the LLM one)" })
 
   vim.api.nvim_create_user_command("AlbertLintToggle", function()
     M.toggle()
-  end, { desc = "albertlint: pause or resume for this buffer" })
+  end, { desc = "albertlint: pause or resume the automatic diagnostics in this buffer" })
 
   vim.api.nvim_create_user_command("AlbertLintCoverage", function()
     M.coverage()
-  end, { desc = "albertlint: which drilled patterns have rules" })
+  end, { desc = "albertlint: which logged mistake patterns have a rule, and which cannot" })
 
   vim.api.nvim_create_user_command("AlbertLintReload", function()
     -- `semantic` and `config` are in this list because they were not, and it cost a real
@@ -282,7 +282,8 @@ function M.setup(opts)
     engine = require("albertlint.engine")
     engine.reset()
     M.lint_all()
-    vim.notify("albertlint: modules reloaded", vim.log.levels.INFO)
+    vim.notify("albertlint: rules, engine, semantic, and config reloaded. Restart Neovim to pick up "
+      .. "changes to init.lua or to the commands themselves.", vim.log.levels.INFO)
   end, { desc = "albertlint: reload rules, engine, semantic, and config" })
 
   -- Catch buffers that were already open. Every autocmd above is an event that has
@@ -298,7 +299,44 @@ function M.setup(opts)
 
   vim.api.nvim_create_user_command("AlbertLintSemantic", function(cmd)
     require("albertlint.semantic").run(NS, cmd.range > 0)
-  end, { range = true, desc = "albertlint: semantic pass (LLM) on paragraph or selection" })
+  end, { range = true, desc = "albertlint: LLM grammar check over the configured scope, or a given range" })
+
+  vim.api.nvim_create_user_command("AlbertLintSemanticCancel", function()
+    require("albertlint.semantic").cancel()
+  end, { desc = "albertlint: stop the LLM grammar check running in this buffer" })
+
+  -- One place that answers "is this thing working". Added because the question came up
+  -- repeatedly and the honest answer needed four separate commands plus reading source.
+  vim.api.nvim_create_user_command("AlbertLintStatus", function()
+    local cfg = config.get()
+    local bufnr = vim.api.nvim_get_current_buf()
+    local lines = {
+      ("filetype %s: %s"):format(
+        vim.bo[bufnr].filetype,
+        vim.tbl_contains(cfg.filetypes, vim.bo[bufnr].filetype) and "attached" or "not a configured prose filetype"
+      ),
+      ("automatic diagnostics: %s"):format(attached(bufnr) and "on" or "paused"),
+      ("semantic: %s, scope %s, timeout %dms, `%s` %s"):format(
+        cfg.semantic.enabled and "enabled" or "disabled",
+        cfg.semantic.scope or "paragraph",
+        cfg.semantic.timeout_ms,
+        cfg.semantic.cmd[1],
+        vim.fn.executable(cfg.semantic.cmd[1]) == 1 and "found" or "NOT ON PATH"
+      ),
+    }
+
+    -- Reported rather than assumed: the collocation module is optional, and a missing one
+    -- should show up here as "not loaded" instead of erroring this command.
+    local ok, collocation = pcall(require, "albertlint.collocation")
+    if ok then
+      local entries = collocation.entries()
+      table.insert(lines, ("collocation: %d entries from %s"):format(#entries, collocation.root()))
+    else
+      table.insert(lines, "collocation: not loaded")
+    end
+
+    vim.notify("albertlint status\n  " .. table.concat(lines, "\n  "), vim.log.levels.INFO)
+  end, { desc = "albertlint: report what is on, what scope, and whether the CLI is reachable" })
 
   return M
 end

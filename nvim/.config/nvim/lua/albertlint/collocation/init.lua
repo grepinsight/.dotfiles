@@ -205,17 +205,21 @@ local function documentation(entry)
   if entry.detail then
     table.insert(lines, entry.detail)
   end
-  if entry.synonyms and #entry.synonyms > 0 then
-    table.insert(lines, "")
-    table.insert(lines, "**Also:** " .. table.concat(entry.synonyms, ", "))
-  end
+  -- Example before synonyms. Meaning and usage answer "is this the right word here?", which
+  -- is the question being asked mid-sentence; a list of alternatives answers a later one.
   if entry.example then
     table.insert(lines, "")
     table.insert(lines, "> " .. entry.example)
   end
-  if entry.kind == "better-english" then
+  if entry.synonyms and #entry.synonyms > 0 then
     table.insert(lines, "")
-    table.insert(lines, "_from Better English_")
+    table.insert(lines, "**Also:** " .. table.concat(entry.synonyms, ", "))
+  end
+  -- For a Better English entry the teaching content is what it replaces, not its provenance.
+  -- "_from Better English_" told him where it came from and nothing he could use.
+  if entry.kind == "better-english" and entry.example then
+    table.insert(lines, "")
+    table.insert(lines, "**Instead of:** " .. entry.example)
   end
   return table.concat(lines, "\n")
 end
@@ -265,11 +269,22 @@ function source:complete(params, callback)
     -- `insert_range` is the value AFTER `convert_range_encoding`. Under cmp's default UTF16
     -- the offset would be translated and misaligned with `filterText`, so multi-word
     -- candidates would score 0 and vanish silently rather than land in the wrong column.
+    -- The label shows what accepting will actually insert, not the note's stored surface.
+    -- They differ: a note is titled in Title Case, so the menu used to offer `A One-Off`
+    -- mid-sentence while accepting inserted `a one-off`. A menu that disagrees with its own
+    -- result teaches the user to distrust it.
+    local inserted = typed .. tail
+
     table.insert(items, {
-      label = entry.surface,
+      label = inserted,
       filterText = entry.matched,
       documentation = { kind = "markdown", value = documentation(entry) },
-      labelDetails = { description = entry.kind == "phrase" and "phrase" or "better english" },
+      -- No marker on phrase entries: it would repeat on 409 of 416 rows and say nothing. The
+      -- Better English ones are the minority worth marking, and "preferred replacement" says
+      -- what the entry IS, where "better english" read as a verdict on the candidate.
+      labelDetails = entry.kind == "better-english"
+          and { description = "preferred replacement" }
+        or nil,
       textEdit = {
         range = {
           start = { line = params.context.cursor.row - 1, character = start_col },
@@ -305,10 +320,18 @@ function M.setup(opts)
 
   vim.api.nvim_create_user_command("AlbertLintCollocationRebuild", function()
     local built = M.entries(true)
-    vim.notify(
-      ("albertlint: collocation index rebuilt, %d entries"):format(#built),
-      vim.log.levels.INFO
-    )
+    if #built == 0 then
+      vim.notify(
+        ("albertlint: no collocations found under %s. Check $OBSIDIAN_VAULT and that "
+          .. "Phrases/ and Better English/ exist there."):format(root()),
+        vim.log.levels.WARN
+      )
+    else
+      vim.notify(
+        ("albertlint: collocation index rebuilt, %d entries from %s"):format(#built, root()),
+        vim.log.levels.INFO
+      )
+    end
   end, { desc = "albertlint: rebuild the collocation index from the vault" })
 
   vim.api.nvim_create_user_command("AlbertLintCollocationStatus", function()
@@ -333,6 +356,13 @@ function M.setup(opts)
   end, { desc = "albertlint: report collocation index size and cache location" })
 
   return M
+end
+
+---Where notes are read from. Public because `:AlbertLintStatus` reports it, and because
+---"0 entries" is unactionable without knowing which directory came up empty.
+---@return string
+function M.root()
+  return root()
 end
 
 M._scan = scan

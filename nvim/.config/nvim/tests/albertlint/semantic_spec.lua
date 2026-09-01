@@ -168,3 +168,64 @@ describe("semantic scope_range selection edge cases", function()
     assert.is_true(e <= vim.api.nvim_buf_line_count(buf))
   end)
 end)
+
+describe("semantic in-flight guard and cancel", function()
+  it("reports nothing to cancel when no pass is running", function()
+    local buf = one_line_paragraphs()
+    focus(buf, 1)
+
+    assert.is_false(semantic.cancel(buf))
+  end)
+
+  it("exposes its in-flight table empty when idle", function()
+    -- The guard exists because a second :AlbertLintSemantic spawned a second `claude`: two
+    -- paid calls and two sets of diagnostics racing to overwrite each other.
+    assert.equals(0, vim.tbl_count(semantic._in_flight))
+  end)
+
+  it("refuses a second pass and leaves the first alone", function()
+    -- Simulated rather than driven through vim.system, so the test needs no CLI and no
+    -- network. What is under test is the guard, not the request.
+    local buf = one_line_paragraphs()
+    focus(buf, 1)
+    semantic._in_flight[buf] = {
+      handle = { kill = function() end },
+      started = (vim.uv or vim.loop).hrtime(),
+      scope = "buffer",
+      lines = 5,
+    }
+
+    local notified
+    local real = vim.notify
+    vim.notify = function(msg) notified = msg end
+    semantic.run(vim.api.nvim_create_namespace("test"), false)
+    vim.notify = real
+
+    assert.is_truthy(notified:find("already running", 1, true))
+    assert.is_truthy(notified:find("AlbertLintSemanticCancel", 1, true))
+    assert.is_not_nil(semantic._in_flight[buf], "the first pass must survive the refusal")
+
+    semantic._in_flight[buf] = nil
+  end)
+
+  it("cancels a running pass by killing its handle", function()
+    local buf = one_line_paragraphs()
+    focus(buf, 1)
+    local killed
+    semantic._in_flight[buf] = {
+      handle = { kill = function(_, sig) killed = sig end },
+      started = (vim.uv or vim.loop).hrtime(),
+      scope = "buffer",
+      lines = 5,
+    }
+
+    local real = vim.notify
+    vim.notify = function() end
+    local ok = semantic.cancel(buf)
+    vim.notify = real
+
+    assert.is_true(ok)
+    assert.equals("sigterm", killed)
+    semantic._in_flight[buf] = nil
+  end)
+end)
