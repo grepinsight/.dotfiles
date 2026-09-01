@@ -26,13 +26,22 @@ the error does not include `~/.config/nvim/lua/albertlint/`, which is the tell.
 
 Any future module added here needs the same one-line link.
 
-## Why two tiers
+## Why several tiers
 
 | Tier | Runs | Rules | Cost |
 |---|---|---|---|
 | `live` | debounced 400ms on `TextChangedI`, cursor word exempt | 8 single-token rules | free, instant |
 | `exit` | `InsertLeave`, `TextChanged`, `BufWritePost` | 13 sentence-level rules | free, instant |
-| `semantic` | on demand, `:AlbertLintSemantic` | 4 error classes no regex can see | shells out to `claude`, seconds |
+| `semantic` | on demand, `:AlbertLintSemantic` | 4 error classes no regex can see | shells out to `claude`, ~35s |
+| `collocation` | as you type, via nvim-cmp | 416 entries from the vault's own phrase notes | free, instant, no model |
+| `style` | **not built.** Spec only | discourse-level annotations | — |
+
+`collocation/` has its own [README](collocation/README.md). It is a completion source rather
+than a linter: it suggests words and short collocations the writer has already collected, and is
+capped at five words on purpose so it stays vocabulary rather than becoming composition.
+
+`style/` is about a third built (`scope.lua` only). See
+`docs/superpowers/specs/2026-08-28-nvim-writing-companion-design.md` before touching it.
 
 The split is not a performance nicety. A sentence-level rule cannot judge a sentence you
 have not finished typing, and a single-token rule can. Running `slash-list` on every
