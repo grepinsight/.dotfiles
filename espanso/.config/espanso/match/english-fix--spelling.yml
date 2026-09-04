@@ -1,0 +1,41 @@
+# English fix autocorrect: spelling and word form.
+#
+# PUBLIC REPO. Generic English only, in the entries AND in these comments.
+# Only strings that are never correct in any context, which makes this the safest file
+# of the set. `word: true` keeps a trigger from firing inside a longer word.
+
+matches:
+  - trigger: "maintable"
+    replace: "maintainable"
+    word: true
+    propagate_case: true
+
+  - trigger: "idividually"
+    replace: "individually"
+    word: true
+    propagate_case: true
+
+  - trigger: "proceess"
+    replace: "processes"
+    word: true
+    propagate_case: true
+
+  - trigger: "re-write"
+    replace: "rewrite"
+    word: true
+    propagate_case: true
+
+  - trigger: "teh"
+    replace: "the"
+    word: true
+    propagate_case: true
+
+  - trigger: "espected"
+    replace: "expected"
+    word: true
+    propagate_case: true
+
+  - trigger: "cannonical"
+    replace: "canonical"
+    word: true
+    propagate_case: true

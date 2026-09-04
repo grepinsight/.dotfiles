@@ -1,0 +1,25 @@
+# English fix autocorrect: articles.
+#
+# PUBLIC REPO. Generic English only, in the entries AND in these comments: no employer,
+# product, internal repo, person, host, filesystem path, or machine name.
+# Only article fixes where the wrong string is never correct in any context.
+# `word: true` is mandatory: without it "use cache" would fire inside "use cached".
+
+matches:
+  - trigger: "being outlier"
+    replace: "being an outlier"
+    word: true
+    propagate_case: true
+
+  - trigger: "is outlier"
+    replace: "is an outlier"
+    word: true
+    propagate_case: true
+
+  # Kept deliberately despite the risk below. Known false positive: "use cache
+  # headers", "use cache invalidation" and similar compounds are legitimate and will
+  # be rewritten too. Delete this entry if that bites.
+  - trigger: "use cache"
+    replace: "use a cache"
+    word: true
+    propagate_case: true

@@ -2,3 +2,5 @@
 matches:
   - trigger: retruns
     replace: returns
+  - trigger: workikng
+    replace: working

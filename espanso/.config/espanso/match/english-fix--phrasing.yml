@@ -1,0 +1,19 @@
+# English fix autocorrect: idiom and phrasing.
+#
+# PUBLIC REPO. Generic English only, in the entries AND in these comments.
+# Only fixed idioms where the wrong string is never correct in any context.
+
+matches:
+  # `turn X into Y` is the idiom; `turn it as` is never correct.
+  - trigger: "turn it as a"
+    replace: "turn it into a"
+    word: true
+    propagate_case: true
+
+  # pbcopy is a command you send data TO, never a container data sits IN.
+  # Three different prepositions were tried across four attempts before this one.
+  # No legitimate "in pbcopy" exists.
+  - trigger: "in pbcopy"
+    replace: "to pbcopy"
+    word: true
+    propagate_case: true
