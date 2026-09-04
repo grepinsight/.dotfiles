@@ -1,3 +1,7 @@
+-- Filetypes where LuaSnip stays out of the completion menu; see the "luasnip"
+-- source entry below for why this is a filter rather than a filetype config.
+local luasnip_disabled_filetypes = { markdown = true }
+
 local has_words_before = function()
   if vim.api.nvim_buf_get_option(0, "buftype") == "prompt" then
     return false
@@ -68,6 +72,16 @@ return {
 
       vim.opt.completeopt = "menu,menuone,noselect"
       vim.opt.pumheight = 10 -- Maximum number of items to show in the popup menu
+
+      -- The "english" source used in `sources` below. Registered here rather than in
+      -- init.lua because `cmp` has to be loaded for register_source to exist, and this is
+      -- the one place that is already true. pcall so a broken or absent collocation module
+      -- degrades to "no prose completions" instead of taking the whole completion setup
+      -- down with it.
+      local ok, collocation = pcall(require, "albertlint.collocation")
+      if ok then
+        cmp.register_source("english", collocation.source)
+      end
 
       local formatForTailwindCSS = function(entry, vim_item)
         if vim_item.kind == "Color" and entry.completion_item.documentation then
@@ -151,7 +165,36 @@ return {
         sources = cmp.config.sources({
           -- ordering is matter
           { name = "nvim_lsp" },
-          { name = "luasnip" },
+          {
+            name = "luasnip",
+            -- Markdown is prose, and there LuaSnip serves friendly-snippets plus
+            -- mysnippets/{markdown,md,all}.snippets, which drop code scaffolding
+            -- into the menu mid-sentence. Filter the entries out per filetype.
+            --
+            -- Filtering rather than dropping the source with
+            -- cmp.setup.filetype("markdown", ...) is deliberate: obsidian.nvim
+            -- copies cmp.get_config().sources into a *buffer* config on BufEnter
+            -- of every vault *.md, and a buffer config outranks a filetype one,
+            -- so the filetype route would be undone inside the vault. This
+            -- predicate rides along in the copied source table.
+            entry_filter = function(_, ctx)
+              return not luasnip_disabled_filetypes[ctx.filetype]
+            end,
+          },
+          {
+            -- Collocations from this vault's own Phrases/ and Better English/ notes. Sits
+            -- above `buffer` on purpose: a phrase collected deliberately outranks a word
+            -- that happens to be open in another window.
+            --
+            -- It fills the hole the two entries above created. copilot_gate.lua keeps
+            -- Copilot out of markdown and the luasnip filter keeps snippets out, which left
+            -- prose with no source that knows any English.
+            --
+            -- keyword_length 2 matches the source's own min_chars: completing on one
+            -- character would put 400+ entries in the menu on every word's first keystroke.
+            name = "english",
+            keyword_length = 2,
+          },
           { name = "path" },
           { name = "buffer", keyword_length = 5 }, -- show buffer's completion only if type more then keyword_length
         }),

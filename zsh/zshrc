@@ -362,7 +362,9 @@ export VOICEMODE_SKIP_TTS=true
 #echo "[BENCH] rest took ${duration}ms"
 
 # Added by dbt installer
-export PATH="$PATH:/Users/allee/.local/bin"
+# [doctor 2026-09-02] redundant: ~/.local/bin is already added idempotently by
+# `. "$HOME/.local/bin/env"` above. Uncomment if PATH resolution ever breaks.
+# export PATH="$PATH:/Users/allee/.local/bin"
 
 # dbt aliases
 alias dbtf=/Users/allee/.local/bin/dbt
@@ -372,7 +374,9 @@ fpath+=~/.zfunc; autoload -Uz compinit; compinit
 
 zstyle ':completion:*' menu select
 
-export PATH="$HOME/.local/bin:$PATH"
+# [doctor 2026-09-02] redundant: ~/.local/bin is already added idempotently by
+# `. "$HOME/.local/bin/env"` above. Uncomment if PATH resolution ever breaks.
+# export PATH="$HOME/.local/bin:$PATH"
 
 export KITTY_LIGHT="Solarized Light"
 export KITTY_DARK="Catppuccin-Mocha"
@@ -394,4 +398,6 @@ export PATH=/Users/allee/.opencode/bin:$PATH
 
 
 # Added by Antigravity CLI installer
-export PATH="/Users/allee/.local/bin:$PATH"
+# [doctor 2026-09-02] redundant: ~/.local/bin is already added idempotently by
+# `. "$HOME/.local/bin/env"` above. Uncomment if PATH resolution ever breaks.
+# export PATH="/Users/allee/.local/bin:$PATH"

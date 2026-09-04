@@ -1,0 +1,5 @@
+
+matches:
+  - trigger: ;finish
+    label: ";finish"
+    replace: "/goal Complete all tasks autonomously and notify me upon completion. If you require my input at any point, pause and alert me — otherwise, proceed independently until the work is done."
