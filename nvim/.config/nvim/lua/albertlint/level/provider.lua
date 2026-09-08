@@ -210,13 +210,26 @@ end
 ---@return table|nil parsed
 ---@return string|nil err
 function M.parse(text)
-  local json = (text or ""):match("%b{}")
+  text = text or ""
+  local json = text:match("%b{}")
   if not json then
-    return nil, "no JSON object in response"
+    -- Say what arrived, not just that parsing failed. "no JSON object in response" alone
+    -- cannot distinguish an empty reply from a refusal from a truncated one, and those want
+    -- different responses from the reader. Seen 2026-09-08 on a run whose raw output was
+    -- in fact valid fenced JSON, which made the bare message actively misleading.
+    local shown = M.scrub(text):gsub("%s+", " "):gsub("^ +", "")
+    if shown == "" then
+      return nil, "the model returned nothing at all (empty response)"
+    end
+    return nil, ("no JSON object in the response, which began: %q"):format(shown:sub(1, 160))
   end
   local ok, decoded = pcall(vim.json.decode, json)
   if not ok then
-    return nil, "invalid JSON: " .. tostring(decoded)
+    -- A truncated reply is the common cause, and it looks nothing like a refusal, so the
+    -- length is worth stating: a cut-off answer is a timeout or a token limit, not a
+    -- misbehaving model.
+    return nil, ("the JSON in the response would not parse (%d bytes): %s")
+      :format(#json, tostring(decoded):sub(1, 120))
   end
   if type(decoded) ~= "table" then
     return nil, "response was not an object"

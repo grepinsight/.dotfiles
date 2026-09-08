@@ -63,9 +63,11 @@ describe("level timeout", function()
 
   it("floors a short selection rather than giving it a tight budget", function()
     -- Most of the cost is fixed overhead (~25s measured), so a 3-line selection needs
-    -- nowhere near 3 lines' worth of time.
-    assert.equals(90000, level._timeout_for(3))
-    assert.equals(90000, level._timeout_for(0))
+    -- nowhere near 3 lines' worth of time. The floor is 120s rather than 90s because the
+    -- same 4-line input measured 22, 26, 35, 38 and 53s across runs, so a budget sized on
+    -- the median clips a slow one -- and a timeout discards an answer already paid for.
+    assert.equals(120000, level._timeout_for(3))
+    assert.equals(120000, level._timeout_for(0))
   end)
 
   it("scales with the line count between the floor and the ceiling", function()
@@ -189,6 +191,107 @@ describe("level in-flight guard", function()
     assert.equals(1, #msgs)
     assert.is_true(msgs[1]:find("nothing to review", 1, true) ~= nil)
     assert.is_nil(level._in_flight[buf])
+  end)
+end)
+
+describe("level run reaches dispatch", function()
+  -- THE gap that let a crash ship. Every other test in this file bails before the provider
+  -- is called -- at the in-flight guard, the disabled check, an empty range, the cache, or
+  -- an unimplemented level -- so nothing exercised the last stretch of run(), where the
+  -- progress notify and the provider call live. A `local` declared below its own use in
+  -- that stretch resolved to a nil global and `:AlbertLintLevel1` died with "attempt to
+  -- perform arithmetic on global 'timeout_ms'" before reaching any provider. Reported from
+  -- a real session 2026-09-08.
+  --
+  -- Stubbing provider.call is what makes this affordable: the whole path runs, nothing is
+  -- spawned, and nothing is paid for.
+  local provider = require("albertlint.level.provider")
+  local real_call
+
+  before_each(function()
+    real_call = provider.call
+    for _, tbl in ipairs({ level._in_flight, level._open_views, level._cache }) do
+      for k in pairs(tbl) do
+        tbl[k] = nil
+      end
+    end
+  end)
+
+  after_each(function()
+    provider.call = real_call
+    config.setup({})
+  end)
+
+  it("runs to the provider without erroring, and announces the real budget", function()
+    local seen
+    provider.call = function(name, prompt, text, opts, cb)
+      seen = { name = name, prompt = prompt, text = text, opts = opts, cb = cb }
+      return { kill = function() end }
+    end
+    local buf = prose_buf({ "a error here", "and a apple too" })
+
+    local msgs = captured(function()
+      level.run(1, false)
+    end)
+
+    assert.is_not_nil(seen, "provider.call was never reached")
+    assert.equals("claude", seen.name)
+    -- The scaled budget was computed and handed over, not left nil.
+    assert.equals(level._timeout_for(2), seen.opts.timeout_ms)
+    -- And the progress message states it, which is the line that crashed.
+    assert.equals(1, #msgs)
+    assert.is_true(msgs[1]:find("Allowing up to", 1, true) ~= nil)
+    assert.is_true(msgs[1]:find(tostring(level._timeout_for(2) / 1000), 1, true) ~= nil)
+    -- The guard is armed only once the call actually started.
+    assert.is_not_nil(level._in_flight[buf])
+  end)
+
+  it("passes an explicit config timeout straight through", function()
+    local seen
+    provider.call = function(_, _, _, opts)
+      seen = opts
+      return { kill = function() end }
+    end
+    config.setup({ level = { timeout_ms = 45000 } })
+    prose_buf({ "a error here" })
+
+    captured(function()
+      level.run(1, false)
+    end)
+
+    assert.equals(45000, seen.timeout_ms)
+  end)
+
+  it("sends the numbered payload, not the raw lines", function()
+    local seen
+    provider.call = function(_, _, text, _)
+      seen = text
+      return { kill = function() end }
+    end
+    prose_buf({ "first line", "second line" })
+
+    captured(function()
+      level.run(1, false)
+    end)
+
+    assert.equals("1: first line\n2: second line\n", seen)
+  end)
+
+  it("does not arm the guard when the provider refuses to start", function()
+    -- provider.call returns nil when the CLI is missing or the key is unset. Recording
+    -- that would wedge the buffer on a pass that never ran.
+    provider.call = function(_, _, _, _, cb)
+      cb({ ok = false, err = "`claude` is not on PATH" })
+      return nil
+    end
+    local buf = prose_buf({ "a error here" })
+
+    local msgs = captured(function()
+      level.run(1, false)
+    end)
+
+    assert.is_nil(level._in_flight[buf])
+    assert.is_true(#msgs >= 1)
   end)
 end)
 

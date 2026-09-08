@@ -273,11 +273,41 @@ describe("level.provider parse", function()
     assert.equals(1, #parsed.findings)
   end)
 
-  it("errors when there is no JSON object at all", function()
+  it("errors when there is no JSON object at all, and shows what arrived", function()
+    -- The bare verdict cannot distinguish an empty reply from a refusal from a truncated
+    -- one, and those call for different reactions. Seen 2026-09-08 reported against a run
+    -- whose raw output was in fact valid fenced JSON, which made it actively misleading.
     local parsed, err = provider.parse("I could not do that.")
 
     assert.is_nil(parsed)
     assert.is_true(err:find("no JSON", 1, true) ~= nil)
+    assert.is_true(err:find("I could not do that", 1, true) ~= nil)
+  end)
+
+  it("distinguishes an empty response from an unparseable one", function()
+    local _, empty = provider.parse("")
+    local _, blank = provider.parse("   \n  ")
+
+    assert.is_true(empty:find("nothing at all", 1, true) ~= nil)
+    assert.is_true(blank:find("nothing at all", 1, true) ~= nil)
+  end)
+
+  it("treats a truncated reply as no-JSON, and shows the start of it", function()
+    -- Important and easy to get wrong: `%b{}` needs BALANCED braces, so a cut-off answer
+    -- has no match at all and lands here rather than in the parse branch. That is what
+    -- "no JSON object in response" meant in the failure reported 2026-09-08, and the bare
+    -- message gave no way to tell truncation from a refusal. Now the excerpt does.
+    local _, err = provider.parse('{"findings":[{"line":1,"quote":"a')
+
+    assert.is_true(err:find("no JSON", 1, true) ~= nil)
+    assert.is_true(err:find("findings", 1, true) ~= nil, "the excerpt must show what arrived")
+  end)
+
+  it("names the byte count when the JSON is balanced but invalid", function()
+    local _, err = provider.parse('{"findings":[},}')
+
+    assert.is_true(err:find("would not parse", 1, true) ~= nil)
+    assert.is_true(err:find("bytes", 1, true) ~= nil)
   end)
 
   it("errors when the object has no findings key", function()
@@ -292,6 +322,8 @@ describe("level.provider parse", function()
 
     assert.is_nil(parsed)
     assert.is_not_nil(err)
+    -- Never a raw Lua error leaking through to the writer.
+    assert.is_nil(err:find("stack traceback", 1, true))
   end)
 
   it("unwraps an OpenAI chat completion envelope", function()

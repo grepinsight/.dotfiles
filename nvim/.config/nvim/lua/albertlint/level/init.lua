@@ -119,22 +119,26 @@ end
 ---A fixed timeout cannot serve both a paragraph and a whole note, and the shipped 90s was
 ---sized against 4-line samples. Measured 2026-09-08 through this module's own code path:
 ---
----    4 lines   22-35s
+---    4 lines   22, 26, 35, 38, 53s   across six runs
 ---   12 lines   22-27s
----  190 lines   105.6s   <- exceeded the 90s default and was killed mid-answer
+---  190 lines   105.6s                <- exceeded the 90s default and was killed mid-answer
 ---
 ---That last run succeeded on the model's side, returning 74 findings, and was then thrown
 ---away by the timeout. Roughly 25s of fixed overhead plus 0.42s per line, so this allows 30s
----plus 0.75s per line for headroom of about 1.6x on the measured points.
+---plus 0.75s per line.
 ---
----The floor keeps a short selection from getting a uselessly tight budget. The ceiling is a
----deliberate refusal rather than a limit of the model: past ten minutes the right answer is a
----narrower scope, not a longer wait, and the timeout message says so.
+---The floor is 120s rather than 90s because of the variance in that first row: the same
+---four-line input ranged from 22s to 53s, so a budget sized on the median clips a slow run.
+---Erring long is close to free here and erring short is not, since a timeout discards an
+---answer the model already finished paying for.
+---
+---The ceiling is a deliberate refusal rather than a limit of the model: past ten minutes the
+---right answer is a narrower scope, not a longer wait, and the timeout message says so.
 ---@param line_count integer
 ---@return integer milliseconds
 local function timeout_for(line_count)
   local ms = math.floor((30 + 0.75 * line_count) * 1000)
-  return math.max(90000, math.min(600000, ms))
+  return math.max(120000, math.min(600000, ms))
 end
 
 ---Open the diff from findings, whether they just arrived or came from the cache.
@@ -256,15 +260,19 @@ function M.run(id, use_selection, force)
   end
   local payload = M._numbered(range_lines, start_lnum + 1)
 
+  -- An explicit `timeout_ms` in config wins; nil means scale it to the payload. Declared
+  -- BEFORE the notify that prints it: with the declaration below, `timeout_ms` in the
+  -- notify resolved to a nil global and `:AlbertLintLevel1` died with "attempt to perform
+  -- arithmetic on global 'timeout_ms'" before it ever reached the provider. Reported from a
+  -- real session 2026-09-08.
+  local timeout_ms = opts.timeout_ms or timeout_for(#range_lines)
+
   vim.notify(
     ("albertlint: level %d (%s) over %d lines (%s scope) via %s. Allowing up to %ds; "
       .. "measured 105s for 190 lines. Run again to check progress.")
       :format(def.id, def.name, #range_lines, scope_name, opts.provider, timeout_ms / 1000),
     vim.log.levels.INFO
   )
-
-  -- An explicit `timeout_ms` in config wins; nil means scale it to the payload.
-  local timeout_ms = opts.timeout_ms or timeout_for(#range_lines)
 
   local started = (vim.uv or vim.loop).hrtime()
   local handle = provider.call(opts.provider, prompt, payload, {

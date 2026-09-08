@@ -173,11 +173,15 @@ code path:
 
 | lines | measured | allowed |
 |---|---|---|
-| 4 | 22-35s | 90s |
-| 12 | 22-27s | 90s |
+| 4 | 22, 26, 35, 38, 53s | 120s |
+| 12 | 22-27s | 120s |
 | 190 | **105.6s** | 172s |
 | 400 | -- | 330s |
 | 1000+ | -- | 600s (capped) |
+
+The floor is 120s, not 90s, because of the spread in that first row: the same four-line input
+ranged from 22s to 53s. A budget sized on the median clips a slow run, and a timeout throws
+away an answer the model already finished.
 
 The 190-line run is why this exists. It was shipped with a flat 90s sized against 4-line
 samples, so a real note got killed *after* the model had already produced 74 findings: the
