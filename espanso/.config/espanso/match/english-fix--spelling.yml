@@ -70,3 +70,40 @@ matches:
     replace: "sabbatical"
     word: true
     propagate_case: true
+
+  - trigger: "sfhit"
+    replace: "shift"
+    word: true
+    propagate_case: true
+
+  - trigger: "resontates"
+    replace: "resonates"
+    word: true
+    propagate_case: true
+
+  - trigger: "resontate"
+    replace: "resonate"
+    word: true
+    propagate_case: true
+
+  - trigger: "birthay"
+    replace: "birthday"
+    word: true
+    propagate_case: true
+
+  - trigger: "vanila"
+    replace: "vanilla"
+    word: true
+    propagate_case: true
+
+  # Transposed letters; never a word.
+  - trigger: "specifcying"
+    replace: "specifying"
+    word: true
+    propagate_case: true
+
+  # Tripled vowel in a config key; never a word.
+  - trigger: "weeekstart"
+    replace: "weekStart"
+    word: true
+    propagate_case: true
