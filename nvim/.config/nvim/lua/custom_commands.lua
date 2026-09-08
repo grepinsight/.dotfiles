@@ -1,12 +1,55 @@
 -- Vault root comes from $OBSIDIAN_VAULT; see lua/util/vault.lua.
 local vault = require("util.vault")
 
+-- The hledger account mapper lives outside this repo, so its path is resolved at call time
+-- rather than hardcoded. Same reasoning as `util/vault.lua`, and for the same reason: this
+-- config is tracked and the repo is public, so a checkout under another username pointed at
+-- an absolute `/Users/<someone>/...` path that does not exist.
+--
+-- Resolution order:
+--   1. `$HLEDGER_MAPPER` -- full path to the script, for a non-standard location
+--   2. `$SCRATCH_DIR`    -- the scratch root, if one is exported
+--   3. `~/scratch`       -- last-resort default, which is where it actually lives
+local HLEDGER_MAPPER_REL = "2024-11-04--lua-hledger/mapper.lua"
+
+---@return string
+local function hledger_mapper_path()
+  local explicit = vim.env.HLEDGER_MAPPER
+  if explicit ~= nil and explicit ~= "" then
+    return vim.fs.normalize(explicit)
+  end
+  local root = vim.env.SCRATCH_DIR
+  if root == nil or root == "" then
+    root = "~/scratch"
+  end
+  return vim.fs.joinpath(vim.fs.normalize(root), HLEDGER_MAPPER_REL)
+end
+
 -- Define a function to call the Lua script
 function SuggestAccounts()
+  local script_path = hledger_mapper_path()
+  -- Checked before the prompt, not after: asking for a description and then failing wastes
+  -- the typing, and the old code failed with a raw `lua: cannot open ...` instead.
+  if vim.fn.filereadable(script_path) == 0 then
+    vim.notify(
+      ("SuggestAccounts: no mapper script at %s. Set $HLEDGER_MAPPER to its full path, or "
+        .. "$SCRATCH_DIR to the directory containing %s."):format(script_path, HLEDGER_MAPPER_REL),
+      vim.log.levels.ERROR
+    )
+    return
+  end
+
   local transaction_description = vim.fn.input("Enter transaction description: ")
-  local script_path = "/Users/allee/scratch/2024-11-04--lua-hledger/mapper.lua"
-  local command = string.format("lua %s %q", script_path, transaction_description)
-  os.execute(command)
+  if transaction_description == "" then
+    return
+  end
+
+  -- `shellescape` on both, because `%q` is Lua's string quoting and not the shell's, and
+  -- the path was previously unquoted entirely, so a space anywhere in it split the command.
+  os.execute(("lua %s %s"):format(
+    vim.fn.shellescape(script_path),
+    vim.fn.shellescape(transaction_description)
+  ))
 end
 
 -- Create a Neovim command to trigger the function
