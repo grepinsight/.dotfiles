@@ -165,6 +165,45 @@ describe("level.diffview open", function()
   end)
 end)
 
+describe("diff hunk granularity", function()
+  it("merges adjacent changed lines into one hunk, so `do` takes both", function()
+    -- Not a bug being pinned as correct: this is vim's diff behaviour, and it defeats
+    -- per-finding review when two unrelated findings land on consecutive lines. The test
+    -- documents it so the line-scoped commands below have a stated reason to exist.
+    local buf = source()
+    -- Lines 4 and 5 differ; make them adjacent changes.
+    local corrected = { "alpha", "which takes the text and use LLM", "beta", "FIXED four", "FIXED five" }
+    local state = diffview.open(buf, corrected, {}, {})
+
+    vim.api.nvim_set_current_win(state.source_win)
+    vim.api.nvim_win_set_cursor(state.source_win, { 4, 0 })
+    vim.cmd("normal! do")
+
+    local after = vim.api.nvim_buf_get_lines(buf, 3, 5, false)
+    diffview.close(state)
+
+    -- Both lines came over from one `do`.
+    assert.same({ "FIXED four", "FIXED five" }, after)
+  end)
+
+  it("takes only the cursor line with a line-scoped diffget", function()
+    -- This is what the :AlbertLintLevelAccept command runs, and it is the mitigation for
+    -- the merged-hunk behaviour above.
+    local buf = source()
+    local corrected = { "alpha", "which takes the text and use LLM", "beta", "FIXED four", "FIXED five" }
+    local state = diffview.open(buf, corrected, {}, {})
+
+    vim.api.nvim_set_current_win(state.source_win)
+    vim.api.nvim_win_set_cursor(state.source_win, { 4, 0 })
+    vim.cmd(".,.diffget")
+
+    local after = vim.api.nvim_buf_get_lines(buf, 3, 5, false)
+    diffview.close(state)
+
+    assert.same({ "FIXED four", "gamma" }, after)
+  end)
+end)
+
 describe("level.diffview close", function()
   it("leaves the source buffer out of diff mode", function()
     -- Without teardown a stale diffthis leaves the author's real buffer permanently in

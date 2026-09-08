@@ -71,6 +71,25 @@ describe("level.levels prompt", function()
     assert.is_true(p:find("shortest", 1, true) ~= nil)
   end)
 
+  it("forbids overlapping findings, which cannot both be applied", function()
+    -- Measured against a live model 2026-09-08: asked to review `takes the text and use
+    -- LLM`, it returned `use` -> `uses` AND `use LLM` -> `use an LLM` as two findings.
+    -- Both are correct and they overlap, so apply.build kept the first and dropped the
+    -- second, producing `uses LLM` with the article error silently surviving.
+    local p = levels.prompt(1):lower()
+
+    assert.is_true(p:find("overlap", 1, true) ~= nil)
+  end)
+
+  it("tells the model to fix capitalization it creates in its own replacement", function()
+    -- Same live run: `Audience` -> `The Audience`, keeping the sentence-initial capital
+    -- mid-phrase, because the ignore list says capitalization is out of scope. Reporting
+    -- a capitalization error and producing one are different acts.
+    local p = levels.prompt(1):lower()
+
+    assert.is_true(p:find("begins a sentence", 1, true) ~= nil)
+  end)
+
   it("returns nil for an unimplemented level", function()
     assert.is_nil(levels.prompt(2))
   end)

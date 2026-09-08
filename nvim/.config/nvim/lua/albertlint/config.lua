@@ -13,6 +13,7 @@ local M = {}
 ---@field enabled_optional string[] Ids from the opt-in rule set to switch on.
 ---@field severity table<string, integer> Per-rule severity overrides, keyed by rule id.
 ---@field semantic AlbertLintSemanticConfig
+---@field level AlbertLintLevelConfig
 local defaults = {
   -- Prose filetypes only. Source files are excluded because a lowercase `python` in
   -- code is correct and the linter has no business there.
@@ -60,6 +61,38 @@ local defaults = {
     -- "paragraph" | "buffer" | "selection". Read by `semantic.scope_range`; before
     -- 2026-08-28 it was declared here and never read.
     scope = "paragraph",
+  },
+
+  ---@class AlbertLintLevelConfig
+  ---@field enabled boolean
+  ---@field provider string "claude" | "openai"
+  ---@field scope string "paragraph" | "buffer" | "selection"
+  ---@field timeout_ms integer
+  ---@field model string|nil Provider-specific model override
+  level = {
+    enabled = true,
+
+    -- "claude" needs no credential in this process: the CLI already holds one, which is
+    -- why the semantic tier shells out too. "openai" reads OPENAI_API_KEY from the
+    -- environment and is otherwise equivalent, with the advantage that a strict
+    -- json_schema makes a malformed response impossible.
+    provider = "claude",
+
+    -- "buffer", not the semantic tier's "paragraph". A level pass opens a two-window
+    -- diff, and a diff over one paragraph is not worth the split. An explicit `:'<,'>`
+    -- range still wins over this, as it does for the semantic tier.
+    scope = "buffer",
+
+    -- 90s against the semantic tier's 60s. Not arbitrary: a buffer-scoped pass sends the
+    -- whole note where a paragraph-scoped pass sends a few lines, and the slowest
+    -- measured semantic run was 34.6s on five lines.
+    timeout_ms = 90000,
+
+    -- nil means the provider's own default: sonnet for claude, pinned for the reason in
+    -- the semantic block above. For openai, `provider.OPENAI_DEFAULT_MODEL` applies, and
+    -- that string is NOT verified against OpenAI's current lineup as of 2026-09-08. Set
+    -- this explicitly if a call returns an unknown-model error.
+    model = nil,
   },
 }
 

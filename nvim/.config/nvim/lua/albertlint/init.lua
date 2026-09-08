@@ -269,6 +269,13 @@ function M.setup(opts)
       "albertlint.semantic",
       "albertlint.config",
       "albertlint.collocation.index",
+      -- The level tier, on this list for exactly the reason `semantic` is: a fix that the
+      -- command called Reload cannot pick up costs a full restart to test.
+      "albertlint.level",
+      "albertlint.level.apply",
+      "albertlint.level.levels",
+      "albertlint.level.provider",
+      "albertlint.level.diffview",
     }) do
       package.loaded[mod] = nil
     end
@@ -305,6 +312,31 @@ function M.setup(opts)
     require("albertlint.semantic").cancel()
   end, { desc = "albertlint: stop the LLM grammar check running in this buffer" })
 
+  -- The graded level tiers. Unlike every other tier here, these produce replacement prose
+  -- with an accept key, which is a scoped and deliberate exception to the doctrine in
+  -- CLAUDE.md rather than an oversight. Read that section before changing this.
+  vim.api.nvim_create_user_command("AlbertLintLevel1", function(cmd)
+    require("albertlint.level").run(1, cmd.range > 0)
+  end, { range = true, desc = "albertlint: level 1 (grammar/usage) as a reviewable diff" })
+
+  -- Vim merges adjacent changed lines into one hunk, so `do` on two findings that landed
+  -- on consecutive lines takes both. These are line-scoped, for when that matters.
+  vim.api.nvim_create_user_command("AlbertLintLevelAccept", function()
+    require("albertlint.level").accept_line()
+  end, { desc = "albertlint: accept only the line under the cursor, not the whole hunk" })
+
+  vim.api.nvim_create_user_command("AlbertLintLevelReject", function()
+    require("albertlint.level").reject_line()
+  end, { desc = "albertlint: reject only the line under the cursor, not the whole hunk" })
+
+  vim.api.nvim_create_user_command("AlbertLintLevelClose", function()
+    require("albertlint.level").close()
+  end, { desc = "albertlint: close the level diff and leave diff mode" })
+
+  vim.api.nvim_create_user_command("AlbertLintLevelCancel", function()
+    require("albertlint.level").cancel()
+  end, { desc = "albertlint: stop the level pass running in this buffer" })
+
   -- One place that answers "is this thing working". Added because the question came up
   -- repeatedly and the honest answer needed four separate commands plus reading source.
   vim.api.nvim_create_user_command("AlbertLintStatus", function()
@@ -322,6 +354,16 @@ function M.setup(opts)
         cfg.semantic.timeout_ms,
         cfg.semantic.cmd[1],
         vim.fn.executable(cfg.semantic.cmd[1]) == 1 and "found" or "NOT ON PATH"
+      ),
+      ("level: %s, provider %s, scope %s, timeout %dms%s"):format(
+        cfg.level.enabled and "enabled" or "disabled",
+        cfg.level.provider,
+        cfg.level.scope,
+        cfg.level.timeout_ms,
+        -- Report only whether the credential is PRESENT, never any part of its value.
+        cfg.level.provider == "openai"
+            and ((vim.env.OPENAI_API_KEY or "") ~= "" and ", OPENAI_API_KEY set" or ", OPENAI_API_KEY NOT SET")
+          or ""
       ),
     }
 
