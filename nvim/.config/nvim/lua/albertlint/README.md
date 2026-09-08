@@ -188,8 +188,24 @@ reachable when measured 2026-08-26.
 never from a dotfile. A strict `json_schema` makes a malformed response impossible, which is its
 real advantage. The key is handed to curl on **stdin** via `--config -`, never in argv, because
 argv is world-readable through `ps`; a test asserts no rendered argv contains `Bearer` or an
-`sk-` string. The default model string is an unverified fallback, not a checked value: set
-`level.model` explicitly if a call returns an unknown-model error.
+`sk-` string.
+
+**The default model is `gpt-5.5`, and it was measured, not chosen.** Three runs per candidate
+against a four-line sample with four known errors, 2026-09-08:
+
+| model | hits over 3 runs | avg s | |
+|---|---|---|---|
+| `gpt-5.5` | 4, 4, 4 | 10.1 | stable, and the oldest that is |
+| `gpt-5.6-sol` | 4, 4, 4 | 10.7 | equally stable, the expensive tier |
+| `gpt-6-astra` | 4, 3, 4 | 10.6 | **newest, and not stable** |
+| `gpt-5.6-luna` | 3, 3, 4 | 5.9 | fastest of the good ones, still not stable |
+| `gpt-5.4-nano` | 0 | 1.6 | **returned zero findings** |
+| `gpt-4o` | 0, 2, 0 | 1.7 | **zero findings on two runs of three** |
+
+Two things worth keeping from that. **Newest is not best**: `gpt-6-astra` is three months newer
+than `gpt-5.5` and less consistent here. And **the floor is real**: the nano tier does not score
+worse, it silently returns nothing, which reads as "your writing is fine" and is the worst
+failure a linter has available. Re-run the measurement before changing this.
 
 Nothing about level 1 has been measured for precision. Every test is recall on text already
 known to be broken.

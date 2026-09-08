@@ -121,6 +121,25 @@ describe("level.provider openai credential handling", function()
     assert.is_nil(body:find("sk-", 1, true))
   end)
 
+  it("pins the measured default model", function()
+    -- Not a style assertion. This default was measured 2026-09-08, three runs per
+    -- candidate against a sample with four known errors, and the previous value
+    -- (`gpt-4o`) returned ZERO findings on two runs of three -- the exact failure
+    -- config.lua records for the semantic tier, where reporting nothing on flawed prose
+    -- reads as "your writing is fine". `gpt-6-astra`, three months newer, was less
+    -- consistent than this. If you are changing this line, re-run the measurement first;
+    -- the table is in provider.lua.
+    assert.equals("gpt-5.5", provider.OPENAI_DEFAULT_MODEL)
+  end)
+
+  it("threads the default into the request body when no override is given", function()
+    local decoded = vim.json.decode(
+      provider.openai_body(provider.OPENAI_DEFAULT_MODEL, "PROMPT", "1: text")
+    )
+
+    assert.equals("gpt-5.5", decoded.model)
+  end)
+
   it("produces a body that round-trips as JSON", function()
     local decoded = vim.json.decode(provider.openai_body("test-model", "PROMPT", "1: text"))
 

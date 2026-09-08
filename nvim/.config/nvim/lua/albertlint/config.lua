@@ -88,10 +88,12 @@ local defaults = {
     -- measured semantic run was 34.6s on five lines.
     timeout_ms = 90000,
 
-    -- nil means the provider's own default: sonnet for claude, pinned for the reason in
-    -- the semantic block above. For openai, `provider.OPENAI_DEFAULT_MODEL` applies, and
-    -- that string is NOT verified against OpenAI's current lineup as of 2026-09-08. Set
-    -- this explicitly if a call returns an unknown-model error.
+    -- nil means the provider's own default, and both are pinned by measurement rather
+    -- than by preference: sonnet for claude (see the semantic block above), gpt-5.5 for
+    -- openai. The openai choice was measured 2026-09-08 across three runs per candidate
+    -- on a sample with four known errors; gpt-4o found none on two runs of three, and
+    -- gpt-6-astra, three months newer than gpt-5.5, was less consistent. The table is in
+    -- `provider.lua`. Do not change either without re-running that measurement.
     model = nil,
   },
 }

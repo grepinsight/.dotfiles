@@ -181,7 +181,7 @@ Uses `response_format: {type: "json_schema", strict: true}`, which makes malform
 structurally impossible and removes the entire parse-failure branch, including the user-facing
 "the model returned an unreadable response" message at `semantic.lua:245`.
 
-Transport is `curl` via `vim.system`, not `vim.net.request`. `vim.net` exists on the author's
+The default model is `gpt-5.5`, chosen by measurement on 2026-09-08; see `provider.lua` for the table. Transport is `curl` via `vim.system`, not `vim.net.request`. `vim.net` exists on the author's
 0.12.4 and exposes a single `request` function, but it is experimental, and `curl` is the boring
 choice that also gives auditable control over where the credential goes.
 
@@ -330,7 +330,7 @@ the second was declined.
 1. **`do`/`dp` ergonomics are inferred, not observed.** The accept and reject bindings follow from
    how diff mode works, not from watching the author use this particular view. The first real
    session may send §6 back for revision.
-2. **Which provider is better on this corpus is unknown.** Both ship; no comparison has been run.
+2. **Which provider is better on this corpus is still unknown.** Both ship. A model comparison *within* openai was run 2026-09-08 and pinned the default to `gpt-5.5` (table in `provider.lua`), but claude and openai have not been compared against each other, and neither has been measured on the author's real prose rather than on a seeded sample.
 3. **The retype gate** (§2, rejected) becomes worth revisiting if `do` turns out to be used
    reflexively, since that is the exact failure the original doctrine predicted.
 4. **Level 2's boundary is undefined.** "Coherence" needs the same treatment §4 gave level 1: a

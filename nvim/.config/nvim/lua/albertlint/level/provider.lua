@@ -30,10 +30,32 @@ M.CLAUDE_CMD = {
 
 M.OPENAI_URL = "https://api.openai.com/v1/chat/completions"
 
----NOT verified against OpenAI's current model lineup. This is a fallback so the provider is
----usable without configuration, not a recommendation. Set `config.level.model` explicitly if
----a call comes back with an unknown-model error.
-M.OPENAI_DEFAULT_MODEL = "gpt-4o"
+---Measured, not guessed. Chosen 2026-09-08 by running `levels.prompt(1)` against a four-line
+---sample with four known errors (agreement, `an LLM`, `errors`, `The audience`), three runs per
+---model, through this module's own code path. Model list taken from a live `/v1/models` call
+---rather than from memory.
+---
+---  model          hits over 3 runs   avg s   note
+---  gpt-5.5        4, 4, 4            10.1    stable, and the oldest that is
+---  gpt-5.6-sol    4, 4, 4            10.7    equally stable, the expensive tier
+---  gpt-6-astra    4, 3, 4            10.6    NEWEST, and not stable
+---  gpt-5.6-luna   3, 3, 4             5.9    fastest of the good ones, still not stable
+---  gpt-5.4-mini   2                   1.5    restated whole clauses, breaking minimal span
+---  gpt-5.4-nano   0                   1.6    returned zero findings
+---  gpt-4o         0, 2, 0             1.7    returned zero findings on two runs of three
+---
+---`gpt-4o` was this default until the measurement, and it is the reason the measurement
+---happened. Zero findings on flawed prose reads as "your writing is fine", which
+---`config.lua` already records as the worst failure a linter has available, from the same
+---mistake in the semantic tier on 2026-08-28. Do not pick a model here without measuring.
+---
+---Two conclusions worth keeping. Newest is not best: `gpt-6-astra` is three months newer than
+---`gpt-5.5` and less consistent on this task. And the floor is real: the nano tier does not
+---merely score worse, it silently returns nothing.
+---
+---Cheapness of `gpt-5.5` over `gpt-5.6-sol` is inferred from it being an older generation, not
+---measured; `/v1/models` does not expose pricing.
+M.OPENAI_DEFAULT_MODEL = "gpt-5.5"
 
 ---@param opts table|nil
 ---@return string[]

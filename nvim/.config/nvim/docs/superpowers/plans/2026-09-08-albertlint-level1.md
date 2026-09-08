@@ -823,7 +823,7 @@ Create `tests/albertlint/level_provider_spec.lua`:
 ---into a header argument, this test is what catches it.
 local provider = require("albertlint.level.provider")
 
-local FAKE_KEY = "sk-tESTtESTtESTtESTtESTtESTtESTtEST"
+local FAKE_KEY = "sk-NOT-A-REAL-KEY-test-fixture-only"
 
 describe("level.provider claude argv", function()
   it("carries all three isolation flags", function()
@@ -2331,5 +2331,5 @@ One fix applied during review: Task 5's test asserted on `level._in_flight`, so 
 
 Two things the executor should not silently resolve:
 
-1. **The openai model string `"gpt-4o"` is a guess.** I cannot verify OpenAI's current model lineup, so it is a config default with a comment saying so, not a verified value. If the first `openai` call returns an unknown-model error, that is expected; set `level.model` explicitly rather than treating it as a bug in the provider.
+1. **RESOLVED 2026-09-08, after this plan was written:** the model was pinned by measurement (`gpt-5.5`); see the table in `provider.lua`. `gpt-4o` scored zero findings on two runs of three, so the concern below was justified and is now closed. Original note, kept as the record: **The openai model string `"gpt-4o"` is a guess.** I cannot verify OpenAI's current model lineup, so it is a config default with a comment saying so, not a verified value. If the first `openai` call returns an unknown-model error, that is expected; set `level.model` explicitly rather than treating it as a bug in the provider.
 2. **Nothing here measures precision.** Every test is recall on text known to be broken. The spec's §10 planned check, a pass over the fix log's `After:` column that should return nothing, is not in this plan and is not claimed.
