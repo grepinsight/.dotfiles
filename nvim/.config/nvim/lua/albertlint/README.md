@@ -96,7 +96,7 @@ require("albertlint").setup({
     enabled = true,
     provider = "claude",          -- claude | openai
     scope = "buffer",             -- paragraph | buffer | selection
-    timeout_ms = 90000,
+    timeout_ms = nil,             -- nil means scale it to the line count
     model = nil,                  -- nil means the provider's own default
   },
 })
@@ -165,6 +165,31 @@ article or a referent, so the thing under review is the thing that disappears.
 **The winbar is on both windows for the same reason the blank virtual lines exist.** A winbar
 on the corrected side alone misaligned all 25 lines of the sample. The `YOURS` label on the
 left is the mirror, not decoration.
+
+### The timeout scales, because a fixed one cannot work
+
+`timeout_ms = nil` sizes the budget from the line count. Measured 2026-09-08 through the real
+code path:
+
+| lines | measured | allowed |
+|---|---|---|
+| 4 | 22-35s | 90s |
+| 12 | 22-27s | 90s |
+| 190 | **105.6s** | 172s |
+| 400 | -- | 330s |
+| 1000+ | -- | 600s (capped) |
+
+The 190-line run is why this exists. It was shipped with a flat 90s sized against 4-line
+samples, so a real note got killed *after* the model had already produced 74 findings: the
+answer existed and was thrown away. Roughly 25s of fixed overhead plus 0.42s per line, and the
+formula allows 30s + 0.75s per line for about 1.6x headroom.
+
+The 10-minute ceiling is a deliberate refusal rather than a model limit. Past that the right
+move is a narrower scope, and the timeout message says so. Set a number to pin it.
+
+A timeout is reported as a timeout. `vim.system` surfaces one as exit code 124 with SIGTERM
+and an **empty** stderr, so the naive message read `claude exited 124:` and said nothing at
+all.
 
 ### Reopening is free
 

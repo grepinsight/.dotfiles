@@ -53,6 +53,46 @@ describe("level payload", function()
   end)
 end)
 
+describe("level timeout", function()
+  it("gives a 190-line note more than the 105.6s it was measured to need", function()
+    -- The exact failure a real session hit. 90s was shipped after timing 4-line samples;
+    -- a 190-line note measured 105.6s on 2026-09-08 and was killed AFTER the model had
+    -- already produced 74 findings. If this drops back under 105600, that recurs.
+    assert.is_true(level._timeout_for(190) > 105600)
+  end)
+
+  it("floors a short selection rather than giving it a tight budget", function()
+    -- Most of the cost is fixed overhead (~25s measured), so a 3-line selection needs
+    -- nowhere near 3 lines' worth of time.
+    assert.equals(90000, level._timeout_for(3))
+    assert.equals(90000, level._timeout_for(0))
+  end)
+
+  it("scales with the line count between the floor and the ceiling", function()
+    assert.is_true(level._timeout_for(400) > level._timeout_for(200))
+  end)
+
+  it("refuses to wait more than ten minutes", function()
+    -- A deliberate refusal, not a model limit: past this the right answer is a narrower
+    -- scope, not a longer wait, and the timeout message says so.
+    assert.equals(600000, level._timeout_for(100000))
+  end)
+
+  it("lets an explicit config value win over the scaling", function()
+    config.setup({ level = { timeout_ms = 12345 } })
+
+    assert.equals(12345, config.get().level.timeout_ms)
+
+    config.setup({})
+  end)
+
+  it("defaults to nil, meaning scale it", function()
+    config.setup({})
+
+    assert.is_nil(config.get().level.timeout_ms)
+  end)
+end)
+
 describe("level config", function()
   after_each(function()
     config.setup({})
@@ -74,13 +114,15 @@ describe("level config", function()
 
     assert.equals("openai", config.get().level.provider)
     assert.equals("buffer", config.get().level.scope)
-    assert.is_true(config.get().level.timeout_ms > 0)
+    assert.is_true(config.get().level.enabled)
   end)
 
-  it("allows a longer timeout than the semantic tier, because it sends more text", function()
+  it("allows more time than the semantic tier, because it sends more text", function()
+    -- The level default is nil, meaning scaled, so compare the scaled value rather than
+    -- the config field. Even the floor beats the semantic tier's fixed 60s.
     config.setup({})
 
-    assert.is_true(config.get().level.timeout_ms >= config.get().semantic.timeout_ms)
+    assert.is_true(level._timeout_for(1) > config.get().semantic.timeout_ms)
   end)
 end)
 

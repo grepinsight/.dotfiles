@@ -114,6 +114,29 @@ local function all_blank(lines)
   return true
 end
 
+---How long to allow, scaled to how much text is being sent.
+---
+---A fixed timeout cannot serve both a paragraph and a whole note, and the shipped 90s was
+---sized against 4-line samples. Measured 2026-09-08 through this module's own code path:
+---
+---    4 lines   22-35s
+---   12 lines   22-27s
+---  190 lines   105.6s   <- exceeded the 90s default and was killed mid-answer
+---
+---That last run succeeded on the model's side, returning 74 findings, and was then thrown
+---away by the timeout. Roughly 25s of fixed overhead plus 0.42s per line, so this allows 30s
+---plus 0.75s per line for headroom of about 1.6x on the measured points.
+---
+---The floor keeps a short selection from getting a uselessly tight budget. The ceiling is a
+---deliberate refusal rather than a limit of the model: past ten minutes the right answer is a
+---narrower scope, not a longer wait, and the timeout message says so.
+---@param line_count integer
+---@return integer milliseconds
+local function timeout_for(line_count)
+  local ms = math.floor((30 + 0.75 * line_count) * 1000)
+  return math.max(90000, math.min(600000, ms))
+end
+
 ---Open the diff from findings, whether they just arrived or came from the cache.
 ---@param bufnr integer
 ---@param def table
@@ -234,15 +257,18 @@ function M.run(id, use_selection, force)
   local payload = M._numbered(range_lines, start_lnum + 1)
 
   vim.notify(
-    ("albertlint: level %d (%s) over %d lines (%s scope) via %s, ~30-90s. "
-      .. "Run again to check progress.")
-      :format(def.id, def.name, #range_lines, scope_name, opts.provider),
+    ("albertlint: level %d (%s) over %d lines (%s scope) via %s. Allowing up to %ds; "
+      .. "measured 105s for 190 lines. Run again to check progress.")
+      :format(def.id, def.name, #range_lines, scope_name, opts.provider, timeout_ms / 1000),
     vim.log.levels.INFO
   )
 
+  -- An explicit `timeout_ms` in config wins; nil means scale it to the payload.
+  local timeout_ms = opts.timeout_ms or timeout_for(#range_lines)
+
   local started = (vim.uv or vim.loop).hrtime()
   local handle = provider.call(opts.provider, prompt, payload, {
-    timeout_ms = opts.timeout_ms,
+    timeout_ms = timeout_ms,
     model = opts.model,
   }, function(res)
     -- Cleared on every path, so a failed, timed-out, or cancelled pass cannot wedge the
@@ -468,5 +494,6 @@ M._open_views = open_views
 M._cache = cache
 M._cancelled = cancelled
 M._all_blank = all_blank
+M._timeout_for = timeout_for
 M._present = present
 return M

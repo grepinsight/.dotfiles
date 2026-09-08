@@ -83,10 +83,12 @@ local defaults = {
     -- range still wins over this, as it does for the semantic tier.
     scope = "buffer",
 
-    -- 90s against the semantic tier's 60s. Not arbitrary: a buffer-scoped pass sends the
-    -- whole note where a paragraph-scoped pass sends a few lines, and the slowest
-    -- measured semantic run was 34.6s on five lines.
-    timeout_ms = 90000,
+    -- nil means scale the timeout to how many lines are being sent; see `timeout_for` in
+    -- level/init.lua for the measurements. A fixed value cannot serve both a paragraph and
+    -- a whole note: 90s was shipped on 2026-09-08 after timing 4-line samples, and a
+    -- 190-line note measured 105.6s the same day, so a real buffer was killed mid-answer
+    -- after the model had already produced 74 findings. Set a number here to pin it.
+    timeout_ms = nil,
 
     -- nil means the provider's own default, and both are pinned by measurement rather
     -- than by preference: sonnet for claude (see the semantic block above), gpt-5.5 for
