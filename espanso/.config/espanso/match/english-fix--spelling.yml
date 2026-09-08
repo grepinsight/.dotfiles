@@ -39,3 +39,34 @@ matches:
     replace: "canonical"
     word: true
     propagate_case: true
+
+  - trigger: "compilant"
+    replace: "compliant"
+    word: true
+    propagate_case: true
+
+  - trigger: "filesytems"
+    replace: "filesystems"
+    word: true
+    propagate_case: true
+
+  - trigger: "sabatical"
+    replace: "sabbatical"
+    word: true
+    propagate_case: true
+
+  - trigger: "antomic"
+    replace: "atomic"
+    word: true
+    propagate_case: true
+
+  - trigger: "thousdand"
+    replace: "thousand"
+    word: true
+    propagate_case: true
+
+  # Doubled initial letter; never a word.
+  - trigger: "ssabbatical"
+    replace: "sabbatical"
+    word: true
+    propagate_case: true

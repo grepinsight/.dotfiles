@@ -17,3 +17,8 @@ matches:
     replace: "to pbcopy"
     word: true
     propagate_case: true
+  # `business days` and `working days` are the same unit; stacking both is never correct.
+  - trigger: "business working days"
+    replace: "business days"
+    word: true
+    propagate_case: true
