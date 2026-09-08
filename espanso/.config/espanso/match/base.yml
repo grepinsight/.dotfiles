@@ -158,7 +158,7 @@ matches:
       - name: output
         type: shell
         params:
-          cmd: /Users/allee/src/productivity/uuidgen-short
+          cmd: $HOME/src/productivity/uuidgen-short
   - trigger: ;uuid2;
     replace: "{{output}}"
     vars:
@@ -259,8 +259,12 @@ matches:
       import althemes
   - trigger: facet=
     replace: "facet=alt.Facet('$|$', columns=3)"
-  - trigger: ":wtf"
-    image_path: /Users/allee/Dropbox/vimwiki/shared/images/wtf-is-all.gif
+  # Disabled 2026-09-08. The image is gone (it lived under a Dropbox tree that no longer
+  # exists), and espanso expands neither `~` nor environment variables in paths -- only
+  # `$CONFIG` -- so there is no portable way to write the old absolute path. To restore
+  # this, put the file in the espanso config dir and use `image_path: "$CONFIG/images/..."`.
+  # - trigger: ":wtf"
+  #   image_path: "$CONFIG/images/wtf-is-all.gif"
   - trigger: ;dash50
     replace: "--------------------------------------------------"
   - trigger: ;cdash50

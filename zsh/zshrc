@@ -354,7 +354,7 @@ alias tm='task-master'
 alias taskmaster='task-master'
 
 # opencode
-export PATH=/Users/allee/.opencode/bin:$PATH
+export PATH=$HOME/.opencode/bin:$PATH
 
 # VoiceMode MCP - text-only mode (skip TTS, voice input only)
 export VOICEMODE_SKIP_TTS=true
@@ -364,10 +364,10 @@ export VOICEMODE_SKIP_TTS=true
 # Added by dbt installer
 # [doctor 2026-09-02] redundant: ~/.local/bin is already added idempotently by
 # `. "$HOME/.local/bin/env"` above. Uncomment if PATH resolution ever breaks.
-# export PATH="$PATH:/Users/allee/.local/bin"
+# export PATH="$PATH:$HOME/.local/bin"
 
 # dbt aliases
-alias dbtf=/Users/allee/.local/bin/dbt
+alias dbtf=$HOME/.local/bin/dbt
 
 
 fpath+=~/.zfunc; autoload -Uz compinit; compinit
@@ -390,7 +390,7 @@ td() {
 }
 
 # opencode
-export PATH=/Users/allee/.opencode/bin:$PATH
+export PATH=$HOME/.opencode/bin:$PATH
 
 
 # Cortex CLI completion (disable via /settings in cortex)
@@ -400,4 +400,4 @@ export PATH=/Users/allee/.opencode/bin:$PATH
 # Added by Antigravity CLI installer
 # [doctor 2026-09-02] redundant: ~/.local/bin is already added idempotently by
 # `. "$HOME/.local/bin/env"` above. Uncomment if PATH resolution ever breaks.
-# export PATH="/Users/allee/.local/bin:$PATH"
+# export PATH="$HOME/.local/bin:$PATH"
