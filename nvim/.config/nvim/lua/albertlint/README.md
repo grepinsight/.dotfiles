@@ -143,11 +143,52 @@ written forcefully enough to look like this feature is a bug.
 The pass opens a native two-window diff: your buffer left, a corrected copy right. Navigation
 and apply are Neovim's own, so nothing here is reinvented.
 
+The keys are on the winbar, so you do not have to remember them:
+
 | Key | Does |
 |---|---|
 | `]c` / `[c` | next / previous hunk |
 | `do` | accept the hunk from the corrected side |
 | `dp` | push the original over the corrected side |
+
+**The cursor lands in your buffer, on the left, and that is deliberate.** `:diffget` modifies
+the *current* buffer, so `do` pressed in the corrected window overwrites the correction with
+your original -- the exact opposite of accept. Verified 2026-09-08 by pressing it, back when
+the cursor did land on the right: the corrected line reverted and the source line did not
+change at all, while the winbar said "do accept".
+
+**Folding is off in both windows.** Diff mode turns on `foldmethod=diff` with `foldlevel=0`,
+which collapses every unchanged region. Measured 2026-09-08 on a 25-line pair with two
+changes: 5 lines hidden. For prose that folds away exactly the context you need to judge an
+article or a referent, so the thing under review is the thing that disappears.
+
+**The winbar is on both windows for the same reason the blank virtual lines exist.** A winbar
+on the corrected side alone misaligned all 25 lines of the sample. The `YOURS` label on the
+left is the mirror, not decoration.
+
+### Reopening is free
+
+Findings are cached per buffer and level, so `:AlbertLintLevelClose` followed by
+`:AlbertLintLevel1` costs nothing and reuses the answer already in memory. Measured: 22.3s for
+the first pass, 0.016s to reopen. Without it the diff is a call you have to think about rather
+than a panel you toggle.
+
+| Command | Does |
+|---|---|
+| `:AlbertLintLevel1` | serve from cache when there is one |
+| `:AlbertLintLevel1!` | ignore the cache and run a fresh pass |
+| `:AlbertLintLevelClearCache` | forget this buffer's findings |
+
+The cache holds the raw findings, not the corrected text, and re-applies them against the
+buffer **as it is now**. That is what makes it correct after a `do`: the accepted fix no longer
+matches its quote, so it drops out and the rest still place. Accepting one of four and
+reopening shows three.
+
+That re-application is also where a text-corruption bug lived. When a replacement *contains*
+its own quote (`expression error` -> `expression errors`), the quote still matches inside its
+own output, and re-applying produced `expression errorss`. Verified 2026-09-08. `apply.build`
+now drops a fix whose span already holds the replacement, and a test asserts the property
+directly: applying twice gives the same text as applying once.
 
 The label and the reason for each fix appear as virtual text above the change. **The blank
 virtual lines on your side of the diff are not dead code.** Diff mode aligns two windows with

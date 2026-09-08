@@ -32,10 +32,47 @@ local in_flight = {}
 ---@type table<integer, table>
 local open_views = {}
 
+---The last findings fetched per buffer and level, so closing and reopening the diff is free.
+---
+---A pass costs money and 30 to 90 seconds. Without this, `:AlbertLintLevelClose` followed by
+---`:AlbertLintLevel1` is a second paid call for an answer already in memory, which makes the
+---diff something you keep open rather than something you consult.
+---
+---The cache holds the raw findings, not the corrected lines, and they are re-applied against
+---the buffer as it is *now*. That is what makes it behave correctly after a `do`: an accepted
+---fix no longer matches its quote, so `apply.build` drops it and the remaining findings still
+---place. A stale finding cannot mis-apply either, because placement needs a byte-exact quote
+---match and an edited line will not provide one.
+---@type table<integer, table<integer, { findings: table[], at: number, provider: string }>>
+local cache = {}
+
 ---@param started integer Nanoseconds from vim.uv.hrtime
 ---@return string
 local function elapsed(started)
   return ("%.0fs"):format(((vim.uv or vim.loop).hrtime() - started) / 1e9)
+end
+
+---Find the level view for a buffer, accepting EITHER side of the diff.
+---
+---Every one of these commands is naturally typed from whichever window you happen to be
+---looking at, and one of them is the corrected scratch buffer. Looking up only
+---`open_views[bufnr]` therefore found nothing and `:AlbertLintLevelClose` silently tore
+---nothing down, leaving the real buffer in diff mode with a winbar still on it. Verified
+---2026-09-08; the unit test missed it because it called `diffview.close(state)` directly and
+---bypassed this lookup entirely.
+---@param bufnr integer
+---@return integer|nil source_buf
+---@return table|nil state
+local function resolve(bufnr)
+  if open_views[bufnr] then
+    return bufnr, open_views[bufnr]
+  end
+  for source_buf, state in pairs(open_views) do
+    if state.scratch_buf == bufnr then
+      return source_buf, state
+    end
+  end
+  return nil, nil
 end
 
 ---Render the range as absolute-numbered lines.
@@ -68,9 +105,35 @@ local function all_blank(lines)
   return true
 end
 
+---Open the diff from findings, whether they just arrived or came from the cache.
+---@param bufnr integer
+---@param def table
+---@param findings table[]
+---@return integer placed, integer dropped
+local function present(bufnr, def, findings)
+  -- The WHOLE buffer, not the reviewed range: the scratch copy is diffed against the real
+  -- buffer, and a range-only array would make every untouched line outside the range read
+  -- as a deletion.
+  local all_lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
+  local corrected, placed, dropped = apply.build(all_lines, 1, findings or {})
+  if #placed > 0 then
+    open_views[bufnr] = diffview.open(bufnr, corrected, placed, { level = def.id })
+  end
+  return #placed, #dropped
+end
+
+---@param n integer
+---@param one string
+---@param many string
+---@return string
+local function plural(n, one, many)
+  return n == 1 and one or many
+end
+
 ---@param id integer
 ---@param use_selection boolean
-function M.run(id, use_selection)
+---@param force boolean|nil Skip the cache and make a fresh call
+function M.run(id, use_selection, force)
   local opts = config.get().level
   if not opts.enabled then
     vim.notify("albertlint: the level tiers are disabled in config", vim.log.levels.WARN)
@@ -105,6 +168,35 @@ function M.run(id, use_selection)
   -- and leave no clear way back out.
   if open_views[bufnr] then
     M.close(bufnr)
+  end
+
+  -- Serve from cache before spending anything. This is what makes the diff a panel you can
+  -- toggle rather than a call you have to think about.
+  local hit = not force and (cache[bufnr] or {})[def.id] or nil
+  if hit then
+    local placed, dropped = present(bufnr, def, hit.findings)
+    local age = ("%.0fs"):format(((vim.uv or vim.loop).hrtime() - hit.at) / 1e9)
+    if placed == 0 then
+      vim.notify(
+        ("albertlint: level %d has nothing left to apply from the cached pass (%s old). "
+          .. ":AlbertLintLevel%d! to run a fresh one."):format(def.id, age, def.id),
+        vim.log.levels.INFO
+      )
+      return
+    end
+    local msg = ("albertlint: level %d, %d fix%s from cache (%s old, %s). "
+      .. ":AlbertLintLevel%d! to re-run."):format(
+      def.id, placed, plural(placed, "", "es"), age, hit.provider, def.id
+    )
+    if dropped > 0 then
+      -- Usually because they were already accepted, which is the good case, so this is
+      -- phrased as information rather than as a failure.
+      msg = msg .. (" %d no longer %s the text, most likely already applied."):format(
+        dropped, plural(dropped, "matches", "match")
+      )
+    end
+    vim.notify(msg, vim.log.levels.INFO)
+    return
   end
 
   local start_lnum, end_lnum, scope_name
@@ -160,16 +252,21 @@ function M.run(id, use_selection)
       return
     end
 
-    -- The WHOLE buffer, not the reviewed range: the scratch copy is diffed against the
-    -- real buffer, and a range-only array would make every untouched line outside the
-    -- range read as a deletion.
-    local all_lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
-    local corrected, placed, dropped = apply.build(all_lines, 1, res.findings or {})
+    -- Cached before presenting, and cached even when nothing placed, so a clean result is
+    -- not re-paid for either.
+    cache[bufnr] = cache[bufnr] or {}
+    cache[bufnr][def.id] = {
+      findings = res.findings or {},
+      at = (vim.uv or vim.loop).hrtime(),
+      provider = opts.provider,
+    }
+
+    local placed, dropped = present(bufnr, def, res.findings)
 
     ---@param msg string
     ---@return string
     local function with_dropped(msg)
-      if #dropped == 0 then
+      if dropped == 0 then
         return msg
       end
       -- "quote not found" is parser vocabulary. What is actionable is that rerunning
@@ -177,10 +274,10 @@ function M.run(id, use_selection)
       return msg
         .. (" %d result%s could not be attached, because the text moved or was quoted "
           .. "inexactly; run the check again to place %s.")
-          :format(#dropped, #dropped == 1 and "" or "s", #dropped == 1 and "it" or "them")
+          :format(dropped, plural(dropped, "", "s"), plural(dropped, "it", "them"))
     end
 
-    if #placed == 0 then
+    if placed == 0 then
       -- Zero has to read as a verdict, not as a no-op. "0 findings" on its own is
       -- indistinguishable from "the tool did not really run", which misled the author for
       -- a real reason once in the semantic tier, so name the line count and the scope.
@@ -193,13 +290,13 @@ function M.run(id, use_selection)
       return
     end
 
-    open_views[bufnr] = diffview.open(bufnr, corrected, placed, { level = def.id })
-
+    -- The keys are on the winbar now, so this does not repeat them. It names the one thing
+    -- the winbar cannot say: that reopening is free.
     vim.notify(
       with_dropped(("albertlint: level %d, %d fix%s in %d lines (%s scope, %s). "
-        .. "]c next, do accept hunk, dp reject hunk, :AlbertLintLevelAccept for one line "
-        .. "only, :AlbertLintLevelClose when done."):format(
-        def.id, #placed, #placed == 1 and "" or "es", #range_lines, scope_name, elapsed(started)
+        .. "Keys are on the winbar. Closing and reopening is free; "
+        .. ":AlbertLintLevel%d! forces a fresh pass."):format(
+        def.id, placed, plural(placed, "", "es"), #range_lines, scope_name, elapsed(started), def.id
       )),
       vim.log.levels.INFO
     )
@@ -217,12 +314,12 @@ end
 ---@return boolean
 function M.close(bufnr)
   bufnr = bufnr or vim.api.nvim_get_current_buf()
-  local state = open_views[bufnr]
+  local source_buf, state = resolve(bufnr)
   if not state then
     vim.notify("albertlint: no level diff open for this buffer", vim.log.levels.INFO)
     return false
   end
-  open_views[bufnr] = nil
+  open_views[source_buf] = nil
   diffview.close(state)
   return true
 end
@@ -242,18 +339,28 @@ end
 ---@return boolean
 local function line_scoped(direction, bufnr)
   bufnr = bufnr or vim.api.nvim_get_current_buf()
-  if not open_views[bufnr] then
+  local _, state = resolve(bufnr)
+  if not state then
     vim.notify("albertlint: no level diff open for this buffer", vim.log.levels.INFO)
     return false
   end
-  if not vim.wo.diff then
-    vim.notify(
-      "albertlint: this window is not in diff mode, so there is no line to take",
-      vim.log.levels.WARN
-    )
+  if not vim.api.nvim_win_is_valid(state.source_win) then
+    vim.notify("albertlint: the window this diff was opened in is gone", vim.log.levels.WARN)
     return false
   end
-  local ok, err = pcall(vim.cmd, ".,.diff" .. direction)
+
+  -- The command is named accept, so it always moves text INTO the author's buffer no matter
+  -- which window it was typed in. `:diffget` modifies the CURRENT buffer, so this has to run
+  -- in the source window; run from the corrected side it would overwrite the correction with
+  -- the original, which is what `do` itself does there and is why that surprised us.
+  --
+  -- Line N maps to line N across the two buffers because `apply.build` only ever replaces
+  -- spans within a line, never adds or removes one, so the corrected copy has the same line
+  -- count. That is what makes taking the cursor's line number across windows safe.
+  local lnum = vim.api.nvim_win_get_cursor(0)[1]
+  local ok, err = pcall(vim.api.nvim_win_call, state.source_win, function()
+    vim.cmd(("%d,%ddiff%s"):format(lnum, lnum, direction))
+  end)
   if not ok then
     -- The usual cause is a cursor that is not on a changed line, which is a normal thing
     -- to do rather than an error worth a stack trace.
@@ -284,6 +391,10 @@ end
 ---@return boolean cancelled
 function M.cancel(bufnr)
   bufnr = bufnr or vim.api.nvim_get_current_buf()
+  -- `in_flight` is keyed by the source buffer, so a cancel typed from the corrected side
+  -- has to be mapped back the same way close() does.
+  local source_buf = resolve(bufnr)
+  bufnr = source_buf or bufnr
   local running = in_flight[bufnr]
   if not running then
     vim.notify("albertlint: no level pass running on this buffer", vim.log.levels.INFO)
@@ -308,7 +419,40 @@ function M.cancel(bufnr)
   return true
 end
 
+---Forget the cached findings for a buffer, so the next run pays for a fresh pass.
+---@param bufnr integer|nil
+---@param id integer|nil Level to forget, or all levels when nil
+---@return boolean had_any
+function M.clear_cache(bufnr, id)
+  bufnr = bufnr or vim.api.nvim_get_current_buf()
+  local per_buf = cache[bufnr]
+  if not per_buf then
+    return false
+  end
+  if id == nil then
+    cache[bufnr] = nil
+    return true
+  end
+  local had = per_buf[id] ~= nil
+  per_buf[id] = nil
+  return had
+end
+
+-- Cache and in-flight records are keyed by buffer number, and buffer numbers are reused
+-- after a delete. Without this, a new buffer can inherit a dead buffer's cached findings
+-- and be handed a diff of somebody else's text.
+vim.api.nvim_create_autocmd({ "BufDelete", "BufWipeout" }, {
+  group = vim.api.nvim_create_augroup("AlbertLintLevelCache", { clear = true }),
+  callback = function(ev)
+    cache[ev.buf] = nil
+    in_flight[ev.buf] = nil
+    open_views[ev.buf] = nil
+  end,
+})
+
 M._in_flight = in_flight
 M._open_views = open_views
+M._cache = cache
 M._all_blank = all_blank
+M._present = present
 return M

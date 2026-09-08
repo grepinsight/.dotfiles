@@ -67,6 +67,43 @@ function M.open(bufnr, corrected, placed, opts)
     vim.cmd("diffthis")
   end)
 
+  -- Saved so close() can put back exactly what was here. `diffoff` restores the options
+  -- diff mode itself changed, but not the ones set below it.
+  local saved = {}
+  for _, win in ipairs({ source_win, scratch_win }) do
+    saved[win] = {
+      foldenable = vim.wo[win].foldenable,
+      foldcolumn = vim.wo[win].foldcolumn,
+      winbar = vim.wo[win].winbar,
+    }
+  end
+
+  for _, win in ipairs({ source_win, scratch_win }) do
+    -- Diff mode turns on `foldmethod=diff` with `foldlevel=0`, which collapses every
+    -- unchanged region. Measured 2026-09-08 on a 25-line pair with two changes: 5 lines
+    -- hidden inside closed folds. For prose that is the wrong default, because the
+    -- surrounding sentences are exactly the context needed to judge an article or a
+    -- referent, so the thing being reviewed is the thing that gets folded away.
+    vim.wo[win].foldenable = false
+    -- With folding off the 2-column fold gutter is dead width. Set on BOTH windows, so it
+    -- stays symmetric and cannot shift the columns of one side relative to the other.
+    vim.wo[win].foldcolumn = "0"
+  end
+
+  -- The key hints live on a winbar, and it has to be on BOTH windows. Measured 2026-09-08:
+  -- a winbar on the corrected side alone misaligned all 25 lines of the sample, which is
+  -- the same failure mode as a one-sided `virt_lines`. Mirrored, 0 misaligned. The left
+  -- label is not decoration; it is the mirror that keeps the rows lined up.
+  vim.wo[source_win].winbar = "%#DiffText#  YOURS %#Comment#  (edits land here)"
+  vim.wo[scratch_win].winbar = table.concat({
+    ("%%#DiffAdd#  LEVEL %d %%#Comment#"):format(opts.level or 1),
+    "  ]c next",
+    "  do accept",
+    "  dp reject",
+    "  :AlbertLintLevelAccept one line",
+    "  :AlbertLintLevelClose",
+  })
+
   local count = 0
   for _, item in ipairs(placed or {}) do
     local row = item.lnum - 1
@@ -97,11 +134,20 @@ function M.open(bufnr, corrected, placed, opts)
     end
   end
 
-  -- Land on the first hunk so `do` is immediately meaningful rather than needing a `]c`
-  -- first. Wrapped because `]c` errors when there is no hunk below the cursor.
-  pcall(vim.api.nvim_win_set_cursor, scratch_win, { 1, 0 })
-  vim.api.nvim_win_call(scratch_win, function()
-    pcall(vim.cmd, "normal! ]c")
+  -- Land in the SOURCE window, not the corrected one, and this is not a preference.
+  -- `:diffget` modifies the CURRENT buffer, so `do` pressed in the scratch window
+  -- overwrites the correction with the original: the exact opposite of accept, while the
+  -- winbar says "do accept". Verified 2026-09-08 by pressing it -- the scratch line
+  -- reverted and the source line did not change at all. Leaving the cursor there made the
+  -- primary action of this feature do the reverse of what it advertised.
+  vim.api.nvim_set_current_win(source_win)
+  pcall(vim.api.nvim_win_set_cursor, source_win, { 1, 0 })
+  vim.api.nvim_win_call(source_win, function()
+    -- `]c` from a line that is ALREADY a change jumps to the next one, skipping the first
+    -- hunk entirely, so only jump when line 1 is unchanged.
+    if vim.fn.diff_hlID(1, 1) == 0 then
+      pcall(vim.cmd, "normal! ]c")
+    end
   end)
 
   ---@type LevelDiffState
@@ -113,6 +159,7 @@ function M.open(bufnr, corrected, placed, opts)
     ns = ns,
     count = count,
     closed = false,
+    saved = saved,
   }
 
   -- Teardown on any route out, not only the close command. Without this, closing the
@@ -147,6 +194,18 @@ function M.close(state)
       vim.api.nvim_win_call(win, function()
         pcall(vim.cmd, "diffoff")
       end)
+      -- Put back what was here before. `diffoff` restores the options diff mode set
+      -- itself, but not `foldenable`, `foldcolumn`, or `winbar`, which this module set on
+      -- top of it. Leaving a winbar behind on the author's real buffer would be a visible
+      -- leftover, and leaving folding disabled would silently change an unrelated setting.
+      local was = (state.saved or {})[win]
+      if was then
+        pcall(function()
+          vim.wo[win].foldenable = was.foldenable
+          vim.wo[win].foldcolumn = was.foldcolumn
+          vim.wo[win].winbar = was.winbar
+        end)
+      end
     end
   end
 

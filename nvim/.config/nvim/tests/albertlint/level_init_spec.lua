@@ -150,6 +150,178 @@ describe("level in-flight guard", function()
   end)
 end)
 
+describe("level cache", function()
+  before_each(function()
+    for k in pairs(level._cache) do
+      level._cache[k] = nil
+    end
+    for k in pairs(level._open_views) do
+      level._open_views[k] = nil
+    end
+    for k in pairs(level._in_flight) do
+      level._in_flight[k] = nil
+    end
+  end)
+
+  it("serves a cached pass without calling the provider", function()
+    -- A pass costs money and 30 to 90 seconds, so closing and reopening the diff must not
+    -- pay for it twice. If this regresses, the diff becomes a call you think about rather
+    -- than a panel you toggle.
+    local buf = prose_buf({ "a error here", "second line" })
+    level._cache[buf] = {
+      [1] = {
+        findings = {
+          { line = 1, quote = "a error", occurrence = 1, replacement = "an error",
+            label = "Article", note = "n" },
+        },
+        at = (vim.uv or vim.loop).hrtime(),
+        provider = "claude",
+      },
+    }
+
+    local msgs = captured(function()
+      level.run(1, false)
+    end)
+
+    -- One message, and it is the cache-hit message, not the "~30-90s" one that precedes a
+    -- real call.
+    assert.equals(1, #msgs)
+    assert.is_true(msgs[1]:find("from cache", 1, true) ~= nil)
+    assert.is_nil(msgs[1]:find("30-90s", 1, true))
+    -- And no pass was started.
+    assert.is_nil(level._in_flight[buf])
+    assert.is_not_nil(level._open_views[buf])
+
+    level.close(buf)
+  end)
+
+  it("tells you how to force a fresh pass", function()
+    local buf = prose_buf({ "a error here" })
+    level._cache[buf] = { [1] = {
+      findings = { { line = 1, quote = "a error", occurrence = 1, replacement = "an error", label = "A", note = "n" } },
+      at = (vim.uv or vim.loop).hrtime(), provider = "claude",
+    } }
+
+    local msgs = captured(function()
+      level.run(1, false)
+    end)
+
+    assert.is_true(msgs[1]:find("AlbertLintLevel1!", 1, true) ~= nil)
+    level.close(buf)
+  end)
+
+  it("re-applies cached findings against the buffer as it is now", function()
+    -- This is what makes the cache correct after a `do`: the accepted fix no longer matches
+    -- its quote, so it drops out and the rest still place. Here the fix is pre-applied, so
+    -- nothing should be left to show.
+    local buf = prose_buf({ "an error here" })
+    level._cache[buf] = { [1] = {
+      findings = { { line = 1, quote = "a error", occurrence = 1, replacement = "an error", label = "A", note = "n" } },
+      at = (vim.uv or vim.loop).hrtime(), provider = "claude",
+    } }
+
+    local msgs = captured(function()
+      level.run(1, false)
+    end)
+
+    assert.is_true(msgs[1]:find("nothing left to apply", 1, true) ~= nil)
+    assert.is_nil(level._open_views[buf])
+  end)
+
+  it("clear_cache drops the entry and reports whether there was one", function()
+    local buf = prose_buf()
+    level._cache[buf] = { [1] = { findings = {}, at = 0, provider = "claude" } }
+
+    assert.is_true(level.clear_cache(buf))
+    assert.is_nil(level._cache[buf])
+    assert.is_false(level.clear_cache(buf))
+  end)
+
+  it("drops the cache when the buffer is deleted, because buffer numbers are reused", function()
+    -- Without this a new buffer can inherit a dead buffer's findings and be shown a diff
+    -- of somebody else's text.
+    local buf = prose_buf()
+    level._cache[buf] = { [1] = { findings = {}, at = 0, provider = "claude" } }
+
+    vim.api.nvim_win_set_buf(0, vim.api.nvim_create_buf(true, false))
+    vim.api.nvim_buf_delete(buf, { force = true })
+
+    assert.is_nil(level._cache[buf])
+  end)
+end)
+
+describe("commands typed from the corrected side", function()
+  -- The whole reason this block exists: every command here is naturally typed from
+  -- whichever window you are looking at, and `close()` used to look up only
+  -- `open_views[current_buf]`. Typed from the scratch buffer it found nothing and tore
+  -- nothing down, leaving the real buffer in diff mode with a winbar on it. Verified
+  -- 2026-09-08. The earlier diffview test missed it by calling diffview.close(state)
+  -- directly and bypassing this lookup.
+  local diffview = require("albertlint.level.diffview")
+
+  before_each(function()
+    for k in pairs(level._open_views) do
+      level._open_views[k] = nil
+    end
+    for k in pairs(level._in_flight) do
+      level._in_flight[k] = nil
+    end
+  end)
+
+  ---@return integer source_buf, table state
+  local function open_a_view()
+    local buf = prose_buf({ "a error here", "second line" })
+    local state = diffview.open(buf, { "an error here", "second line" }, {
+      { lnum = 1, col = 0, fix = { label = "Article", note = "n" } },
+    }, { level = 1 })
+    level._open_views[buf] = state
+    return buf, state
+  end
+
+  it("close tears down when typed from the scratch buffer", function()
+    local buf, state = open_a_view()
+    vim.api.nvim_set_current_win(state.scratch_win)
+    assert.equals(state.scratch_buf, vim.api.nvim_get_current_buf())
+
+    local ok = level.close()
+
+    assert.is_true(ok)
+    assert.is_nil(level._open_views[buf])
+    assert.is_false(vim.wo[state.source_win].diff)
+    assert.equals("", vim.wo[state.source_win].winbar)
+  end)
+
+  it("accept typed from the scratch side still moves text INTO the source", function()
+    local buf, state = open_a_view()
+    vim.api.nvim_set_current_win(state.scratch_win)
+    vim.api.nvim_win_set_cursor(state.scratch_win, { 1, 0 })
+
+    local ok = level.accept_line()
+
+    local src = vim.api.nvim_buf_get_lines(buf, 0, 1, false)[1]
+    level.close(buf)
+    assert.is_true(ok)
+    -- Not reverted to "a error here", which is what a naive `.,.diffget` in the scratch
+    -- window would have produced.
+    assert.equals("an error here", src)
+  end)
+
+  it("cancel typed from the scratch buffer finds the pass", function()
+    local buf, state = open_a_view()
+    level._in_flight[buf] = {
+      handle = nil, started = (vim.uv or vim.loop).hrtime(), lines = 2, level = 1,
+    }
+    vim.api.nvim_set_current_win(state.scratch_win)
+
+    local msgs = captured(function()
+      assert.is_true(level.cancel())
+    end)
+
+    level.close(buf)
+    assert.is_true(msgs[1]:find("cancelled", 1, true) ~= nil)
+  end)
+end)
+
 describe("level cancel and close", function()
   before_each(function()
     for k in pairs(level._in_flight) do

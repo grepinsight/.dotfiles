@@ -315,9 +315,24 @@ function M.setup(opts)
   -- The graded level tiers. Unlike every other tier here, these produce replacement prose
   -- with an accept key, which is a scoped and deliberate exception to the doctrine in
   -- CLAUDE.md rather than an oversight. Read that section before changing this.
+  -- Bang forces a fresh pass. Without it the command serves the cached findings, so the
+  -- diff can be closed and reopened without paying for the call twice.
   vim.api.nvim_create_user_command("AlbertLintLevel1", function(cmd)
-    require("albertlint.level").run(1, cmd.range > 0)
-  end, { range = true, desc = "albertlint: level 1 (grammar/usage) as a reviewable diff" })
+    require("albertlint.level").run(1, cmd.range > 0, cmd.bang)
+  end, {
+    range = true,
+    bang = true,
+    desc = "albertlint: level 1 (grammar/usage) as a reviewable diff. ! re-runs, ignoring the cache",
+  })
+
+  vim.api.nvim_create_user_command("AlbertLintLevelClearCache", function()
+    local level = require("albertlint.level")
+    vim.notify(
+      level.clear_cache() and "albertlint: cached level findings dropped for this buffer"
+        or "albertlint: nothing cached for this buffer",
+      vim.log.levels.INFO
+    )
+  end, { desc = "albertlint: forget the cached level findings for this buffer" })
 
   -- Vim merges adjacent changed lines into one hunk, so `do` on two findings that landed
   -- on consecutive lines takes both. These are line-scoped, for when that matters.

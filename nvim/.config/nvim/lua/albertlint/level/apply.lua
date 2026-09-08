@@ -55,7 +55,9 @@ end
 ---@param fixes LevelFix[]
 ---@return string[] corrected
 ---@return table[] placed { fix, lnum (1-indexed), col (0-indexed byte) }, sorted by position
----@return table[] dropped { fix, reason }, sorted by line then by the order given
+---@return table[] dropped { fix, reason }, sorted by line then by the order given.
+---  `reason` is "line out of range", "quote not found", "already applied", or
+---  "overlaps an earlier fix"
 function M.build(lines, start_lnum, fixes)
   local corrected = {}
   for i, line in ipairs(lines) do
@@ -74,9 +76,20 @@ function M.build(lines, start_lnum, fixes)
       })
     else
       local s, e = nth_find(lines[idx], tostring(fix.quote or ""), tonumber(fix.occurrence) or 1)
+      local repl = tostring(fix.replacement or "")
       if not s then
         table.insert(pending_drops, {
           fix = fix, reason = "quote not found", key = idx, order = order,
+        })
+      elseif repl ~= "" and lines[idx]:sub(s, s + #repl - 1) == repl then
+        -- Already applied. This is reachable whenever the replacement CONTAINS the quote,
+        -- because the quote then still matches inside its own output:
+        -- `expression error` -> `expression errors` matched again on the corrected line and
+        -- produced `expression errorss`. Verified 2026-09-08, and reachable in normal use as
+        -- soon as findings are cached and re-applied after a `do`, or if the writer fixes a
+        -- line by hand and reruns. A quote-not-found check alone does not catch it.
+        table.insert(pending_drops, {
+          fix = fix, reason = "already applied", key = idx, order = order,
         })
       else
         if not by_line[idx] then

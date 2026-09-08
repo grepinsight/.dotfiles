@@ -122,6 +122,50 @@ describe("level.apply build", function()
     assert.equals("quote not found", dropped[1].reason)
   end)
 
+  it("does not re-apply a fix whose replacement contains its own quote", function()
+    -- The corruption case, and the one a quote-not-found check does NOT catch. When the
+    -- replacement contains the quote, the quote still matches inside its own output:
+    -- `expression error` -> `expression errors` matched again on the already-corrected line
+    -- and produced `expression errorss`. Verified 2026-09-08. Reachable in normal use as
+    -- soon as findings are cached and re-applied after a `do`.
+    local lines = { "It should focus on grammar/expression errors." }
+
+    local corrected, placed, dropped = apply.build(lines, 1, {
+      fix({ quote = "expression error", replacement = "expression errors" }),
+    })
+
+    assert.same({ "It should focus on grammar/expression errors." }, corrected)
+    assert.equals(0, #placed)
+    assert.equals("already applied", dropped[1].reason)
+  end)
+
+  it("is idempotent: applying twice gives the same text as applying once", function()
+    -- The property the case above is a instance of. If this fails, the cache corrupts text.
+    local lines = { "a error and grammar/expression error here" }
+    local fixes = {
+      fix({ quote = "a error", replacement = "an error" }),
+      fix({ quote = "expression error", replacement = "expression errors" }),
+    }
+
+    local once = apply.build(lines, 1, fixes)
+    local twice = apply.build(once, 1, fixes)
+
+    assert.same(once, twice)
+  end)
+
+  it("still applies a fix whose replacement merely starts similarly", function()
+    -- Guard against the check above being too eager: `use LLM` -> `uses an LLM` shares a
+    -- prefix with the original text and must still apply.
+    local lines = { "and use LLM here" }
+
+    local corrected, placed = apply.build(lines, 1, {
+      fix({ quote = "use LLM", replacement = "uses an LLM" }),
+    })
+
+    assert.same({ "and uses an LLM here" }, corrected)
+    assert.equals(1, #placed)
+  end)
+
   it("places a span that follows multibyte text", function()
     -- The author's buffers contain Korean. A character-based offset would misplace
     -- every span after the first multibyte run; Lua string ops are byte-based, and
