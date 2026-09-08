@@ -172,7 +172,7 @@ function M.coverage()
   table.insert(lines, "## known NOT covered by any deterministic rule")
   table.insert(lines, "These need the semantic tier (`:AlbertLintSemantic`); no regex sees them.")
   for _, item in ipairs({
-    "Article: missing `the` before a specific, known referent (106+ logged, his largest)",
+    "Article: missing `the` before a specific, known referent (129 logged as of 2026-09-08, his largest)",
     "Article: missing `a` before a singular count noun (25 logged)",
     "Number: subject-verb agreement across an intervening phrase",
     "Pronoun reference with two available antecedents",
@@ -289,9 +289,9 @@ function M.setup(opts)
     engine = require("albertlint.engine")
     engine.reset()
     M.lint_all()
-    vim.notify("albertlint: rules, engine, semantic, and config reloaded. Restart Neovim to pick up "
+    vim.notify("albertlint: rules, engine, semantic, level, and config reloaded. Restart Neovim to pick up "
       .. "changes to init.lua or to the commands themselves.", vim.log.levels.INFO)
-  end, { desc = "albertlint: reload rules, engine, semantic, and config" })
+  end, { desc = "albertlint: reload rules, engine, semantic, level, and config" })
 
   -- Catch buffers that were already open. Every autocmd above is an event that has
   -- already fired for them, so without this sweep a lazy-loaded or re-sourced setup

@@ -40,7 +40,7 @@ PLENARY_DIR=~/.local/share/nvim/lazy/plenary.nvim nvim --headless \
   -c "PlenaryBustedDirectory tests { minimal_init = 'tests/minimal_init.lua' }"
 ```
 
-275 tests as of 2026-09-01. Run before and after every change. `tests/minimal_init.lua` is
+393 tests as of 2026-09-08 (275 as of 2026-09-01; the count moves, so treat it as a floor and diff per-file rather than pinning a total). Run before and after every change. `tests/minimal_init.lua` is
 deliberately minimal and does not load `plugins.lua`; ignore the `telescope.builtin not found`
 and `UpdateRemotePlugins` noise from specs that `:edit` a real file.
 
@@ -80,20 +80,46 @@ Consequences already encoded, do not undo them:
 - The deterministic tier names the fix in its message and still makes the user type it. No
   autofix, no code actions.
 
+### Scoped exception, decided 2026-09-08: the graded level commands
+
+**`:AlbertLintLevel1` shows replacement prose in a diff with an accept key (`do`), which the
+constraint above rules out.** The user was shown the conflict, restated the requirement as
+"review and decide accept/reject by hunk", and confirmed it. This is written down because the
+constraint above is forceful enough that an agent reading only it would find this feature,
+classify it as a violation, and delete it.
+
+The exception is **narrow**. It covers the `:AlbertLintLevel*` commands only. Everything in the
+list above still holds: the live, exit, and semantic tiers keep the no-autofix rule,
+`copilot_gate.lua` still blocks Copilot from markdown, and the collocation source still caps a
+surface at five words. Do not widen it.
+
+What the original reasoning got right, and what this design preserves: the danger is
+*unattributed* replacement prose arriving in bulk. Level 1 answers that structurally rather than
+by refusing to show a fix. The model returns labeled spans, not a rewritten paragraph, so a
+reorder or a tone change is **unrepresentable** rather than merely forbidden by prompt, and every
+diff hunk traces back to exactly one named finding. See
+`docs/superpowers/specs/2026-09-08-albertlint-graded-levels-design.md` §2 and §4.
+
+If the accept key turns out to be used reflexively, the alternative to revisit is the **retype
+gate** (spec §2, rejected as over-built): the diff shows the fix, but applying it requires typing
+the corrected span. Do not revert to annotations-only; that option was considered and declined.
+
 ## Commit style
 
 Conventional commits (`feat(nvim):`, `fix(nvim):`, `docs(nvim):`). Bodies explain the *why* and
 name the measurement or the failure that motivated the change. **No AI authorship trailers** —
 the user's global instructions forbid them.
 
-## State of play, 2026-09-01
+## State of play, 2026-09-08
 
-Branch `feat/writing-companion`, 18 commits ahead of `master`.
+Branch `feat/albertlint-levels`, off `master` at `f5ca555`. The `feat/writing-companion` work
+this file used to point at has since landed on `master`.
 
 | Component | State |
 |---|---|
 | `albertlint` live + exit tiers | done, pre-existing |
 | `albertlint` semantic tier | working. Was silent for two independent reasons, both fixed: a dead `scope` config field, and the CLI's default model returning `{"findings":[]}` where sonnet finds the error |
+| `albertlint/level/` | **level 1 done.** `:AlbertLintLevel1` renders a grammar/usage pass as a native two-window diff, `do`/`dp` per hunk. Both `claude` and `openai` backends. Levels 2-4 are data rows only |
 | `albertlint/collocation/` | **done and wired.** nvim-cmp source over the user's own phrase notes. See `README.md` |
 | `albertlint/style/` | **~1/3 built.** `scope.lua` only. The runner, classes, groups, providers, and reconciliation are unwritten |
 | `annotate` AI lifecycle | partly built: `author`/`state`/`dismiss`/`add_many`/`retarget` done, the dismissal **ledger is not** |

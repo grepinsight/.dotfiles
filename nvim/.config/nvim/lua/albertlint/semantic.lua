@@ -1,6 +1,6 @@
 ---Tier 2: the patterns no regex can see.
 ---
----His largest logged category is `missing "the" before a specific, known referent` at 106+
+---His largest logged category is `missing "the" before a specific, known referent` at 129
 ---instances, and it is undetectable by pattern matching because deciding it needs to know
 ---whether the reader has already met the referent. Same for `missing "a" before a count
 ---noun`, agreement across an intervening phrase, and pronoun ambiguity. Those four are the

@@ -61,8 +61,13 @@ position. `:AlbertLintCoverage` prints exactly which patterns fall on which side
 | `:AlbertLintSemantic` | LLM grammar check over the configured scope, or a given `:'<,'>` range |
 | `:AlbertLintSemanticCancel` | stop a running LLM check |
 | `:AlbertLintToggle` | pause or resume the automatic diagnostics in this buffer |
+| `:AlbertLintLevel1` | **level 1 review** (grammar/usage) as a two-window diff you accept per hunk |
+| `:AlbertLintLevelAccept` | take only the line under the cursor, not the whole hunk |
+| `:AlbertLintLevelReject` | push the original back over only the line under the cursor |
+| `:AlbertLintLevelClose` | close the level diff and leave diff mode |
+| `:AlbertLintLevelCancel` | stop a running level pass |
 | `:AlbertLintCoverage` | which logged mistake patterns have a rule, and which cannot have one |
-| `:AlbertLintReload` | reload rules, engine, semantic, and config. Not `init.lua`, not the commands |
+| `:AlbertLintReload` | reload rules, engine, semantic, level, and config. Not `init.lua`, not the commands |
 | `:AlbertLintCollocationStatus` | collocation entry count, breakdown, and cache path |
 | `:AlbertLintCollocationRebuild` | force a collocation rebuild after bulk-editing notes |
 
@@ -87,6 +92,13 @@ require("albertlint").setup({
     timeout_ms = 60000,
     scope = "paragraph",          -- paragraph | buffer | selection
   },
+  level = {
+    enabled = true,
+    provider = "claude",          -- claude | openai
+    scope = "buffer",             -- paragraph | buffer | selection
+    timeout_ms = 90000,
+    model = nil,                  -- nil means the provider's own default
+  },
 })
 ```
 
@@ -110,6 +122,77 @@ available. `timeout_ms` is 60000 for the same reason: the old 30000 would have a
 Diagnostics use their own namespace, so the display config here cannot fight your global
 one. Default is underline with virtual text on the current line only, because prose is read
 left to right and a floating message per line breaks that.
+
+## The graded levels
+
+`:AlbertLintLevel1` is the first of four planned review tiers, each answering a different
+question so the feedback arrives in an order you can absorb:
+
+| Level | Question | State |
+|---|---|---|
+| 1 | Is it grammatical? | shipped |
+| 2 | Does it hold together? | data row only |
+| 3 | Is it in the right order? | data row only |
+| 4 | Is it substantive, and what would make it convincing? | data row only |
+
+**This is the one tier that produces replacement prose.** Every other tier names the fix and
+still makes you type it. That is a deliberate, scoped exception to the doctrine in `CLAUDE.md`,
+decided 2026-09-08 — read that section before changing it, because the constraint it amends is
+written forcefully enough to look like this feature is a bug.
+
+The pass opens a native two-window diff: your buffer left, a corrected copy right. Navigation
+and apply are Neovim's own, so nothing here is reinvented.
+
+| Key | Does |
+|---|---|
+| `]c` / `[c` | next / previous hunk |
+| `do` | accept the hunk from the corrected side |
+| `dp` | push the original over the corrected side |
+
+The label and the reason for each fix appear as virtual text above the change. **The blank
+virtual lines on your side of the diff are not dead code.** Diff mode aligns two windows with
+filler lines it computes itself, while `virt_lines` add screen rows to one window only. Measured
+2026-09-08: a one-line note on the corrected side alone put line 3 at screen row 4 on the right
+and row 3 on the left, and everything below it drifted further apart. An equal count of blanks
+on the other side restores exact alignment.
+
+**`do` takes a whole hunk, and vim merges adjacent changed lines into one hunk.** So two
+unrelated findings that happen to land on consecutive lines are a single hunk, and one `do`
+applies both. Measured 2026-09-08 with a Number fix on line 3 and an Article fix on line 4.
+`:AlbertLintLevelAccept` is line-scoped and restores per-finding granularity. It is a command
+rather than a keymap so it claims nothing in your keyspace; bind it if it earns it.
+
+### Why spans and not a rewrite
+
+The model returns *labeled spans* — the exact substring plus its correction — never a rewritten
+paragraph. That is what keeps level 1 inside its own boundary: with no channel for free-form
+prose, reordering a clause or changing tone is **unrepresentable**, not merely forbidden by the
+prompt. It also means every diff hunk traces back to exactly one named finding, which is what
+lets a note attach to a hunk at all.
+
+Two prompt rules exist because a live call broke without them, both measured 2026-09-08. The
+model returned `use` → `uses` *and* `use LLM` → `use an LLM` as two overlapping findings; both
+were right, only the first could apply, and the article error silently survived. And it returned
+`Audience` → `The Audience`, keeping a sentence-initial capital mid-phrase, because
+capitalization is on the ignore list. The prompt now forbids overlapping quotes and requires the
+model to fix capitalization it creates in its own replacement.
+
+### Providers
+
+`provider = "claude"` shells out to the CLI, so this plugin never holds a credential. It passes
+`--safe-mode --disable-slash-commands --strict-mcp-config`, which is the measured set for "no
+skills or plugins loaded" from `util/claude.lua`: `--safe-mode` alone still left 12 skills
+reachable when measured 2026-08-26.
+
+`provider = "openai"` reads `OPENAI_API_KEY` **from the environment** — never from this config,
+never from a dotfile. A strict `json_schema` makes a malformed response impossible, which is its
+real advantage. The key is handed to curl on **stdin** via `--config -`, never in argv, because
+argv is world-readable through `ps`; a test asserts no rendered argv contains `Bearer` or an
+`sk-` string. The default model string is an unverified fallback, not a checked value: set
+`level.model` explicitly if a call returns an unknown-model error.
+
+Nothing about level 1 has been measured for precision. Every test is recall on text already
+known to be broken.
 
 ## Adding a rule
 
