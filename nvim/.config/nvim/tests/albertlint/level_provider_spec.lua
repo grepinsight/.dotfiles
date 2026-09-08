@@ -10,8 +10,10 @@
 ---What is tested is argv construction, the request body, scrubbing, and parsing.
 local provider = require("albertlint.level.provider")
 
--- Not a real key. Shaped like one so the scrubber's pattern is actually exercised.
-local FAKE_KEY = "sk-tESTtESTtESTtESTtESTtESTtESTtEST"
+-- Not a real key, and named so that a secret scanner reading this public repo does not
+-- have to guess. It still starts with `sk-` because that is the prefix the scrubber
+-- pattern matches, and the test is worthless against a string the pattern would miss.
+local FAKE_KEY = "sk-NOT-A-REAL-KEY-test-fixture-only"
 
 describe("level.provider claude argv", function()
   it("carries all three isolation flags", function()
