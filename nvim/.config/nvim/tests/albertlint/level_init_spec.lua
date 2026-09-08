@@ -226,6 +226,8 @@ describe("level run reaches dispatch", function()
     local seen
     provider.call = function(name, prompt, text, opts, cb)
       seen = { name = name, prompt = prompt, text = text, opts = opts, cb = cb }
+      -- Must answer: run() blocks in vim.wait until it does.
+      cb({ ok = true, findings = {} })
       return { kill = function() end }
     end
     local buf = prose_buf({ "a error here", "and a apple too" })
@@ -238,18 +240,25 @@ describe("level run reaches dispatch", function()
     assert.equals("claude", seen.name)
     -- The scaled budget was computed and handed over, not left nil.
     assert.equals(level._timeout_for(2), seen.opts.timeout_ms)
-    -- And the progress message states it, which is the line that crashed.
-    assert.equals(1, #msgs)
-    assert.is_true(msgs[1]:find("Allowing up to", 1, true) ~= nil)
+    -- Two messages now: the progress line, then the verdict once the pass lands. The
+    -- progress line is the one that crashed on a nil global.
+    assert.equals(2, #msgs)
+    assert.is_true(msgs[1]:find("up to", 1, true) ~= nil)
     assert.is_true(msgs[1]:find(tostring(level._timeout_for(2) / 1000), 1, true) ~= nil)
-    -- The guard is armed only once the call actually started.
-    assert.is_not_nil(level._in_flight[buf])
+    -- Kept short on purpose: a notify that wraps past the cmdline triggers the hit-enter
+    -- prompt, which blocked the writer in order to report progress. Screenshot 2026-09-08.
+    assert.is_true(#msgs[1] < 80, "progress notify must not wrap: " .. msgs[1])
+    -- run() now blocks to completion, so by the time it returns the guard is released
+    -- again. That it was released rather than left set is the thing worth asserting: a
+    -- stuck guard locks the buffer out of ever running again.
+    assert.is_nil(level._in_flight[buf])
   end)
 
   it("passes an explicit config timeout straight through", function()
     local seen
-    provider.call = function(_, _, _, opts)
+    provider.call = function(_, _, _, opts, cb)
       seen = opts
+      cb({ ok = true, findings = {} })
       return { kill = function() end }
     end
     config.setup({ level = { timeout_ms = 45000 } })
@@ -264,8 +273,9 @@ describe("level run reaches dispatch", function()
 
   it("sends the numbered payload, not the raw lines", function()
     local seen
-    provider.call = function(_, _, text, _)
+    provider.call = function(_, _, text, _, cb)
       seen = text
+      cb({ ok = true, findings = {} })
       return { kill = function() end }
     end
     prose_buf({ "first line", "second line" })
@@ -292,6 +302,8 @@ describe("level run reaches dispatch", function()
 
     assert.is_nil(level._in_flight[buf])
     assert.is_true(#msgs >= 1)
+    -- And no panel is left sitting there showing an empty diff.
+    assert.is_nil(level._open_views[buf])
   end)
 end)
 

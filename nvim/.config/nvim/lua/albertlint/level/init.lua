@@ -146,13 +146,21 @@ end
 ---@param def table
 ---@param findings table[]
 ---@return integer placed, integer dropped
-local function present(bufnr, def, findings)
+local function present(bufnr, def, findings, lines, view)
   -- The WHOLE buffer, not the reviewed range: the scratch copy is diffed against the real
   -- buffer, and a range-only array would make every untouched line outside the range read
   -- as a deletion.
-  local all_lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
-  local corrected, placed, dropped = apply.build(all_lines, 1, findings or {})
-  if #placed > 0 then
+  --
+  -- `lines` is the snapshot taken when the panel opened, which under the blocking flow is
+  -- the buffer verbatim. The cache path passes the buffer as it is now instead.
+  lines = lines or vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
+  local corrected, placed, dropped = apply.build(lines, 1, findings or {})
+  if #placed == 0 then
+    return 0, #dropped
+  end
+  if view then
+    diffview.populate(view, corrected, placed)
+  else
     open_views[bufnr] = diffview.open(bufnr, corrected, placed, { level = def.id })
   end
   return #placed, #dropped
@@ -220,10 +228,8 @@ function M.run(id, use_selection, force)
       )
       return
     end
-    local msg = ("albertlint: level %d, %d fix%s from cache (%s old, %s). "
-      .. ":AlbertLintLevel%d! to re-run."):format(
-      def.id, placed, plural(placed, "", "es"), age, hit.provider, def.id
-    )
+    local msg = ("albertlint: level %d, %d fix%s from cache (%s old), :AlbertLintLevel%d! re-runs")
+      :format(def.id, placed, plural(placed, "", "es"), age, def.id)
     if dropped > 0 then
       -- Usually because they were already accepted, which is the good case, so this is
       -- phrased as information rather than as a failure.
@@ -267,33 +273,82 @@ function M.run(id, use_selection, force)
   -- real session 2026-09-08.
   local timeout_ms = opts.timeout_ms or timeout_for(#range_lines)
 
+  -- One short line. The previous version listed the budget, a measurement and an
+  -- instruction, wrapped past the cmdline, and triggered a hit-enter prompt that blocked
+  -- the writer in order to tell them about progress. Seen in a screenshot 2026-09-08.
+  -- The waiting state lives on the winbar instead, where it costs nothing.
   vim.notify(
-    ("albertlint: level %d (%s) over %d lines (%s scope) via %s. Allowing up to %ds; "
-      .. "measured 105s for 190 lines. Run again to check progress.")
-      :format(def.id, def.name, #range_lines, scope_name, opts.provider, timeout_ms / 1000),
+    ("albertlint: level %d over %d lines, up to %ds"):format(def.id, #range_lines, timeout_ms / 1000),
     vim.log.levels.INFO
   )
 
+  -- Open the panel BEFORE the call, then block until it answers. Two reasons, and the
+  -- second is a correctness one.
+  --
+  -- Asynchronous, the pass finished into whatever the buffer had become. Measured
+  -- 2026-09-08: a line inserted above a finding made its quote unfindable, so the fix was
+  -- silently dropped -- and worse, when the same quote happened to sit at that line number
+  -- afterwards, the fix applied to a DIFFERENT sentence. The safety was probabilistic.
+  -- Blocking makes the snapshot below equal to the buffer by construction.
+  --
+  -- `vim.wait` blocks the main loop but keeps pumping the event loop, so the provider's
+  -- callback still fires and Ctrl-C still interrupts. A truly synchronous wait would freeze
+  -- the editor with no way out.
+  local snapshot = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
+  local view = diffview.open(bufnr, snapshot, {}, { level = def.id, pending = true })
+  open_views[bufnr] = view
+  vim.cmd("redraw")
+
+  local answer
   local started = (vim.uv or vim.loop).hrtime()
   local handle = provider.call(opts.provider, prompt, payload, {
     timeout_ms = timeout_ms,
     model = opts.model,
   }, function(res)
-    -- Cleared on every path, so a failed, timed-out, or cancelled pass cannot wedge the
-    -- guard and lock this buffer out of ever running again.
-    in_flight[bufnr] = nil
+    answer = res
+  end)
+
+  if handle then
+    in_flight[bufnr] = { handle = handle, started = started, lines = #range_lines, level = def.id }
+  end
+
+  -- +2s so the provider's own timeout fires first and reports itself, rather than this
+  -- giving up and leaving the process running.
+  local completed = vim.wait(timeout_ms + 2000, function() return answer ~= nil end, 100)
+  in_flight[bufnr] = nil
+
+  if not completed then
+    -- Either Ctrl-C or the wait elapsing. Kill the process either way: leaving it running
+    -- would deliver an answer into a torn-down view.
+    if handle then
+      pcall(function() handle:kill("sigterm") end)
+    end
+    M.close(bufnr)
+    vim.notify(
+      ("albertlint: level %d aborted after %s"):format(def.id, elapsed(started)),
+      vim.log.levels.WARN
+    )
+    return
+  end
+
+  do
+    local res = answer
 
     if not vim.api.nvim_buf_is_valid(bufnr) then
+      M.close(bufnr)
       return
     end
     if not res.ok then
+      -- Tear the pending panel down: it shows an empty diff and would sit there looking
+      -- like a result.
+      M.close(bufnr)
       -- A cancel the writer asked for is not a failure, and cancel() has already said so.
       if cancelled[bufnr] then
         cancelled[bufnr] = nil
         return
       end
       vim.notify(
-        ("albertlint: level %d pass failed, so nothing changed. %s"):format(def.id, tostring(res.err)),
+        ("albertlint: level %d failed, nothing changed. %s"):format(def.id, tostring(res.err)),
         vim.log.levels.ERROR
       )
       return
@@ -308,7 +363,7 @@ function M.run(id, use_selection, force)
       provider = opts.provider,
     }
 
-    local placed, dropped = present(bufnr, def, res.findings)
+    local placed, dropped = present(bufnr, def, res.findings, snapshot, view)
 
     ---@param msg string
     ---@return string
@@ -325,6 +380,9 @@ function M.run(id, use_selection, force)
     end
 
     if placed == 0 then
+      -- Nothing to review, so the panel goes away rather than sitting there as an empty
+      -- diff that looks like a result.
+      M.close(bufnr)
       -- Zero has to read as a verdict, not as a no-op. "0 findings" on its own is
       -- indistinguishable from "the tool did not really run", which misled the author for
       -- a real reason once in the semantic tier, so name the line count and the scope.
@@ -337,23 +395,15 @@ function M.run(id, use_selection, force)
       return
     end
 
-    -- The keys are on the winbar now, so this does not repeat them. It names the one thing
-    -- the winbar cannot say: that reopening is free.
+    -- Deliberately short. The keys are on the winbar, and a notify long enough to repeat
+    -- them wraps past the cmdline and triggers the hit-enter prompt, which is what was
+    -- interrupting the writer to tell them the tool would not interrupt them.
     vim.notify(
-      with_dropped(("albertlint: level %d, %d fix%s in %d lines (%s scope, %s). "
-        .. "Keys are on the winbar. Closing and reopening is free; "
-        .. ":AlbertLintLevel%d! forces a fresh pass."):format(
-        def.id, placed, plural(placed, "", "es"), #range_lines, scope_name, elapsed(started), def.id
+      with_dropped(("albertlint: level %d, %d fix%s in %d lines (%s)"):format(
+        def.id, placed, plural(placed, "", "es"), #range_lines, elapsed(started)
       )),
       vim.log.levels.INFO
     )
-  end)
-
-  -- Only recorded when the call actually started. `provider.call` returns nil when the CLI
-  -- is missing or the key is unset, and recording those would wedge the guard on a pass
-  -- that never ran.
-  if handle then
-    in_flight[bufnr] = { handle = handle, started = started, lines = #range_lines, level = def.id }
   end
 end
 

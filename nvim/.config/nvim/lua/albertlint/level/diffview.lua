@@ -21,6 +21,68 @@ local M = {}
 ---the full window, since in diff mode each window holds roughly half the columns.
 local NOTE_WIDTH = 64
 
+---Attach one note per finding, mirrored so the two windows stay aligned.
+---@param source_buf integer
+---@param scratch integer
+---@param ns integer
+---@param placed table[]
+---@return integer count
+local function draw_notes(source_buf, scratch, ns, placed)
+  local count = 0
+  for _, item in ipairs(placed or {}) do
+    local row = item.lnum - 1
+    local note = apply.note_lines(item.fix.label or "", item.fix.note or "", NOTE_WIDTH)
+
+    local virt, blanks = {}, {}
+    for _, text in ipairs(note) do
+      table.insert(virt, { { "  " .. text, "Comment" } })
+      -- One blank per note line. This COUNT, not the text, is what preserves alignment.
+      table.insert(blanks, { { "", "Comment" } })
+    end
+
+    local ok_scratch = pcall(vim.api.nvim_buf_set_extmark, scratch, ns, row, 0, {
+      virt_lines = virt,
+      virt_lines_above = true,
+    })
+    local ok_source = pcall(vim.api.nvim_buf_set_extmark, source_buf, ns, row, 0, {
+      virt_lines = blanks,
+      virt_lines_above = true,
+    })
+    if ok_scratch and ok_source then
+      count = count + 1
+    else
+      -- All or nothing per finding. A note on one side without its mirror is worse than
+      -- no note, because it silently misaligns the diff the author is reading.
+      pcall(vim.api.nvim_buf_clear_namespace, scratch, ns, row, row + 1)
+      pcall(vim.api.nvim_buf_clear_namespace, source_buf, ns, row, row + 1)
+    end
+  end
+  return count
+end
+
+---The corrected side's winbar, in one of two states.
+---
+---This carries the key hints because a `vim.notify` long enough to list them triggers the
+---hit-enter prompt, which blocks the writer to tell them the tool is not blocking. Seen in a
+---screenshot 2026-09-08.
+---@param level integer
+---@param status string|nil "waiting" while the pass is in flight, nil once it has landed
+---@return string
+function M.winbar(level, status)
+  if status == "waiting" then
+    return ("%%#DiffDelete#  LEVEL %d %%#Comment#  waiting for the model...  <C-c> aborts")
+      :format(level)
+  end
+  return table.concat({
+    ("%%#DiffAdd#  LEVEL %d %%#Comment#"):format(level),
+    "  ]c next",
+    "  do accept",
+    "  dp reject",
+    "  :AlbertLintLevelAccept one line",
+    "  :AlbertLintLevelClose",
+  })
+end
+
 ---@class LevelDiffState
 ---@field source_buf integer
 ---@field scratch_buf integer
@@ -95,44 +157,9 @@ function M.open(bufnr, corrected, placed, opts)
   -- the same failure mode as a one-sided `virt_lines`. Mirrored, 0 misaligned. The left
   -- label is not decoration; it is the mirror that keeps the rows lined up.
   vim.wo[source_win].winbar = "%#DiffText#  YOURS %#Comment#  (edits land here)"
-  vim.wo[scratch_win].winbar = table.concat({
-    ("%%#DiffAdd#  LEVEL %d %%#Comment#"):format(opts.level or 1),
-    "  ]c next",
-    "  do accept",
-    "  dp reject",
-    "  :AlbertLintLevelAccept one line",
-    "  :AlbertLintLevelClose",
-  })
+  vim.wo[scratch_win].winbar = M.winbar(opts.level or 1, opts.pending and "waiting" or nil)
 
-  local count = 0
-  for _, item in ipairs(placed or {}) do
-    local row = item.lnum - 1
-    local note = apply.note_lines(item.fix.label or "", item.fix.note or "", NOTE_WIDTH)
-
-    local virt, blanks = {}, {}
-    for _, text in ipairs(note) do
-      table.insert(virt, { { "  " .. text, "Comment" } })
-      -- One blank per note line. This COUNT, not the text, is what preserves alignment.
-      table.insert(blanks, { { "", "Comment" } })
-    end
-
-    local ok_scratch = pcall(vim.api.nvim_buf_set_extmark, scratch, ns, row, 0, {
-      virt_lines = virt,
-      virt_lines_above = true,
-    })
-    local ok_source = pcall(vim.api.nvim_buf_set_extmark, bufnr, ns, row, 0, {
-      virt_lines = blanks,
-      virt_lines_above = true,
-    })
-    if ok_scratch and ok_source then
-      count = count + 1
-    else
-      -- All or nothing per finding. A note on one side without its mirror is worse than
-      -- no note, because it silently misaligns the diff the author is reading.
-      pcall(vim.api.nvim_buf_clear_namespace, scratch, ns, row, row + 1)
-      pcall(vim.api.nvim_buf_clear_namespace, bufnr, ns, row, row + 1)
-    end
-  end
+  local count = draw_notes(bufnr, scratch, ns, placed)
 
   -- Land in the SOURCE window, not the corrected one, and this is not a preference.
   -- `:diffget` modifies the CURRENT buffer, so `do` pressed in the scratch window
@@ -158,6 +185,7 @@ function M.open(bufnr, corrected, placed, opts)
     scratch_win = scratch_win,
     ns = ns,
     count = count,
+    level = opts.level or 1,
     closed = false,
     saved = saved,
   }
@@ -220,6 +248,48 @@ function M.close(state)
   end
 
   return true
+end
+
+---Fill in the corrected side once the model has answered.
+---
+---`open()` is called before the pass finishes, so the writer sees the panel immediately and
+---the buffer they are looking at is the one that gets reviewed. This is the second half.
+---@param state LevelDiffState|nil
+---@param corrected string[]
+---@param placed table[]
+---@return integer count
+function M.populate(state, corrected, placed)
+  if not state or state.closed then
+    return 0
+  end
+  if not vim.api.nvim_buf_is_valid(state.scratch_buf) then
+    return 0
+  end
+
+  vim.bo[state.scratch_buf].modifiable = true
+  vim.api.nvim_buf_set_lines(state.scratch_buf, 0, -1, false, corrected)
+
+  -- Redraw from scratch rather than adding to what is there: `open()` drew nothing, but a
+  -- second populate on the same state would otherwise stack notes and break the mirror.
+  pcall(vim.api.nvim_buf_clear_namespace, state.scratch_buf, state.ns, 0, -1)
+  pcall(vim.api.nvim_buf_clear_namespace, state.source_buf, state.ns, 0, -1)
+  state.count = draw_notes(state.source_buf, state.scratch_buf, state.ns, placed)
+
+  if vim.api.nvim_win_is_valid(state.scratch_win) then
+    vim.wo[state.scratch_win].winbar = M.winbar(state.level or 1, nil)
+  end
+
+  -- Land on the first hunk now that there are hunks to land on.
+  if vim.api.nvim_win_is_valid(state.source_win) then
+    vim.api.nvim_set_current_win(state.source_win)
+    pcall(vim.api.nvim_win_set_cursor, state.source_win, { 1, 0 })
+    vim.api.nvim_win_call(state.source_win, function()
+      if vim.fn.diff_hlID(1, 1) == 0 then
+        pcall(vim.cmd, "normal! ]c")
+      end
+    end)
+  end
+  return state.count
 end
 
 M._NOTE_WIDTH = NOTE_WIDTH
