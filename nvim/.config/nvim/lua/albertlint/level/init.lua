@@ -32,6 +32,15 @@ local in_flight = {}
 ---@type table<integer, table>
 local open_views = {}
 
+---Buffers whose pass the writer stopped on purpose.
+---
+---Killing the process still delivers a completion callback with a non-zero exit, so without
+---this a cancel produced two messages: "cancelled after 4s" immediately followed by "pass
+---failed, so nothing changed. Run it again." The second one is noise at best and reads as a
+---bug at worst, since nothing failed.
+---@type table<integer, boolean>
+local cancelled = {}
+
 ---The last findings fetched per buffer and level, so closing and reopening the diff is free.
 ---
 ---A pass costs money and 30 to 90 seconds. Without this, `:AlbertLintLevelClose` followed by
@@ -244,9 +253,13 @@ function M.run(id, use_selection, force)
       return
     end
     if not res.ok then
+      -- A cancel the writer asked for is not a failure, and cancel() has already said so.
+      if cancelled[bufnr] then
+        cancelled[bufnr] = nil
+        return
+      end
       vim.notify(
-        ("albertlint: level %d pass failed, so nothing changed. Run it again. (%s)")
-          :format(def.id, tostring(res.err)),
+        ("albertlint: level %d pass failed, so nothing changed. %s"):format(def.id, tostring(res.err)),
         vim.log.levels.ERROR
       )
       return
@@ -405,13 +418,12 @@ function M.cancel(bufnr)
   -- killing still delivers one. The handle is nil when the provider never started, and
   -- cancel must still clear the report rather than erroring.
   if running.handle then
+    cancelled[bufnr] = true
     pcall(function()
       running.handle:kill("sigterm")
     end)
-    in_flight[bufnr] = nil
-  else
-    in_flight[bufnr] = nil
   end
+  in_flight[bufnr] = nil
   vim.notify(
     ("albertlint: level %d pass cancelled after %s"):format(running.level, elapsed(running.started)),
     vim.log.levels.INFO
@@ -447,12 +459,14 @@ vim.api.nvim_create_autocmd({ "BufDelete", "BufWipeout" }, {
     cache[ev.buf] = nil
     in_flight[ev.buf] = nil
     open_views[ev.buf] = nil
+    cancelled[ev.buf] = nil
   end,
 })
 
 M._in_flight = in_flight
 M._open_views = open_views
 M._cache = cache
+M._cancelled = cancelled
 M._all_blank = all_blank
 M._present = present
 return M

@@ -152,6 +152,27 @@ function M.openai_body(model, prompt, text)
   })
 end
 
+---Read the API key without going through Vimscript.
+---
+---`vim.env` is backed by the Vimscript `getenv`, which raises
+---`E5560: Vimscript function "getenv" must not be called in a fast event context`. `scrub` is
+---called from a `vim.system` on_exit callback, and that IS a fast event context, so a
+---non-zero exit from either provider crashed with a Lua traceback instead of reporting the
+---error. The error handler was the thing that broke, which is the worst place for this to
+---live. Reported from a real session 2026-09-08 on the claude path.
+---
+---`vim.uv.os_getenv` is a libuv binding rather than a Vimscript call, so it is safe there,
+---and it observes writes made through `vim.env` (verified 2026-09-08).
+---@return string|nil
+local function api_key()
+  local uv = vim.uv or vim.loop
+  local ok, value = pcall(uv.os_getenv, "OPENAI_API_KEY")
+  if ok and value ~= nil and value ~= "" then
+    return value
+  end
+  return nil
+end
+
 ---Remove anything credential-shaped from text about to be shown to the user.
 ---
 ---`vim.notify` output lands in the message history and persists there for the session, and
@@ -170,8 +191,8 @@ function M.scrub(s)
   -- (`GATEWAY-abc123-not-sk-shaped`) gets partially rewritten by the pattern, after which
   -- the literal match no longer finds it and a PREFIX OF THE REAL KEY survives into
   -- vim.notify. Scrubbing the exact value first makes the patterns pure backstop.
-  local key = vim.env.OPENAI_API_KEY
-  if key and key ~= "" then
+  local key = api_key()
+  if key then
     s = s:gsub(vim.pesc(key), "[redacted]")
   end
 
@@ -215,6 +236,30 @@ function M.parse(text)
   return decoded, nil
 end
 
+---Turn a non-zero exit into something the writer can act on.
+---
+---`vim.system` reports a timeout as code 124 with SIGTERM and an EMPTY stderr, so the
+---obvious message renders as "claude exited 124: " and says nothing at all. Verified
+---2026-09-08. A timeout is also the most likely failure in normal use, because the default
+---scope is the whole buffer and a real note is far larger than any sample this was built
+---against, so it earns its own branch.
+---@param label string Provider name for the message
+---@param res table The vim.system result
+---@param timeout_ms integer|nil
+---@return string
+local function exit_error(label, res, timeout_ms)
+  local stderr = M.scrub(res.stderr or res.stdout)
+  if res.signal == 15 and stderr:match("^%s*$") then
+    return ("%s was stopped after %.0fs with no error output, which almost always means the "
+      .. "timeout. Raise `level.timeout_ms`, or set `level.scope` to \"paragraph\" or pass a "
+      .. ":'<,'> range to review less at once."):format(label, (timeout_ms or 0) / 1000)
+  end
+  if stderr:match("^%s*$") then
+    return ("%s exited %d with no error output"):format(label, res.code)
+  end
+  return ("%s exited %d: %s"):format(label, res.code, stderr:sub(1, 300))
+end
+
 ---@param name string "claude" | "openai"
 ---@param prompt string
 ---@param text string The numbered lines
@@ -241,10 +286,7 @@ function M.call(name, prompt, text, opts, cb)
       timeout = opts.timeout_ms,
     }, function(res)
       if res.code ~= 0 then
-        finish({
-          ok = false,
-          err = ("claude exited %d: %s"):format(res.code, M.scrub(res.stderr):sub(1, 200)),
-        })
+        finish({ ok = false, err = exit_error("claude", res, opts.timeout_ms), signal = res.signal })
         return
       end
       local parsed, err = M.parse(res.stdout or "")
@@ -257,8 +299,8 @@ function M.call(name, prompt, text, opts, cb)
   end
 
   if name == "openai" then
-    local key = vim.env.OPENAI_API_KEY
-    if not key or key == "" then
+    local key = api_key()
+    if not key then
       -- Name the variable, never a value.
       finish({ ok = false, err = "OPENAI_API_KEY is not set in this environment" })
       return nil
@@ -287,10 +329,7 @@ function M.call(name, prompt, text, opts, cb)
     }, function(res)
       os.remove(body_path)
       if res.code ~= 0 then
-        finish({
-          ok = false,
-          err = ("curl exited %d: %s"):format(res.code, M.scrub(res.stderr or res.stdout):sub(1, 200)),
-        })
+        finish({ ok = false, err = exit_error("curl", res, opts.timeout_ms), signal = res.signal })
         return
       end
       local parsed, err = M.parse(res.stdout or "")
@@ -306,4 +345,6 @@ function M.call(name, prompt, text, opts, cb)
   return nil
 end
 
+M._exit_error = exit_error
+M._api_key = api_key
 return M

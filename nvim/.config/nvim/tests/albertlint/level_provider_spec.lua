@@ -187,6 +187,76 @@ describe("level.provider scrub", function()
   end)
 end)
 
+describe("level.provider fast event context", function()
+  it("scrub does not error inside a libuv callback", function()
+    -- The bug this pins, reported from a real session 2026-09-08. `vim.env` is backed by
+    -- the Vimscript `getenv`, which raises E5560 in a fast event context, and `scrub` is
+    -- called from `vim.system`'s on_exit callback, which IS one. So every non-zero exit
+    -- from either provider crashed with a Lua traceback instead of reporting the error:
+    -- the error handler was the thing that broke. A libuv timer callback is the same kind
+    -- of context, which is what makes this reproducible without spending money.
+    local failure, done = nil, false
+    local timer = (vim.uv or vim.loop).new_timer()
+    timer:start(0, 0, function()
+      local ok, err = pcall(provider.scrub, "Bearer " .. FAKE_KEY .. " boom")
+      if not ok then
+        failure = tostring(err)
+      end
+      done = true
+      timer:stop()
+      timer:close()
+    end)
+    vim.wait(2000, function() return done end, 10)
+
+    assert.is_true(done, "the timer callback never ran")
+    assert.is_nil(failure)
+  end)
+
+  it("still scrubs the environment key when read through libuv", function()
+    -- The fix swapped vim.env for vim.uv.os_getenv, so prove the scrub still works rather
+    -- than only that it no longer throws.
+    local saved = vim.env.OPENAI_API_KEY
+    vim.env.OPENAI_API_KEY = "GATEWAY-fastctx-probe"
+
+    local out = provider.scrub("failed with GATEWAY-fastctx-probe in the header")
+
+    vim.env.OPENAI_API_KEY = saved
+    assert.is_nil(out:find("GATEWAY-fastctx", 1, true))
+  end)
+end)
+
+describe("level.provider exit_error", function()
+  it("reports a timeout as a timeout, not as an opaque exit code", function()
+    -- vim.system reports a timeout as code 124 with SIGTERM and an EMPTY stderr, so the
+    -- obvious message rendered as "claude exited 124: " and told the writer nothing.
+    -- Verified 2026-09-08. It is also the most likely failure in normal use, because the
+    -- default scope is the whole buffer.
+    local msg = provider._exit_error("claude", { code = 124, signal = 15, stderr = "" }, 90000)
+
+    assert.is_true(msg:find("timeout", 1, true) ~= nil)
+    assert.is_true(msg:find("90", 1, true) ~= nil)
+    -- And it names the two ways out.
+    assert.is_true(msg:find("timeout_ms", 1, true) ~= nil)
+    assert.is_true(msg:find("scope", 1, true) ~= nil)
+  end)
+
+  it("says so plainly when there is no error output at all", function()
+    local msg = provider._exit_error("curl", { code = 7, signal = 0, stderr = "" }, 90000)
+
+    assert.is_true(msg:find("exited 7", 1, true) ~= nil)
+    assert.is_true(msg:find("no error output", 1, true) ~= nil)
+  end)
+
+  it("passes real stderr through, scrubbed", function()
+    local msg = provider._exit_error(
+      "curl", { code = 22, signal = 0, stderr = "Bearer " .. FAKE_KEY .. " unauthorized" }, 90000
+    )
+
+    assert.is_true(msg:find("unauthorized", 1, true) ~= nil)
+    assert.is_nil(msg:find("sk-", 1, true))
+  end)
+end)
+
 describe("level.provider parse", function()
   it("strips a markdown fence around the JSON", function()
     -- Models wrap JSON in a fence often enough that stripping is cheaper than
