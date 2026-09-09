@@ -276,6 +276,13 @@ function M.setup(opts)
       "albertlint.level.levels",
       "albertlint.level.provider",
       "albertlint.level.diffview",
+      -- The parse tier, on the list for the same reason. `daemon` is *not* on it: dropping
+      -- it would orphan a running spaCy process and its 0.5 s startup, and the reload
+      -- would silently start a second one. Use :AlbertLintTreeStatus if the daemon is what
+      -- you are debugging.
+      "albertlint.parse",
+      "albertlint.parse.sentence",
+      "albertlint.parse.tree",
     }) do
       package.loaded[mod] = nil
     end
@@ -352,6 +359,49 @@ function M.setup(opts)
     require("albertlint.level").cancel()
   end, { desc = "albertlint: stop the level pass running in this buffer" })
 
+  -- The structure sidebar. Read-only analysis of what is already written, so it sits
+  -- outside the level tier's scoped exception in CLAUDE.md rather than widening it: there
+  -- is no replacement prose here and nothing to accept.
+  vim.api.nvim_create_user_command("AlbertLintTree", function()
+    require("albertlint.parse").toggle()
+  end, { desc = "albertlint: sentence structure of the sentence under the cursor, in a sidebar" })
+
+  vim.api.nvim_create_user_command("AlbertLintTreeClose", function()
+    require("albertlint.parse").close()
+  end, { desc = "albertlint: close the structure sidebar" })
+
+  vim.api.nvim_create_user_command("AlbertLintTreeFollow", function()
+    vim.notify(
+      require("albertlint.parse").toggle_follow()
+        and "albertlint: structure sidebar now follows the cursor"
+        or "albertlint: structure sidebar no longer follows the cursor",
+      vim.log.levels.INFO
+    )
+  end, { desc = "albertlint: toggle re-rendering the sidebar as the cursor crosses sentences" })
+
+  -- The bang installs from public PyPI instead of whatever index uv is configured to use.
+  -- Needed here because this machine's uv points at a non-public index that is only
+  -- reachable on that network, and a text editor should not silently reroute a package install.
+  vim.api.nvim_create_user_command("AlbertLintTreeBootstrap", function(cmd)
+    require("albertlint.parse.daemon").bootstrap(cmd.bang)
+  end, {
+    bang = true,
+    desc = "albertlint: create the parser venv and download the model (about 60 MB); ! uses public PyPI",
+  })
+
+  vim.api.nvim_create_user_command("AlbertLintTreeStatus", function()
+    require("albertlint.parse").status()
+  end, { desc = "albertlint: parser state, cache size, and the measured hover latency" })
+
+  vim.api.nvim_create_user_command("AlbertLintTreeBenchmark", function()
+    require("albertlint.parse").benchmark()
+  end, { desc = "albertlint: time the hover path over every cached sentence in this buffer" })
+
+  vim.api.nvim_create_user_command("AlbertLintTreeClearCache", function()
+    require("albertlint.parse").clear_cache(vim.api.nvim_get_current_buf())
+    vim.notify("albertlint: parse cache dropped for this buffer", vim.log.levels.INFO)
+  end, { desc = "albertlint: drop the cached parses for this buffer" })
+
   -- One place that answers "is this thing working". Added because the question came up
   -- repeatedly and the honest answer needed four separate commands plus reading source.
   vim.api.nvim_create_user_command("AlbertLintStatus", function()
@@ -370,11 +420,15 @@ function M.setup(opts)
         cfg.semantic.cmd[1],
         vim.fn.executable(cfg.semantic.cmd[1]) == 1 and "found" or "NOT ON PATH"
       ),
-      ("level: %s, provider %s, scope %s, timeout %dms%s"):format(
+      -- `%s` and not `%dms` for the timeout. `level.timeout_ms` defaults to nil, meaning
+      -- "scale to the number of lines", and `%d` against nil is an error, so this whole
+      -- command failed on a default config. Found 2026-09-09 while smoke-testing the parse
+      -- tier's commands, which is an argument for smoke-testing the old ones too.
+      ("level: %s, provider %s, scope %s, timeout %s%s"):format(
         cfg.level.enabled and "enabled" or "disabled",
         cfg.level.provider,
         cfg.level.scope,
-        cfg.level.timeout_ms,
+        cfg.level.timeout_ms and (cfg.level.timeout_ms .. "ms") or "scaled to length",
         -- Report only whether the credential is PRESENT, never any part of its value.
         cfg.level.provider == "openai"
             and ((vim.env.OPENAI_API_KEY or "") ~= "" and ", OPENAI_API_KEY set" or ", OPENAI_API_KEY NOT SET")
@@ -392,8 +446,19 @@ function M.setup(opts)
       table.insert(lines, "collocation: not loaded")
     end
 
+    table.insert(lines, ("parse: %s, follow %s, labels %s"):format(
+      require("albertlint.parse.daemon").installed() and "installed" or "not bootstrapped",
+      cfg.parse.follow and "on" or "off",
+      cfg.parse.dep_labels
+    ))
+
     vim.notify("albertlint status\n  " .. table.concat(lines, "\n  "), vim.log.levels.INFO)
   end, { desc = "albertlint: report what is on, what scope, and whether the CLI is reachable" })
+
+  -- Autocmds and the highlight group only. No process is started and no venv is touched:
+  -- the daemon starts on the first `:AlbertLintTree`, so a session that never opens the
+  -- sidebar pays nothing for it.
+  require("albertlint.parse").setup()
 
   return M
 end

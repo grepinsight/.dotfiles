@@ -34,6 +34,7 @@ Any future module added here needs the same one-line link.
 | `exit` | `InsertLeave`, `TextChanged`, `BufWritePost` | 13 sentence-level rules | free, instant |
 | `semantic` | on demand, `:AlbertLintSemantic` | 4 error classes no regex can see | shells out to `claude`, ~35s |
 | `collocation` | as you type, via nvim-cmp | 416 entries from the vault's own phrase notes | free, instant, no model |
+| `parse` | on demand, `:AlbertLintTree` | not a linter: a dependency tree in a sidebar | local spaCy, ~0.1ms per hover |
 | `style` | **not built.** Spec only | discourse-level annotations | — |
 
 `collocation/` has its own [README](collocation/README.md). It is a completion source rather
@@ -66,6 +67,12 @@ position. `:AlbertLintCoverage` prints exactly which patterns fall on which side
 | `:AlbertLintLevelReject` | push the original back over only the line under the cursor |
 | `:AlbertLintLevelClose` | close the level diff and leave diff mode |
 | `:AlbertLintLevelCancel` | stop a running level pass |
+| `:AlbertLintTree` | **structure sidebar.** The dependency tree of the sentence under the cursor |
+| `:AlbertLintTreeFollow` | toggle re-rendering as the cursor crosses sentence boundaries |
+| `:AlbertLintTreeBootstrap` | one-time: create the parser venv and download the model. `!` uses public PyPI |
+| `:AlbertLintTreeStatus` | parser state, cache size, and the measured hover latency |
+| `:AlbertLintTreeBenchmark` | time the hover path over every cached sentence in this buffer |
+| `:AlbertLintTreeClearCache` | drop the cached parses for this buffer |
 | `:AlbertLintCoverage` | which logged mistake patterns have a rule, and which cannot have one |
 | `:AlbertLintReload` | reload rules, engine, semantic, level, and config. Not `init.lua`, not the commands |
 | `:AlbertLintCollocationStatus` | collocation entry count, breakdown, and cache path |
@@ -98,6 +105,15 @@ require("albertlint").setup({
     scope = "buffer",             -- paragraph | buffer | selection
     timeout_ms = nil,             -- nil means scale it to the line count
     model = nil,                  -- nil means the provider's own default
+  },
+  parse = {
+    follow = false,               -- re-render as the cursor crosses sentences
+    include_punct = false,        -- a `punct` leaf per clause carries no structure
+    dep_labels = "gloss",         -- gloss | raw | both; `K` shows raw either way
+    width = 52,
+    debounce_ms = 500,            -- the background buffer sweep after an edit
+    highlight_sentence = true,    -- underline the span that was actually parsed
+    max_sentences = 400,          -- cap per sweep, announced when it bites
   },
 })
 ```
@@ -279,6 +295,88 @@ failure a linter has available. Re-run the measurement before changing this.
 
 Nothing about level 1 has been measured for precision. Every test is recall on text already
 known to be broken.
+
+## The structure sidebar
+
+`:AlbertLintTree` opens a right-hand split showing the sentence under the cursor as a nested
+dependency tree.
+
+```
+There is a strong belief in the benefits of enriching clinical patient data.
+(23 words)
+
+is · VERB · root
+├── There · PRON · existential there
+└── belief · NOUN · attribute
+    ├── a · DET · determiner
+    ├── strong · ADJ · adjective modifier
+    └── in · ADP · preposition
+        └── benefits · NOUN · object of preposition
+```
+
+`q` closes it. `K` on a line reports that token's raw `pos`, `tag`, `dep`, and head, because
+the sidebar shows glossed labels (`subject`) and the raw tag (`nsubj`) is the searchable one.
+
+One-time setup, roughly 60 MB:
+
+```vim
+:AlbertLintTreeBootstrap
+```
+
+It builds a venv under `stdpath("data")/albertlint-parse` with `spacy==3.8.16` and
+`en_core_web_sm-3.8.0`. If your `uv` is pointed at a non-public index that needs network access, the
+install fails with a DNS error and says so; `:AlbertLintTreeBootstrap!` installs from public
+PyPI instead. The bang is deliberate rather than automatic: rerouting a package install is not
+a decision an editor should make on your behalf.
+
+### The hover is sub-millisecond; the parse is not
+
+This is the whole architecture, so it is worth stating plainly. Measured on this machine,
+`en_core_web_sm` with `ner`, `lemmatizer`, and `senter` excluded:
+
+| | measured |
+|---|---|
+| parse, 9 words | 1.29 ms |
+| parse, 25 words | 2.01 ms |
+| parse, 44 words | 3.60 ms |
+| whole 294-word document in one call | 22 ms |
+| **hover on a cached sentence, end to end** | **~95 us** |
+| cache lookup plus render alone | 13.8 us median, 76.9 us worst |
+
+There is no configuration of spaCy that parses a sentence in under a millisecond. So the parse
+is moved off the interaction path entirely: the buffer is swept in the background, the trees are
+cached **in Lua** keyed by sentence text, and a hover is a table lookup plus a render, with no
+IPC and no Python on the path. Reproduce it yourself with `:AlbertLintTreeBenchmark`.
+
+Two consequences of keying the cache on text rather than on buffer position. An edit
+invalidates exactly the sentence you edited, so the rest of the buffer stays hot for the whole
+session. And rewrapping a paragraph is free, because whitespace is normalized before the
+lookup.
+
+Cold starts, also measured, also worth knowing so they do not read as a hang:
+
+- **first parse after bootstrap: about 20 s.** macOS verifying a few dozen freshly written
+  shared objects, once per install location. This is why the environment is a persistent venv
+  and not `uv run --script`, which would pay it on every start.
+- **first parse of a later session: about 0.5 s.** 332 to 413 ms to import, 142 to 150 ms to
+  load the model.
+
+### Dependency, not constituency
+
+A constituency parse (`S -> NP VP`) is the tree most people picture, and it reads better for
+clause nesting. It needs benepar or Stanza, which means PyTorch and a parse budget in the tens
+of milliseconds. A dependency parse comes free with the model that already does the tagging and
+fits the latency budget, at the cost of answering a different question: not *what phrase is this
+part of* but *what word governs this word*.
+
+### Why this is not the level tier's exception
+
+`CLAUDE.md` forbids replacement prose with an accept path, and carves out a narrow exception for
+`:AlbertLintLevel1`. This feature needs no exception. It shows an analysis of what is already
+written: one token and two labels per line, a read-only buffer, no accept key, and nothing to
+apply. The only way to act on it is to go and change the sentence.
+
+Design doc: `docs/superpowers/specs/2026-09-09-albertlint-syntax-tree-design.md`.
 
 ## Adding a rule
 

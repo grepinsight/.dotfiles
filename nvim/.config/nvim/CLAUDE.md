@@ -40,7 +40,7 @@ PLENARY_DIR=~/.local/share/nvim/lazy/plenary.nvim nvim --headless \
   -c "PlenaryBustedDirectory tests { minimal_init = 'tests/minimal_init.lua' }"
 ```
 
-393 tests as of 2026-09-08 (275 as of 2026-09-01; the count moves, so treat it as a floor and diff per-file rather than pinning a total). Run before and after every change. `tests/minimal_init.lua` is
+470 tests as of 2026-09-09 (393 as of 2026-09-08, 275 as of 2026-09-01; the count moves, so treat it as a floor and diff per-file rather than pinning a total). Run before and after every change. `tests/minimal_init.lua` is
 deliberately minimal and does not load `plugins.lua`; ignore the `telescope.builtin not found`
 and `UpdateRemotePlugins` noise from specs that `:edit` a real file.
 
@@ -104,16 +104,36 @@ If the accept key turns out to be used reflexively, the alternative to revisit i
 gate** (spec §2, rejected as over-built): the diff shows the fix, but applying it requires typing
 the corrected span. Do not revert to annotations-only; that option was considered and declined.
 
+### The parse tier is not another exception
+
+`albertlint/parse/` shows replacement-free analysis: one token and two labels per line, in a
+read-only scratch buffer, with no accept key and nothing to apply. It needs no carve-out from
+the constraint above, and an agent reading only the level-1 exception should not conclude the
+constraint has been loosened generally. It has not. See
+`docs/superpowers/specs/2026-09-09-albertlint-syntax-tree-design.md` section 5.
+
+Two facts about it that are expensive to rediscover:
+
+- **The daemon's Python file lives at `lua/albertlint/parse/daemon.py`,** inside the Lua tree.
+  That is deliberate. `~/.config/nvim/lua/albertlint` is a whole-directory symlink, so anything
+  under it is reachable, while a new top-level `python/` directory would hit the symlink trap at
+  the top of this file.
+- **The venv is persistent, under `stdpath("data")/albertlint-parse`, and must stay that way.**
+  Measured 2026-09-09: the first `import spacy` in a freshly created environment takes 19.6s on
+  macOS, and every later import in the same location takes 332 to 413ms. `uv run --script` with
+  PEP 723 inline dependencies builds a new environment per invocation, so it pays the 19.6s
+  every single time. This was verified twice; do not "simplify" it back.
+
 ## Commit style
 
 Conventional commits (`feat(nvim):`, `fix(nvim):`, `docs(nvim):`). Bodies explain the *why* and
 name the measurement or the failure that motivated the change. **No AI authorship trailers** —
 the user's global instructions forbid them.
 
-## State of play, 2026-09-08
+## State of play, 2026-09-09
 
-Branch `feat/albertlint-levels`, off `master` at `f5ca555`. The `feat/writing-companion` work
-this file used to point at has since landed on `master`.
+Branch `feat/albertlint-syntax-tree`, off `master` at `f5c1154`. The
+`feat/albertlint-levels` work this file used to point at has since landed on `master`.
 
 | Component | State |
 |---|---|
@@ -121,6 +141,7 @@ this file used to point at has since landed on `master`.
 | `albertlint` semantic tier | working. Was silent for two independent reasons, both fixed: a dead `scope` config field, and the CLI's default model returning `{"findings":[]}` where sonnet finds the error |
 | `albertlint/level/` | **level 1 done.** `:AlbertLintLevel1` renders a grammar/usage pass as a native two-window diff, `do`/`dp` per hunk. Both `claude` and `openai` backends. Levels 2-4 are data rows only |
 | `albertlint/collocation/` | **done and wired.** nvim-cmp source over the user's own phrase notes. See `README.md` |
+| `albertlint/parse/` | **done.** `:AlbertLintTree` renders the sentence under the cursor as a dependency tree in a sidebar. Local spaCy daemon, cache keyed on sentence text, hover measured at ~95us. Needs a one-time `:AlbertLintTreeBootstrap` |
 | `albertlint/style/` | **~1/3 built.** `scope.lua` only. The runner, classes, groups, providers, and reconciliation are unwritten |
 | `annotate` AI lifecycle | partly built: `author`/`state`/`dismiss`/`add_many`/`retarget` done, the dismissal **ledger is not** |
 

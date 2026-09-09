@@ -98,6 +98,46 @@ local defaults = {
     -- `provider.lua`. Do not change either without re-running that measurement.
     model = nil,
   },
+
+  ---@class AlbertLintParseConfig
+  ---@field follow boolean Re-render the sidebar as the cursor crosses sentences
+  ---@field include_punct boolean
+  ---@field dep_labels string "gloss" | "raw" | "both"
+  ---@field width integer
+  ---@field debounce_ms integer
+  ---@field highlight_sentence boolean
+  ---@field max_sentences integer
+  parse = {
+    -- Off by default, and it is the one tier where that is not about false positives. The
+    -- sidebar re-renders on every cursor move across a sentence boundary, which is a fine
+    -- thing to ask for and a bad thing to inherit by opening a markdown file. `:AlbertLint
+    -- TreeFollow` turns it on for the session.
+    follow = false,
+
+    -- A `punct` leaf hangs off nearly every clause boundary and carries no structure, so
+    -- including it roughly triples the line count of a long sentence for no information.
+    include_punct = false,
+
+    -- "gloss" | "raw" | "both". `nsubj` is the searchable term and `subject` is the one
+    -- that teaches, so the default shows the gloss and `K` on a line reports the raw tag.
+    dep_labels = "gloss",
+
+    width = 52,
+
+    -- The buffer sweep after an edit. Longer than the live tier's 400 ms because the sweep
+    -- is a subprocess round trip rather than a regex pass, and nothing on screen waits for
+    -- it: a hover during the debounce window falls back to a single-sentence parse.
+    debounce_ms = 500,
+
+    -- Underline the span that was actually parsed. The Lua sentence splitter is a
+    -- heuristic (abbreviations, footnote markers), so showing its answer in the buffer is
+    -- how a wrong split becomes visible instead of confusing.
+    highlight_sentence = true,
+
+    -- A cap on one sweep, announced when it bites rather than applied silently. 400
+    -- sentences is roughly a 6000-word note, which is longer than anything in the vault.
+    max_sentences = 400,
+  },
 }
 
 ---@type AlbertLintConfig
