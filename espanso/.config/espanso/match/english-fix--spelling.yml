@@ -107,3 +107,8 @@ matches:
     replace: "weekStart"
     word: true
     propagate_case: true
+
+  - trigger: "highlevel"
+    replace: "high-level"
+    word: true
+    propagate_case: true

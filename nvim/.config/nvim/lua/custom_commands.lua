@@ -1516,3 +1516,65 @@ vim.keymap.set("v", "<leader>ca", ":ClaudeAnalyze<CR>", {
   desc = "Analyze selection's English (verbs, nouns, adjectives, idioms, structures)",
   silent = true,
 })
+
+-- ============================================================================
+-- Capture: a thought into the vault's 00-Capture folder, one file per thought
+-- The writer is ~/bin/capture (~/.dotfiles/capture); this is the Neovim door of
+-- four (shell, Hammerspoon cmd+shift+alt+N, Raycast, here). Nothing on this
+-- path calls a model, so it cannot be slow and cannot fail on a network.
+-- ============================================================================
+local capture = require("util.capture")
+
+vim.api.nvim_create_user_command("Capture", function(opts)
+  local run_opts = { source = "nvim", open = opts.bang }
+
+  -- A range wins over args: `:'<,'>Capture` is the visual-mode path and comes
+  -- with no args of its own.
+  if opts.range > 0 then
+    local lines = vim.api.nvim_buf_get_lines(0, opts.line1 - 1, opts.line2, false)
+    capture.run(capture.selection_text(lines), run_opts)
+    return
+  end
+
+  if opts.args ~= "" then
+    capture.run(opts.args, run_opts)
+    return
+  end
+
+  vim.ui.input({ prompt = "Capture: " }, function(text)
+    -- nil means the prompt was cancelled, which is not a failure worth a message.
+    if text then
+      capture.run(text, run_opts)
+    end
+  end)
+end, {
+  nargs = "*",
+  range = true,
+  bang = true,
+  desc = "Capture a thought into the vault's 00-Capture folder (! also opens it)",
+})
+
+vim.keymap.set("n", "<leader>nc", ":Capture<CR>", {
+  desc = "Capture a thought (prompts)",
+  silent = true,
+})
+
+vim.keymap.set("v", "<leader>nc", ":Capture<CR>", {
+  desc = "Capture the selection as a thought",
+  silent = true,
+})
+
+-- :Captures -- the read side of :Capture. A one-line capture's filename is
+-- already the thought, so reviewing them is a list problem, not an open-a-file
+-- problem; `~/bin/captures --json` supplies the list and telescope renders it.
+vim.api.nvim_create_user_command("Captures", function(opts)
+  capture.pick({ limit = tonumber(opts.args) })
+end, {
+  nargs = "?",
+  desc = "Pick from recent captures, newest first (optional count, default 200)",
+})
+
+vim.keymap.set("n", "<leader>nC", ":Captures<CR>", {
+  desc = "Browse recent captures",
+  silent = true,
+})

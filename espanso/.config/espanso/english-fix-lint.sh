@@ -19,7 +19,7 @@ FILES=("$MATCH_DIR"/english-fix--*.yml)
 
 # Case-insensitive denylist of things that must never leave the machine in this file
 # set. Employer, products, internal repos, hosts, ticket prefixes, and credentials.
-DENY='guardant|goldmine|spacestation|midas|hatchhub|propel|titan|epishield|shield|lunar|bedrock|proteomics|protein_monitoring|spacebox|devana|ghsfa|snowflake|snowsql|databricks|artifactory|okta|crowdstrike|code42|cato|simpplr|OCT-[0-9]|atlassian|confluence|gh-[a-z]{3,}|slack\.com|\.internal|BEGIN [A-Z ]*PRIVATE KEY|ghp_|gho_|xox[baprs]-|AKIA[0-9A-Z]{16}'
+DENY='guardant|goldmine|spacestation|midas|hatchhub|propel|titan|epishield|shield|lunar|bedrock|proteomics|protein_monitoring|spacebox|devana|ghsfa|snowflake|snowsql|databricks|artifactory|okta|crowdstrike|code42|cato|simpplr|OCT-[0-9]|atlassian|confluence|(^|[^[:alnum:]])gh-[a-z]{3,}|slack\.com|\.internal|BEGIN [A-Z ]*PRIVATE KEY|ghp_|gho_|xox[baprs]-|AKIA[0-9A-Z]{16}'
 
 fail=0
 for f in "${FILES[@]}"; do

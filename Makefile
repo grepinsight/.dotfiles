@@ -24,6 +24,7 @@ reload:  ## Reload configs
 	cd jupyter && make
 	cd ripgrep && make
 	cd claude && make
+	cd capture && make
 
 
 update_brew:

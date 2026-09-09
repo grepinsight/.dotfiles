@@ -6,6 +6,7 @@ package.path = package.path .. ";" .. hs.configdir .. "/modules/?.lua"
 -- Load Slack hotkeys configuration
 require("slack")
 require("unclassified")
+require("capture")
 
 -- Function to show current time in South Korea and US (PST)
 local function showCurrentTime()
