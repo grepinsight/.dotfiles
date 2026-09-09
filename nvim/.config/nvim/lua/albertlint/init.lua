@@ -283,6 +283,7 @@ function M.setup(opts)
       "albertlint.parse",
       "albertlint.parse.sentence",
       "albertlint.parse.tree",
+      "albertlint.parse.palette",
     }) do
       package.loaded[mod] = nil
     end
@@ -378,6 +379,10 @@ function M.setup(opts)
       vim.log.levels.INFO
     )
   end, { desc = "albertlint: toggle re-rendering the sidebar as the cursor crosses sentences" })
+
+  vim.api.nvim_create_user_command("AlbertLintTreeLegend", function()
+    require("albertlint.parse").legend()
+  end, { desc = "albertlint: the part-of-speech color legend for the structure sidebar" })
 
   -- The bang installs from public PyPI instead of whatever index uv is configured to use.
   -- Needed here because this machine's uv points at a non-public index that is only

@@ -40,7 +40,7 @@ PLENARY_DIR=~/.local/share/nvim/lazy/plenary.nvim nvim --headless \
   -c "PlenaryBustedDirectory tests { minimal_init = 'tests/minimal_init.lua' }"
 ```
 
-470 tests as of 2026-09-09 (393 as of 2026-09-08, 275 as of 2026-09-01; the count moves, so treat it as a floor and diff per-file rather than pinning a total). Run before and after every change. `tests/minimal_init.lua` is
+480 tests as of 2026-09-09 (393 as of 2026-09-08, 275 as of 2026-09-01; the count moves, so treat it as a floor and diff per-file rather than pinning a total). Run before and after every change. `tests/minimal_init.lua` is
 deliberately minimal and does not load `plugins.lua`; ignore the `telescope.builtin not found`
 and `UpdateRemotePlugins` noise from specs that `:edit` a real file.
 
@@ -118,6 +118,12 @@ Two facts about it that are expensive to rediscover:
   That is deliberate. `~/.config/nvim/lua/albertlint` is a whole-directory symlink, so anything
   under it is reachable, while a new top-level `python/` directory would hit the symlink trap at
   the top of this file.
+- **Measure the hover on a buffer with no blank lines before trusting it.** Two performance
+  bugs shipped in draft 1 and neither was visible to the correctness tests, because the output
+  was right the whole time. The worse one made `sentence.at` quadratic in the paragraph's byte
+  length and cost **39ms** on a 200-line paragraph, and the e2e run missed it because its test
+  buffer had blank lines between paragraphs. These notes are often written as one-line
+  paragraphs, which is exactly the pathological case. See the design doc §9.4.
 - **The venv is persistent, under `stdpath("data")/albertlint-parse`, and must stay that way.**
   Measured 2026-09-09: the first `import spacy` in a freshly created environment takes 19.6s on
   macOS, and every later import in the same location takes 332 to 413ms. `uv run --script` with
@@ -141,7 +147,7 @@ Branch `feat/albertlint-syntax-tree`, off `master` at `f5c1154`. The
 | `albertlint` semantic tier | working. Was silent for two independent reasons, both fixed: a dead `scope` config field, and the CLI's default model returning `{"findings":[]}` where sonnet finds the error |
 | `albertlint/level/` | **level 1 done.** `:AlbertLintLevel1` renders a grammar/usage pass as a native two-window diff, `do`/`dp` per hunk. Both `claude` and `openai` backends. Levels 2-4 are data rows only |
 | `albertlint/collocation/` | **done and wired.** nvim-cmp source over the user's own phrase notes. See `README.md` |
-| `albertlint/parse/` | **done.** `:AlbertLintTree` renders the sentence under the cursor as a dependency tree in a sidebar. Local spaCy daemon, cache keyed on sentence text, hover measured at ~95us. Needs a one-time `:AlbertLintTreeBootstrap` |
+| `albertlint/parse/` | **done, draft 2.** `:AlbertLintTree` renders the sentence under the cursor as a dependency tree in a sidebar, colored per part of speech, each node labelled with the phrase it heads. Local spaCy daemon, cache keyed on sentence text, hover measured at ~420us. Needs a one-time `:AlbertLintTreeBootstrap` |
 | `albertlint/style/` | **~1/3 built.** `scope.lua` only. The runner, classes, groups, providers, and reconciliation are unwritten |
 | `annotate` AI lifecycle | partly built: `author`/`state`/`dismiss`/`add_many`/`retarget` done, the dismissal **ledger is not** |
 

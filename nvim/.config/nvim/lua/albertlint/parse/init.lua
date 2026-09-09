@@ -13,12 +13,14 @@
 local config = require("albertlint.config")
 local daemon = require("albertlint.parse.daemon")
 local engine = require("albertlint.engine")
+local palette = require("albertlint.parse.palette")
 local sentence = require("albertlint.parse.sentence")
 local tree = require("albertlint.parse.tree")
 
 local M = {}
 
 local NS = vim.api.nvim_create_namespace("albertlint_tree")
+local TREE_NS = vim.api.nvim_create_namespace("albertlint_tree_hl")
 local AUGROUP = "AlbertLintTree"
 
 ---@type table<integer, table<string, table>>
@@ -29,7 +31,8 @@ local timers = {}
 M.view = {
   win = nil,
   buf = nil,
-  follow = false,
+  follow = true,
+  phrases = true,
   ---@type table<integer, integer>
   index = {},
   last_key = nil,
@@ -50,11 +53,30 @@ local function bucket(bufnr)
   return cache[bufnr]
 end
 
+---@type table<integer, table>
+local line_cache = {}
+
+---The buffer's lines and code mask, memoized on `changedtick`.
+---
+---Both are recomputed on every hover, and both are O(buffer) rather than O(sentence), so on
+---a long note they dominate a cost that is otherwise measured in microseconds. Memoizing on
+---`changedtick` is exact: the tick changes on any edit and on nothing else, so a stale entry
+---is not possible.
+---
+---Not merged into the parse cache, which is keyed on sentence text and deliberately survives
+---edits. This one must not.
 ---@param bufnr integer
 ---@return string[] lines, table mask
 local function buffer_lines(bufnr)
+  local tick = vim.api.nvim_buf_get_changedtick(bufnr)
+  local hit = line_cache[bufnr]
+  if hit and hit.tick == tick then
+    return hit.lines, hit.mask
+  end
   local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
-  return lines, engine._build_mask(lines)
+  local mask = engine._build_mask(lines)
+  line_cache[bufnr] = { tick = tick, lines = lines, mask = mask }
+  return lines, mask
 end
 
 --- Submit every sentence in the buffer that is not already cached.
@@ -122,6 +144,13 @@ local function sidebar_buf()
   vim.keymap.set("n", "K", function()
     M.explain()
   end, { buffer = buf, desc = "albertlint: raw tag and dependency label for this token" })
+  vim.keymap.set("n", "p", function()
+    M.view.phrases = not M.view.phrases
+    M.render_current(true)
+  end, { buffer = buf, desc = "albertlint: toggle the phrase each node stands for" })
+  vim.keymap.set("n", "g?", function()
+    M.legend()
+  end, { buffer = buf, desc = "albertlint: the color legend" })
   M.view.buf = buf
   return buf
 end
@@ -180,6 +209,58 @@ local function highlight(bufnr, span)
   end
 end
 
+---@return table
+function M.render_opts()
+  local o = opts()
+  return {
+    include_punct = o.include_punct,
+    dep_labels = o.dep_labels,
+    pos_column = o.pos_column ~= false,
+    phrases = M.view.phrases,
+    phrase_max = math.max(16, (o.width or 52) - 6),
+  }
+end
+
+---Turn the render's highlight spans into extmarks in the sidebar buffer.
+---
+---A separate namespace from the source-buffer sentence underline, so clearing one cannot
+---clear the other.
+---@param highlights table[]
+local function paint(highlights)
+  vim.api.nvim_buf_clear_namespace(M.view.buf, TREE_NS, 0, -1)
+  if not opts().highlight_tokens then
+    return
+  end
+  -- One pcall around the loop, not one per span. A byte offset past the end of a line is an
+  -- error rather than a clamp, so the guard is real, but there are around 110 spans on a
+  -- 20-word sentence and this sits on the hover path. Losing the tail of the colors is an
+  -- acceptable failure; a pcall per extmark is a measurable cost for no extra safety, since
+  -- a spec already asserts every span lies inside its line.
+  pcall(function()
+    for _, h in ipairs(highlights) do
+      vim.api.nvim_buf_set_extmark(M.view.buf, TREE_NS, h.line - 1, h.col, {
+        end_col = h.end_col,
+        hl_group = h.group,
+      })
+    end
+  end)
+end
+
+---Register the palette.
+---
+---Re-run on `ColorScheme`, because `:colorscheme` clears every group set with
+---`nvim_set_hl`, links included. Without that autocmd the tree loses its colors the first
+---time the scheme is switched, which reads as a bug in this plugin.
+function M.apply_palette()
+  local groups = vim.o.background == "light" and palette.LIGHT or palette.DARK
+  for name, spec in pairs(groups) do
+    local hl = vim.deepcopy(spec)
+    hl.default = true
+    vim.api.nvim_set_hl(0, name, hl)
+  end
+  vim.api.nvim_set_hl(0, "AlbertLintTreeSentence", { link = "Underlined", default = true })
+end
+
 ---Render the sentence under the cursor.
 ---
 ---This is the hover path, and the only thing on it is a table lookup and
@@ -220,6 +301,10 @@ function M.render_current(force)
     vim.bo[M.view.buf].modifiable = true
     vim.api.nvim_buf_set_lines(M.view.buf, 0, -1, false, { span.text, "", "(parsing...)" })
     vim.bo[M.view.buf].modifiable = false
+    paint({
+      { line = 1, col = 0, end_col = #span.text, group = "AlbertLintTreeHeader" },
+      { line = 3, col = 0, end_col = 11, group = "AlbertLintTreeCount" },
+    })
     highlight(bufnr, span)
     local key = span.text
     daemon.request({ key }, function(res)
@@ -236,13 +321,11 @@ function M.render_current(force)
   end
 
   M.view.hits = M.view.hits + 1
-  local rendered, index = tree.render(parsed, {
-    include_punct = opts().include_punct,
-    dep_labels = opts().dep_labels,
-  })
+  local rendered, index, highlights = tree.render(parsed, M.render_opts())
   vim.bo[M.view.buf].modifiable = true
   vim.api.nvim_buf_set_lines(M.view.buf, 0, -1, false, rendered)
   vim.bo[M.view.buf].modifiable = false
+  paint(highlights)
   M.view.index = index
   M.view.last_key = span.text
   highlight(bufnr, span)
@@ -360,6 +443,54 @@ local function schedule_sweep(bufnr)
   end))
 end
 
+---The color legend, in its own scratch window.
+---
+---Exists because a fourteen-color scheme is only readable once you know it, and the
+---alternative to a legend is a permanent header in the sidebar eating four lines of a narrow
+---pane. Ordered by how much meaning the class carries rather than alphabetically, so the
+---content words are together at the top.
+function M.legend()
+  local lines, highlights = { "albertlint tree colors", "" }, {}
+  for _, pos in ipairs(palette.LEGEND_ORDER) do
+    local label = ("  %-6s %s"):format(pos, palette.LEGEND_GLOSS[pos] or "")
+    table.insert(lines, label)
+    table.insert(highlights, { line = #lines, col = 0, end_col = #label, group = palette.group(pos) })
+  end
+  vim.list_extend(lines, {
+    "",
+    "  bold verb    the root of every clause; find these first",
+    "  [in brackets]  the phrase that node stands for; `p` toggles",
+    "  dim italic     the dependency label, not a word in the sentence",
+  })
+
+  vim.cmd("noautocmd botright 24vsplit")
+  local buf = vim.api.nvim_create_buf(false, true)
+  vim.api.nvim_win_set_buf(0, buf)
+  vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
+  vim.api.nvim_set_hl(0, "AlbertLintTreeLegendTitle", { link = "Title", default = true })
+  vim.api.nvim_buf_set_extmark(buf, TREE_NS, 0, 0, {
+    end_col = #lines[1],
+    hl_group = "AlbertLintTreeLegendTitle",
+  })
+  for _, h in ipairs(highlights) do
+    vim.api.nvim_buf_set_extmark(buf, TREE_NS, h.line - 1, h.col, {
+      end_col = h.end_col,
+      hl_group = h.group,
+    })
+  end
+  for _, n in ipairs({ #lines - 2, #lines - 1, #lines }) do
+    vim.api.nvim_buf_set_extmark(buf, TREE_NS, n - 1, 0, {
+      end_col = #lines[n],
+      hl_group = "AlbertLintTreeDep",
+    })
+  end
+  vim.bo[buf].modifiable = false
+  vim.wo.number = false
+  vim.wo.relativenumber = false
+  vim.wo.signcolumn = "no"
+  vim.keymap.set("n", "q", "<cmd>close<cr>", { buffer = buf, desc = "close the legend" })
+end
+
 ---Cache size, daemon state, and the measured hover latency.
 function M.status()
   local total = 0
@@ -405,7 +536,7 @@ function M.benchmark(bufnr)
   bufnr = bufnr or vim.api.nvim_get_current_buf()
   local store = bucket(bufnr)
   local samples = {}
-  local render_opts = { include_punct = opts().include_punct, dep_labels = opts().dep_labels }
+  local render_opts = M.render_opts()
   for key, parsed in pairs(store) do
     local t0 = vim.uv.hrtime()
     tree.render(parsed, render_opts)
@@ -436,16 +567,27 @@ end
 function M.clear_cache(bufnr)
   if bufnr then
     cache[bufnr] = nil
+    line_cache[bufnr] = nil
   else
     cache = {}
+    line_cache = {}
   end
   M.view.last_key = nil
 end
 
 function M.setup()
-  vim.api.nvim_set_hl(0, "AlbertLintTreeSentence", { link = "Underlined", default = true })
+  M.view.follow = opts().follow ~= false
+  M.view.phrases = opts().phrases ~= false
+  M.apply_palette()
 
   local group = vim.api.nvim_create_augroup(AUGROUP, { clear = true })
+
+  vim.api.nvim_create_autocmd("ColorScheme", {
+    group = group,
+    callback = function()
+      M.apply_palette()
+    end,
+  })
 
   vim.api.nvim_create_autocmd({ "CursorMoved", "CursorHold" }, {
     group = group,
@@ -469,6 +611,7 @@ function M.setup()
     group = group,
     callback = function(ev)
       cache[ev.buf] = nil
+      line_cache[ev.buf] = nil
       if timers[ev.buf] then
         timers[ev.buf]:stop()
         timers[ev.buf]:close()

@@ -189,3 +189,27 @@ describe("parse.sentence all", function()
     assert.same({ "Same one." }, sentence.all(lines, mask))
   end)
 end)
+
+describe("parse.sentence performance", function()
+  it("stays linear in the paragraph length", function()
+    -- A regression test with a number in it, which this suite otherwise avoids. It earns the
+    -- exception: `boundary` used to take a substring of everything before the mark on every
+    -- call, which made the splitter quadratic in bytes and cost 39ms on this input against a
+    -- 1ms budget for the whole hover. A correctness test cannot see that, because the output
+    -- was right the whole time.
+    local lines = {}
+    for i = 1, 200 do
+      lines[i] = ("Some prose sentence number %d sits here to pad the buffer out."):format(i)
+    end
+    local engine_mask = require("albertlint.engine")._build_mask(lines)
+
+    local t0 = vim.uv.hrtime()
+    local at = require("albertlint.parse.sentence").at(lines, 100, 5, engine_mask)
+    local us = (vim.uv.hrtime() - t0) / 1000
+
+    assert.is_not_nil(at)
+    -- Two orders of magnitude of headroom over the fixed version's ~440us, so this fails on a
+    -- return to quadratic behaviour and not on a slow CI box.
+    assert.is_true(us < 15000, ("sentence.at took %.0f us on a 200-line paragraph"):format(us))
+  end)
+end)

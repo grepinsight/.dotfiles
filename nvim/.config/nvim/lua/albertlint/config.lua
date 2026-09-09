@@ -101,6 +101,9 @@ local defaults = {
 
   ---@class AlbertLintParseConfig
   ---@field follow boolean Re-render the sidebar as the cursor crosses sentences
+  ---@field phrases boolean Show the phrase each node stands for
+  ---@field highlight_tokens boolean Color each word by part of speech
+  ---@field pos_column boolean Show the POS tag as a text column
   ---@field include_punct boolean
   ---@field dep_labels string "gloss" | "raw" | "both"
   ---@field width integer
@@ -108,11 +111,28 @@ local defaults = {
   ---@field highlight_sentence boolean
   ---@field max_sentences integer
   parse = {
-    -- Off by default, and it is the one tier where that is not about false positives. The
-    -- sidebar re-renders on every cursor move across a sentence boundary, which is a fine
-    -- thing to ask for and a bad thing to inherit by opening a markdown file. `:AlbertLint
-    -- TreeFollow` turns it on for the session.
-    follow = false,
+    -- On, and it was `false` for exactly one day. The reasoning for off was that a sidebar
+    -- re-rendering on every cursor move is a bad thing to inherit by opening a markdown
+    -- file, and that reasoning is wrong: the sidebar only exists while it is open, and you
+    -- open it with an explicit command, so opening it *is* the opt-in. Following the cursor
+    -- is not an extra behaviour on top of the feature, it is the feature. Reported as a bug
+    -- within minutes of shipping.
+    follow = true,
+
+    -- Show the phrase each node stands for, in brackets. On by default because it is what
+    -- makes a dependency tree readable to someone who does not already think in
+    -- dependencies: `In · ADP · preposition` is an honest label for a node whose subtree is
+    -- `In this case`, and unreadable without the phrase beside it. `p` toggles it.
+    phrases = true,
+
+    -- Color each word by its part of speech. Verbs are bold, because the root of every
+    -- clause is one and finding them is how you find the clause boundaries. `g?` in the
+    -- sidebar shows the legend; the palette is in `parse/palette.lua`.
+    highlight_tokens = true,
+
+    -- The `· NOUN ·` column. Redundant once the colors are learned, so it is here to turn
+    -- off rather than to keep forever.
+    pos_column = true,
 
     -- A `punct` leaf hangs off nearly every clause boundary and carries no structure, so
     -- including it roughly triples the line count of a long sentence for no information.

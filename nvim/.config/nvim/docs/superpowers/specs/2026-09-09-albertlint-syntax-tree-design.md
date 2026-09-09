@@ -45,7 +45,10 @@ and it happens to also survive editing (see §4).
 ### What is being promised
 
 - **Hover on a cached sentence: sub-millisecond.** A Lua table lookup plus a render of a
-  pre-tokenized list. Verified by a benchmark in the test suite, not asserted.
+  pre-tokenized list. Verified by a benchmark in the test suite, not asserted. Draft 1
+  measured 95 us here; draft 2 added the phrase column and per-part-of-speech color and it is
+  now ~420 us median, ~555 us worst. See §9.4, which also records the two performance bugs
+  that measurement turned up.
 - **Hover on an uncached sentence: 2 to 5 ms**, the parse plus one pipe round trip, resolved
   asynchronously so the sidebar fills in rather than blocking. Below the ~100 ms perceptual
   floor by a wide margin, but not sub-millisecond, and the docs should not claim otherwise.
@@ -309,3 +312,133 @@ found by reading:
   the feature is a toy.
 - **The gloss table is one person's translation of Universal Dependencies labels.** It is not
   authoritative and a linguist would argue with several rows.
+
+## 9. Draft 2, same day: what the first version got wrong
+
+Three corrections, all from using it for five minutes, all worth recording because two were
+design errors rather than bugs.
+
+### 9.1 `follow` should have defaulted on
+
+Shipped as `false`, with the reasoning that a sidebar re-rendering on every cursor move is a bad
+thing to inherit by opening a markdown file. The reasoning is wrong. The sidebar only exists
+while it is open and you open it with an explicit command, so **opening it is the opt-in.**
+Following the cursor is not a behaviour layered on the feature, it is the feature; the original
+ask was "hover over a sentence", and a pane that shows one frozen sentence is not a hover.
+
+Reported as a bug within minutes of shipping. Default is now `true`.
+
+### 9.2 A dependency label is not readable without the phrase it heads
+
+The real complaint, and the sharpest one: *how do you actually read this?*
+
+```
+├── In · ADP · preposition
+│   └── case · NOUN · object of preposition
+│       └── this · DET · determiner
+```
+
+Every line there is correct and the reader still cannot recover that this subtree is the phrase
+`In this case`. Dependency grammar names the **head** of a phrase, and for a prepositional
+phrase the head is the preposition, which is the least informative word in it. Three levels of
+correct labels, no phrase.
+
+So each non-leaf node now carries the span its subtree covers:
+
+```
+├── In · ADP · preposition  [In this case]
+│   └── case · NOUN · object of preposition  [this case]
+│       └── this · DET · determiner
+```
+
+Computed in `tree.subtree_spans` from spaCy's `idx`, over the full token list so a phrase does
+not silently lose its comma, and skipped on leaves (where it would repeat the word) and on the
+root (where the header already shows the sentence). `p` toggles it.
+
+This is the closest the design gets to the constituency view rejected in §2, and it gets there
+for free: a dependency subtree *is* a constituent, so projecting the span recovers the phrase
+bracket without a second parser. Worth knowing before anyone reaches for benepar again.
+
+One bug fell out of building it, and it is the interesting kind. Without `idx` on the tokens,
+every span starts at 0 and the column shows the sentence's first word against every node:
+confidently wrong rather than absent. The existing specs caught it immediately, because their
+hand-written fixtures predated `idx`. `subtree_spans` now returns nothing when `idx` is missing,
+and there is a test named after that behaviour.
+
+### 9.3 Color carries the part of speech; text is the fallback
+
+`tree.render` now returns highlight spans as a third value, which the caller turns into
+extmarks. The module stays pure, and the spans are unit-testable, which matters more than it
+sounds: they are **byte** offsets, and the guide glyphs and the `·` separator are multibyte, so
+an off-by-one is a silent mis-paint rather than an error. One spec asserts every span lies
+inside its line.
+
+The palette is explicit hex in `parse/palette.lua`, not links to `Function` and `Type`. Linking
+follows the colorscheme for free and was the first design; it fails here because the classic
+groups collide (`Statement`, `Keyword`, and `Operator` are one color in most schemes) and a tree
+whose purpose is distinguishing fourteen parts of speech cannot have three of them identical.
+Every group is `default = true`, so a one-line override wins, and the palette is re-applied on
+`ColorScheme` because `:colorscheme` clears groups set with `nvim_set_hl`.
+
+Two asymmetries in the palette are deliberate:
+
+- **Verbs are bold and get the brightest hue.** A dependency tree hangs off its verbs: the root
+  is one, every clause has one, and finding them is how you find the clause boundaries.
+  Auxiliaries share the hue without the bold, because an auxiliary does structural work rather
+  than carrying a clause.
+- **Determiners, particles, and punctuation are dim, and so are the guides, the labels, and the
+  phrase column.** Fourteen colors only read if the scaffolding recedes. The words are the
+  content; everything else is a label.
+
+`:AlbertLintTreeLegend` and `g?` print the legend, ordered by how much meaning the class
+carries rather than alphabetically. `pos_column = false` drops the `· NOUN ·` text once the
+colors are learned, which is the payoff of having them.
+
+### 9.4 Re-measured, and the number in §1 is now wrong
+
+The hover got slower, so the honest thing is to correct §1 rather than leave the good number
+standing. **~420 us median, ~555 us worst**, against the ~95 us that draft 1 shipped with.
+
+The cost is real work, not waste: 110 extmarks on a 20-word sentence, plus the phrase column.
+Setting `highlight_tokens = false` and `phrases = false` returns roughly the old number, which
+is the honest way to offer the trade.
+
+Two performance bugs found while measuring, and the second is the reason this section exists.
+
+**`subtree_spans` was O(n^3).** It found each token's parent by scanning the token list. With
+`by_index` built once it is O(n x depth). Took the hover from 437 us median / 760 us worst back
+to 308 / 534.
+
+**`sentence.at` took 39 milliseconds.** Not microseconds. `boundary` tested the word before a
+candidate mark with `text:sub(1, i - 1):match("[%a]+$")`, which allocates a substring the
+length of everything before the mark **on every call**, so the splitter was quadratic in the
+paragraph's byte length. On a 200-line paragraph that is 14 KB scanned 14,000 times: 39 ms,
+against a 1 ms budget for the entire hover. Two fixes, together worth 90x:
+
+- scan backwards for the preceding word instead of slicing the prefix, and
+- jump to the next `[.!?]` with `find` instead of calling `boundary` on every byte.
+
+Now 436 us on the same pathological input.
+
+Three things worth keeping from this:
+
+1. **The correctness tests could not have caught it.** The output was right the whole time. It
+   took a measurement of a realistic buffer, and the e2e run did not find it either, because
+   its test buffer had blank lines between paragraphs and so never built a 14 KB paragraph.
+   There is now a spec named for the behaviour, with a threshold two orders of magnitude above
+   the fixed cost so it fails on a return to quadratic and not on a slow machine.
+2. **The pathological input is this writer's normal input.** `semantic.scope` already carries a
+   note that these notes are often written as one-line paragraphs, and a note without blank
+   lines is exactly the 200-contiguous-line case.
+3. `engine._build_mask` is O(buffer) and costs 292 us per 200 lines, so it is memoized on
+   `changedtick`. It is exact rather than approximate: the tick changes on any edit and on
+   nothing else. The first hover after each edit still pays it, which means the
+   sub-millisecond claim holds for repeat hovers in an unchanged buffer and degrades with
+   buffer length on the first hover after a keystroke. Roughly 1.5 ms on a 1000-line note.
+   That is over the stated target and 60x under the perceptual floor, and it is stated here
+   rather than rounded away.
+
+### 9.5 Verified
+
+480 examples, 0 failures (was 470). 11 new specs over the phrase column, the highlight spans,
+and the splitter's complexity.

@@ -68,7 +68,8 @@ position. `:AlbertLintCoverage` prints exactly which patterns fall on which side
 | `:AlbertLintLevelClose` | close the level diff and leave diff mode |
 | `:AlbertLintLevelCancel` | stop a running level pass |
 | `:AlbertLintTree` | **structure sidebar.** The dependency tree of the sentence under the cursor |
-| `:AlbertLintTreeFollow` | toggle re-rendering as the cursor crosses sentence boundaries |
+| `:AlbertLintTreeFollow` | toggle re-rendering as the cursor crosses sentence boundaries (on by default) |
+| `:AlbertLintTreeLegend` | the part-of-speech color legend |
 | `:AlbertLintTreeBootstrap` | one-time: create the parser venv and download the model. `!` uses public PyPI |
 | `:AlbertLintTreeStatus` | parser state, cache size, and the measured hover latency |
 | `:AlbertLintTreeBenchmark` | time the hover path over every cached sentence in this buffer |
@@ -107,7 +108,10 @@ require("albertlint").setup({
     model = nil,                  -- nil means the provider's own default
   },
   parse = {
-    follow = false,               -- re-render as the cursor crosses sentences
+    follow = true,                -- re-render as the cursor crosses sentences
+    phrases = true,               -- the [bracketed] span each node stands for; `p` toggles
+    highlight_tokens = true,      -- color each word by part of speech; `g?` for the legend
+    pos_column = true,            -- the `· NOUN ·` column, redundant once colors are learned
     include_punct = false,        -- a `punct` leaf per clause carries no structure
     dep_labels = "gloss",         -- gloss | raw | both; `K` shows raw either way
     width = 52,
@@ -302,20 +306,72 @@ known to be broken.
 dependency tree.
 
 ```
-There is a strong belief in the benefits of enriching clinical patient data.
-(23 words)
+In this case, a lightweight approach was chosen to map all genomics data to the measurement entity.
+(17 words)
 
-is · VERB · root
-├── There · PRON · existential there
-└── belief · NOUN · attribute
-    ├── a · DET · determiner
-    ├── strong · ADJ · adjective modifier
-    └── in · ADP · preposition
-        └── benefits · NOUN · object of preposition
+chosen · VERB · root
+├── In · ADP · preposition  [In this case]
+│   └── case · NOUN · object of preposition  [this case]
+│       └── this · DET · determiner
+├── approach · NOUN · passive subject  [a lightweight approach]
+│   ├── a · DET · determiner
+│   └── lightweight · ADJ · adjective modifier
+├── was · AUX · passive auxiliary
+└── map · VERB · open clausal complement  [to map all genomics data to the measurement e…]
+    ├── to · PART · auxiliary
+    ├── data · NOUN · direct object  [all genomics data]
+    │   ├── all · DET · determiner
+    │   └── genomics · NOUN · compound
+    └── to · ADP · preposition  [to the measurement entity]
+        └── entity · NOUN · object of preposition  [the measurement entity]
+            ├── the · DET · determiner
+            └── measurement · NOUN · compound
 ```
 
-`q` closes it. `K` on a line reports that token's raw `pos`, `tag`, `dep`, and head, because
-the sidebar shows glossed labels (`subject`) and the raw tag (`nsubj`) is the searchable one.
+Keys in the sidebar: `q` closes, `p` toggles the phrase column, `g?` shows the color legend,
+and `K` reports the token's raw `pos`, `tag`, `dep`, and head, because the tree shows glossed
+labels (`subject`) and the raw tag (`nsubj`) is the searchable one.
+
+### How to read it
+
+Four rules, and after them the tree reads at a glance.
+
+1. **The root is the main verb.** Its direct children are the sentence's main slots: here
+   `chosen` has four, so the skeleton is `[In this case] [a lightweight approach] was chosen
+   [to map ...]`.
+2. **Indentation is containment.** A node plus everything indented under it is one phrase,
+   which is exactly what the bracket spells out. That column exists because the label alone
+   cannot tell you: `In · ADP · preposition` is the honest name for a node whose subtree is
+   `In this case`.
+3. **Prepositions and `to` head their own phrases.** This is the counterintuitive part of
+   dependency grammar and the usual reason a first tree looks wrong. `In` governs `this case`;
+   `to` governs `the measurement entity`. The phrase column is what makes it readable anyway.
+4. **Depth is a writing signal.** A content word at depth 5 is buried under four layers of
+   modifier. In the example above, `measurement entity` is what the sentence is *about* and it
+   sits at the bottom of a right-branching tail, under a purpose clause, under an agentless
+   passive. The tree does not say that is wrong. It does make it visible, which is the whole
+   point of the pane.
+
+### Colors, one per part of speech
+
+`g?` prints the legend. The palette is `parse/palette.lua`, one table per background.
+
+| | |
+|---|---|
+| **verb**, bold and the brightest hue | the root of every clause; find these first and the clause boundaries follow |
+| auxiliary | same hue, no bold: a verb doing structural work rather than carrying the clause |
+| noun, proper noun | yellow and orange |
+| adjective, adverb | green and purple |
+| pronoun, conjunction | red family |
+| determiner, particle, punctuation | deliberately dim; they are structure, not content |
+| the guides, the label, the phrase | dim, italic, dimmer. Fourteen colors only read if the scaffolding recedes |
+
+Explicit hex, not links to `Function` and `Type`. Linking follows the colorscheme for free and
+was the first design; it is wrong here, because the classic groups collide (`Statement`,
+`Keyword`, and `Operator` are one color in most schemes) and a tree whose job is to distinguish
+fourteen parts of speech cannot have three of them look identical. Every group is registered
+with `default = true`, so one `nvim_set_hl` line overrides any of them, and the palette is
+re-applied on `ColorScheme` because `:colorscheme` clears them.
 
 One-time setup, roughly 60 MB:
 
@@ -340,8 +396,16 @@ This is the whole architecture, so it is worth stating plainly. Measured on this
 | parse, 25 words | 2.01 ms |
 | parse, 44 words | 3.60 ms |
 | whole 294-word document in one call | 22 ms |
-| **hover on a cached sentence, end to end** | **~95 us** |
-| cache lookup plus render alone | 13.8 us median, 76.9 us worst |
+| **hover on a cached sentence, end to end** | **~420 us median, ~555 us worst** |
+| cache lookup plus render alone | ~196 us single-shot, ~43 us warm |
+
+The hover figure was 95 us before the phrase column and the colors arrived; those cost about
+110 extmarks per sentence and roughly 300 us. Setting `highlight_tokens = false` and
+`phrases = false` gets the old number back, which is the honest way to offer the trade.
+
+One caveat on "sub-millisecond": the code mask is O(buffer) and memoized on `changedtick`, so
+the first hover after each keystroke pays a rebuild, about 1.5 ms on a 1000-line note. Repeat
+hovers in an unchanged buffer are the figure above.
 
 There is no configuration of spaCy that parses a sentence in under a millisecond. So the parse
 is moved off the interaction path entirely: the buffer is swept in the background, the trees are
