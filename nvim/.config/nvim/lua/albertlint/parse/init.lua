@@ -1,15 +1,12 @@
 ---The sentence-structure sidebar: cache, window, and the hover path.
 ---
----The whole feature exists to answer one question fast: *what is the structure of the
----sentence I am looking at?* spaCy cannot answer it in under a millisecond (measured: 2.0 ms
----for 25 words, 3.6 ms for 44), so the parse is moved off the interaction path entirely and
----the hover becomes a table lookup. See
+---spaCy cannot parse a sentence in under a millisecond (2.0ms for 25 words, 3.6ms for 44), so
+---the parse is off the interaction path and the hover is a table lookup. Design doc:
 ---`docs/superpowers/specs/2026-09-09-albertlint-syntax-tree-design.md`.
 ---
----The cache is keyed on **sentence text**, not on buffer position. Keying on offsets was the
----obvious design and is wrong: every keystroke shifts every offset after the cursor, so the
----cache would invalidate on each edit. Keyed on text, an edit invalidates exactly the one
----sentence you edited and the rest of the buffer stays hot for the session.
+---The cache is keyed on **sentence text**, not buffer position. Offsets were the obvious
+---design and are wrong: every keystroke shifts every offset after the cursor. Keyed on text,
+---an edit invalidates exactly the sentence you edited.
 local config = require("albertlint.config")
 local daemon = require("albertlint.parse.daemon")
 local engine = require("albertlint.engine")
@@ -58,13 +55,9 @@ local line_cache = {}
 
 ---The buffer's lines and code mask, memoized on `changedtick`.
 ---
----Both are recomputed on every hover, and both are O(buffer) rather than O(sentence), so on
----a long note they dominate a cost that is otherwise measured in microseconds. Memoizing on
----`changedtick` is exact: the tick changes on any edit and on nothing else, so a stale entry
----is not possible.
----
----Not merged into the parse cache, which is keyed on sentence text and deliberately survives
----edits. This one must not.
+---Both are O(buffer) rather than O(sentence), so on a long note they dominate a hover
+---otherwise measured in microseconds. `changedtick` is exact: it changes on any edit and on
+---nothing else. Separate from the parse cache, which is keyed on text and must survive edits.
 ---@param bufnr integer
 ---@return string[] lines, table mask
 local function buffer_lines(bufnr)
@@ -104,8 +97,8 @@ function M.sweep(bufnr, on_done)
 
   local cap = opts().max_sentences or 400
   if #todo > cap then
-    -- Named, not silent. A truncated sweep looks exactly like a working one from the
-    -- sidebar, and the difference only shows up as unexplained misses much later.
+    -- Named, not silent: a truncated sweep looks like a working one from the sidebar, and
+    -- shows up only as unexplained misses much later.
     vim.notify(
       ("albertlint: parsing the first %d of %d uncached sentences (parse.max_sentences)")
         :format(cap, #todo),
@@ -221,21 +214,17 @@ function M.render_opts()
   }
 end
 
----Turn the render's highlight spans into extmarks in the sidebar buffer.
----
----A separate namespace from the source-buffer sentence underline, so clearing one cannot
----clear the other.
+---Turn the render's highlight spans into extmarks. Its own namespace, so clearing this
+---cannot clear the source buffer's sentence underline.
 ---@param highlights table[]
 local function paint(highlights)
   vim.api.nvim_buf_clear_namespace(M.view.buf, TREE_NS, 0, -1)
   if not opts().highlight_tokens then
     return
   end
-  -- One pcall around the loop, not one per span. A byte offset past the end of a line is an
-  -- error rather than a clamp, so the guard is real, but there are around 110 spans on a
-  -- 20-word sentence and this sits on the hover path. Losing the tail of the colors is an
-  -- acceptable failure; a pcall per extmark is a measurable cost for no extra safety, since
-  -- a spec already asserts every span lies inside its line.
+  -- One pcall around the loop, not one per span: a byte offset past the end of a line errors
+  -- rather than clamping, but there are ~110 spans per sentence on the hover path and a spec
+  -- already asserts every span lies inside its line.
   pcall(function()
     for _, h in ipairs(highlights) do
       vim.api.nvim_buf_set_extmark(M.view.buf, TREE_NS, h.line - 1, h.col, {
@@ -246,11 +235,8 @@ local function paint(highlights)
   end)
 end
 
----Register the palette.
----
----Re-run on `ColorScheme`, because `:colorscheme` clears every group set with
----`nvim_set_hl`, links included. Without that autocmd the tree loses its colors the first
----time the scheme is switched, which reads as a bug in this plugin.
+---Register the palette. Re-run on `ColorScheme`, which clears every group set with
+---`nvim_set_hl`; without that the tree silently loses its colors on the first scheme switch.
 function M.apply_palette()
   local groups = vim.o.background == "light" and palette.LIGHT or palette.DARK
   for name, spec in pairs(groups) do
@@ -263,10 +249,8 @@ end
 
 ---Render the sentence under the cursor.
 ---
----This is the hover path, and the only thing on it is a table lookup and
----`tree.render`, both pure Lua. Nothing here talks to Python on a cache hit; that is what
----makes the sub-millisecond claim true, and `:AlbertLintTreeStatus` reports the measured
----number so it can be checked rather than believed.
+---The hover path: a table lookup and `tree.render`, both pure Lua, and nothing talks to
+---Python on a cache hit. `:AlbertLintTreeBenchmark` reports the measured cost.
 ---@param force boolean|nil Re-render even if the sentence has not changed
 ---@return boolean rendered
 function M.render_current(force)
@@ -312,9 +296,8 @@ function M.render_current(force)
         return
       end
       bucket(bufnr)[key] = res.trees[1]
-      -- Re-read the cursor rather than rendering `key` blind: 2 to 5 ms is long enough to
-      -- have moved on, and drawing a tree for the sentence you just left is worse than a
-      -- blank pane.
+      -- Re-read the cursor rather than rendering `key` blind: 2 to 5ms is long enough to
+      -- have moved on.
       M.render_current(true)
     end)
     return true
@@ -342,8 +325,7 @@ function M.open()
   ensure_window(source_win)
   local bufnr = vim.api.nvim_get_current_buf()
   M.render_current(true)
-  -- Warm the rest of the buffer behind the first render, so moving to the next sentence
-  -- is a hit rather than another 2 ms round trip.
+  -- Warm the rest of the buffer behind the first render, so the next sentence is a hit.
   M.sweep(bufnr, function()
     if sidebar_win() then
       M.render_current(true)
@@ -382,10 +364,8 @@ function M.toggle_follow()
   return M.view.follow
 end
 
----The raw labels for the token on the sidebar line under the cursor.
----
----The sidebar shows glossed labels because `subject` teaches and `nsubj` does not, but the
----raw tag is the searchable term, so it stays one keystroke away rather than being replaced.
+---The raw labels for the token under the cursor. The sidebar glosses them because `subject`
+---teaches and `nsubj` does not, but the raw tag is the searchable one, so it stays on `K`.
 function M.explain()
   local row = vim.api.nvim_win_get_cursor(0)[1]
   local token_i = M.view.index and M.view.index[row]
@@ -443,12 +423,8 @@ local function schedule_sweep(bufnr)
   end))
 end
 
----The color legend, in its own scratch window.
----
----Exists because a fourteen-color scheme is only readable once you know it, and the
----alternative to a legend is a permanent header in the sidebar eating four lines of a narrow
----pane. Ordered by how much meaning the class carries rather than alphabetically, so the
----content words are together at the top.
+---The color legend, in its own scratch window. A fourteen-color scheme is only readable once
+---you know it, and the alternative is a permanent header eating four lines of a narrow pane.
 function M.legend()
   local lines, highlights = { "albertlint tree colors", "" }, {}
   for _, pos in ipairs(palette.LEGEND_ORDER) do
@@ -526,11 +502,9 @@ function M.status()
   vim.notify(table.concat(lines, "\n"), vim.log.levels.INFO)
 end
 
----Measure the hover path over every cached sentence in this buffer.
----
----Exists because section 1 of the design doc makes a latency promise, and a promise about
----someone's machine should be checkable on that machine. Reports the render only: the cache
----lookup plus `tree.render`, which is exactly what a hover on a cached sentence costs.
+---Measure the hover path over every cached sentence in this buffer, because the design doc
+---makes a latency promise and a promise about your machine should be checkable on it. Reports
+---the cache lookup plus `tree.render`, which is what a hover on a cached sentence costs.
 ---@param bufnr integer|nil
 function M.benchmark(bufnr)
   bufnr = bufnr or vim.api.nvim_get_current_buf()

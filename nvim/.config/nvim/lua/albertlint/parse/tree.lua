@@ -1,34 +1,22 @@
 ---Rendering a dependency parse as a nested list.
 ---
----Deliberately pure: no `vim.api`, no `vim.fn`, no filesystem. Same reason
----`annotate/anchor.lua` and `style/scope.lua` are pure. This module is also the only thing
----on the hover path once a sentence is cached, so it is both the piece most likely to be
----wrong and the piece whose speed is the whole point of the feature. Both arguments say
----"testable with string literals".
+---Pure: no `vim.api`, no filesystem, same as `annotate/anchor.lua`. Also the only thing on
+---the hover path once a sentence is cached, so it is both the likeliest to be wrong and the
+---one whose speed matters.
 ---
----Input is the token list the daemon returns, which is spaCy's own shape: 0-indexed `i`,
----and `head` pointing at the governing token's `i`. A root is a token whose head is itself.
----
----Line numbers in the returned index are 1-indexed, matching `nvim_buf_set_lines` output
----rather than the 0-indexed extmark convention used elsewhere in this plugin. The index is
----consumed by a window-local cursor lookup, and window cursors are 1-indexed.
----
----`palette.lua` is required for the group names only. It is a data table, so this module is
----still runnable outside an editor.
+---Input is spaCy's token shape: 0-indexed `i`, `head` pointing at the governing token's `i`,
+---a root being a token whose head is itself. Returned line numbers are 1-indexed, matching
+---window cursors rather than the 0-indexed extmark convention used elsewhere here.
 local palette = require("albertlint.parse.palette")
 
 local M = {}
 
----Universal-ish dependency labels, glossed.
+---Dependency labels, glossed. Data, not logic, the same split `rules.lua` uses.
 ---
----Data, not logic, the same split `rules.lua` uses. `en_core_web_sm` emits the
----ClearNLP/OntoNotes scheme rather than strict Universal Dependencies, which is why
----`dobj` and `pobj` appear here and UD's `obj`/`obl` do not.
----
----These glosses are one reader's translation, chosen to name the grammatical role in words a
----writer would recognize. A linguist would argue with several of them; that is an accepted
----cost, because the raw label teaches nothing to someone who does not already know it, and
----`dep_labels = "raw"` is there for when the jargon is what you want.
+---`en_core_web_sm` emits the ClearNLP scheme, not strict Universal Dependencies, hence
+---`dobj`/`pobj` rather than UD's `obj`/`obl`. The glosses are one reader's translation and a
+---linguist would argue with several; `dep_labels = "raw"` is there for when the jargon is
+---what you want.
 M.GLOSS = {
   ROOT = "root",
   acl = "clause modifying a noun",
@@ -102,10 +90,8 @@ end
 
 ---Drop punctuation that carries no structure.
 ---
----Only *leaf* punctuation is dropped. A `punct` token with children would orphan a subtree
----if it were removed, and while spaCy does not normally produce one, a malformed or
----hand-written token list can, and silently losing half a sentence is a worse failure than
----one stray comma on screen.
+---Leaves only. Removing a `punct` token with children would orphan its subtree, and losing
+---half a sentence is a worse failure than one stray comma on screen.
 ---@param tokens table[]
 ---@return table[]
 local function without_punct_leaves(tokens)
@@ -166,8 +152,8 @@ function M.word_count(tokens)
   return n
 end
 
----`vim.tbl_extend` would do this, but it is the one `vim.*` call that would otherwise appear
----in the file, and a module that claims to be runnable without an editor should be.
+---`vim.tbl_extend` would do this, and is the one `vim.*` call that would otherwise appear in
+---a file that claims to run without an editor.
 ---@param opts table|nil
 ---@return table
 local function with_defaults(opts)
@@ -183,22 +169,17 @@ end
 
 ---The text span each token's whole subtree covers.
 ---
----This is what makes the tree readable rather than merely correct. A dependency tree names
----the *head* of every phrase, so `In · ADP · preposition` is the honest label for a node whose
----subtree is the phrase `In this case`, and a reader who does not already think in
----dependencies cannot recover the phrase from the label. Showing the span turns each line
----into a statement about a piece of the sentence you can point at.
+---What makes the tree readable rather than merely correct: a dependency tree names the *head*
+---of a phrase, so `In · ADP · preposition` is the honest label for a node whose subtree is
+---`In this case`, and the phrase is unrecoverable from the label alone.
 ---
----Computed over the **full** token list, including punctuation that the render drops, so a
----phrase is not silently missing its comma. Offsets are spaCy's `idx`, which is 0-indexed
----from the start of the sentence.
+---Over the **full** token list, so a phrase does not silently lose its comma. Offsets are
+---spaCy's `idx`, 0-indexed from the start of the sentence.
 ---@param tokens table[]
 ---@return table<integer, table> `{ [token.i] = { s = integer, e = integer } }`
 function M.subtree_spans(tokens)
-  -- No offsets, no phrases. Without `idx` every span would start at 0 and the column would
-  -- show the sentence's first word against every node, which is worse than showing nothing:
-  -- it is confidently wrong. Caught by the existing specs on 2026-09-09, whose hand-written
-  -- fixtures predate `idx` and so exercised exactly this path.
+  -- Without `idx` every span starts at 0 and the column shows the sentence's first word
+  -- against every node: confidently wrong, which is worse than absent.
   if #tokens == 0 or tokens[1].idx == nil then
     return {}
   end
@@ -208,14 +189,12 @@ function M.subtree_spans(tokens)
     spans[t.i] = { s = t.idx, e = t.idx + #t.text }
   end
 
-  -- Widen from each token toward its ancestors, rather than a recursive descent. Same
-  -- result, and it cannot blow the stack or spin on the malformed input the render's cycle
-  -- guard exists for.
+  -- Widen toward the ancestors rather than descending: cannot blow the stack or spin on the
+  -- malformed input the render's cycle guard exists for.
   --
-  -- `by_index` is the whole performance story here. The first version found each parent by
-  -- scanning the token list, which made this O(n^3) and took the hover from 95us to 437us
-  -- median with a 760us worst case, close enough to the 1ms target to matter. Measured
-  -- 2026-09-09; do not replace the lookup with a search.
+  -- `by_index` is load-bearing. Finding each parent by scanning the token list made this
+  -- O(n^3) and cost 437us median / 760us worst against a 1ms hover budget, measured
+  -- 2026-09-09. Do not replace the lookup with a search.
   for _, t in ipairs(tokens) do
     local node, hops = t, 0
     local s, e = spans[t.i].s, spans[t.i].e
@@ -239,9 +218,8 @@ end
 
 ---Render a parsed sentence as an indented nested list.
 ---
----Returns highlight spans alongside the lines rather than applying them, because this module
----is pure. The caller turns them into extmarks. Byte offsets, not character offsets: the
----guide glyphs and the `·` separator are multibyte, and `nvim_buf_set_extmark` counts bytes.
+---Returns highlight spans rather than applying them, since this module is pure. **Byte**
+---offsets: the guide glyphs and the `·` separator are multibyte and extmarks count bytes.
 ---@param tree table `{ text = string, tokens = table[] }`
 ---@param opts table|nil
 ---@return string[] lines, table<integer, integer> index, table[] highlights
@@ -278,10 +256,8 @@ function M.render(tree, opts)
   mark(#lines, 0, count, "AlbertLintTreeCount")
   table.insert(lines, "")
 
-  ---The phrase a node stands for, or nil when it adds nothing.
-  ---
-  ---Skipped for a leaf (the phrase is the word) and for a root (the header already shows the
-  ---whole sentence), which is what keeps the column from repeating what is on screen.
+  ---The phrase a node stands for, or nil when it adds nothing: a leaf, where the phrase is
+  ---the word, or a root, where the header already shows the whole sentence.
   ---@param token table
   ---@param is_root boolean
   ---@return string|nil
@@ -331,13 +307,9 @@ function M.render(tree, opts)
     index[line] = token.i
   end
 
-  -- `seen` is a cycle guard. A dependency parse is a tree by construction, so a cycle means
-  -- the input is malformed, and the honest failure is a truncated tree rather than a hung
-  -- editor. This is on the hover path; it must not be able to spin.
-  --
-  -- `depth` is threaded rather than inferred from the guide string. Inferring it meant
-  -- comparing `guide:sub(1, 3)` against "└──", which is wrong on the first byte: the box
-  -- characters are three bytes each in UTF-8, so that slice is one glyph, not three.
+  -- `seen` is a cycle guard: a malformed parse must give a truncated tree, not a hung editor.
+  -- `last` is threaded rather than inferred from the guide string, because `guide:sub(1, 3)`
+  -- against "└──" compares one glyph to three: the box characters are 3 bytes each.
   local seen = {}
   local function walk(token, prefix, guide, last, is_root)
     if seen[token.i] then

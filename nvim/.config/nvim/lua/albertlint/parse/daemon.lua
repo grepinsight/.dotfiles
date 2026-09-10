@@ -1,19 +1,12 @@
----The spaCy process: bootstrap, lifecycle, and JSON-lines framing.
+---The spaCy process: bootstrap, lifecycle, and JSON-lines framing. Separate from `tree.lua`
+---and `sentence.lua` because everything here touches the outside world and those are pure.
 ---
----Everything here touches the outside world, which is why it is a separate file from
----`tree.lua` and `sentence.lua`. Those two hold the logic and are pure; this one holds the
----subprocess and is not.
----
----The environment is a persistent venv rather than `uv run --script` with PEP 723 inline
----dependencies, and that is not a style preference. Measured 2026-09-09: the first
----`import spacy` in a freshly created environment takes **19.6 seconds** on macOS, which is
----the OS verifying and caching a few dozen new shared objects, not spaCy being slow. Every
----later import in the same location takes 332 to 413 ms. `uv run --script` builds a new
----environment per invocation, so it pays the 19.6 seconds *every* time. Verified twice
----before this file was written.
----
----Which is also why the venv is created by an explicit command and never implicitly on
----first hover: a twenty-second silent stall on a keystroke is indistinguishable from a hang.
+---A persistent venv, not `uv run --script`, and that is not a style preference. Measured
+---2026-09-09: the first `import spacy` in a freshly created environment takes **19.6s** on
+---macOS, the OS verifying a few dozen new shared objects; every later import in the same
+---location takes 332 to 413ms. `uv run --script` builds a new environment per invocation, so
+---it pays the 19.6s every time. Which is also why bootstrap is an explicit command: a
+---twenty-second silent stall on a keystroke is indistinguishable from a hang.
 local M = {}
 
 M.SPACY = "spacy==3.8.16"
@@ -48,24 +41,20 @@ function M.python()
   return vim.fs.joinpath(M.root(), "bin", "python")
 end
 
----The daemon script, resolved from this file rather than from a hardcoded path.
----
----`debug.getinfo` gives the path Lua loaded, which under `~/.config/nvim` is inside a
----symlinked directory. That is fine and intended: the script sits next to this file, so the
----symlink resolves both together and there is no second link to forget.
+---The daemon script, resolved from this file rather than hardcoded: it sits next to this one,
+---so the symlink under `~/.config/nvim` resolves both together and there is no link to forget.
 ---@return string
 function M.script()
   local source = debug.getinfo(1, "S").source:sub(2)
   return vim.fs.joinpath(vim.fs.dirname(source), "daemon.py")
 end
 
----Is the environment actually usable, not merely present?
+---Is the environment usable, not merely present?
 ---
----Checks for the model package, not for the interpreter. Checking the interpreter was the
----first version and it lied: a `uv venv` that succeeds followed by a `uv pip install` that
----fails leaves a working `bin/python` with no spaCy in it, so `installed()` returned true
----and the daemon then died on `ModuleNotFoundError` with the failure surfacing three layers
----away from its cause. Observed 2026-09-09, first bootstrap attempt.
+---Checks for the model package, not the interpreter. Checking the interpreter lied: a
+---successful `uv venv` followed by a failed `uv pip install` leaves a working `bin/python`
+---with no spaCy in it, and the daemon then died on `ModuleNotFoundError` three layers from
+---the cause.
 ---@return boolean
 function M.installed()
   if vim.fn.executable(M.python()) ~= 1 then
@@ -137,11 +126,9 @@ function M.start()
   proc = vim.system({ M.python(), "-u", M.script() }, {
     stdin = true,
     stdout = on_stdout,
-    -- stderr is kept rather than discarded. A traceback here is the only evidence of a
-    -- broken venv, and swallowing it was how the semantic tier stayed silently dead for two
-    -- reasons at once (see the state-of-play table in CLAUDE.md).
-    -- Labelled "stderr:" rather than stored bare. spaCy writes deprecation warnings here
-    -- too, and an unlabelled warning in the status output reads as a fatal error.
+    -- Kept, not discarded: a traceback here is the only evidence of a broken venv, and
+    -- swallowing stderr is how the semantic tier stayed silently dead. Labelled, because
+    -- spaCy writes deprecation warnings here too and an unlabelled one reads as fatal.
     stderr = function(_, data)
       if data and data:match("%S") then
         M.state.error = "stderr: " .. vim.trim(data)
@@ -168,17 +155,15 @@ function M.stop()
   pcall(function()
     proc:write('{"id":-1,"quit":true}\n')
   end)
-  -- Not killed. The process exits on its own once it reads the quit line, and killing it
-  -- races with a request already in flight.
+  -- Not killed: it exits on reading the quit line, and a kill races an in-flight request.
   proc = nil
   M.state.ready = false
 end
 
----Parse a list of sentences.
+---Parse a list of sentences. The callback gets `{ trees, parse_ms }` or `{ error }`.
 ---
----The callback receives `{ trees = table[], parse_ms = number }` or `{ error = string }`.
----Queued rather than dropped while the model is still loading, because the first sweep of a
----session fires from `BufReadPost`, which lands well before the 0.5 s startup completes.
+---Queued rather than dropped while the model loads: the first sweep of a session fires well
+---before the 0.5s startup completes.
 ---@param sentences string[]
 ---@param cb fun(res: table)
 function M.request(sentences, cb)
@@ -214,17 +199,15 @@ M.PUBLIC_INDEX = "https://pypi.org/simple"
 
 ---Create the venv and install spaCy plus the model.
 ---
----Asynchronous and noisy on purpose. It downloads roughly 60 MB and the first import after
----it will take about twenty seconds, so the notifications are the difference between
----"working" and "frozen".
+---Noisy on purpose: 60 MB of download and a twenty-second first import, so the notifications
+---are the difference between "working" and "frozen".
 ---
----`public_index` exists because this machine's `~/.config/uv/uv.toml` points uv at an
----non-public package mirror, which needs network access. Off-network the install fails with a DNS
----error four `Caused by:` levels deep, which reads as a bug in this plugin. So the default
----honours whatever uv is configured to use, the failure names the likely reason, and the
----bypass to public PyPI is a deliberate second command rather than something this code does
----quietly on the user's behalf. spaCy and its model are public OSS packages, but which index
----an install goes through is not a decision a text editor should make silently.
+---`public_index` exists because uv may be configured against a private package index that
+---is not reachable from every network, and the failure then surfaces as a DNS error four
+---`Caused by:` levels deep, which reads as a bug in this plugin. So the default honours
+---whatever uv is configured to use and the failure names the likely reason, while the bypass
+---to public PyPI stays a deliberate second command: which index an install goes through is
+---not a decision a text editor should make silently.
 ---@param public_index boolean|nil Install from public PyPI, ignoring the configured index
 ---@param on_done fun(ok: boolean, msg: string)|nil
 function M.bootstrap(public_index, on_done)
@@ -237,10 +220,9 @@ function M.bootstrap(public_index, on_done)
   end
   local root = M.root()
   vim.notify("albertlint: creating the parser venv at " .. root, vim.log.levels.INFO)
-  -- `--allow-existing` rather than `--clear`, so re-running after a failed install repairs
-  -- the environment instead of re-downloading it. The first attempt on 2026-09-09 created
-  -- the venv and then failed to install into it, and without this flag the retry died on
-  -- "a virtual environment already exists" before it reached the part that was broken.
+  -- `--allow-existing`, not `--clear`, so re-running after a failed install repairs the
+  -- environment instead of re-downloading it. Without it the retry dies on "a virtual
+  -- environment already exists" before reaching the part that was broken.
   vim.system({ "uv", "venv", "--allow-existing", "--python", "3.12", root }, { text = true }, function(venv)
     if venv.code ~= 0 then
       vim.schedule(function()
@@ -250,10 +232,9 @@ function M.bootstrap(public_index, on_done)
     end
     local cmd = { "uv", "pip", "install", "--python", M.python() }
     if public_index then
-      -- `--no-config` as well as `--default-index`, and the first is what actually works.
-      -- Measured 2026-09-09: `--default-index` alone still resolved through the named
-      -- `[[index]]` in ~/.config/uv/uv.toml and failed with the same DNS error, because a
-      -- configured index is *added* to the search rather than replaced by the flag.
+      -- `--no-config` as well as `--default-index`, and the first is what actually works: a
+      -- configured `[[index]]` is *added* to the search rather than replaced by the flag, so
+      -- `--default-index` alone still resolves through it.
       vim.list_extend(cmd, { "--no-config", "--default-index", M.PUBLIC_INDEX })
     end
     vim.list_extend(cmd, { M.SPACY, M.MODEL_WHEEL })
@@ -267,9 +248,9 @@ function M.bootstrap(public_index, on_done)
           local err = vim.trim(install.stderr or "")
           local hint = ""
           if err:match("dns error") or err:match("Failed to fetch") or err:match("Connect") then
-            hint = "\nThe configured package index is unreachable. If that is the internal "
-              .. "mirror, connect to the VPN and retry, or run :AlbertLintTreeBootstrap! to "
-              .. "install from public PyPI instead."
+            hint = "\nThe configured package index is unreachable. If it is a private one, "
+              .. "check your network and retry, or run :AlbertLintTreeBootstrap! to install "
+              .. "from public PyPI instead."
           end
           done(false, "uv pip install failed: " .. err .. hint)
           return

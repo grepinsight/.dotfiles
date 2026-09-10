@@ -22,7 +22,7 @@ Two of the three are free. The third is not, and it is worth being exact about w
 
 Dropping the tagger and `attribute_ruler` too buys almost nothing (1.19 / 1.81 / 3.26 ms) and
 costs the POS column, so it is not worth doing. There is no configuration of this model that
-parses the sentence from the screenshot in under a millisecond, and no other Python parser is
+parses a real sentence in under a millisecond, and no other Python parser is
 meaningfully faster; the ones that are more accurate (benepar, Stanza) are 1 to 2 orders of
 magnitude slower.
 
@@ -66,10 +66,9 @@ A dependency parse is already a tree, it comes free with the model that does the
 and it is the only option inside the latency budget. It answers a slightly different question:
 not *what phrase is this part of* but *what word governs this word*.
 
-Consequence to accept: dependency trees put function words at the leaves and can nest in ways
-that surprise a reader expecting phrase brackets. `due to` in the screenshot's second sentence
-hangs off the main verb as `prep` + `pcomp`, which is correct and unintuitive. The gloss table
-in §5 exists to soften exactly this.
+Consequence to accept: dependency trees name the *head* of a phrase, which is often its least
+informative word, and they nest in ways that surprise a reader expecting phrase brackets. The
+gloss table in §5 and the phrase column in §9.2 exist to soften exactly this.
 
 If the constituency view turns out to be the one worth having, this design does not block it:
 the daemon protocol (§3) returns a token list with a `head` index, and a constituency backend
@@ -180,21 +179,27 @@ and `style/scope.lua` established:
 ## 5. What the sidebar shows
 
 ```
-There is a strong belief in the benefits of enriching clinical patient data.  (13 words)
+In each release, a simpler approach was chosen to move all the remaining fields to the shared schema.
+(18 words)
 
-is · AUX · root
-├── There · PRON · existential there
-├── belief · NOUN · attribute
+chosen · VERB · root
+├── In · ADP · preposition  [In each release]
+│   └── release · NOUN · object of preposition  [each release]
+│       └── each · DET · determiner
+├── approach · NOUN · passive subject  [a simpler approach]
 │   ├── a · DET · determiner
-│   ├── strong · ADJ · adjective modifier
-│   └── in · ADP · preposition
-│       └── benefits · NOUN · object of preposition
-│           ├── the · DET · determiner
-│           └── of · ADP · preposition
-│               └── enriching · VERB · complement of preposition
-│                   └── data · NOUN · direct object
-│                       ├── clinical · ADJ · adjective modifier
-│                       └── patient · NOUN · noun modifier
+│   └── simpler · ADJ · adjective modifier
+├── was · AUX · passive auxiliary
+└── move · VERB · open clausal complement  [to move all the remaining fields to the share…]
+    ├── to · PART · auxiliary
+    ├── fields · NOUN · direct object  [all the remaining fields]
+    │   ├── all · DET · predeterminer
+    │   ├── the · DET · determiner
+    │   └── remaining · VERB · adjective modifier
+    └── to · ADP · preposition  [to the shared schema]
+        └── schema · NOUN · object of preposition  [the shared schema]
+            ├── the · DET · determiner
+            └── shared · ADJ · adjective modifier
 ```
 
 Three decisions in that render:
@@ -251,9 +256,9 @@ able to show it.
 
 ### The install goes through whatever index uv is configured to use
 
-Found while shipping. This machine's `~/.config/uv/uv.toml` names a non-public package
-mirror, which needs network access, so off-network the bootstrap fails with a DNS error nested four
-`Caused by:` levels deep and reads as a bug in this plugin.
+Found while shipping. `uv` may be configured against a private package index that the current
+network cannot reach, and the bootstrap then fails with a DNS error nested four `Caused by:`
+levels deep, which reads as a bug in this plugin.
 
 The default therefore honours the configured index and the failure message names the likely
 cause. `:AlbertLintTreeBootstrap!` is the explicit bypass to public PyPI. Two details worth

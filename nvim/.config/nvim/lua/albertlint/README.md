@@ -364,26 +364,27 @@ known to be broken.
 dependency tree.
 
 ```
-In this case, a lightweight approach was chosen to map all genomics data to the measurement entity.
-(17 words)
+In each release, a simpler approach was chosen to move all the remaining fields to the shared schema.
+(18 words)
 
 chosen · VERB · root
-├── In · ADP · preposition  [In this case]
-│   └── case · NOUN · object of preposition  [this case]
-│       └── this · DET · determiner
-├── approach · NOUN · passive subject  [a lightweight approach]
+├── In · ADP · preposition  [In each release]
+│   └── release · NOUN · object of preposition  [each release]
+│       └── each · DET · determiner
+├── approach · NOUN · passive subject  [a simpler approach]
 │   ├── a · DET · determiner
-│   └── lightweight · ADJ · adjective modifier
+│   └── simpler · ADJ · adjective modifier
 ├── was · AUX · passive auxiliary
-└── map · VERB · open clausal complement  [to map all genomics data to the measurement e…]
+└── move · VERB · open clausal complement  [to move all the remaining fields to the share…]
     ├── to · PART · auxiliary
-    ├── data · NOUN · direct object  [all genomics data]
-    │   ├── all · DET · determiner
-    │   └── genomics · NOUN · compound
-    └── to · ADP · preposition  [to the measurement entity]
-        └── entity · NOUN · object of preposition  [the measurement entity]
+    ├── fields · NOUN · direct object  [all the remaining fields]
+    │   ├── all · DET · predeterminer
+    │   ├── the · DET · determiner
+    │   └── remaining · VERB · adjective modifier
+    └── to · ADP · preposition  [to the shared schema]
+        └── schema · NOUN · object of preposition  [the shared schema]
             ├── the · DET · determiner
-            └── measurement · NOUN · compound
+            └── shared · ADJ · adjective modifier
 ```
 
 Keys in the sidebar: `q` closes, `p` toggles the phrase column, `g?` shows the color legend,
@@ -395,17 +396,17 @@ labels (`subject`) and the raw tag (`nsubj`) is the searchable one.
 Four rules, and after them the tree reads at a glance.
 
 1. **The root is the main verb.** Its direct children are the sentence's main slots: here
-   `chosen` has four, so the skeleton is `[In this case] [a lightweight approach] was chosen
-   [to map ...]`.
+   `chosen` has four, so the skeleton is `[In each release] [a simpler approach] was chosen
+   [to move ...]`.
 2. **Indentation is containment.** A node plus everything indented under it is one phrase,
    which is exactly what the bracket spells out. That column exists because the label alone
    cannot tell you: `In · ADP · preposition` is the honest name for a node whose subtree is
-   `In this case`.
+   `In each release`.
 3. **Prepositions and `to` head their own phrases.** This is the counterintuitive part of
-   dependency grammar and the usual reason a first tree looks wrong. `In` governs `this case`;
-   `to` governs `the measurement entity`. The phrase column is what makes it readable anyway.
+   dependency grammar and the usual reason a first tree looks wrong. `In` governs
+   `each release`; `to` governs `the shared schema`. The phrase column makes it readable anyway.
 4. **Depth is a writing signal.** A content word at depth 5 is buried under four layers of
-   modifier. In the example above, `measurement entity` is what the sentence is *about* and it
+   modifier. In the example above, `the shared schema` is what the sentence is *about* and it
    sits at the bottom of a right-branching tail, under a purpose clause, under an agentless
    passive. The tree does not say that is wrong. It does make it visible, which is the whole
    point of the pane.
@@ -438,10 +439,10 @@ One-time setup, roughly 60 MB:
 ```
 
 It builds a venv under `stdpath("data")/albertlint-parse` with `spacy==3.8.16` and
-`en_core_web_sm-3.8.0`. If your `uv` is pointed at a non-public index that needs network access, the
-install fails with a DNS error and says so; `:AlbertLintTreeBootstrap!` installs from public
-PyPI instead. The bang is deliberate rather than automatic: rerouting a package install is not
-a decision an editor should make on your behalf.
+`en_core_web_sm-3.8.0`. If your `uv` is configured against a private index that the current
+network cannot reach, the install fails with a DNS error and says so;
+`:AlbertLintTreeBootstrap!` installs from public PyPI instead. The bang is deliberate rather
+than automatic: rerouting a package install is not a decision an editor should make for you.
 
 ### The hover is sub-millisecond; the parse is not
 

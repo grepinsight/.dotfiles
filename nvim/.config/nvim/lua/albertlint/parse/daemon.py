@@ -1,20 +1,15 @@
 """Dependency parses for albertlint, one JSON object per line.
 
-Long-lived on purpose. Measured on the author's machine, in a persistent venv:
-
-    import spacy          332 to 413 ms
-    spacy.load(...)       142 to 150 ms
-    parse, 25 words         2.0 ms
-
-so a per-hover subprocess would spend 500 times the parse on startup. The Lua side keeps
-this process alive for the session and caches the results, which is what makes a hover a
-table lookup instead of a parse. See ../../../docs/superpowers/specs/
+Long-lived on purpose. Measured in a persistent venv: 332-413ms to import, 142-150ms to load
+the model, 2.0ms to parse 25 words, so a per-hover subprocess would spend 500 times the parse
+on startup. The Lua side keeps this alive for the session and caches the results, which is
+what makes a hover a table lookup. Design doc: docs/superpowers/specs/
 2026-09-09-albertlint-syntax-tree-design.md.
 
-This file lives inside the `lua/` tree, which looks wrong. `~/.config/nvim/lua/albertlint`
-is a whole-directory symlink into this repo, so anything under it is reachable with no new
-link, while a new top-level `python/` directory would be invisible to Neovim until someone
-hand-linked it. See the trap documented at the top of CLAUDE.md.
+This file lives inside the `lua/` tree, which looks wrong and is not:
+`~/.config/nvim/lua/albertlint` is a whole-directory symlink, so anything under it is
+reachable, while a new top-level `python/` directory would be invisible to Neovim until
+someone hand-linked it. See the trap at the top of CLAUDE.md.
 
 Protocol, one JSON object per line in each direction:
 
@@ -28,13 +23,13 @@ Protocol, one JSON object per line in each direction:
 
     -> {"id": 0, "ready": true, "load_ms": 291.0, "model": "en_core_web_sm"}
 
-An id is echoed on every response so the caller can drop a reply for a buffer that has
-since changed. Errors come back as {"id": N, "error": "..."} and the process stays up: a
-parser that dies on one malformed sentence would take the whole session's cache with it.
+An id is echoed on every response so the caller can drop a reply for a buffer that has since
+changed. Errors come back as {"id": N, "error": "..."} and the process stays up: dying on one
+malformed sentence would take the whole session's cache with it.
 
-Segmentation is NOT done here. The caller sends sentences it has already split, and the
-strings it sends are the cache keys it will look the results up under, so re-splitting them
-here would return trees filed under text nobody asked about.
+Segmentation is NOT done here. The strings the caller sends are the cache keys it will look
+the results up under, so re-splitting them would return trees filed under text nobody asked
+about.
 """
 
 from __future__ import annotations
@@ -45,12 +40,10 @@ import time
 
 MODEL = "en_core_web_sm"
 
-# `senter` is redundant when the caller pre-splits, and `ner` plus `lemmatizer` cost about
-# 45% of the parse for output this feature never reads. Measured 2026-09-09 over 200 runs:
-# a 25-word sentence goes from 3.52 ms to 2.01 ms median with these three excluded.
-#
-# `tagger` and `attribute_ruler` stay. Dropping them too saves only 0.2 ms and costs the POS
-# column, which is half of what the sidebar shows.
+# `senter` is redundant when the caller pre-splits, and `ner` plus `lemmatizer` cost about 45%
+# of the parse for output this never reads: 3.52ms to 2.01ms median on 25 words, measured
+# 2026-09-09 over 200 runs. `tagger` and `attribute_ruler` stay, since dropping them saves
+# 0.2ms and costs the POS column.
 EXCLUDE = ["ner", "lemmatizer", "senter"]
 
 
@@ -65,10 +58,7 @@ def tree_of(doc) -> dict:
         "tokens": [
             {
                 "i": token.i,
-                # Character offset within this sentence. Unused by the current sidebar and
-                # included anyway, because it is free here and the alternative later is a
-                # protocol change: jumping from a tree line back to the word in the buffer
-                # needs it.
+                # Character offset within the sentence, which the phrase column needs.
                 "idx": token.idx,
                 "text": token.text,
                 "pos": token.pos_,
@@ -92,9 +82,8 @@ def main() -> int:
         return 1
     load_ms = (time.perf_counter() - t0) * 1000
 
-    # One throwaway parse. The first call through a spaCy pipeline is several times slower
-    # than the rest, and paying that here means the first real hover of a session is not the
-    # slowest one the user will ever see.
+    # The first call through a pipeline is several times slower than the rest, so pay it here
+    # rather than on the session's first real hover.
     nlp("The cat sat on the mat.")
 
     emit({"id": 0, "ready": True, "load_ms": round(load_ms, 1), "model": MODEL,
@@ -124,8 +113,7 @@ def main() -> int:
 
         try:
             t0 = time.perf_counter()
-            # `nlp.pipe` rather than a loop: it batches the tok2vec forward pass, which is
-            # where the time goes, and the whole point of the buffer sweep is to be cheap.
+            # `nlp.pipe` rather than a loop: it batches the tok2vec forward pass.
             trees = [tree_of(doc) for doc in nlp.pipe([str(s) for s in sentences])]
             parse_ms = (time.perf_counter() - t0) * 1000
         except Exception as exc:  # noqa: BLE001

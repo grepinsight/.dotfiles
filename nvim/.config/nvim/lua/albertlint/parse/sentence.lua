@@ -1,40 +1,27 @@
----Finding the sentence under the cursor, in Lua.
+---Finding the sentence under the cursor, in Lua. Pure, same shape as `style/scope.lua`.
 ---
----Deliberately pure: no `vim.api`, no `vim.fn`, no filesystem. Same shape as
----`annotate/anchor.lua` and `style/scope.lua`.
+---Exists for the latency target and no other reason. spaCy segments better than this does,
+---but asking it *which sentence is the cursor in* would put a pipe round trip on the hover
+---path. It is also the cache-key generator, so the daemon must not re-split: trees would come
+---back filed under strings nobody looked up. Design doc §3, §4.
 ---
----This module exists because of the latency target and for no other reason. spaCy already
----segments sentences, and better than this does, but asking it *which sentence is the cursor
----in* would put a pipe round trip on the hover path, and the hover path is the one thing in
----this feature that has to be sub-millisecond. So the daemon segments a whole buffer for the
----cache, and this segments the one paragraph under the cursor for the lookup. Two
----segmenters, on purpose. See the design doc, section 4.
----
----Line numbers are 0-indexed and end bounds are exclusive, matching
----`nvim_buf_set_extmark` and the rest of this plugin. Columns are 0-indexed, matching
----`engine._build_mask`. Offsets *within* a joined paragraph string are 1-indexed, because
----they index a Lua string.
+---Line numbers 0-indexed, end bounds exclusive, matching `nvim_buf_set_extmark`. Offsets
+---*within* a joined paragraph are 1-indexed, because they index a Lua string.
 local M = {}
 
 ---Words that take a period and are almost never sentence-final.
 ---
----`etc` is deliberately absent. It ends sentences constantly (`... and so on, etc. The next
----point is`), so listing it would merge two sentences every time, which is a worse and more
----frequent failure than splitting `Fig. 3` in half.
----
----`e.g.` and `i.e.` need no entry: they are caught by the single-letter rule in `boundary`,
----along with initials like `J. R. R.`
+---`etc` is deliberately absent: it ends sentences constantly, so listing it would merge two
+---every time, a worse failure than splitting `Fig. 3`. `e.g.` and `i.e.` need no entry, being
+---caught by the single-letter rule in `boundary` along with initials like `J. R. R.`
 M.ABBREV = {
   al = true, approx = true, cf = true, co = true, dr = true, eq = true, fig = true,
   inc = true, jr = true, ltd = true, mr = true, mrs = true, ms = true, no = true,
   prof = true, sr = true, st = true, vs = true,
 }
 
----Masked spans blanked in place, byte for byte.
----
----Byte-for-byte matters: the sentence span is reported back in buffer coordinates, so a
----substitution that changed the length would misplace every column after it. Same
----convention, and the same reason, as the payload builder in `style/scope.lua`.
+---Masked spans blanked in place, byte for byte, so the reported span stays in buffer
+---coordinates. Same convention and reason as the payload builder in `style/scope.lua`.
 ---@param line string
 ---@param cols table|nil
 ---@return string
@@ -62,9 +49,7 @@ local function is_prose(line, cols)
   if line:match("^%s*$") or is_heading(line) then
     return false
   end
-  -- A fenced or frontmatter line gets a mask row that reports every column masked, so
-  -- probing column 0 is enough to reject the whole line. Same probe `style/scope.lua` uses
-  -- to keep a `# comment` inside a fence from reading as a heading.
+  -- A fenced or frontmatter line masks every column, so probing column 0 rejects the line.
   return not (cols and cols[0])
 end
 
@@ -108,18 +93,14 @@ local function boundary(text, i)
   end
   local after = text:sub(j, j)
   if after ~= "" and not after:match("%s") then
-    -- No space after the mark, so it is not a boundary. This is what keeps a footnote
-    -- marker (`treatment success.1, 2, 3 However`), a decimal (`0.05`), a version
-    -- (`v3.8`), and a filename (`config.lua`) from splitting a sentence in half.
+    -- No space after the mark, which is what keeps a footnote marker (`success.1, 2, 3`), a
+    -- decimal (`0.05`), a version (`v3.8`), and a filename (`config.lua`) from splitting.
     return nil
   end
-  -- The word immediately before the mark decides the rest.
-  --
-  -- Scanned backwards a byte at a time rather than with `text:sub(1, i - 1):match("[%a]+$")`.
-  -- That version allocated a substring the length of everything before the mark on every
-  -- call, which made the whole splitter quadratic in the paragraph's byte length: measured
-  -- 2026-09-09 at **39ms** for one `sentence.at` on a 200-line paragraph, against a 1ms
-  -- budget for the entire hover. This version is proportional to the word.
+  -- The word before the mark decides the rest, scanned backwards rather than with
+  -- `text:sub(1, i - 1):match("[%a]+$")`. That allocated a substring the length of everything
+  -- before the mark on every call, making the splitter quadratic in bytes: **39ms** for one
+  -- `sentence.at` on a 200-line paragraph, measured 2026-09-09, against a 1ms hover budget.
   local start = i - 1
   while start >= 1 and text:sub(start, start):match("%a") do
     start = start - 1
@@ -127,8 +108,7 @@ local function boundary(text, i)
   local word = start < i - 1 and text:sub(start + 1, i - 1) or nil
   if word then
     if #word == 1 then
-      -- A single letter before a period is an initial or the tail of `e.g.` / `i.e.`, never
-      -- the end of a sentence in this writer's prose.
+      -- An initial, or the tail of `e.g.` / `i.e.`; never a sentence end in practice.
       return nil
     end
     if M.ABBREV[word:lower()] then
@@ -146,8 +126,8 @@ function M.split(text)
   local start = 1
   local i = 1
   while i <= #text do
-    -- Jump to the next candidate mark rather than testing every byte. On a long paragraph
-    -- this is the difference between a few dozen `boundary` calls and one per character.
+    -- Jump to the next candidate rather than testing every byte: a few dozen `boundary`
+    -- calls on a long paragraph instead of one per character.
     local mark = text:find("[.!?]", i)
     if not mark then
       break
@@ -175,10 +155,8 @@ function M.split(text)
   return out
 end
 
----Join a paragraph's lines into one string, keeping a map back to buffer coordinates.
----
----Lines are joined with a single space, because a sentence wrapped across two lines is one
----sentence and the newline is not part of it.
+---Join a paragraph's lines into one string, keeping a map back to buffer coordinates. Joined
+---with a single space: a sentence wrapped across two lines is one sentence.
 ---@param lines string[]
 ---@param para table
 ---@param mask table|nil
@@ -231,8 +209,7 @@ function M.at(lines, lnum, col, mask)
 
   local chosen = sentences[#sentences]
   for _, s in ipairs(sentences) do
-    -- `cursor <= s.e` rather than `< s.e`: sitting on the final period should report the
-    -- sentence it closes, not the next one.
+    -- `<=`, so sitting on the final period reports the sentence it closes, not the next.
     if cursor <= s.e then
       chosen = s
       break
@@ -250,11 +227,8 @@ function M.at(lines, lnum, col, mask)
   }
 end
 
----The cache key for a sentence.
----
----Whitespace is collapsed and the ends trimmed, so a sentence rewrapped across a different
----set of lines is the same cache entry. Without this, reformatting a paragraph would cold-
----miss every sentence in it while changing none of them.
+---The cache key for a sentence. Whitespace collapsed, so rewrapping a paragraph does not
+---cold-miss every sentence in it while changing none of them.
 ---@param text string
 ---@return string
 function M.normalize(text)
@@ -276,8 +250,7 @@ function M.all(lines, mask)
       local text = flatten(lines, para, mask)
       for _, s in ipairs(M.split(text)) do
         local key = M.normalize(s.text)
-        -- Deduplicated, because the daemon is billed per sentence and a buffer with a
-        -- repeated heading-and-sentence pattern would otherwise pay for it twice.
+        -- Deduplicated: a repeated sentence should not be parsed twice.
         if not seen[key] then
           seen[key] = true
           table.insert(out, key)

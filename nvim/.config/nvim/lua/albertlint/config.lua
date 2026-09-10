@@ -128,51 +128,42 @@ local defaults = {
   ---@field highlight_sentence boolean
   ---@field max_sentences integer
   parse = {
-    -- On, and it was `false` for exactly one day. The reasoning for off was that a sidebar
-    -- re-rendering on every cursor move is a bad thing to inherit by opening a markdown
-    -- file, and that reasoning is wrong: the sidebar only exists while it is open, and you
-    -- open it with an explicit command, so opening it *is* the opt-in. Following the cursor
-    -- is not an extra behaviour on top of the feature, it is the feature. Reported as a bug
-    -- within minutes of shipping.
+    -- On, and it was `false` for one day. The reasoning for off, that a sidebar re-rendering
+    -- on every cursor move is a bad thing to inherit, does not hold: the sidebar only exists
+    -- while open and you open it explicitly, so opening it *is* the opt-in.
     follow = true,
 
-    -- Show the phrase each node stands for, in brackets. On by default because it is what
-    -- makes a dependency tree readable to someone who does not already think in
-    -- dependencies: `In · ADP · preposition` is an honest label for a node whose subtree is
-    -- `In this case`, and unreadable without the phrase beside it. `p` toggles it.
+    -- The phrase each node stands for, in brackets. What makes a dependency tree readable:
+    -- `In · ADP · preposition` is an honest label for a node whose subtree is `In this case`,
+    -- and unreadable without the phrase beside it. `p` toggles it.
     phrases = true,
 
-    -- Color each word by its part of speech. Verbs are bold, because the root of every
-    -- clause is one and finding them is how you find the clause boundaries. `g?` in the
-    -- sidebar shows the legend; the palette is in `parse/palette.lua`.
+    -- Color each word by part of speech; `g?` shows the legend, `parse/palette.lua` has it.
     highlight_tokens = true,
 
-    -- The `· NOUN ·` column. Redundant once the colors are learned, so it is here to turn
-    -- off rather than to keep forever.
+    -- The `· NOUN ·` column, redundant once the colors are learned.
     pos_column = true,
 
     -- A `punct` leaf hangs off nearly every clause boundary and carries no structure, so
-    -- including it roughly triples the line count of a long sentence for no information.
+    -- including it roughly triples the line count of a long sentence.
     include_punct = false,
 
-    -- "gloss" | "raw" | "both". `nsubj` is the searchable term and `subject` is the one
-    -- that teaches, so the default shows the gloss and `K` on a line reports the raw tag.
+    -- "gloss" | "raw" | "both". `subject` teaches and `nsubj` is searchable, so the default
+    -- glosses and `K` reports the raw tag.
     dep_labels = "gloss",
 
     width = 52,
 
-    -- The buffer sweep after an edit. Longer than the live tier's 400 ms because the sweep
-    -- is a subprocess round trip rather than a regex pass, and nothing on screen waits for
-    -- it: a hover during the debounce window falls back to a single-sentence parse.
+    -- Longer than the live tier's 400ms because the sweep is a subprocess round trip, and
+    -- nothing on screen waits for it: a hover during the window falls back to a single parse.
     debounce_ms = 500,
 
-    -- Underline the span that was actually parsed. The Lua sentence splitter is a
-    -- heuristic (abbreviations, footnote markers), so showing its answer in the buffer is
-    -- how a wrong split becomes visible instead of confusing.
+    -- Underline the span that was actually parsed. The splitter is a heuristic, so showing
+    -- its answer is how a wrong split becomes visible instead of confusing.
     highlight_sentence = true,
 
     -- A cap on one sweep, announced when it bites rather than applied silently. 400
-    -- sentences is roughly a 6000-word note, which is longer than anything in the vault.
+    -- sentences is roughly a 6000-word note.
     max_sentences = 400,
   },
 }
