@@ -329,7 +329,7 @@ describe("level cache", function()
       [1] = {
         findings = {
           { line = 1, quote = "a error", occurrence = 1, replacement = "an error",
-            label = "Article", note = "n" },
+            label = "Article", note = "n", confident = true },
         },
         at = (vim.uv or vim.loop).hrtime(),
         provider = "claude",
@@ -355,7 +355,7 @@ describe("level cache", function()
   it("tells you how to force a fresh pass", function()
     local buf = prose_buf({ "a error here" })
     level._cache[buf] = { [1] = {
-      findings = { { line = 1, quote = "a error", occurrence = 1, replacement = "an error", label = "A", note = "n" } },
+      findings = { { line = 1, quote = "a error", occurrence = 1, replacement = "an error", label = "A", note = "n", confident = true } },
       at = (vim.uv or vim.loop).hrtime(), provider = "claude",
     } }
 
@@ -373,7 +373,7 @@ describe("level cache", function()
     -- nothing should be left to show.
     local buf = prose_buf({ "an error here" })
     level._cache[buf] = { [1] = {
-      findings = { { line = 1, quote = "a error", occurrence = 1, replacement = "an error", label = "A", note = "n" } },
+      findings = { { line = 1, quote = "a error", occurrence = 1, replacement = "an error", label = "A", note = "n", confident = true } },
       at = (vim.uv or vim.loop).hrtime(), provider = "claude",
     } }
 
@@ -381,8 +381,35 @@ describe("level cache", function()
       level.run(1, false)
     end)
 
-    assert.is_true(msgs[1]:find("nothing left to apply", 1, true) ~= nil)
+    assert.is_true(msgs[1]:find("nothing left", 1, true) ~= nil, msgs[1])
     assert.is_nil(level._open_views[buf])
+  end)
+
+  it("reports a question-only cached pass as a result, not as emptiness", function()
+    -- A level 2 pass is normally all questions and no hunks. If that reads as "nothing
+    -- found", the whole tier looks broken.
+    local buf = prose_buf({ "Just write it down in this" })
+    level._cache[buf] = { [1] = {
+      findings = { {
+        line = 1, quote = "in this", occurrence = 1, confident = false,
+        question = "What is the object here? `this` resolves to nothing.",
+        label = "Unresolved referent", note = "n",
+      } },
+      at = (vim.uv or vim.loop).hrtime(), provider = "claude",
+    } }
+
+    local msgs = captured(function()
+      level.run(1, false)
+    end)
+
+    assert.is_true(msgs[1]:find("question", 1, true) ~= nil, msgs[1])
+    -- No panel: there is no diff to show, and the question lives on the buffer instead.
+    assert.is_nil(level._open_views[buf])
+    local diags = vim.diagnostic.get(buf, { namespace = level._QUESTION_NS })
+    assert.equals(1, #diags)
+    assert.is_true(diags[1].message:find("resolves to nothing", 1, true) ~= nil)
+
+    level.clear_questions(buf)
   end)
 
   it("clear_cache drops the entry and reports whether there was one", function()

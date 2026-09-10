@@ -80,7 +80,55 @@ Consequences already encoded, do not undo them:
 - The deterministic tier names the fix in its message and still makes the user type it. No
   autofix, no code actions.
 
-### Scoped exception, decided 2026-09-08: the graded level commands
+### Superseded 2026-09-10: the rule is now per finding, not per tier
+
+**The exception below was replaced.** Read this first; the section after it is kept because it
+records the decision that got us here, not the current rule.
+
+An adversarial `codex exec` review on 2026-09-10 broke the tier-shaped exception with one line:
+
+> Certainty that something is wrong does not establish certainty about its replacement.
+
+and broke it using this tool's own output. `in a calculator` is not inherently wrong, since you
+might calculate *in* an app. The duplicated `to audience to audience to` repairs either as
+`have the audience type` or as `ask the audience to type`, which are different stage
+directions. Both arrive inside a "grammar" hunk. So **grammar hunks already contain authorial
+choices**, and "grammar gets an accept key, judgement does not" was a fiction that let level 1
+guess at repairs it could not be sure of.
+
+**The rule now.** Every finding, at every level, declares one of two shapes:
+
+- `confident: true` plus a `replacement`, allowed **only** when the repair is unambiguous *and*
+  meaning-preserving. Becomes a diff hunk with `do` to accept.
+- `confident: false` plus a `question`, and **no replacement**. Becomes a `vim.diagnostic`
+  anchored to the span. There is nothing to accept; the only way to resolve it is to write
+  something.
+
+The default when the field is absent is `false`, so a model that omits it gets the cautious
+treatment rather than the destructive one. `A question wearing a suggestion` is explicitly
+forbidden in the prompt: `Did you mean X?` with a single X is a replacement with a question
+mark on it.
+
+Measured on a real draft, 2026-09-10: level 1 returned 2 confident fixes (both misspellings)
+and asked about both of the cases above rather than guessing. Level 2 returned 4 questions and
+0 fixes.
+
+**Questions are diagnostics, not hunks, and that asymmetry is the design.** A fix is transient:
+accept or reject and it is gone. A question is not resolved by a keystroke, so it has to
+survive closing the panel. `:AlbertLintLevelQuestionsClear` drops them deliberately.
+
+**`level.mode` separates finishing from practising.** The review also pointed out that
+authorship and practice are different objectives and that this file had been bundling them: the
+stated goal, "to actually HAVE me write", is about practice, while accepting a correction you
+understand is a perfectly authorial act. So it is a flag rather than something the tool infers.
+`finishing` (default) lets confident fixes be accepted; `practice` demotes every finding to a
+question, so even `a error` has to be typed. `:AlbertLintLevelMode` toggles it.
+
+What survives from the original doctrine, and what it was always really protecting: the danger
+is **unattributed replacement prose arriving in bulk**. Every hunk still traces to one named
+finding, and now every hunk additionally carries a claim that its replacement was safe to make.
+
+### Historical: the scoped exception decided 2026-09-08
 
 **`:AlbertLintLevel1` shows replacement prose in a diff with an accept key (`do`), which the
 constraint above rules out.** The user was shown the conflict, restated the requirement as

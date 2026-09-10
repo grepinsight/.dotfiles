@@ -13,11 +13,29 @@ local M = {}
 
 ---@class LevelFix
 ---@field line integer 1-indexed buffer line
----@field quote string Exact substring to replace
----@field replacement string
+---@field quote string Exact substring the finding is about
+---@field replacement string|nil Present only when `confident` is true
+---@field question string|nil Present only when `confident` is false
 ---@field label string
 ---@field note string
+---@field confident boolean|nil Defaults to false: no replacement without an explicit claim
 ---@field occurrence integer|nil 1-indexed, defaults to 1
+---
+---`confident` is the whole design, and it sits on the finding rather than on the level.
+---
+---The earlier split was by tier: grammar got replacement prose and an accept key, judgement
+---tiers got annotations only. An adversarial review on 2026-09-08 broke that with one line,
+---*certainty that something is wrong does not establish certainty about its replacement*, and
+---broke it using this tool's own output. `in a calculator` is not inherently wrong, since you
+---might calculate *in* an app. The writer's duplicated `to audience to audience to` can be
+---repaired as `have the audience type` or as `ask the audience to type`, which are different
+---stage directions. Both arrive inside a "grammar" hunk, so grammar hunks already contain
+---authorial choices and the tier-shaped line was fiction.
+---
+---The test is therefore per finding, and it is operational: is the replacement unambiguous
+---AND meaning-preserving? If yes it gets a `+` line and an accept key. If no it gets a
+---question anchored to the span and NO replacement, so there is nothing to accept and the
+---only way to resolve it is to write something.
 
 ---Byte span of the nth occurrence of `needle` in `haystack`.
 ---
@@ -58,7 +76,13 @@ end
 ---@return table[] dropped { fix, reason }, sorted by line then by the order given.
 ---  `reason` is "line out of range", "quote not found", "already applied", or
 ---  "overlaps an earlier fix"
-function M.build(lines, start_lnum, fixes)
+---@return table[] questions { fix, lnum, col } for findings carrying no replacement. These
+---  are located so they can be anchored, but never applied, so they produce no diff hunk and
+---  nothing to accept.
+---@param opts table|nil { demote_all: boolean } Treat every finding as a question, which is
+---  what practice mode does.
+function M.build(lines, start_lnum, fixes, opts)
+  opts = opts or {}
   local corrected = {}
   for i, line in ipairs(lines) do
     corrected[i] = line
@@ -66,6 +90,21 @@ function M.build(lines, start_lnum, fixes)
 
   -- Resolve every fix to a byte span first, so overlap detection can compare spans rather
   -- than re-searching. `order` preserves the model's ordering as a stable tiebreak.
+  -- A finding is applied only when it claims confidence AND actually carries a replacement.
+  -- Everything else is located and annotated, never applied. Defaulting to question rather
+  -- than to replacement is deliberate: a model that omits the field gets the cautious
+  -- treatment rather than the destructive one.
+  local applicable, asks = {}, {}
+  for _, fix in ipairs(fixes or {}) do
+    local repl = fix.replacement
+    if opts.demote_all or not fix.confident or repl == nil or repl == "" then
+      table.insert(asks, fix)
+    else
+      table.insert(applicable, fix)
+    end
+  end
+  fixes = applicable
+
   local by_line, indices, pending_drops = {}, {}, {}
   for order, fix in ipairs(fixes or {}) do
     local lnum = tonumber(fix.line)
@@ -161,7 +200,32 @@ function M.build(lines, start_lnum, fixes)
     table.insert(dropped, { fix = d.fix, reason = d.reason })
   end
 
-  return corrected, placed, dropped
+  -- Questions are located exactly the way fixes are, so they can be anchored to a span, but
+  -- they never touch `corrected`. One that cannot be located is dropped for the same reason a
+  -- fix is: a question pointing at the wrong sentence is worse than no question.
+  local questions = {}
+  for _, fix in ipairs(asks) do
+    local lnum = tonumber(fix.line)
+    local idx = lnum and (lnum - start_lnum + 1) or nil
+    if not idx or not lines[idx] then
+      table.insert(dropped, { fix = fix, reason = "line out of range" })
+    else
+      local s = nth_find(lines[idx], tostring(fix.quote or ""), tonumber(fix.occurrence) or 1)
+      if not s then
+        table.insert(dropped, { fix = fix, reason = "quote not found" })
+      else
+        table.insert(questions, { fix = fix, lnum = lnum, col = s - 1 })
+      end
+    end
+  end
+  table.sort(questions, function(a, b)
+    if a.lnum ~= b.lnum then
+      return a.lnum < b.lnum
+    end
+    return a.col < b.col
+  end)
+
+  return corrected, placed, dropped, questions
 end
 
 ---Render a label and note into wrapped lines for the diff view's virtual text.

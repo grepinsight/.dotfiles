@@ -67,10 +67,27 @@ local defaults = {
   ---@field enabled boolean
   ---@field provider string "claude" | "openai"
   ---@field scope string "paragraph" | "buffer" | "selection"
-  ---@field timeout_ms integer
+  ---@field timeout_ms integer|nil
   ---@field model string|nil Provider-specific model override
+  ---@field mode string "finishing" | "practice"
   level = {
     enabled = true,
+
+    -- "finishing" | "practice".
+    --
+    -- In finishing mode a finding that is unambiguous and meaning-preserving arrives as a
+    -- diff hunk you can accept with `do`. In practice mode every finding is demoted to a
+    -- question, so even `a error` -> `an error` has to be typed.
+    --
+    -- The distinction comes from an adversarial review on 2026-09-10, which pointed out
+    -- that authorship and practice are different objectives and that this config had been
+    -- bundling them: the stated goal, "to actually HAVE me write", is about practice, while
+    -- accepting a correction you understand is a perfectly authorial act. Rather than the
+    -- tool guessing which one a given session is for, it is a flag.
+    --
+    -- Default is "finishing" because that is what was asked for and confirmed. Set
+    -- "practice" for a session where the point is the drill rather than the draft.
+    mode = "finishing",
 
     -- "claude" needs no credential in this process: the CLI already holds one, which is
     -- why the semantic tier shells out too. "openai" reads OPENAI_API_KEY from the

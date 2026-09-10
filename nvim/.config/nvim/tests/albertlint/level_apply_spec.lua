@@ -18,6 +18,24 @@ local function fix(over)
     replacement = "calls an LLM",
     label = "Subject-verb agreement",
     note = "`takes` and `use` share the subject `which`.",
+    -- Explicit on the fixture, because the module defaults it to false: a finding without a
+    -- confidence claim is a question, not a replacement.
+    confident = true,
+  }
+  return vim.tbl_extend("force", base, over or {})
+end
+
+---A finding that names a defect without claiming to know the repair.
+---@param over table|nil
+---@return table
+local function ask(over)
+  local base = {
+    line = 1,
+    quote = "audience to audience to",
+    question = "Should this be `have the audience type` or `ask the audience to type`?",
+    label = "Duplicated fragment",
+    note = "The two repairs are different stage directions.",
+    confident = false,
   }
   return vim.tbl_extend("force", base, over or {})
 end
@@ -242,6 +260,114 @@ describe("level.apply build", function()
     assert.same({ 1, 2, 3 }, { d1[1].fix.line, d1[2].fix.line, d1[3].fix.line })
     assert.same({ d1[1].fix.line, d1[2].fix.line }, { d2[1].fix.line, d2[2].fix.line })
     assert.same({ "line one", "line two", "line three" }, first)
+  end)
+end)
+
+describe("level.apply confidence gate", function()
+  -- The mechanism the whole ladder now rests on. An adversarial review on 2026-09-08 broke
+  -- the previous tier-shaped rule with one line -- certainty that something is wrong does not
+  -- establish certainty about its replacement -- so the decision moved onto the finding.
+
+  it("never applies a finding that does not claim confidence", function()
+    local lines = { "which takes the text and use LLM" }
+
+    local corrected, placed, dropped, questions = apply.build(lines, 1, {
+      fix({ confident = false }),
+    })
+
+    assert.same({ "which takes the text and use LLM" }, corrected)
+    assert.equals(0, #placed)
+    assert.equals(0, #dropped)
+    assert.equals(1, #questions)
+  end)
+
+  it("defaults an absent confidence field to a question, not a replacement", function()
+    -- The cautious default matters: a model that omits the field must not get the
+    -- destructive treatment.
+    local lines = { "which takes the text and use LLM" }
+    local f = fix({})
+    f.confident = nil
+
+    local corrected, placed, questions = nil, nil, nil
+    corrected, placed, _, questions = apply.build(lines, 1, { f })
+
+    assert.same({ "which takes the text and use LLM" }, corrected)
+    assert.equals(0, #placed)
+    assert.equals(1, #questions)
+  end)
+
+  it("treats a confident finding with an empty replacement as a question", function()
+    local lines = { "which takes the text and use LLM" }
+
+    local _, placed, _, questions = apply.build(lines, 1, {
+      fix({ confident = true, replacement = "" }),
+    })
+
+    assert.equals(0, #placed)
+    assert.equals(1, #questions)
+  end)
+
+  it("anchors a question to its span without changing the text", function()
+    local lines = { "Now I have the audience to audience to type this" }
+
+    local corrected, placed, _, questions = apply.build(lines, 1, { ask({}) })
+
+    assert.same({ "Now I have the audience to audience to type this" }, corrected)
+    assert.equals(0, #placed)
+    assert.equals(1, #questions)
+    assert.equals(1, questions[1].lnum)
+    assert.equals(#("Now I have the "), questions[1].col)
+    -- The question itself has to survive to the renderer: it is the only thing the writer
+    -- gets, since there is deliberately no replacement to read.
+    assert.is_true(questions[1].fix.question:find("ask the audience to type", 1, true) ~= nil)
+    assert.is_nil(questions[1].fix.replacement)
+  end)
+
+  it("drops a question it cannot locate rather than guessing a span", function()
+    -- A question pointing at the wrong sentence is worse than no question.
+    local lines = { "nothing matching here" }
+
+    local _, _, dropped, questions = apply.build(lines, 1, { ask({}) })
+
+    assert.equals(0, #questions)
+    assert.equals("quote not found", dropped[1].reason)
+  end)
+
+  it("handles fixes and questions together, applying only the fixes", function()
+    local lines = { "a error here", "Now I have the audience to audience to type this" }
+
+    local corrected, placed, _, questions = apply.build(lines, 1, {
+      fix({ line = 1, quote = "a error", replacement = "an error" }),
+      ask({ line = 2 }),
+    })
+
+    assert.same({ "an error here", "Now I have the audience to audience to type this" }, corrected)
+    assert.equals(1, #placed)
+    assert.equals(1, #questions)
+  end)
+
+  it("demote_all turns every fix into a question, which is practice mode", function()
+    local lines = { "a error here" }
+
+    local corrected, placed, _, questions = apply.build(lines, 1, {
+      fix({ line = 1, quote = "a error", replacement = "an error" }),
+    }, { demote_all = true })
+
+    assert.same({ "a error here" }, corrected)
+    assert.equals(0, #placed)
+    assert.equals(1, #questions)
+  end)
+
+  it("sorts questions by position, like placed fixes", function()
+    local lines = { "alpha zzz", "beta zzz", "gamma zzz" }
+
+    local _, _, _, questions = apply.build(lines, 1, {
+      ask({ line = 3, quote = "zzz" }),
+      ask({ line = 1, quote = "zzz" }),
+      ask({ line = 2, quote = "zzz" }),
+    })
+
+    assert.same({ 1, 2, 3 }, { questions[1].lnum, questions[2].lnum, questions[3].lnum })
   end)
 end)
 

@@ -325,12 +325,54 @@ function M.setup(opts)
   -- CLAUDE.md rather than an oversight. Read that section before changing this.
   -- Bang forces a fresh pass. Without it the command serves the cached findings, so the
   -- diff can be closed and reopened without paying for the call twice.
-  vim.api.nvim_create_user_command("AlbertLintLevel1", function(cmd)
-    require("albertlint.level").run(1, cmd.range > 0, cmd.bang)
+  -- One command per level, generated from the catalogue so adding level 3 stays a data
+  -- change rather than a code change.
+  for _, spec in ipairs({
+    { id = 1, name = "grammar/usage" },
+    { id = 2, name = "coherence/clarity" },
+  }) do
+    vim.api.nvim_create_user_command(("AlbertLintLevel%d"):format(spec.id), function(cmd)
+      require("albertlint.level").run(spec.id, cmd.range > 0, cmd.bang)
+    end, {
+      range = true,
+      bang = true,
+      desc = ("albertlint: level %d (%s). ! ignores the cache"):format(spec.id, spec.name),
+    })
+  end
+
+  -- Questions outlive the panel on purpose, so dropping them is its own command rather than
+  -- a side effect of closing the diff.
+  vim.api.nvim_create_user_command("AlbertLintLevelQuestionsClear", function()
+    require("albertlint.level").clear_questions()
+    vim.notify("albertlint: level questions cleared for this buffer", vim.log.levels.INFO)
+  end, { desc = "albertlint: drop the unanswered level questions on this buffer" })
+
+  -- Practice vs finishing decides whether a confident fix arrives as an acceptable hunk or
+  -- as a question you have to type an answer to. See config.lua for why it is a flag rather
+  -- than something the tool infers.
+  vim.api.nvim_create_user_command("AlbertLintLevelMode", function(cmd)
+    local cfg = require("albertlint.config")
+    local want = cmd.args ~= "" and cmd.args
+      or (cfg.get().level.mode == "practice" and "finishing" or "practice")
+    if want ~= "practice" and want ~= "finishing" then
+      vim.notify(
+        ("albertlint: unknown mode %q, expected practice or finishing"):format(want),
+        vim.log.levels.ERROR
+      )
+      return
+    end
+    cfg.get().level.mode = want
+    vim.notify(
+      want == "practice" and "albertlint: practice mode, every finding becomes a question"
+        or "albertlint: finishing mode, confident fixes are acceptable with do",
+      vim.log.levels.INFO
+    )
   end, {
-    range = true,
-    bang = true,
-    desc = "albertlint: level 1 (grammar/usage) as a reviewable diff. ! re-runs, ignoring the cache",
+    nargs = "?",
+    complete = function()
+      return { "practice", "finishing" }
+    end,
+    desc = "albertlint: switch practice/finishing mode, or toggle with no argument",
   })
 
   vim.api.nvim_create_user_command("AlbertLintLevelClearCache", function()
@@ -429,8 +471,9 @@ function M.setup(opts)
       -- "scale to the number of lines", and `%d` against nil is an error, so this whole
       -- command failed on a default config. Found 2026-09-09 while smoke-testing the parse
       -- tier's commands, which is an argument for smoke-testing the old ones too.
-      ("level: %s, provider %s, scope %s, timeout %s%s"):format(
+      ("level: %s, %s mode, provider %s, scope %s, timeout %s%s"):format(
         cfg.level.enabled and "enabled" or "disabled",
+        cfg.level.mode,
         cfg.level.provider,
         cfg.level.scope,
         cfg.level.timeout_ms and (cfg.level.timeout_ms .. "ms") or "scaled to length",

@@ -55,6 +55,43 @@ local cancelled = {}
 ---@type table<integer, table<integer, { findings: table[], at: number, provider: string }>>
 local cache = {}
 
+---Namespace for the questions a pass leaves behind.
+---
+---Questions are rendered as diagnostics, not as diff hunks, and that difference is the point
+---of the design. A confident fix is transient: accept it or reject it and it is gone. A
+---question is not resolved by a keystroke, only by writing something, so it has to survive
+---closing the panel. Diagnostics also give `]d` / `[d` navigation and hover text for free,
+---and the other albertlint tiers already display this way.
+---
+---A separate namespace from the deterministic tiers, so clearing one never clears the other.
+local QUESTION_NS = vim.api.nvim_create_namespace("albertlint_level_questions")
+
+---@param bufnr integer
+---@param level integer
+---@param questions table[]
+local function set_questions(bufnr, level, questions)
+  local diagnostics = {}
+  for _, item in ipairs(questions or {}) do
+    local fix = item.fix
+    local quote = tostring(fix.quote or "")
+    table.insert(diagnostics, {
+      lnum = item.lnum - 1,
+      col = item.col,
+      end_lnum = item.lnum - 1,
+      end_col = item.col + #quote,
+      -- HINT rather than WARN: a question is not an error, and the writer decides whether
+      -- it is worth answering.
+      severity = vim.diagnostic.severity.HINT,
+      source = "albertlint",
+      code = ("level%d:%s"):format(level, (fix.label or "?"):lower()),
+      message = ("%s\n\n%s"):format(tostring(fix.question or fix.note or "?"), tostring(fix.note or "")),
+      user_data = { tier = "level", level = level },
+    })
+  end
+  vim.diagnostic.set(QUESTION_NS, bufnr, diagnostics)
+  return #diagnostics
+end
+
 ---@param started integer Nanoseconds from vim.uv.hrtime
 ---@return string
 local function elapsed(started)
@@ -154,16 +191,25 @@ local function present(bufnr, def, findings, lines, view)
   -- `lines` is the snapshot taken when the panel opened, which under the blocking flow is
   -- the buffer verbatim. The cache path passes the buffer as it is now instead.
   lines = lines or vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
-  local corrected, placed, dropped = apply.build(lines, 1, findings or {})
+  -- Practice mode demotes every finding to a question, so even a fix with one right answer
+  -- has to be typed. That is a voluntary constraint, off by default; see config.lua.
+  local demote = config.get().level.mode == "practice"
+  local corrected, placed, dropped, questions =
+    apply.build(lines, 1, findings or {}, { demote_all = demote })
+
+  -- Questions go up regardless of whether there is a diff to show. A level 2 pass will
+  -- often be all questions and no hunks, and that is a full result, not an empty one.
+  local asked = set_questions(bufnr, def.id, questions)
+
   if #placed == 0 then
-    return 0, #dropped
+    return 0, #dropped, asked
   end
   if view then
     diffview.populate(view, corrected, placed)
   else
     open_views[bufnr] = diffview.open(bufnr, corrected, placed, { level = def.id })
   end
-  return #placed, #dropped
+  return #placed, #dropped, asked
 end
 
 ---@param n integer
@@ -218,12 +264,20 @@ function M.run(id, use_selection, force)
   -- toggle rather than a call you have to think about.
   local hit = not force and (cache[bufnr] or {})[def.id] or nil
   if hit then
-    local placed, dropped = present(bufnr, def, hit.findings)
+    local placed, dropped, asked = present(bufnr, def, hit.findings)
     local age = ("%.0fs"):format(((vim.uv or vim.loop).hrtime() - hit.at) / 1e9)
     if placed == 0 then
+      if asked > 0 then
+        vim.notify(
+          ("albertlint: level %d, %d cached question%s (]d), :AlbertLintLevel%d! re-runs")
+            :format(def.id, asked, plural(asked, "", "s"), def.id),
+          vim.log.levels.INFO
+        )
+        return
+      end
       vim.notify(
-        ("albertlint: level %d has nothing left to apply from the cached pass (%s old). "
-          .. ":AlbertLintLevel%d! to run a fresh one."):format(def.id, age, def.id),
+        ("albertlint: level %d cache has nothing left (%s old), :AlbertLintLevel%d! re-runs")
+          :format(def.id, age, def.id),
         vim.log.levels.INFO
       )
       return
@@ -363,7 +417,7 @@ function M.run(id, use_selection, force)
       provider = opts.provider,
     }
 
-    local placed, dropped = present(bufnr, def, res.findings, snapshot, view)
+    local placed, dropped, asked = present(bufnr, def, res.findings, snapshot, view)
 
     ---@param msg string
     ---@return string
@@ -380,15 +434,27 @@ function M.run(id, use_selection, force)
     end
 
     if placed == 0 then
-      -- Nothing to review, so the panel goes away rather than sitting there as an empty
-      -- diff that looks like a result.
+      -- No diff to show, so the panel goes away rather than sitting there as an empty diff
+      -- that looks like a result. The questions stay: they are diagnostics on the real
+      -- buffer and do not need the panel.
       M.close(bufnr)
+      if asked > 0 then
+        -- All questions and no hunks is the NORMAL shape of a level 2 pass, so this must not
+        -- read as a failure.
+        vim.notify(
+          ("albertlint: level %d, %d question%s to answer (%s), ]d to walk them"):format(
+            def.id, asked, plural(asked, "", "s"), elapsed(started)
+          ),
+          vim.log.levels.INFO
+        )
+        return
+      end
       -- Zero has to read as a verdict, not as a no-op. "0 findings" on its own is
       -- indistinguishable from "the tool did not really run", which misled the author for
-      -- a real reason once in the semantic tier, so name the line count and the scope.
+      -- a real reason once in the semantic tier, so name the line count.
       vim.notify(
-        with_dropped(("albertlint: level %d found nothing to fix in %d lines (%s scope, %s)."):format(
-          def.id, #range_lines, scope_name, elapsed(started)
+        with_dropped(("albertlint: level %d found nothing in %d lines (%s)"):format(
+          def.id, #range_lines, elapsed(started)
         )),
         vim.log.levels.INFO
       )
@@ -398,9 +464,10 @@ function M.run(id, use_selection, force)
     -- Deliberately short. The keys are on the winbar, and a notify long enough to repeat
     -- them wraps past the cmdline and triggers the hit-enter prompt, which is what was
     -- interrupting the writer to tell them the tool would not interrupt them.
+    local tail = asked > 0 and (", %d question%s (]d)"):format(asked, plural(asked, "", "s")) or ""
     vim.notify(
-      with_dropped(("albertlint: level %d, %d fix%s in %d lines (%s)"):format(
-        def.id, placed, plural(placed, "", "es"), #range_lines, elapsed(started)
+      with_dropped(("albertlint: level %d, %d fix%s%s (%s)"):format(
+        def.id, placed, plural(placed, "", "es"), tail, elapsed(started)
       )),
       vim.log.levels.INFO
     )
@@ -519,6 +586,17 @@ end
 ---@param bufnr integer|nil
 ---@param id integer|nil Level to forget, or all levels when nil
 ---@return boolean had_any
+---Drop the questions a pass left on this buffer.
+---
+---Separate from `close()` on purpose: closing the panel disposes of the fixes, which are
+---transient, but a question is only resolved by writing something and must survive.
+---@param bufnr integer|nil
+function M.clear_questions(bufnr)
+  bufnr = bufnr or vim.api.nvim_get_current_buf()
+  local source_buf = resolve(bufnr)
+  vim.diagnostic.reset(QUESTION_NS, source_buf or bufnr)
+end
+
 function M.clear_cache(bufnr, id)
   bufnr = bufnr or vim.api.nvim_get_current_buf()
   local per_buf = cache[bufnr]
@@ -554,4 +632,5 @@ M._cancelled = cancelled
 M._all_blank = all_blank
 M._timeout_for = timeout_for
 M._present = present
+M._QUESTION_NS = QUESTION_NS
 return M

@@ -151,14 +151,72 @@ question so the feedback arrives in an order you can absorb:
 | Level | Question | State |
 |---|---|---|
 | 1 | Is it grammatical? | shipped |
-| 2 | Does it hold together? | data row only |
+| 2 | Does it hold together, and does it read well? | shipped |
 | 3 | Is it in the right order? | data row only |
 | 4 | Is it substantive, and what would make it convincing? | data row only |
 
-**This is the one tier that produces replacement prose.** Every other tier names the fix and
-still makes you type it. That is a deliberate, scoped exception to the doctrine in `CLAUDE.md`,
-decided 2026-09-08 — read that section before changing it, because the constraint it amends is
-written forcefully enough to look like this feature is a bug.
+### The confidence gate
+
+Every finding, at every level, is one of two shapes:
+
+| shape | becomes | how you resolve it |
+|---|---|---|
+| `confident: true` + `replacement` | a diff hunk | `do` accepts, `dp` rejects |
+| `confident: false` + `question` | a `vim.diagnostic` | you write something. `]d` walks them |
+
+A replacement is allowed **only** when the repair is unambiguous *and* meaning-preserving. The
+field defaults to `false` when absent, so a model that omits it gets the cautious treatment.
+
+This replaced an earlier rule that split by tier -- grammar got replacements, judgement tiers
+got annotations. An adversarial review broke that with one line, *certainty that something is
+wrong does not establish certainty about its replacement*, using this tool's own output:
+`in a calculator` is not wrong if the calculator is an app, and `to audience to audience to`
+repairs as either `have the audience type` or `ask the audience to type`, which are different
+stage directions. Both arrive inside a "grammar" hunk, so the tier-shaped line was fiction.
+
+Measured on a real draft, 2026-09-10:
+
+```
+LEVEL 1  2 fixes, 2 questions (37s)
+  fix       resontates -> resonates
+  fix       birthay -> birthday
+  question  duplicated fragment: `have the audience type` or `ask the audience to type`?
+  question  type the numbers INTO a calculator, or is `in` meant?
+
+LEVEL 2  4 questions, 0 fixes (64s)
+  question  `write it down in this` -- in what? paper, their hand, an envelope?
+  question  how does the calculator step connect to the word they chose?
+  question  is `year` the birth year or the current year?
+  question  what makes the product always land on 251112?
+```
+
+Level 2 producing zero fixes is correct, not a failure. Its prompt says almost nothing at that
+level is confident, because clarity is a judgement.
+
+**Questions outlive the panel.** A fix is transient: accept or reject and it is gone. A
+question is only resolved by writing something, so it is a diagnostic on the real buffer and
+survives `:AlbertLintLevelClose`. Drop them with `:AlbertLintLevelQuestionsClear`.
+
+### Practice mode vs finishing mode
+
+`level.mode` decides whether a confident fix is acceptable or is demoted to a question.
+
+| mode | confident findings | use it when |
+|---|---|---|
+| `finishing` (default) | diff hunks, `do` accepts | you want the draft done |
+| `practice` | demoted to questions | the point is the drill, not the draft |
+
+`:AlbertLintLevelMode` toggles, or takes `practice` / `finishing`.
+
+The split exists because authorship and practice are different objectives, and this config had
+been bundling them. "To actually HAVE me write" is about practice; accepting a correction you
+understand is a perfectly authorial act. Rather than the tool guessing which a session is for,
+it is a flag.
+
+**These are the only tiers that produce replacement prose, and only for findings that claim
+confidence.** See the confidence gate below. That is a deliberate, scoped amendment to the
+doctrine in `CLAUDE.md` — read that section before changing it, because the constraint it
+amends is written forcefully enough to make this feature look like a bug.
 
 The pass opens a native two-window diff: your buffer left, a corrected copy right. Navigation
 and apply are Neovim's own, so nothing here is reinvented.

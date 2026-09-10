@@ -92,6 +92,18 @@ link in `~/.config/nvim/lua/`. Stated because the failure mode is a confusing
 
 ## 4. The model returns spans, not a rewrite
 
+> **AMENDED 2026-09-10.** This section's invariant was tier-shaped and an adversarial
+> `codex exec` review broke it: *certainty that something is wrong does not establish certainty
+> about its replacement.* `in a calculator` is not inherently wrong, and
+> `to audience to audience to` repairs as either `have the audience type` or `ask the audience
+> to type`, which are different stage directions. Both arrive inside a level-1 hunk, so
+> "grammar gets an accept key" was fiction and level 1 was guessing at repairs it could not be
+> sure of. The invariant moved onto the individual finding as `confident`, and the `spans_only`
+> field on a level definition is gone. See `CLAUDE.md`, "Superseded 2026-09-10", and
+> `apply.lua`'s `LevelFix` class for the current rule. Everything below still describes why
+> spans beat a free-form rewrite, which is unchanged.
+
+
 Each finding is:
 
 ```json
