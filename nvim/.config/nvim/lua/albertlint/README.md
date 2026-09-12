@@ -74,6 +74,7 @@ position. `:AlbertLintCoverage` prints exactly which patterns fall on which side
 | `:AlbertLintTreeStatus` | parser state, cache size, and the measured hover latency |
 | `:AlbertLintTreeBenchmark` | time the hover path over every cached sentence in this buffer |
 | `:AlbertLintTreeClearCache` | drop the cached parses for this buffer |
+| `:AlbertLintBullets` | **bullet list.** Turn a range into one bullet per sentence. Also `gb` as an operator (`gbip`) and in visual mode |
 | `:AlbertLintCoverage` | which logged mistake patterns have a rule, and which cannot have one |
 | `:AlbertLintReload` | reload rules, engine, semantic, level, and config. Not `init.lua`, not the commands |
 | `:AlbertLintCollocationStatus` | collocation entry count, breakdown, and cache path |
@@ -500,6 +501,53 @@ written: one token and two labels per line, a read-only buffer, no accept key, a
 apply. The only way to act on it is to go and change the sentence.
 
 Design doc: `docs/superpowers/specs/2026-09-09-albertlint-syntax-tree-design.md`.
+
+## One bullet per sentence
+
+`:AlbertLintBullets` turns prose into a bullet list, one bullet per sentence. Three ways in:
+
+```
+gbip                     the paragraph under the cursor
+gb2j                     this line and the two below
+vip gb                   the visual selection
+:'<,'>AlbertLintBullets  the same, as a range command
+:%AlbertLintBullets      the whole buffer
+```
+
+`gb` is the only keymap this plugin claims, and only because a text object is half the point: an
+operator is the sole way `gbip` can exist. Everything else stays a command, for the reason in
+`level/init.lua`.
+
+Sentence boundaries come from spaCy's `doc.sents`, through a `segment` action on the same daemon
+the structure sidebar uses. If the venv is missing it falls back to the pure-Lua splitter in
+`parse/sentence.lua` and **says so**, because the two disagree on abbreviations and on anything
+without a space after the period, and a quality difference you cannot see is worse than one extra
+message.
+
+### What it leaves alone
+
+| In the range | What happens |
+|---|---|
+| A paragraph of prose | one bullet per sentence, indent copied from its first line |
+| A blank line | kept, so paragraph groups stay separated |
+| A heading (`## ...`) | untouched, and the prose under it is still bulleted |
+| An existing list item | untouched, including its wrapped continuation lines |
+
+That last row is what makes the command **idempotent**: run it twice and the second run is a
+no-op. It is also structural rather than careful. `format.lua` classifies every block first, and
+the caller sends only `prose` blocks to the segmenter and files the answers back by block index,
+so a heading or an existing bullet is unreachable from spaCy. A buggy segmenter cannot reach
+them.
+
+### Why this is not the level tier's exception either
+
+It changes no words. Splitting on sentence boundaries and prepending `- ` produces no replacement
+prose, so there is nothing to accept or reject, and the comparison is `gq` rather than
+`:AlbertLintLevel1`. See `CLAUDE.md`, "Neither is the bullet command".
+
+The one thing it cannot promise is atomicity against a moving buffer: the segmenter is behind a
+pipe, so the range is re-read and compared before anything is written, and a range that changed
+in the meantime is reported and left alone rather than overwritten.
 
 ## Adding a rule
 

@@ -282,6 +282,10 @@ function M.setup(opts)
       "albertlint.parse.sentence",
       "albertlint.parse.tree",
       "albertlint.parse.palette",
+      -- The bullet command. Both halves, since `format` holds every placement decision and is
+      -- the file most likely to be edited while tuning what counts as a line to leave alone.
+      "albertlint.bullets",
+      "albertlint.bullets.format",
     }) do
       package.loaded[mod] = nil
     end
@@ -444,6 +448,23 @@ function M.setup(opts)
     require("albertlint.parse").clear_cache(vim.api.nvim_get_current_buf())
     vim.notify("albertlint: parse cache dropped for this buffer", vim.log.levels.INFO)
   end, { desc = "albertlint: drop the cached parses for this buffer" })
+
+  -- One bullet per sentence. Reformatting, not rewriting: no word changes, so this is in the
+  -- parse tier's category rather than the level tier's scoped exception in CLAUDE.md.
+  vim.api.nvim_create_user_command("AlbertLintBullets", function(cmd)
+    require("albertlint.bullets").range(cmd.line1, cmd.line2)
+  end, { range = true, desc = "albertlint: turn the range into a bullet list, one bullet per sentence" })
+
+  -- The only keymaps this plugin claims, and only because a text object is half the point: an
+  -- operator is the sole way `gbip` can exist. Everything else stays a command, per the note
+  -- in `level/init.lua`. `gb` was unmapped across `lua/` when this was added.
+  vim.keymap.set("n", "gb", function()
+    return require("albertlint.bullets").operator_expr()
+  end, { expr = true, desc = "albertlint: bullet the lines a motion covers (gbip, gb2j)" })
+
+  vim.keymap.set("x", "gb", function()
+    require("albertlint.bullets").visual()
+  end, { desc = "albertlint: bullet the visual selection" })
 
   -- One place that answers "is this thing working". Added because the question came up
   -- repeatedly and the honest answer needed four separate commands plus reading source.

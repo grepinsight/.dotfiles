@@ -16,6 +16,9 @@ Protocol, one JSON object per line in each direction:
     <- {"id": 1, "sentences": ["The cat sat.", "It was warm."]}
     -> {"id": 1, "trees": [...], "parse_ms": 2.4}
 
+    <- {"id": 2, "segment": ["Para one. Still one.", "Para two."]}
+    -> {"id": 2, "sentences": [["Para one.", "Still one."], ["Para two."]], "segment_ms": 1.8}
+
     <- {"id": 2, "ping": true}
     -> {"id": 2, "pong": true}
 
@@ -27,9 +30,17 @@ An id is echoed on every response so the caller can drop a reply for a buffer th
 changed. Errors come back as {"id": N, "error": "..."} and the process stays up: dying on one
 malformed sentence would take the whole session's cache with it.
 
-Segmentation is NOT done here. The strings the caller sends are the cache keys it will look
-the results up under, so re-splitting them would return trees filed under text nobody asked
-about.
+The `sentences` request does NOT segment, and that is the invariant, not a blanket ban on
+segmentation in this file. The strings a caller sends to `sentences` are the cache keys it will
+look the results up under, so re-splitting them would return trees filed under text nobody
+asked about.
+
+`segment` is a separate action added 2026-09-12 for the bullet-list command, and it does not
+touch that invariant: its output is never a cache key, and nothing in the tree cache is reached
+through it. It uses `doc.sents`, which comes from the dependency `parser` rather than from
+`senter`. Verified on the installed environment: with `senter` in EXCLUDE the pipeline is
+`['tok2vec', 'tagger', 'parser', 'attribute_ruler']` and `doc.sents` is populated, so excluding
+`senter` costs nothing here.
 """
 
 from __future__ import annotations
@@ -106,9 +117,27 @@ def main() -> int:
             emit({"id": req_id, "pong": True})
             continue
 
+        segment = req.get("segment")
+        if segment is not None:
+            if not isinstance(segment, list):
+                emit({"id": req_id, "error": "`segment` must be a list of paragraph strings"})
+                continue
+            try:
+                t0 = time.perf_counter()
+                groups = [
+                    [sent.text.strip() for sent in doc.sents if sent.text.strip()]
+                    for doc in nlp.pipe([str(p) for p in segment])
+                ]
+                segment_ms = (time.perf_counter() - t0) * 1000
+            except Exception as exc:  # noqa: BLE001
+                emit({"id": req_id, "error": f"{type(exc).__name__}: {exc}"})
+                continue
+            emit({"id": req_id, "sentences": groups, "segment_ms": round(segment_ms, 3)})
+            continue
+
         sentences = req.get("sentences")
         if not isinstance(sentences, list):
-            emit({"id": req_id, "error": "request needs a `sentences` list"})
+            emit({"id": req_id, "error": "request needs a `sentences` or `segment` list"})
             continue
 
         try:

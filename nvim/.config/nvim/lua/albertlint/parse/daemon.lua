@@ -195,6 +195,39 @@ function M.request(sentences, cb)
   end
 end
 
+---Segment paragraphs into sentences. The callback gets `{ sentences, segment_ms }` or
+---`{ error }`, where `sentences[i]` is the sentence list for `paragraphs[i]`.
+---
+---Deliberately not routed through `M.request`: that one's strings are tree cache keys, and
+---re-splitting them would file trees under text nobody looked up. This action's output is never
+---a cache key. See the daemon docstring.
+---
+---Off the hover path, so a pipe round trip is affordable here in a way it is not in
+---`sentence.at`. The caller falls back to the Lua splitter when this errors.
+---@param paragraphs string[]
+---@param cb fun(res: table)
+function M.segment(paragraphs, cb)
+  if #paragraphs == 0 then
+    cb({ sentences = {} })
+    return
+  end
+  if not M.start() then
+    cb({ error = M.state.error or "daemon unavailable" })
+    return
+  end
+  next_id = next_id + 1
+  local id = next_id
+  pending[id] = cb
+  local payload = vim.json.encode({ id = id, segment = paragraphs })
+  local ok, err = pcall(function()
+    proc:write(payload .. "\n")
+  end)
+  if not ok then
+    pending[id] = nil
+    cb({ error = tostring(err) })
+  end
+end
+
 M.PUBLIC_INDEX = "https://pypi.org/simple"
 
 ---Create the venv and install spaCy plus the model.

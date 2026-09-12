@@ -40,7 +40,7 @@ PLENARY_DIR=~/.local/share/nvim/lazy/plenary.nvim nvim --headless \
   -c "PlenaryBustedDirectory tests { minimal_init = 'tests/minimal_init.lua' }"
 ```
 
-480 tests as of 2026-09-09 (393 as of 2026-09-08, 275 as of 2026-09-01; the count moves, so treat it as a floor and diff per-file rather than pinning a total). Run before and after every change. `tests/minimal_init.lua` is
+533 tests as of 2026-09-12 (480 as of 2026-09-09, 393 as of 2026-09-08, 275 as of 2026-09-01; the count moves, so treat it as a floor and diff per-file rather than pinning a total). Run before and after every change. `tests/minimal_init.lua` is
 deliberately minimal and does not load `plugins.lua`; ignore the `telescope.builtin not found`
 and `UpdateRemotePlugins` noise from specs that `:edit` a real file.
 
@@ -152,6 +152,29 @@ If the accept key turns out to be used reflexively, the alternative to revisit i
 gate** (spec §2, rejected as over-built): the diff shows the fix, but applying it requires typing
 the corrected span. Do not revert to annotations-only; that option was considered and declined.
 
+### Neither is the bullet command
+
+`:AlbertLintBullets` and its `gb` operator rewrite the buffer with no accept gate, which looks
+like the level-1 exception and is not. It **changes no words**: it splits on sentence boundaries
+and prepends `- `. There is no replacement prose to accept or reject, so it sits with the parse
+tier rather than under the level tier's carve-out, and `gq` is the right comparison. Added
+2026-09-12.
+
+The structural guarantee is in `bullets/format.lua`: the caller segments only `prose` blocks and
+files the answers back by block index, so headings and existing list items are **unreachable**
+from the segmenter. A buggy segmenter cannot rewrite them. Two other traps worth not
+rediscovering:
+
+- **A list marker needs the trailing space in the pattern.** Without it, any sentence opening on
+  a hyphenated modifier (`well-scoped work is the goal.`) and any opening on a negative number
+  (`-5 degrees is cold.`) read as existing bullets and pass through untouched, so the command
+  looks broken rather than wrong.
+- **A list-item run must swallow its continuation lines; a heading must not.** A wrapped bullet's
+  second line is plain indented text, so stopping the run at the first non-marker line makes it
+  prose and a second run bullets it separately. That is the only way the transform loses
+  idempotence. A heading gets the opposite treatment, one line only, or the paragraph beneath it
+  is never bulleted.
+
 ### The parse tier is not another exception
 
 `albertlint/parse/` shows replacement-free analysis: one token and two labels per line, in a
@@ -196,6 +219,7 @@ Branch `feat/albertlint-syntax-tree`, off `master` at `f5c1154`. The
 | `albertlint/level/` | **level 1 done.** `:AlbertLintLevel1` renders a grammar/usage pass as a native two-window diff, `do`/`dp` per hunk. Both `claude` and `openai` backends. Levels 2-4 are data rows only |
 | `albertlint/collocation/` | **done and wired.** nvim-cmp source over the user's own phrase notes. See `README.md` |
 | `albertlint/parse/` | **done, draft 2.** `:AlbertLintTree` renders the sentence under the cursor as a dependency tree in a sidebar, colored per part of speech, each node labelled with the phrase it heads. Local spaCy daemon, cache keyed on sentence text, hover measured at ~420us. Needs a one-time `:AlbertLintTreeBootstrap` |
+| `albertlint/bullets/` | **done.** `:AlbertLintBullets` over a range, `gb` as an operator (`gbip`) and in visual mode. spaCy `doc.sents` via a new `segment` daemon action, falling back to `parse/sentence.lua` with a notice when the venv is absent |
 | `albertlint/style/` | **~1/3 built.** `scope.lua` only. The runner, classes, groups, providers, and reconciliation are unwritten |
 | `annotate` AI lifecycle | partly built: `author`/`state`/`dismiss`/`add_many`/`retarget` done, the dismissal **ledger is not** |
 
