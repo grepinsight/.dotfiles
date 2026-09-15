@@ -22,6 +22,18 @@ export type Entry = {
   copyText: string;
   /** The prose after a leading code span, shown as the row's subtitle. */
   description?: string;
+  /**
+   * Whether the payload is code rather than prose: a fenced block, or a bullet
+   * whose payload came from a leading code span. Drives whether the preview
+   * renders it as a highlighted fence.
+   */
+  isCode: boolean;
+  /**
+   * The fence's info string, lowercased, when the note declared one. Only a
+   * fenced block can carry this, since a bullet's code span has nowhere to put
+   * it. Used as the preview fence's language.
+   */
+  language?: string;
   /** The note's H1, else its filename. */
   topic: string;
   /** Nearest `##` or deeper above the entry. Absent above the first one. */
@@ -38,6 +50,12 @@ export type Entry = {
 export type Note = {
   file: string;
   topic: string;
+  /**
+   * The note's own `language:` frontmatter key, lowercased. Lets one cheatsheet
+   * be SQL and another shell without a global setting that is wrong for one of
+   * them. A fence's own info string still wins inside the note.
+   */
+  language?: string;
   entries: Entry[];
 };
 
@@ -46,13 +64,19 @@ const TAGS_KEY = /^tags[ \t]*:/;
 const YAML_ITEM = /^[ \t]*-[ \t]+(.*)$/;
 const BULLET = /^[ \t]*(?:[-*+]|\d+[.)])[ \t]+(.*)$/;
 const HEADING = /^(#{1,6})[ \t]+(.*)$/;
-const FENCE = /^[ \t]*(?:```|~~~)/;
+const FENCE = /^[ \t]*(?:```|~~~)[ \t]*(\S*)/;
 /** A code span only counts when it LEADS the line. See splitPayload. */
 const LEADING_SPAN = /^`([^`\n]+)`[ \t]*(.*)$/;
 const SEPARATOR = /^[-–—:,.)\]]+[ \t]*/;
 
 function unquote(value: string): string {
-  return value.trim().replace(/^["']|["']$/g, "");
+  // Trimmed on both sides of the quote strip: `"  Python  "` has whitespace
+  // outside the quotes and inside them, and only the second pass catches the
+  // inner pair.
+  return value
+    .trim()
+    .replace(/^["']|["']$/g, "")
+    .trim();
 }
 
 /**
@@ -90,6 +114,22 @@ export function frontmatterTags(content: string): string[] | null {
     items.push(unquote(item[1] ?? ""));
   }
   return items;
+}
+
+/** A scalar value from the frontmatter, lowercased and unquoted. */
+export function frontmatterScalar(
+  content: string,
+  key: string,
+): string | undefined {
+  const block = FRONTMATTER.exec(content);
+  if (!block) return undefined;
+
+  const matcher = new RegExp(`^${key}[ \\t]*:(.*)$`);
+  for (const line of (block[1] ?? "").split(/\r?\n/)) {
+    const hit = matcher.exec(line);
+    if (hit) return unquote(hit[1] ?? "").toLowerCase() || undefined;
+  }
+  return undefined;
 }
 
 /** How many leading lines the frontmatter block occupies, 0 when there is none. */
@@ -138,6 +178,9 @@ function lineEntry(
     text: content,
     copyText: payload,
     description,
+    // The payload differing from the whole line means splitPayload found a
+    // leading span, which is the only thing that marks a bullet as code.
+    isCode: payload !== content,
     topic: at.topic,
     section: at.section,
     file: at.file,
@@ -161,6 +204,7 @@ export function parseNote(
 
   const lines = content.split(/\r?\n/);
   const start = frontmatterLineCount(content);
+  const declared = frontmatterScalar(content, "language");
 
   const at: Cursor = { topic: basename(file), file };
   let topicFromHeading = false;
@@ -172,7 +216,9 @@ export function parseNote(
 
     // A fenced block is ONE entry. Indexing its lines separately would hand the
     // clipboard half of a continued command.
-    if (FENCE.test(raw)) {
+    const fence = FENCE.exec(raw);
+    if (fence) {
+      const language = (fence[1] ?? "").trim().toLowerCase() || undefined;
       const body: string[] = [];
       let j = i + 1;
       for (; j < lines.length && !FENCE.test(lines[j] ?? ""); j++)
@@ -190,6 +236,8 @@ export function parseNote(
           text: (body[0] ?? "").trim(),
           copyText: block,
           description: body.length > 1 ? `${body.length} lines` : undefined,
+          isCode: true,
+          language,
           topic: at.topic,
           section: at.section,
           file,
@@ -233,7 +281,15 @@ export function parseNote(
     for (const entry of entries) entry.topic = at.topic;
   }
 
-  return { file, topic: at.topic, entries };
+  // Only code inherits the note's language. Tagging a prose line as SQL would
+  // colour an English sentence as a broken query.
+  if (declared) {
+    for (const entry of entries) {
+      if (entry.isCode && !entry.language) entry.language = declared;
+    }
+  }
+
+  return { file, topic: at.topic, language: declared, entries };
 }
 
 export type ContextWindow = {

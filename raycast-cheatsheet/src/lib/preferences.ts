@@ -6,6 +6,7 @@ export type RawPreferences = {
   newNotePath?: string;
   tag?: string;
   primaryAction?: "copy" | "paste";
+  codeLanguage?: string;
 };
 
 export type Settings = {
@@ -18,6 +19,8 @@ export type Settings = {
   newNotePath: string;
   tag: string;
   primaryAction: "copy" | "paste";
+  /** Highlighting fallback for code entries whose note declares no language. */
+  codeLanguage: string;
 };
 
 function expand(path: string): string {
@@ -33,5 +36,6 @@ export function settings(): Settings {
     newNotePath: expand(raw.newNotePath ?? "") || notesPath,
     tag: (raw.tag ?? "").trim() || "quick-ref",
     primaryAction: raw.primaryAction ?? "copy",
+    codeLanguage: (raw.codeLanguage ?? "").trim().toLowerCase() || "bash",
   };
 }

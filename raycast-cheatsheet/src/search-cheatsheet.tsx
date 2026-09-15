@@ -37,7 +37,13 @@ function fenced(body: string, language = ""): string {
  * Raycast renders a row's detail only while that row is selected, so reading
  * the note here costs one file read per selection rather than one per row.
  */
-function EntryDetail({ entry }: { entry: Entry }) {
+function EntryDetail({
+  entry,
+  codeLanguage,
+}: {
+  entry: Entry;
+  codeLanguage: string;
+}) {
   const { data, isLoading } = useCachedPromise(
     async (file: string, line: number) =>
       contextAround(await readFile(file, "utf-8"), line, CONTEXT_RADIUS),
@@ -59,9 +65,18 @@ function EntryDetail({ entry }: { entry: Entry }) {
       isLoading={isLoading}
       markdown={[
         `**Copies**`,
-        fenced(entry.copyText),
+        // A block's own fence wins, then the note's `language:` key, then the
+        // preference. Prose gets no language, since tagging an English sentence
+        // as SQL colours it as a broken query.
+        fenced(
+          entry.copyText,
+          entry.isCode ? (entry.language ?? codeLanguage) : "",
+        ),
         `**In the note**`,
-        fenced(gutter),
+        // Tagged markdown so the backticked commands in the surrounding lines
+        // colour too. The gutter prefix stops each line reading as a list item,
+        // which trades bullet colouring for keeping the line numbers.
+        fenced(gutter, "markdown"),
       ].join("\n\n")}
       metadata={
         <List.Item.Detail.Metadata>
@@ -115,7 +130,8 @@ async function openAtLine(entry: Entry) {
 }
 
 export default function Command() {
-  const { notesPath, newNotePath, tag, primaryAction } = settings();
+  const { notesPath, newNotePath, tag, primaryAction, codeLanguage } =
+    settings();
   const [query, setQuery] = useState("");
   const [showPreview, setShowPreview] = useState(true);
 
@@ -201,7 +217,7 @@ export default function Command() {
                   },
                 ]
           }
-          detail={<EntryDetail entry={entry} />}
+          detail={<EntryDetail entry={entry} codeLanguage={codeLanguage} />}
           actions={
             <ActionPanel>
               <ActionPanel.Section>

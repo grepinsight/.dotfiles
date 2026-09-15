@@ -339,3 +339,152 @@ test("clamps the window at the end of the file", () => {
   assert.equal(window.lines.at(-1), "c");
   assert.equal(window.targetIndex, 2);
 });
+
+test("records a fenced block's language from its info string", () => {
+  const content = [
+    "---",
+    "tags:",
+    "  - quick-ref",
+    "---",
+    "```bash",
+    "ls -la",
+    "```",
+  ].join("\n");
+
+  const entry = parseNote("/n.md", content, TAG)?.entries[0];
+
+  assert.equal(entry?.language, "bash");
+  assert.equal(entry?.isCode, true);
+});
+
+test("lowercases the language and keeps only the first token of the info string", () => {
+  const content = [
+    "---",
+    "tags:",
+    "  - quick-ref",
+    "---",
+    '```Bash title="x"',
+    "ls",
+    "```",
+  ].join("\n");
+
+  assert.equal(parseNote("/n.md", content, TAG)?.entries[0]?.language, "bash");
+});
+
+test("a fence with no info string records no language but is still code", () => {
+  const content = [
+    "---",
+    "tags:",
+    "  - quick-ref",
+    "---",
+    "```",
+    "ls",
+    "```",
+  ].join("\n");
+  const entry = parseNote("/n.md", content, TAG)?.entries[0];
+
+  assert.equal(entry?.language, undefined);
+  assert.equal(entry?.isCode, true);
+});
+
+test("marks a bullet as code when its payload came from a leading span", () => {
+  const content = [
+    "---",
+    "tags:",
+    "  - quick-ref",
+    "---",
+    "- `git status` show the tree",
+  ].join("\n");
+
+  assert.equal(parseNote("/n.md", content, TAG)?.entries[0]?.isCode, true);
+});
+
+test("marks a bullet as code even when the span carries no description", () => {
+  const content = [
+    "---",
+    "tags:",
+    "  - quick-ref",
+    "---",
+    "- `git status`",
+  ].join("\n");
+
+  assert.equal(parseNote("/n.md", content, TAG)?.entries[0]?.isCode, true);
+});
+
+test("does not mark a prose bullet as code", () => {
+  const content = [
+    "---",
+    "tags:",
+    "  - quick-ref",
+    "---",
+    "- never use `--force` on a shared branch",
+  ].join("\n");
+  const entry = parseNote("/n.md", content, TAG)?.entries[0];
+
+  assert.equal(entry?.isCode, false);
+  assert.equal(entry?.language, undefined);
+});
+
+test("a note can declare its language in frontmatter, and code entries inherit it", () => {
+  const content = [
+    "---",
+    "tags:",
+    "  - quick-ref",
+    "language: sql",
+    "---",
+    "- `select 1` a query",
+  ].join("\n");
+  const note = parseNote("/n.md", content, TAG);
+
+  assert.equal(note?.language, "sql");
+  assert.equal(note?.entries[0]?.language, "sql");
+});
+
+test("a fence's own language beats the note's declaration", () => {
+  const content = [
+    "---",
+    "tags:",
+    "  - quick-ref",
+    "language: sql",
+    "---",
+    "```python",
+    "print(1)",
+    "```",
+  ].join("\n");
+
+  assert.equal(
+    parseNote("/n.md", content, TAG)?.entries[0]?.language,
+    "python",
+  );
+});
+
+test("a prose entry inherits no language even when the note declares one", () => {
+  const content = [
+    "---",
+    "tags:",
+    "  - quick-ref",
+    "language: sql",
+    "---",
+    "- plain prose here",
+  ].join("\n");
+  const entry = parseNote("/n.md", content, TAG)?.entries[0];
+
+  assert.equal(entry?.isCode, false);
+  assert.equal(entry?.language, undefined);
+});
+
+test("the declared language is lowercased and trimmed", () => {
+  const content = [
+    "---",
+    "tags:",
+    "  - quick-ref",
+    'language: "  Python  "',
+    "---",
+    "- `print(1)`",
+  ].join("\n");
+
+  assert.equal(
+    parseNote("/n.md", content, TAG)?.entries[0]?.language,
+    "python",
+  );
+});

@@ -98,6 +98,33 @@ Only the selected row's note is read, so the cost is one file read per
 selection. `Cmd+Shift+P` turns the pane off, which restores the topic and
 section accessory on each row.
 
+### Syntax highlighting
+
+Raycast renders detail markdown with highlight.js, so a fenced block gets real
+highlighting. The language is resolved in this order:
+
+1. **A fenced block's own info string.** ```` ```bash ```` wins for that entry.
+2. **The note's `language:` frontmatter key.** One cheatsheet can be SQL and
+   another shell, with no global setting that is wrong for one of them.
+3. **The Default Code Language preference**, `bash` unless you change it.
+
+```markdown
+---
+tags:
+  - quick-ref
+language: sql
+---
+
+- `select count(*) from t` row count
+```
+
+Prose entries are never tagged. A line with no leading code span is English, and
+colouring an English sentence as SQL renders it as a broken query.
+
+The surrounding-lines block is tagged `markdown`, so the backticked commands in
+it colour too. Its gutter prefix stops each line parsing as a list item, which
+trades bullet colouring for keeping the line numbers.
+
 ## Opening the note at the line
 
 `Cmd+O` jumps to the entry's own line rather than the top of the note. It needs

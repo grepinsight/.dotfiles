@@ -62,6 +62,14 @@
           "value": "paste"
         }
       ]
+    },
+    {
+      "name": "codeLanguage",
+      "title": "Default Code Language",
+      "description": "Highlighting for code entries whose note declares none. Any highlight.js language: bash, sql, python, json, yaml, plaintext. A note's own `language:` frontmatter key and a fenced block's info string both win over this.",
+      "type": "textfield",
+      "default": "bash",
+      "required": false
     }
   ],
   "dependencies": {
