@@ -1,0 +1,98 @@
+#!/usr/bin/env python3
+"""List captured thoughts, newest first.
+
+    captures                # last 20, as `DATE TIME  thought`
+    captures -n 100         # more
+    captures --paths        # just paths, for xargs / nvim
+    captures --json         # full records, for scripts and the nvim picker
+
+Plural of `capture` on purpose: the write path is the thing that must never
+hesitate, so it stays a separate entry point with no listing code in it.
+"""
+
+import argparse
+import json
+import os
+import sys
+from pathlib import Path
+
+# resolve() so this works through the ~/bin/captures symlink.
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "lib"))
+
+import capture_core  # noqa: E402
+
+VAULT_VARS = ("OBSIDIAN_VAULT", "OBSIDIAN_VAULT_PATH")
+
+
+def resolve_vault(explicit):
+    if explicit:
+        return Path(explicit).expanduser()
+    for name in VAULT_VARS:
+        value = os.environ.get(name)
+        if value:
+            return Path(value).expanduser()
+    raise SystemExit(
+        "captures: $OBSIDIAN_VAULT is not set, so there is nothing to list.\n"
+        "          Set it, or pass --vault DIR."
+    )
+
+
+def stamp(record):
+    """`YYYY-MM-DD HH:MM` from frontmatter, falling back to the filename.
+
+    The filename is the more reliable of the two -- `write()` generates it --
+    but frontmatter carries the timezone, so prefer it when present.
+    """
+    created = record.get("created_at")
+    if created and len(created) >= 16:
+        return created[:10] + " " + created[11:16]
+    name = record.get("name", "")
+    if len(name) >= 16 and name[4] == "-":
+        return name[:10] + " " + name[11:13] + ":" + name[13:15]
+    return "?" * 16
+
+
+def main(argv=None):
+    parser = argparse.ArgumentParser(
+        prog="captures", description="List captured thoughts, newest first."
+    )
+    parser.add_argument(
+        "-n", "--limit", type=int, default=20, help="how many to show (default 20; 0 = all)"
+    )
+    parser.add_argument("--vault", help="vault root, overriding $OBSIDIAN_VAULT")
+    parser.add_argument(
+        "--paths", action="store_true", help="print only paths, one per line"
+    )
+    parser.add_argument(
+        "--json", dest="as_json", action="store_true", help="print full records as JSON"
+    )
+    args = parser.parse_args(argv)
+
+    vault = resolve_vault(args.vault)
+    limit = None if args.limit in (0, None) else args.limit
+    records = capture_core.list_captures(vault, limit=limit)
+
+    if args.as_json:
+        print(json.dumps(records, ensure_ascii=False))
+        return 0
+
+    if args.paths:
+        for record in records:
+            print(record["path"])
+        return 0
+
+    if not records:
+        # To stderr, so `captures | wc -l` reports 0 rather than 1.
+        print("captures: nothing captured yet", file=sys.stderr)
+        return 0
+
+    for record in records:
+        text = record["first_line"] or "(empty)"
+        if record["multiline"]:
+            text += " […]"
+        print("{}  {}".format(stamp(record), text))
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
