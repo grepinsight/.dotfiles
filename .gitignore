@@ -21,3 +21,6 @@ espanso/.config/espanso/match/base-local.yml
 
 # Per-machine Claude Code provider selection, not config worth sharing
 .claude-provider
+
+# Lua bytecode dropped by a failed :luafile / luac run
+luac.out

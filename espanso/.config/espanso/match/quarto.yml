@@ -42,7 +42,7 @@ matches:
         author: "Albert Lee"
         date: "{{mydate}}"
         categories:
-          - Guardant
+          - "{{form1.category}}"
         tags:
           - Analytical Validation
         execute:
@@ -71,7 +71,7 @@ matches:
       - name: "form1"
         type: form
         params:
-          layout: "Title: [[title]]"
+          layout: "Title: [[title]]\nCategory: [[category]]"
       - name: mydate
         type: date
         params:
