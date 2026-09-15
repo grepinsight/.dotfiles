@@ -132,6 +132,28 @@ async function openAtLine(entry: Entry) {
   await open(advancedUri({ ...target, line: entry.line }));
 }
 
+/**
+ * Rescan, and say out loud which folders were read.
+ *
+ * A silent rescan cannot be told apart from one that never ran, which is
+ * exactly the confusion that follows adding a folder: you press Cmd+R, nothing
+ * changes, and you cannot tell whether the folder went unread or held nothing
+ * tagged. Naming the roots and the tag answers both without a second scan; the
+ * entry count is already visible in the list.
+ */
+async function rescan(
+  revalidate: () => void,
+  roots: string[],
+  tag: string,
+): Promise<void> {
+  revalidate();
+  await showToast({
+    style: Toast.Style.Success,
+    title: `Rescanning ${roots.length} folder${roots.length === 1 ? "" : "s"} for ${tag}`,
+    message: roots.join("\n"),
+  });
+}
+
 export default function Command() {
   const { notesPaths, newNotePath, tag, primaryAction, codeLanguage } =
     settings();
@@ -196,7 +218,7 @@ export default function Command() {
             <Action
               title="Rescan Notes"
               icon={Icon.ArrowClockwise}
-              onAction={revalidate}
+              onAction={() => rescan(revalidate, notesPaths, tag)}
             />
           </ActionPanel>
         }
@@ -312,7 +334,7 @@ export default function Command() {
                   title="Rescan Notes"
                   icon={Icon.ArrowClockwise}
                   shortcut={Keyboard.Shortcut.Common.Refresh}
-                  onAction={revalidate}
+                  onAction={() => rescan(revalidate, notesPaths, tag)}
                 />
               </ActionPanel.Section>
             </ActionPanel>
