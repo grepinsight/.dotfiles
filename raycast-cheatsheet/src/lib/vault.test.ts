@@ -4,7 +4,13 @@ import { mkdtemp, mkdir, writeFile, readFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-import { appendToNote, createNote, editEntry, scan } from "./vault.ts";
+import {
+  appendToNote,
+  createNote,
+  editEntry,
+  obsidianTarget,
+  scan,
+} from "./vault.ts";
 
 const TAG = "quick-ref";
 
@@ -170,4 +176,30 @@ test("refuses to edit a fenced block in place and says to open the note", async 
 
   assert.equal(entries[0]?.kind, "block");
   await assert.rejects(() => editEntry(entries[0]!, "x"), /open the note/);
+});
+
+test("finds the Obsidian vault a note sits in, and the path relative to it", async () => {
+  const root = await vault({ "nested/deep/git.md": tagged("Git", "- one") });
+  await mkdir(join(root, ".obsidian"), { recursive: true });
+
+  const target = await obsidianTarget(join(root, "nested/deep/git.md"));
+
+  assert.equal(target?.vault, root.split("/").pop());
+  assert.equal(target?.filepath, "nested/deep/git.md");
+});
+
+test("finds the vault when the note sits at its root", async () => {
+  const root = await vault({ "git.md": tagged("Git", "- one") });
+  await mkdir(join(root, ".obsidian"), { recursive: true });
+
+  assert.equal(
+    (await obsidianTarget(join(root, "git.md")))?.filepath,
+    "git.md",
+  );
+});
+
+test("returns null when no .obsidian folder sits above the note", async () => {
+  const root = await vault({ "git.md": tagged("Git", "- one") });
+
+  assert.equal(await obsidianTarget(join(root, "git.md")), null);
 });

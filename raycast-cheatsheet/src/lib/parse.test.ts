@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 
-import { parseNote } from "./parse.ts";
+import { contextAround, parseNote } from "./parse.ts";
 
 const TAG = "quick-ref";
 
@@ -311,4 +311,31 @@ test("gives every entry a distinct id carrying file and line", () => {
 
   assert.equal(entries[0]?.id, "/notes/git.md:5");
   assert.equal(entries[1]?.id, "/notes/git.md:6");
+});
+
+test("returns the lines around a target line, with the range it covered", () => {
+  const content = ["one", "two", "three", "four", "five", "six", "seven"].join(
+    "\n",
+  );
+
+  const window = contextAround(content, 4, 2);
+
+  assert.deepEqual(window.lines, ["two", "three", "four", "five", "six"]);
+  assert.equal(window.firstLine, 2);
+  assert.equal(window.targetIndex, 2);
+});
+
+test("clamps the window at the start of the file", () => {
+  const window = contextAround(["a", "b", "c"].join("\n"), 1, 3);
+
+  assert.deepEqual(window.lines, ["a", "b", "c"]);
+  assert.equal(window.firstLine, 1);
+  assert.equal(window.targetIndex, 0);
+});
+
+test("clamps the window at the end of the file", () => {
+  const window = contextAround(["a", "b", "c"].join("\n"), 3, 5);
+
+  assert.equal(window.lines.at(-1), "c");
+  assert.equal(window.targetIndex, 2);
 });

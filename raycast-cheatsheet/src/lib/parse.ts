@@ -235,3 +235,36 @@ export function parseNote(
 
   return { file, topic: at.topic, entries };
 }
+
+export type ContextWindow = {
+  /** The surrounding lines, verbatim. */
+  lines: string[];
+  /** 1-indexed line number of `lines[0]`, so a preview can number its gutter. */
+  firstLine: number;
+  /** Index within `lines` of the line asked for, after clamping. */
+  targetIndex: number;
+};
+
+/**
+ * The lines around a target line, clamped to the file.
+ *
+ * A cheatsheet row shows one line, which is the point at lookup time and not
+ * enough when deciding whether it is the right line. The preview needs its
+ * neighbours.
+ */
+export function contextAround(
+  content: string,
+  line: number,
+  radius: number,
+): ContextWindow {
+  const all = content.split(/\r?\n/);
+  const target = Math.max(1, Math.min(line, all.length));
+  const first = Math.max(1, target - radius);
+  const last = Math.min(all.length, target + radius);
+
+  return {
+    lines: all.slice(first - 1, last),
+    firstLine: first,
+    targetIndex: target - first,
+  };
+}

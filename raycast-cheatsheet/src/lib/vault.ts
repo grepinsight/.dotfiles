@@ -7,7 +7,7 @@
  */
 
 import { readdir, readFile, writeFile, access } from "node:fs/promises";
-import { join } from "node:path";
+import { basename, dirname, join, relative } from "node:path";
 
 import { parseNote, type Entry, type Note } from "./parse.ts";
 import {
@@ -154,4 +154,41 @@ export async function editEntry(entry: Entry, text: string): Promise<void> {
     file: entry.file,
   });
   await writeFile(entry.file, next, "utf-8");
+}
+
+export type ObsidianLocation = {
+  /** The vault's name, which Obsidian takes from its folder name. */
+  vault: string;
+  /** The note's path relative to the vault root. */
+  filepath: string;
+};
+
+/**
+ * Locate the Obsidian vault a note belongs to by walking up for a `.obsidian`
+ * folder.
+ *
+ * Detected rather than configured, because the notes folder and the vault root
+ * are not the same thing: pointing the scan at one subfolder of a vault is
+ * normal, and a deep link needs the root above it. Returns null when the note
+ * is not in a vault at all, which is the signal to fall back to opening the
+ * file with whatever owns `.md`.
+ */
+export async function obsidianTarget(
+  file: string,
+): Promise<ObsidianLocation | null> {
+  let directory = dirname(file);
+
+  for (;;) {
+    try {
+      await access(join(directory, ".obsidian"));
+      return {
+        vault: basename(directory),
+        filepath: relative(directory, file),
+      };
+    } catch {
+      const parent = dirname(directory);
+      if (parent === directory) return null;
+      directory = parent;
+    }
+  }
 }

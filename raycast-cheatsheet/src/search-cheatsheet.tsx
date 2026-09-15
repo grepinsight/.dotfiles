@@ -2,44 +2,122 @@ import {
   Action,
   ActionPanel,
   Clipboard,
-  Detail,
   Icon,
+  Keyboard,
   List,
   Toast,
+  open,
   showToast,
-  Keyboard,
 } from "@raycast/api";
 import { useCachedPromise } from "@raycast/utils";
+import { readFile } from "node:fs/promises";
 import { useState } from "react";
 
 import { EntryForm } from "./components/EntryForm.tsx";
 import { settings } from "./lib/preferences.ts";
-import { scan } from "./lib/vault.ts";
-import type { Entry, Note } from "./lib/parse.ts";
+import { advancedUri } from "./lib/obsidian.ts";
+import { obsidianTarget, scan } from "./lib/vault.ts";
+import { contextAround, type Entry, type Note } from "./lib/parse.ts";
 
-/** Full payload for a multi-line entry, so nothing is copied unseen. */
-function FullEntry({ entry }: { entry: Entry }) {
-  const fence =
-    entry.kind === "block"
-      ? `\`\`\`\n${entry.copyText}\n\`\`\``
-      : entry.copyText;
+/** Lines of surrounding note shown on each side of the entry in the preview. */
+const CONTEXT_RADIUS = 6;
+
+/**
+ * Tildes rather than backticks, because an entry can itself contain a fenced
+ * block and a backtick fence would be closed early by its content.
+ */
+function fenced(body: string, language = ""): string {
+  return `~~~${language}\n${body}\n~~~`;
+}
+
+/**
+ * The entry as it sits in its note, so you can tell whether it is the line you
+ * wanted before copying it.
+ *
+ * Raycast renders a row's detail only while that row is selected, so reading
+ * the note here costs one file read per selection rather than one per row.
+ */
+function EntryDetail({ entry }: { entry: Entry }) {
+  const { data, isLoading } = useCachedPromise(
+    async (file: string, line: number) =>
+      contextAround(await readFile(file, "utf-8"), line, CONTEXT_RADIUS),
+    [entry.file, entry.line],
+  );
+
+  const gutter = data
+    ? data.lines
+        .map((text, index) => {
+          const number = data.firstLine + index;
+          const marker = index === data.targetIndex ? "▸" : " ";
+          return `${marker} ${String(number).padStart(4)} │ ${text}`;
+        })
+        .join("\n")
+    : "";
+
   return (
-    <Detail
-      markdown={`${fence}\n\n---\n\n${entry.description ?? ""}`}
-      navigationTitle={`${entry.topic}${entry.section ? ` › ${entry.section}` : ""}`}
-      actions={
-        <ActionPanel>
-          <Action.CopyToClipboard title="Copy Entry" content={entry.copyText} />
-          <Action.Open title="Open Source Note" target={entry.file} />
-        </ActionPanel>
+    <List.Item.Detail
+      isLoading={isLoading}
+      markdown={[
+        `**Copies**`,
+        fenced(entry.copyText),
+        `**In the note**`,
+        fenced(gutter),
+      ].join("\n\n")}
+      metadata={
+        <List.Item.Detail.Metadata>
+          <List.Item.Detail.Metadata.Label
+            title="Topic"
+            text={entry.topic}
+            icon={Icon.Document}
+          />
+          {entry.section ? (
+            <List.Item.Detail.Metadata.Label
+              title="Section"
+              text={entry.section}
+            />
+          ) : null}
+          <List.Item.Detail.Metadata.Label
+            title="Kind"
+            text={
+              entry.kind === "block"
+                ? `code block, ${entry.lineCount} lines`
+                : "single line"
+            }
+          />
+          <List.Item.Detail.Metadata.Separator />
+          <List.Item.Detail.Metadata.Label
+            title="Line"
+            text={String(entry.line)}
+          />
+          <List.Item.Detail.Metadata.Label title="File" text={entry.file} />
+        </List.Item.Detail.Metadata>
       }
     />
   );
 }
 
+/**
+ * Open the note at the entry's own line.
+ *
+ * Plain `obsidian://open` reaches the file but not the line, so this goes
+ * through the Advanced URI plugin. When the note is not inside a vault, or the
+ * plugin is not installed and the link does nothing visible, opening the file
+ * with whatever owns `.md` is the honest fallback.
+ */
+async function openAtLine(entry: Entry) {
+  const target = await obsidianTarget(entry.file);
+
+  if (!target) {
+    await open(entry.file);
+    return;
+  }
+  await open(advancedUri({ ...target, line: entry.line }));
+}
+
 export default function Command() {
   const { notesPath, newNotePath, tag, primaryAction } = settings();
   const [query, setQuery] = useState("");
+  const [showPreview, setShowPreview] = useState(true);
 
   const { data, isLoading, revalidate } = useCachedPromise(
     scan,
@@ -69,6 +147,7 @@ export default function Command() {
   return (
     <List
       isLoading={isLoading}
+      isShowingDetail={showPreview && entries.length > 0}
       filtering
       onSearchTextChange={setQuery}
       searchBarPlaceholder="Search every line of your cheatsheets"
@@ -109,15 +188,20 @@ export default function Command() {
           // The title IS the clipboard payload. A launcher that copies something
           // other than what it shows is a trap, so the two are one string.
           title={entry.copyText.split("\n")[0] ?? ""}
-          subtitle={entry.description}
+          subtitle={showPreview ? undefined : entry.description}
           keywords={[entry.topic, entry.section, entry.text].filter(
             (value): value is string => Boolean(value),
           )}
-          accessories={[
-            {
-              text: `${entry.topic}${entry.section ? ` › ${entry.section}` : ""}`,
-            },
-          ]}
+          accessories={
+            showPreview
+              ? undefined
+              : [
+                  {
+                    text: `${entry.topic}${entry.section ? ` › ${entry.section}` : ""}`,
+                  },
+                ]
+          }
+          detail={<EntryDetail entry={entry} />}
           actions={
             <ActionPanel>
               <ActionPanel.Section>
@@ -159,14 +243,25 @@ export default function Command() {
                     });
                   }}
                 />
-                {entry.lineCount > 1 && (
-                  <Action.Push
-                    title="Show Full Entry"
-                    icon={Icon.Eye}
-                    shortcut={{ modifiers: ["cmd"], key: "d" }}
-                    target={<FullEntry entry={entry} />}
-                  />
-                )}
+              </ActionPanel.Section>
+
+              <ActionPanel.Section>
+                <Action
+                  title={showPreview ? "Hide Preview" : "Show Preview"}
+                  icon={Icon.Sidebar}
+                  shortcut={{ modifiers: ["cmd", "shift"], key: "p" }}
+                  onAction={() => setShowPreview((shown) => !shown)}
+                />
+                <Action
+                  title="Open in Obsidian at This Line"
+                  icon={Icon.Pencil}
+                  shortcut={Keyboard.Shortcut.Common.Open}
+                  onAction={() => openAtLine(entry)}
+                />
+                <Action.ShowInFinder
+                  path={entry.file}
+                  shortcut={Keyboard.Shortcut.Common.OpenWith}
+                />
               </ActionPanel.Section>
 
               <ActionPanel.Section>
@@ -191,11 +286,6 @@ export default function Command() {
                   icon={Icon.Plus}
                   shortcut={Keyboard.Shortcut.Common.New}
                   target={addForm(entry)}
-                />
-                <Action.Open
-                  title="Open Source Note"
-                  target={entry.file}
-                  shortcut={Keyboard.Shortcut.Common.Open}
                 />
                 <Action
                   title="Rescan Notes"

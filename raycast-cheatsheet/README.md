@@ -71,11 +71,43 @@ inferred at copy time.
 | `Return` | copy the entry (configurable: copy or paste) |
 | `Cmd+Return` | the other one |
 | `Cmd+Shift+C` | copy without closing the window |
-| `Cmd+D` | show a multi-line entry in full before copying |
+| `Cmd+Shift+P` | show or hide the preview |
 | `Cmd+E` | edit the entry |
 | `Cmd+N` | new entry, seeded with whatever you typed |
-| `Cmd+O` | open the source note |
+| `Cmd+O` | open the note at the entry's own line |
 | `Cmd+R` | rescan |
+
+## Preview
+
+The preview pane shows the exact string `Return` will copy, then the entry in
+its note with a gutter marking its line, so you can tell a near-miss from the
+line you wanted before pressing anything.
+
+~~~
+  Copies
+  git reflog
+
+  In the note
+      12 │ - `git rebase -i HEAD~3` squash or reword the last three
+      13 │ - `git commit --amend --no-edit` fold staged changes in
+    ▸ 14 │ - `git reflog` find a commit a reset left unreachable
+      15 │ - never rebase a branch someone else has already pulled
+~~~
+
+Only the selected row's note is read, so the cost is one file read per
+selection. `Cmd+Shift+P` turns the pane off, which restores the topic and
+section accessory on each row.
+
+## Opening the note at the line
+
+`Cmd+O` jumps to the entry's own line rather than the top of the note. It needs
+Obsidian's [Advanced URI](https://github.com/Vinzent03/obsidian-advanced-uri)
+plugin, since plain `obsidian://open` reaches a file but not a position in it.
+
+The vault is detected, not configured: the extension walks up from the note
+looking for a `.obsidian` folder, and the vault's name is that folder's parent.
+So pointing the scan at a subfolder of a vault still produces a correct link.
+With no vault above the note, `Cmd+O` opens the file with whatever owns `.md`.
 
 `Cmd+K` lists every action with its shortcut.
 
