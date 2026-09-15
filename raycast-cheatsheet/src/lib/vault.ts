@@ -59,42 +59,36 @@ async function markdownFiles(root: string): Promise<string[]> {
   return found.concat(...nested);
 }
 
-/**
- * Read every file, up to READ_CONCURRENCY at a time.
- *
- * Measured on a 13,455-note folder: one after another took 2,613ms, 64 at a
- * time took 316ms. The work is IO latency, not CPU, so the only thing
- * sequential reads buy is a stall. The cap is what keeps it clear of EMFILE.
- */
-async function readAll(
-  files: string[],
-): Promise<Array<{ file: string; content: string }>> {
-  const out: Array<{ file: string; content: string }> = [];
+/** Every entry in every tagged note under `root`. */
+export async function scan(root: string, tag: string): Promise<ScanResult> {
+  const files = await markdownFiles(root);
+  const notes: Note[] = [];
 
+  // Read READ_CONCURRENCY files at a time and parse each one INSIDE its own
+  // task, so the content string is garbage the moment the note is extracted.
+  //
+  // Collecting every file's content first and parsing afterwards is what makes
+  // peak memory scale with the folder instead of with the batch. On a real
+  // 13,455-note folder that peaked at 141 MB of heap to produce 10 entries, and
+  // Raycast runs each command in a heap-capped worker, so the command died with
+  // "Worker terminated due to reaching memory limit". `vault.memory.test.ts`
+  // holds the line by scanning a corpus larger than the heap it is given.
+  //
+  // The concurrency is still what makes it fast: sequential reads of that
+  // folder took 2,613ms against 316ms at 64 at a time, since the cost is IO
+  // latency rather than CPU. Fast and bounded are not in tension here.
   for (let i = 0; i < files.length; i += READ_CONCURRENCY) {
     const batch = await Promise.all(
       files.slice(i, i + READ_CONCURRENCY).map(async (file) => {
         try {
-          return { file, content: await readFile(file, "utf-8") };
+          return parseNote(file, await readFile(file, "utf-8"), tag);
         } catch {
           // An unreadable note is skipped rather than failing the whole scan.
           return null;
         }
       }),
     );
-    for (const item of batch) if (item) out.push(item);
-  }
-  return out;
-}
-
-/** Every entry in every tagged note under `root`. */
-export async function scan(root: string, tag: string): Promise<ScanResult> {
-  const files = await markdownFiles(root);
-  const notes: Note[] = [];
-
-  for (const { file, content } of await readAll(files)) {
-    const note = parseNote(file, content, tag);
-    if (note) notes.push(note);
+    for (const note of batch) if (note) notes.push(note);
   }
 
   notes.sort((a, b) => a.topic.localeCompare(b.topic));
