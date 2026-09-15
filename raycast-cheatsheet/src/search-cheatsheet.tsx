@@ -17,6 +17,7 @@ import { EntryForm } from "./components/EntryForm.tsx";
 import { settings } from "./lib/preferences.ts";
 import { advancedUri } from "./lib/obsidian.ts";
 import { obsidianTarget, scan } from "./lib/vault.ts";
+import { matchEntries } from "./lib/search.ts";
 import { contextAround, type Entry, type Note } from "./lib/parse.ts";
 
 /** Lines of surrounding note shown on each side of the entry in the preview. */
@@ -148,6 +149,9 @@ export default function Command() {
 
   const entries: Entry[] = data.entries;
   const notes: Note[] = data.notes;
+  // Filtered here rather than by the launcher, so a query can reach an entry's
+  // description and section and so results can be ranked. See lib/search.ts.
+  const visible = matchEntries(entries, query);
 
   function addForm(entry?: Entry) {
     return (
@@ -165,10 +169,10 @@ export default function Command() {
   return (
     <List
       isLoading={isLoading}
-      isShowingDetail={showPreview && entries.length > 0}
-      filtering
+      isShowingDetail={showPreview && visible.length > 0}
+      filtering={false}
       onSearchTextChange={setQuery}
-      searchBarPlaceholder="Search every line of your cheatsheets"
+      searchBarPlaceholder="Search by command or by what it does"
     >
       <List.EmptyView
         icon={entries.length === 0 ? Icon.Document : Icon.MagnifyingGlass}
@@ -198,7 +202,7 @@ export default function Command() {
         }
       />
 
-      {entries.map((entry) => (
+      {visible.map((entry) => (
         <List.Item
           key={entry.id}
           id={entry.id}
@@ -206,10 +210,9 @@ export default function Command() {
           // The title IS the clipboard payload. A launcher that copies something
           // other than what it shows is a trap, so the two are one string.
           title={entry.copyText.split("\n")[0] ?? ""}
-          subtitle={showPreview ? undefined : entry.description}
-          keywords={[entry.topic, entry.section, entry.text].filter(
-            (value): value is string => Boolean(value),
-          )}
+          // Always shown, preview or not: when a query matched on the
+          // description, the description is the reason the row is here.
+          subtitle={entry.description}
           accessories={
             showPreview
               ? undefined

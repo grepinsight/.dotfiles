@@ -77,6 +77,33 @@ inferred at copy time.
 | `Cmd+O` | open the note at the entry's own line |
 | `Cmd+R` | rescan |
 
+## Search
+
+Search by the command or by what it does. `delete branch` finds
+`git branch -d <branch>` through its description, which is the case a cheatsheet
+exists for: you reach for it precisely when you cannot remember the command.
+
+Filtering is done by the extension, not by Raycast's built-in filter, which
+would not spread a multi-word query across a long keyword string.
+
+Every query term is looked for in the payload, the description, the section and
+the topic. Ranking, in order of what dominates:
+
+1. **How many of your terms matched.** An entry matching all of them always
+   outranks one matching fewer. Only entries matching nothing are dropped, so
+   one stray word does not empty the screen.
+2. **Where each term matched.** The command itself beats its description, which
+   beats the note's section and topic.
+3. **How the term sat in the text.** A whole word beats a word's prefix, which
+   beats a fragment inside a word. This is what puts "who last touched" above
+   "whose upstream" when you search `who`.
+4. **Payload length**, as a tie-break, since the shorter command is the more
+   specific answer.
+
+Searching `delete branch` therefore ranks the safe `git branch -d` above the
+destructive `git branch -D`, whose description says "deletes" rather than
+"delete".
+
 ## Preview
 
 The preview pane shows the exact string `Return` will copy, then the entry in
