@@ -5,7 +5,7 @@ import { settings } from "./lib/preferences.ts";
 import { scan } from "./lib/vault.ts";
 
 export default function Command() {
-  const { notesPath, tag } = settings();
+  const { notesPath, newNotePath, tag } = settings();
 
   // Only the note list is needed here, but scanning is cheap and reuses the
   // search command's cache, so the topic dropdown is populated on first paint.
@@ -21,7 +21,7 @@ export default function Command() {
   return (
     <EntryForm
       notes={data.notes}
-      notesPath={notesPath}
+      newNotePath={newNotePath}
       tag={tag}
       isLoading={isLoading}
       onSaved={revalidate}

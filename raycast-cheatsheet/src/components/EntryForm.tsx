@@ -17,8 +17,8 @@ const NEW_TOPIC = "__new_topic__";
 
 export type EntryFormProps = {
   notes: Note[];
-  /** Where new notes get created. */
-  notesPath: string;
+  /** Where a brand-new topic's note gets created. */
+  newNotePath: string;
   tag: string;
   /** Present when editing rather than adding. */
   entry?: Entry;
@@ -33,7 +33,7 @@ export type EntryFormProps = {
 
 export function EntryForm({
   notes,
-  notesPath,
+  newNotePath,
   tag,
   entry,
   initialText,
@@ -69,7 +69,7 @@ export function EntryForm({
       } else {
         const file =
           topic === NEW_TOPIC
-            ? await createNote(notesPath, newTopic, tag)
+            ? await createNote(newNotePath, newTopic, tag)
             : topic;
         await appendToNote(file, {
           section: section.trim() || undefined,
@@ -160,7 +160,7 @@ export function EntryForm({
               id="newTopic"
               title="New Topic"
               placeholder="Kubernetes"
-              info={`Creates a note tagged ${tag} in your notes folder.`}
+              info={`Creates ${newTopic.trim() || "<topic>"}.md tagged ${tag} in ${newNotePath}.`}
               value={newTopic}
               onChange={setNewTopic}
             />

@@ -31,6 +31,13 @@
       "required": true
     },
     {
+      "name": "newNotePath",
+      "title": "New Note Folder",
+      "description": "Where a brand-new topic's note is created. Defaults to the Notes Folder, which for a whole vault means its root.",
+      "type": "directory",
+      "required": false
+    },
+    {
       "name": "tag",
       "title": "Tag",
       "description": "Only notes whose frontmatter tags include this value are indexed",

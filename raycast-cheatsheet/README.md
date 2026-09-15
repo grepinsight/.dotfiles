@@ -90,8 +90,17 @@ file and line rather than overwriting the newer text.
 | Preference | Default | Meaning |
 | --- | --- | --- |
 | Notes Folder | — | searched recursively for tagged notes |
+| New Note Folder | the Notes Folder | where a brand-new topic's note is created |
 | Tag | `quick-ref` | only notes carrying this tag are indexed |
 | Return Key | copy | whether Return copies or pastes |
+
+Point Notes Folder at the whole collection, since the tag is what filters. Set
+New Note Folder to one tidy subfolder, or a new topic lands at the root of
+everything you just pointed at.
+
+Scanning only ever reads, and only notes carrying the tag produce entries.
+Writes happen on three explicit actions: appending an entry, creating a note for
+a new topic, and replacing one line on edit. There are no network calls.
 
 ## Development
 

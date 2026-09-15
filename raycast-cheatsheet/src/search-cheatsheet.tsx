@@ -38,7 +38,7 @@ function FullEntry({ entry }: { entry: Entry }) {
 }
 
 export default function Command() {
-  const { notesPath, tag, primaryAction } = settings();
+  const { notesPath, newNotePath, tag, primaryAction } = settings();
   const [query, setQuery] = useState("");
 
   const { data, isLoading, revalidate } = useCachedPromise(
@@ -57,7 +57,7 @@ export default function Command() {
     return (
       <EntryForm
         notes={notes}
-        notesPath={notesPath}
+        newNotePath={newNotePath}
         tag={tag}
         initialText={query}
         initialFile={entry?.file}
@@ -178,7 +178,7 @@ export default function Command() {
                     target={
                       <EntryForm
                         notes={notes}
-                        notesPath={notesPath}
+                        newNotePath={newNotePath}
                         tag={tag}
                         entry={entry}
                         onSaved={revalidate}
