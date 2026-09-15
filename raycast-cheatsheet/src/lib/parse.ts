@@ -3,10 +3,11 @@
  * copyable entries out.
  *
  * Pure on purpose. Nothing here touches the filesystem or Raycast, so the whole
- * contract is exercised by `parse.test.ts` with plain strings.
+ * contract is exercised by `parse.test.ts` and `table.test.ts` with plain
+ * strings.
  */
 
-export type EntryKind = "line" | "block";
+export type EntryKind = "line" | "block" | "table";
 
 export type Entry = {
   /** Stable list key. `file:line` survives a reload as long as the line does. */
@@ -20,19 +21,11 @@ export type Entry = {
    * copies something other than what it displays is a trap.
    */
   copyText: string;
-  /** The prose after a leading code span, shown as the row's subtitle. */
+  /** The prose after a leading code span, or a table row's other cells. */
   description?: string;
-  /**
-   * Whether the payload is code rather than prose: a fenced block, or a bullet
-   * whose payload came from a leading code span. Drives whether the preview
-   * renders it as a highlighted fence.
-   */
+  /** Whether the payload is code rather than prose. Drives highlighting. */
   isCode: boolean;
-  /**
-   * The fence's info string, lowercased, when the note declared one. Only a
-   * fenced block can carry this, since a bullet's code span has nowhere to put
-   * it. Used as the preview fence's language.
-   */
+  /** The fence's info string or the note's declared language, lowercased. */
   language?: string;
   /** The note's H1, else its filename. */
   topic: string;
@@ -41,7 +34,7 @@ export type Entry = {
   file: string;
   /** 1-indexed, counted over the whole file including frontmatter. */
   line: number;
-  /** Lines the entry spans. Always 1 for a line entry. */
+  /** Lines the entry spans. Always 1 except for a fenced block. */
   lineCount: number;
   /** The entry exactly as it sits on disk, which is what an edit checks against. */
   raw: string;
@@ -65,9 +58,27 @@ const YAML_ITEM = /^[ \t]*-[ \t]+(.*)$/;
 const BULLET = /^[ \t]*(?:[-*+]|\d+[.)])[ \t]+(.*)$/;
 const HEADING = /^(#{1,6})[ \t]+(.*)$/;
 const FENCE = /^[ \t]*(?:```|~~~)[ \t]*(\S*)/;
-/** A code span only counts when it LEADS the line. See splitPayload. */
+/** A code span only counts when it LEADS the text. See splitPayload. */
 const LEADING_SPAN = /^`([^`\n]+)`[ \t]*(.*)$/;
 const SEPARATOR = /^[-–—:,.)\]]+[ \t]*/;
+/** A table separator cell: dashes, optionally with alignment colons. */
+const SEPARATOR_CELL = /^:?-+:?$/;
+
+/**
+ * Headings whose content points elsewhere instead of being usable itself.
+ *
+ * A bare wiki-link or a bare path under one of these is navigation, not a
+ * cheatsheet entry, and indexing it puts an uncopyable row in the results. The
+ * note's own structure declares the intent, which beats guessing from syntax:
+ * a link is a perfectly good payload anywhere else.
+ */
+const NAVIGATION_HEADINGS = new Set([
+  "related",
+  "see also",
+  "links",
+  "references",
+  "further reading",
+]);
 
 function unquote(value: string): string {
   // Trimmed on both sides of the quote strip: `"  Python  "` has whitespace
@@ -145,12 +156,13 @@ function basename(file: string): string {
 }
 
 /**
- * Split a bullet into what gets copied and what merely explains it.
+ * Split a bullet or a table cell into what gets copied and what merely explains
+ * it.
  *
- * The code span has to LEAD the line. An earlier version took the first span
+ * The code span has to LEAD the text. An earlier version took the first span
  * anywhere, which quietly turned `never use \`--force\` on a shared branch` into
  * a clipboard holding `--force`: the copy inverted the sentence that warned
- * against it. A span mid-sentence is prose, so the whole line is the payload.
+ * against it. A span mid-sentence is prose, so the whole text is the payload.
  */
 export function splitPayload(text: string): {
   payload: string;
@@ -161,6 +173,61 @@ export function splitPayload(text: string): {
 
   const rest = (span[2] ?? "").replace(SEPARATOR, "").trim();
   return { payload: span[1] ?? "", description: rest || undefined };
+}
+
+/**
+ * Split a table row into trimmed cells.
+ *
+ * Splits on UNESCAPED pipes only, and turns `\|` into a literal pipe. In GFM a
+ * backtick does not protect a pipe inside a table cell, so an author writing a
+ * shell pipeline in a cell has to escape it. Splitting naively turns
+ * `` `printf x \| cat` `` into the payload `printf x`, which is the worst kind
+ * of bug: the result looks like a valid command and silently does something
+ * else.
+ *
+ * Outer pipes are optional, since `Flag | Means` is a valid GFM header.
+ */
+export function tableCells(row: string): string[] {
+  const cells: string[] = [];
+  let current = "";
+
+  for (let i = 0; i < row.length; i++) {
+    const character = row[i]!;
+    if (character === "\\" && row[i + 1] === "|") {
+      current += "|";
+      i++;
+      continue;
+    }
+    if (character === "|") {
+      cells.push(current);
+      current = "";
+      continue;
+    }
+    current += character;
+  }
+  cells.push(current);
+
+  if (cells.length > 1 && cells[0]!.trim() === "") cells.shift();
+  if (cells.length > 1 && cells[cells.length - 1]!.trim() === "") cells.pop();
+
+  return cells.map((cell) => cell.trim());
+}
+
+/** Is this row a table's `| --- | :---: |` separator? */
+function isSeparatorRow(row: string): boolean {
+  if (!row.includes("|") && !row.includes("-")) return false;
+  const cells = tableCells(row);
+  return cells.length > 0 && cells.every((cell) => SEPARATOR_CELL.test(cell));
+}
+
+/**
+ * Is `row` a table header, i.e. is the line after it a separator?
+ *
+ * Detecting the separator rather than the header is what keeps ordinary prose
+ * containing a pipe from being read as a table.
+ */
+function startsTable(row: string, next: string | undefined): boolean {
+  return row.includes("|") && next !== undefined && isSeparatorRow(next);
 }
 
 type Cursor = { topic: string; section?: string; file: string };
@@ -190,6 +257,38 @@ function lineEntry(
   };
 }
 
+function tableEntry(
+  raw: string,
+  cells: string[],
+  line: number,
+  at: Cursor,
+): Entry | null {
+  const first = cells[0] ?? "";
+  if (!first) return null;
+
+  const { payload, description } = splitPayload(first);
+  // Every cell past the first explains the payload. Joined rather than dropped:
+  // discarding a column to avoid discarding context is self-defeating.
+  const rest = [description, ...cells.slice(1)].filter((cell) =>
+    Boolean(cell && cell.trim()),
+  );
+
+  return {
+    id: `${at.file}:${line}`,
+    kind: "table",
+    text: first,
+    copyText: payload,
+    description: rest.length > 0 ? rest.join(" · ") : undefined,
+    isCode: payload !== first,
+    topic: at.topic,
+    section: at.section,
+    file: at.file,
+    line,
+    lineCount: 1,
+    raw,
+  };
+}
+
 /**
  * Index one note. Returns null when the note is not tagged, which is how the
  * caller filters a whole folder without a second pass over the frontmatter.
@@ -208,6 +307,7 @@ export function parseNote(
 
   const at: Cursor = { topic: basename(file), file };
   let topicFromHeading = false;
+  let underNavigation = false;
   const entries: Entry[] = [];
 
   for (let i = start; i < lines.length; i++) {
@@ -215,7 +315,8 @@ export function parseNote(
     const line = i + 1;
 
     // A fenced block is ONE entry. Indexing its lines separately would hand the
-    // clipboard half of a continued command.
+    // clipboard half of a continued command. Checked before tables, so a pipe
+    // table shown as an example inside a fence stays an example.
     const fence = FENCE.exec(raw);
     if (fence) {
       const language = (fence[1] ?? "").trim().toLowerCase() || undefined;
@@ -228,7 +329,7 @@ export function parseNote(
       while (body.length > 0 && (body[body.length - 1] ?? "").trim() === "")
         body.pop();
 
-      if (body.length > 0) {
+      if (body.length > 0 && !underNavigation) {
         const block = body.join("\n");
         entries.push({
           id: `${file}:${i + 2}`,
@@ -254,6 +355,8 @@ export function parseNote(
     if (heading) {
       const depth = heading[1]!.length;
       const title = (heading[2] ?? "").trim();
+      underNavigation = NAVIGATION_HEADINGS.has(title.toLowerCase());
+
       if (depth === 1) {
         if (!topicFromHeading) {
           at.topic = title;
@@ -266,11 +369,29 @@ export function parseNote(
       continue;
     }
 
+    if (startsTable(raw, lines[i + 1])) {
+      // Skip the header and the separator structurally, by knowing where the
+      // table began, rather than by pattern-matching each row.
+      for (let j = i + 2; j < lines.length; j++) {
+        const row = lines[j] ?? "";
+        if (!row.includes("|") || HEADING.test(row) || !row.trim()) {
+          i = j - 1;
+          break;
+        }
+        if (!underNavigation) {
+          const entry = tableEntry(row, tableCells(row), j + 1, at);
+          if (entry) entries.push(entry);
+        }
+        i = j;
+      }
+      continue;
+    }
+
     const bullet = BULLET.exec(raw);
     if (!bullet) continue;
 
     const text = (bullet[1] ?? "").trim();
-    if (!text) continue;
+    if (!text || underNavigation) continue;
 
     entries.push(lineEntry(raw, text, line, at));
   }

@@ -36,6 +36,44 @@ tags:
 
 Headings, prose paragraphs, blank lines and frontmatter are not indexed.
 
+### Tables
+
+A table's data rows are entries. The first cell is the payload, every cell after
+it becomes the description, and the header and separator rows are skipped:
+
+```markdown
+| Flag | What it does |
+| --- | --- |
+| `--depth N` | how many levels down to walk, -1 for all |
+```
+
+The first cell goes through the same rule as a bullet, so a cell whose code span
+does not lead stays prose:
+
+```markdown
+| Symptom | Cause |
+| --- | --- |
+| Columns truncated with `…` | terminal width; use `--json` |
+```
+
+copies the whole symptom rather than `…`.
+
+Outer pipes are optional and alignment colons are fine. A pipe inside a cell
+must be escaped as `\|`, which GFM requires anyway, since a backtick does not
+protect a table pipe: unescaped, `` `printf x | cat` `` is two cells and the
+payload silently becomes `printf x`.
+
+Three or more columns are joined into the description rather than skipped.
+A table row cannot be edited in place, since writing a bullet into a table
+breaks it; `Cmd+O` opens the note at that row instead.
+
+### Navigation headings
+
+Content under `Related`, `See also`, `Links`, `References` or `Further reading`
+is skipped. A bare wiki-link or a bare path there points elsewhere rather than
+being usable itself, and indexing it puts an uncopyable row in the results.
+Elsewhere in a note, a link is a perfectly good payload.
+
 ## What Return copies
 
 **A code span only counts when it opens the line.** Then it is the payload, and
@@ -187,6 +225,7 @@ file and line rather than overwriting the newer text.
 | Preference | Default | Meaning |
 | --- | --- | --- |
 | Notes Folder | — | searched recursively for tagged notes |
+| More Notes Folders | — | additional folders, comma-separated |
 | New Note Folder | the Notes Folder | where a brand-new topic's note is created |
 | Tag | `quick-ref` | only notes carrying this tag are indexed |
 | Return Key | copy | whether Return copies or pastes |
@@ -194,6 +233,10 @@ file and line rather than overwriting the newer text.
 Point Notes Folder at the whole collection, since the tag is what filters. Set
 New Note Folder to one tidy subfolder, or a new topic lands at the root of
 everything you just pointed at.
+
+Raycast has no multi-folder picker, so the first folder uses the picker and any
+others go in More Notes Folders, comma-separated. A folder nested inside another
+listed folder is ignored rather than indexed twice.
 
 Scanning only ever reads, and only notes carrying the tag produce entries.
 Writes happen on three explicit actions: appending an entry, creating a note for

@@ -59,9 +59,27 @@ async function markdownFiles(root: string): Promise<string[]> {
   return found.concat(...nested);
 }
 
-/** Every entry in every tagged note under `root`. */
-export async function scan(root: string, tag: string): Promise<ScanResult> {
-  const files = await markdownFiles(root);
+/**
+ * Drop roots that are blank, duplicated, or nested inside another root.
+ *
+ * Without this, listing a vault and a folder inside it indexes those notes
+ * twice, and two identical rows in a launcher look like a parsing bug.
+ */
+export function distinctRoots(roots: string[]): string[] {
+  const cleaned = [
+    ...new Set(roots.map((root) => root.trim()).filter(Boolean)),
+  ].map((root) => (root.endsWith("/") ? root.slice(0, -1) : root));
+
+  return cleaned.filter(
+    (root) =>
+      !cleaned.some((other) => other !== root && root.startsWith(`${other}/`)),
+  );
+}
+
+/** Every entry in every tagged note under any of `roots`. */
+export async function scan(roots: string[], tag: string): Promise<ScanResult> {
+  const nested = await Promise.all(distinctRoots(roots).map(markdownFiles));
+  const files = nested.flat();
   const notes: Note[] = [];
 
   // Read READ_CONCURRENCY files at a time and parse each one INSIDE its own
@@ -140,9 +158,14 @@ export async function createNote(
 export async function editEntry(entry: Entry, text: string): Promise<void> {
   // A block entry spans several lines, and replaceLine swaps exactly one. Rather
   // than half-rewrite a fenced command, send the user to the note.
-  if (entry.kind === "block") {
+  if (entry.kind !== "line") {
+    // A block spans several lines and replaceLine swaps exactly one. A table row
+    // has a shape this module cannot rebuild, since composeEntry writes a
+    // bullet and writing a bullet into a table breaks the table. Both go to the
+    // note instead of being half-rewritten here.
     throw new Error(
-      "Code blocks are edited in the note itself. Use Open Source Note to open the note.",
+      `A ${entry.kind === "block" ? "code block" : "table row"} is edited in the note itself. ` +
+        "Use Open in Obsidian to open the note at this line.",
     );
   }
 

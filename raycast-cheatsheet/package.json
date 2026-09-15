@@ -31,6 +31,13 @@
       "required": true
     },
     {
+      "name": "extraNotesPaths",
+      "title": "More Notes Folders",
+      "description": "Additional folders to scan, comma-separated. Raycast has no multi-folder picker, so the first folder uses the picker above and the rest go here. A folder nested inside another is ignored rather than indexed twice.",
+      "type": "textfield",
+      "required": false
+    },
+    {
       "name": "newNotePath",
       "title": "New Note Folder",
       "description": "Where a brand-new topic's note is created. Defaults to the Notes Folder, which for a whole vault means its root.",

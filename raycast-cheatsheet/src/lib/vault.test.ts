@@ -33,7 +33,7 @@ test("collects entries from tagged notes anywhere under the root", async () => {
     "nested/deep/kube.md": tagged("Kube", "- `kubectl get pods`"),
   });
 
-  const { entries } = await scan(root, TAG);
+  const { entries } = await scan([root], TAG);
 
   assert.deepEqual(entries.map((e) => e.copyText).sort(), [
     "git status",
@@ -48,7 +48,7 @@ test("ignores notes without the tag", async () => {
     "bare.md": "- no frontmatter at all\n",
   });
 
-  const { entries } = await scan(root, TAG);
+  const { entries } = await scan([root], TAG);
 
   assert.deepEqual(
     entries.map((e) => e.copyText),
@@ -64,7 +64,7 @@ test("ignores non-markdown files and dot-directories", async () => {
     "node_modules/pkg/readme.md": tagged("Pkg", "- dropped"),
   });
 
-  const { entries } = await scan(root, TAG);
+  const { entries } = await scan([root], TAG);
 
   assert.deepEqual(
     entries.map((e) => e.copyText),
@@ -78,14 +78,14 @@ test("reports the notes it found so a picker can list them", async () => {
     "kube.md": tagged("Kubernetes", "- two"),
   });
 
-  const { notes } = await scan(root, TAG);
+  const { notes } = await scan([root], TAG);
 
   assert.deepEqual(notes.map((n) => n.topic).sort(), ["Git", "Kubernetes"]);
 });
 
 test("returns nothing rather than throwing when the root does not exist", async () => {
   const { entries, notes } = await scan(
-    join(tmpdir(), "cheatsheet-does-not-exist-9e1"),
+    [join(tmpdir(), "cheatsheet-does-not-exist-9e1")],
     TAG,
   );
 
@@ -103,7 +103,7 @@ test("appends an entry to an existing note and it shows up on the next scan", as
     section: "Rebase",
     text: "- `git rebase --abort` bail out",
   });
-  const { entries } = await scan(root, TAG);
+  const { entries } = await scan([root], TAG);
 
   const added = entries.find((e) => e.copyText === "git rebase --abort");
   assert.equal(added?.section, "Rebase");
@@ -115,7 +115,7 @@ test("creates a tagged note from a topic name and returns its path", async () =>
 
   const file = await createNote(root, "Kubernetes Basics", TAG);
   await appendToNote(file, { text: "- `kubectl get pods`" });
-  const { entries } = await scan(root, TAG);
+  const { entries } = await scan([root], TAG);
 
   assert.equal(file, join(root, "Kubernetes Basics.md"));
   assert.equal(entries[0]?.topic, "Kubernetes Basics");
@@ -131,7 +131,7 @@ test("edits an entry in place, leaving the rest of the note alone", async () => 
   const root = await vault({
     "git.md": tagged("Git", "- squash three", "- other entry"),
   });
-  const { entries } = await scan(root, TAG);
+  const { entries } = await scan([root], TAG);
   const target = entries.find((e) => e.copyText === "squash three")!;
 
   await editEntry(target, "- squash the last three");
@@ -143,7 +143,7 @@ test("edits an entry in place, leaving the rest of the note alone", async () => 
 
 test("refuses an edit when the note changed underneath", async () => {
   const root = await vault({ "git.md": tagged("Git", "- squash three") });
-  const { entries } = await scan(root, TAG);
+  const { entries } = await scan([root], TAG);
   const target = entries[0]!;
 
   await writeFile(
@@ -172,7 +172,7 @@ test("refuses to edit a fenced block in place and says to open the note", async 
       "",
     ].join("\n"),
   });
-  const { entries } = await scan(root, TAG);
+  const { entries } = await scan([root], TAG);
 
   assert.equal(entries[0]?.kind, "block");
   await assert.rejects(() => editEntry(entries[0]!, "x"), /open the note/);
@@ -202,4 +202,73 @@ test("returns null when no .obsidian folder sits above the note", async () => {
   const root = await vault({ "git.md": tagged("Git", "- one") });
 
   assert.equal(await obsidianTarget(join(root, "git.md")), null);
+});
+
+test("refuses to edit a table row in place, since a bullet would corrupt the table", async () => {
+  const root = await vault({
+    "t.md": [
+      "---",
+      "tags:",
+      `  - ${TAG}`,
+      "---",
+      "| Flag | Means |",
+      "| --- | --- |",
+      "| `--json` | x |",
+      "",
+    ].join("\n"),
+  });
+  const { entries } = await scan([root], TAG);
+
+  assert.equal(entries[0]?.kind, "table");
+  await assert.rejects(() => editEntry(entries[0]!, "x"), /open the note/);
+});
+
+test("scans several roots into one list", async () => {
+  const a = await vault({ "a.md": tagged("A", "- one") });
+  const b = await vault({ "b.md": tagged("B", "- two") });
+
+  const { entries } = await scan([a, b], TAG);
+
+  assert.deepEqual(entries.map((e) => e.copyText).sort(), ["one", "two"]);
+});
+
+test("does not index a note twice when one root sits inside another", async () => {
+  const root = await vault({
+    "nested/deep/git.md": tagged("Git", "- only once"),
+  });
+
+  const { entries } = await scan(
+    [root, join(root, "nested"), join(root, "nested/deep")],
+    TAG,
+  );
+
+  assert.deepEqual(
+    entries.map((e) => e.copyText),
+    ["only once"],
+  );
+});
+
+test("ignores a root that does not exist while still scanning the others", async () => {
+  const good = await vault({ "a.md": tagged("A", "- kept") });
+
+  const { entries } = await scan(
+    [join(tmpdir(), "cheatsheet-absent-7f2"), good],
+    TAG,
+  );
+
+  assert.deepEqual(
+    entries.map((e) => e.copyText),
+    ["kept"],
+  );
+});
+
+test("ignores duplicate and blank roots", async () => {
+  const root = await vault({ "a.md": tagged("A", "- once") });
+
+  const { entries } = await scan([root, root, "", "   "], TAG);
+
+  assert.deepEqual(
+    entries.map((e) => e.copyText),
+    ["once"],
+  );
 });

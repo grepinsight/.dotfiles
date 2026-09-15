@@ -133,14 +133,14 @@ async function openAtLine(entry: Entry) {
 }
 
 export default function Command() {
-  const { notesPath, newNotePath, tag, primaryAction, codeLanguage } =
+  const { notesPaths, newNotePath, tag, primaryAction, codeLanguage } =
     settings();
   const [query, setQuery] = useState("");
   const [showPreview, setShowPreview] = useState(true);
 
   const { data, isLoading, revalidate } = useCachedPromise(
     scan,
-    [notesPath, tag],
+    [notesPaths, tag],
     {
       initialData: { entries: [], notes: [] },
       keepPreviousData: true,
@@ -183,7 +183,7 @@ export default function Command() {
         }
         description={
           entries.length === 0
-            ? `Searching ${notesPath} for notes tagged ${tag}. Press Return to write the first entry.`
+            ? `Searching ${notesPaths.join(", ")} for notes tagged ${tag}. Press Return to write the first entry.`
             : "Press Return to add it as a new entry."
         }
         actions={

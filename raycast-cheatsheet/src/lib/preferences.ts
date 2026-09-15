@@ -3,6 +3,7 @@ import { homedir } from "node:os";
 
 export type RawPreferences = {
   notesPath: string;
+  extraNotesPaths?: string;
   newNotePath?: string;
   tag?: string;
   primaryAction?: "copy" | "paste";
@@ -10,6 +11,9 @@ export type RawPreferences = {
 };
 
 export type Settings = {
+  /** Every folder to scan, tilde-expanded, blanks dropped. */
+  notesPaths: string[];
+  /** The first folder, which is also where the scan's hint points. */
   notesPath: string;
   /**
    * Where `createNote` puts a new topic. Separate from `notesPath` because
@@ -31,7 +35,13 @@ function expand(path: string): string {
 export function settings(): Settings {
   const raw = getPreferenceValues<RawPreferences>();
   const notesPath = expand(raw.notesPath);
+  const extra = (raw.extraNotesPaths ?? "")
+    .split(/[,\n]/)
+    .map((path) => expand(path.trim()))
+    .filter(Boolean);
+
   return {
+    notesPaths: [notesPath, ...extra].filter(Boolean),
     notesPath,
     newNotePath: expand(raw.newNotePath ?? "") || notesPath,
     tag: (raw.tag ?? "").trim() || "quick-ref",

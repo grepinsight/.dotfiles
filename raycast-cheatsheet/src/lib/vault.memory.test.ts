@@ -66,7 +66,7 @@ test("scans a folder larger than the heap it is given", async () => {
   await writeFile(
     runner,
     `const { scan } = await import(${JSON.stringify(VAULT_MODULE)});\n` +
-      `const { entries } = await scan(${JSON.stringify(root)}, "quick-ref");\n` +
+      `const { entries } = await scan([${JSON.stringify(root)}], "quick-ref");\n` +
       `console.log(entries.length);\n`,
     "utf-8",
   );
