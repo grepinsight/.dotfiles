@@ -85,13 +85,17 @@ line you wanted before pressing anything.
 
 ~~~
   Copies
+  ```bash
   git reflog
+  ```
 
-  In the note
-      12 │ - `git rebase -i HEAD~3` squash or reword the last three
-      13 │ - `git commit --amend --no-edit` fold staged changes in
-    ▸ 14 │ - `git reflog` find a commit a reset left unreachable
-      15 │ - never rebase a branch someone else has already pulled
+  In the note · lines 12-16, yours is 14
+  ```markdown
+  - `git rebase -i HEAD~3` squash or reword the last three
+  - `git commit --amend --no-edit` fold staged changes in
+  - `git reflog` find a commit a reset left unreachable
+  - never rebase a branch someone else has already pulled
+  ```
 ~~~
 
 Only the selected row's note is read, so the cost is one file read per
@@ -121,9 +125,16 @@ language: sql
 Prose entries are never tagged. A line with no leading code span is English, and
 colouring an English sentence as SQL renders it as a broken query.
 
-The surrounding-lines block is tagged `markdown`, so the backticked commands in
-it colour too. Its gutter prefix stops each line parsing as a list item, which
-trades bullet colouring for keeping the line numbers.
+The surrounding-lines block is the note's markdown verbatim in a `markdown`
+fence, so its headings, list markers and inline code spans all colour. It
+carries no line-number gutter on purpose: a prefix like `> 14 | ` stops each
+line parsing as a heading or a list item, and a markdown fence only highlights
+if its contents are markdown. The line numbers live in the block's label and in
+the metadata instead, where they cost no highlighting.
+
+Blank lines are trimmed from the window's edges but never from inside it, so a
+window that starts at a section boundary opens on the heading rather than on
+two empty lines.
 
 ## Opening the note at the line
 

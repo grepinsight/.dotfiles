@@ -488,3 +488,34 @@ test("the declared language is lowercased and trimmed", () => {
     "python",
   );
 });
+
+test("trims blank lines from the edges of the window and reports the real first line", () => {
+  const content = ["a", "", "", "target", "", "z"].join("\n");
+
+  const window = contextAround(content, 4, 2);
+
+  // The two blanks before the target go. The blank after it stays, because the
+  // line past it is not blank, so there is no trailing edge to trim.
+  assert.deepEqual(window.lines, ["target", "", "z"]);
+  assert.equal(window.firstLine, 4);
+  assert.equal(window.targetIndex, 0);
+});
+
+test("keeps blank lines inside the window", () => {
+  const content = ["one", "", "target", "", "four"].join("\n");
+
+  const window = contextAround(content, 3, 2);
+
+  assert.deepEqual(window.lines, ["one", "", "target", "", "four"]);
+  assert.equal(window.firstLine, 1);
+  assert.equal(window.targetIndex, 2);
+});
+
+test("trims a trailing blank edge when the window really ends in blanks", () => {
+  const content = ["a", "target", "", ""].join("\n");
+
+  const window = contextAround(content, 2, 2);
+
+  assert.deepEqual(window.lines, ["a", "target"]);
+  assert.equal(window.firstLine, 1);
+});

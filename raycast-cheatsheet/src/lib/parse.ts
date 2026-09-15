@@ -318,9 +318,18 @@ export function contextAround(
   const first = Math.max(1, target - radius);
   const last = Math.min(all.length, target + radius);
 
+  let from = first;
+  let to = last;
+
+  // Trim blank edges, but never past the target line. A window that opens at a
+  // section boundary otherwise begins with two empty lines, which in a fenced
+  // preview reads as a rendering fault rather than as context.
+  while (from < target && (all[from - 1] ?? "").trim() === "") from++;
+  while (to > target && (all[to - 1] ?? "").trim() === "") to--;
+
   return {
-    lines: all.slice(first - 1, last),
-    firstLine: first,
-    targetIndex: target - first,
+    lines: all.slice(from - 1, to),
+    firstLine: from,
+    targetIndex: target - from,
   };
 }

@@ -50,15 +50,14 @@ function EntryDetail({
     [entry.file, entry.line],
   );
 
-  const gutter = data
-    ? data.lines
-        .map((text, index) => {
-          const number = data.firstLine + index;
-          const marker = index === data.targetIndex ? "▸" : " ";
-          return `${marker} ${String(number).padStart(4)} │ ${text}`;
-        })
-        .join("\n")
-    : "";
+  // The note's lines verbatim, with no gutter.
+  //
+  // An earlier version prefixed each line with "▸ 14 │ ", which read nicely but
+  // defeated the point: a markdown-tagged fence only highlights if its contents
+  // are markdown, and nothing prefixed parses as a heading or a list item. The
+  // line numbers move to the label and the metadata, where they cost nothing.
+  const context = data?.lines.join("\n") ?? "";
+  const lastLine = data ? data.firstLine + data.lines.length - 1 : entry.line;
 
   return (
     <List.Item.Detail
@@ -72,11 +71,10 @@ function EntryDetail({
           entry.copyText,
           entry.isCode ? (entry.language ?? codeLanguage) : "",
         ),
-        `**In the note**`,
-        // Tagged markdown so the backticked commands in the surrounding lines
-        // colour too. The gutter prefix stops each line reading as a list item,
-        // which trades bullet colouring for keeping the line numbers.
-        fenced(gutter, "markdown"),
+        `**In the note** \u00b7 lines ${data?.firstLine ?? entry.line}\u2013${lastLine}, yours is ${entry.line}`,
+        // Real markdown now: unprefixed source in a markdown-tagged fence, so
+        // headings, list markers and inline code spans all colour.
+        fenced(context, "markdown"),
       ].join("\n\n")}
       metadata={
         <List.Item.Detail.Metadata>
@@ -102,7 +100,11 @@ function EntryDetail({
           <List.Item.Detail.Metadata.Separator />
           <List.Item.Detail.Metadata.Label
             title="Line"
-            text={String(entry.line)}
+            text={
+              data
+                ? `${entry.line}, showing ${data.firstLine}\u2013${lastLine}`
+                : String(entry.line)
+            }
           />
           <List.Item.Detail.Metadata.Label title="File" text={entry.file} />
         </List.Item.Detail.Metadata>
