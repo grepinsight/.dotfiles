@@ -1,0 +1,18 @@
+# English fix autocorrect: singular and plural.
+#
+# PUBLIC REPO. Generic English only, in the entries AND in these comments.
+# Only fixed forms where the wrong string is never correct in any context.
+
+matches:
+
+  # `for no reason` is a fixed singular idiom, like `on purpose`.
+  - trigger: "for no reasons"
+    replace: "for no reason"
+    word: true
+    propagate_case: true
+
+  # Branch 1 already set the number, so branch 2 has to match it.
+  - trigger: "thoughts or recommendation"
+    replace: "thoughts or recommendations"
+    word: true
+    propagate_case: true

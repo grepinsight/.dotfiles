@@ -23,3 +23,12 @@ matches:
     replace: "use a cache"
     word: true
     propagate_case: true
+  - trigger: "a alias"
+    replace: "an alias"
+    word: true
+    propagate_case: true
+  # Vowel-sound noun: "a" is never correct before it.
+  - trigger: "a eraser"
+    replace: "an eraser"
+    word: true
+    propagate_case: true

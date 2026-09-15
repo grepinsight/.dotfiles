@@ -1,0 +1,11 @@
+# English fix autocorrect: word choice.
+#
+# PUBLIC REPO. Generic English only, in the entries AND in these comments.
+# Only strings that are never correct in any context. `word: true` keeps a trigger from
+# firing inside a longer word.
+
+matches:
+  - trigger: "well legible"
+    replace: "legible"
+    word: true
+    propagate_case: true

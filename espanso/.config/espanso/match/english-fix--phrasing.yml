@@ -22,3 +22,17 @@ matches:
     replace: "business days"
     word: true
     propagate_case: true
+
+  # `do` before a bare verb only works in a question, a negation, or an emphatic.
+  # A `to`-infinitive has no slot for it, so `to do get` is never correct.
+  - trigger: "to do get"
+    replace: "to get"
+    word: true
+    propagate_case: true
+
+  # `big of a` is licensed only after a degree word (that / too / so / how / this).
+  # With none present the `of` has nothing to attach to, so this is never correct.
+  - trigger: "not big of a"
+    replace: "not that big of a"
+    word: true
+    propagate_case: true

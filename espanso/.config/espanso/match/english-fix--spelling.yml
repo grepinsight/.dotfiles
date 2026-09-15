@@ -112,3 +112,256 @@ matches:
     replace: "high-level"
     word: true
     propagate_case: true
+
+  - trigger: "shoudl"
+    replace: "should"
+    word: true
+    propagate_case: true
+
+  - trigger: "sub millisecond"
+    replace: "sub-millisecond"
+    word: true
+    propagate_case: true
+  - trigger: "phrse"
+    replace: "phrase"
+    word: true
+    propagate_case: true
+  - trigger: "notesl"
+    replace: "notes"
+    word: true
+    propagate_case: true
+
+  - trigger: "nound"
+    replace: "noun"
+    word: true
+    propagate_case: true
+
+  - trigger: "auto update"
+    replace: "auto-update"
+    word: true
+    propagate_case: true
+  # Compound modifier, same shape as the entry above but noun+participle rather
+  # than a bound prefix. Predicative use ("the plugin is battle tested") is
+  # defensible unhyphenated, so this trigger does fire there, but the hyphenated
+  # form is the dictionary headword, so the rewrite stays correct either way.
+  - trigger: "battle tested"
+    replace: "battle-tested"
+    word: true
+    propagate_case: true
+  - trigger: "unsreadable"
+    replace: "unreadable"
+    word: true
+    propagate_case: true
+  - trigger: "refeering"
+    replace: "referring"
+    word: true
+    propagate_case: true
+  - trigger: "fastqest"
+    replace: "fastest"
+    word: true
+    propagate_case: true
+  - trigger: "publically"
+    replace: "publicly"
+    word: true
+    propagate_case: true
+  - trigger: "render it nice"
+    replace: "render it nicely"
+    word: true
+    propagate_case: true
+  - trigger: "dimenional"
+    replace: "dimensional"
+    word: true
+    propagate_case: true
+  - trigger: "conver"
+    replace: "convert"
+    word: true
+    propagate_case: true
+  - trigger: "beacuse"
+    replace: "because"
+    word: true
+    propagate_case: true
+  - trigger: "offical"
+    replace: "official"
+    word: true
+    propagate_case: true
+  - trigger: "cand"
+    replace: "can"
+    word: true
+    propagate_case: true
+
+  - trigger: "commmit"
+    replace: "commit"
+    word: true
+    propagate_case: true
+
+  - trigger: "remoev"
+    replace: "remove"
+    word: true
+    propagate_case: true
+  - trigger: "cointinue"
+    replace: "continue"
+    word: true
+    propagate_case: true
+  - trigger: "fundalmental"
+    replace: "fundamental"
+    word: true
+    propagate_case: true
+  - trigger: "messag"
+    replace: "message"
+    word: true
+    propagate_case: true
+
+  - trigger: "scription"
+    replace: "description"
+    word: true
+    propagate_case: true
+
+  - trigger: "opnions"
+    replace: "opinions"
+    word: true
+    propagate_case: true
+  - trigger: "whcih"
+    replace: "which"
+    word: true
+    propagate_case: true
+
+  # `orgwide` is not a word; the compound modifier takes a hyphen.
+  - trigger: "orgwide"
+    replace: "org-wide"
+    word: true
+    propagate_case: true
+
+  # Adjacent-key transposition; not a word in any context.
+  - trigger: "cladue"
+    replace: "Claude"
+    word: true
+    propagate_case: true
+
+  # `local` + `-ly` keeps both l's.
+  - trigger: "localy"
+    replace: "locally"
+    word: true
+    propagate_case: true
+
+  # A space landing one character early inside `and`.
+  - trigger: "a nd"
+    replace: "and"
+    word: true
+    propagate_case: true
+  # The `s` in `os` dropped from the command name.
+  - trigger: "oascript"
+    replace: "osascript"
+    word: true
+    propagate_case: true
+  # Two words fused by a dropped space; not a word on its own.
+  - trigger: "canquickly"
+    replace: "can quickly"
+    word: true
+    propagate_case: true
+  # `lemma` carries the double m, so the derived verb keeps it.
+  - trigger: "lematize"
+    replace: "lemmatize"
+    word: true
+    propagate_case: true
+  # A determiner in front forces the noun reading, and the noun is hyphenated.
+  # `follow up` without a determiner is the verb and is left alone.
+  - trigger: "the follow up"
+    replace: "the follow-up"
+    word: true
+    propagate_case: true
+  - trigger: "a follow up"
+    replace: "a follow-up"
+    word: true
+    propagate_case: true
+  - trigger: "entiteis"
+    replace: "entities"
+    word: true
+    propagate_case: true
+  - trigger: "distrilled"
+    replace: "distilled"
+    word: true
+    propagate_case: true
+  - trigger: "OpemMP"
+    replace: "OpenMP"
+    word: true
+    propagate_case: true
+  - trigger: "knowlege"
+    replace: "knowledge"
+    word: true
+    propagate_case: true
+  # Adjacent letters swapped; not a word.
+  - trigger: "moduels"
+    replace: "modules"
+    word: true
+    propagate_case: true
+  # Adjacent letters swapped; not a word.
+  - trigger: "direcotry"
+    replace: "directory"
+    word: true
+    propagate_case: true
+  # Adjacent letters swapped; not a word.
+  - trigger: "fiels"
+    replace: "files"
+    word: true
+    propagate_case: true
+  # Adjacent letters swapped; not a word.
+  - trigger: "thign"
+    replace: "thing"
+    word: true
+    propagate_case: true
+  # Adjacent letters swapped; not a word.
+  - trigger: "highlihgt"
+    replace: "highlight"
+    word: true
+    propagate_case: true
+  # Adjacent letters swapped in the fixed pair `qu`; not a word.
+  - trigger: "reuqires"
+    replace: "requires"
+    word: true
+    propagate_case: true
+  # Adjacent letters swapped in the fixed pair `qu`; not a word.
+  - trigger: "reuqire"
+    replace: "require"
+    word: true
+    propagate_case: true
+  # Adjacent letters swapped in the fixed pair `qu`; not a word.
+  - trigger: "reuqired"
+    replace: "required"
+    word: true
+    propagate_case: true
+  - trigger: "depdends"
+    replace: "depends"
+    word: true
+    propagate_case: true
+  - trigger: "knolwedege"
+    replace: "knowledge"
+    word: true
+    propagate_case: true
+  - trigger: "intresting"
+    replace: "interesting"
+    word: true
+    propagate_case: true
+  - trigger: "afforance"
+    replace: "affordance"
+    word: true
+    propagate_case: true
+  # Adjacent letters swapped; not a word.
+  - trigger: "direcotory"
+    replace: "directory"
+    word: true
+    propagate_case: true
+  # Adjacent letters swapped; not a word.
+  - trigger: "direcotories"
+    replace: "directories"
+    word: true
+    propagate_case: true
+  # Adjacent letters swapped; not a word.
+  - trigger: "direcroty"
+    replace: "directory"
+    word: true
+    propagate_case: true
+  # Doubled initial letter; not a word.
+  - trigger: "oorg"
+    replace: "org"
+    word: true
+    propagate_case: true
