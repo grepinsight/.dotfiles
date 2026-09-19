@@ -15,6 +15,7 @@ augroup syntax_setup
     autocmd BufNewFile,BufRead Jenkinsfile setfiletype groovy
     autocmd BufNewFile,BufRead .envrc setfiletype envrc
     autocmd BufNewFile,BufRead .rules setfiletype rules
+    autocmd BufNewFile,BufRead *.taskpaper setfiletype taskpaper
 
     " set foldmethod to marker if ft is rules
     autocmd BufNewFile,BufRead *.rules set foldmethod=marker
