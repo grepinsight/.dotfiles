@@ -516,3 +516,7 @@ matches:
     replace: "using"
     word: true
     propagate_case: true
+  - trigger: "ntoe"
+    replace: "note"
+    word: true
+    propagate_case: true
