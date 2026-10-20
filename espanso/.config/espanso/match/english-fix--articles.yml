@@ -32,3 +32,31 @@ matches:
     replace: "an eraser"
     word: true
     propagate_case: true
+
+  - trigger: "an permission"
+    replace: "a permission"
+    word: true
+    propagate_case: true
+
+  - trigger: "take sabbatical"
+    replace: "take a sabbatical"
+    word: true
+    propagate_case: true
+
+  # Singular countable noun only: "give me concise answers/feedback" needs no article.
+  - trigger: "give me concise draft"
+    replace: "give me a concise draft"
+    word: true
+    propagate_case: true
+
+  # "a" before a vowel sound; "a appropriate" is never correct.
+  - trigger: "a appropriate"
+    replace: "an appropriate"
+    word: true
+    propagate_case: true
+
+  # Determiner typed twice around a quantifier; "the all the" is never correct.
+  - trigger: "the all the"
+    replace: "all the"
+    word: true
+    propagate_case: true

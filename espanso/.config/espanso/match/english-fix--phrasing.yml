@@ -36,3 +36,8 @@ matches:
     replace: "not that big of a"
     word: true
     propagate_case: true
+
+  - trigger: "did research a bit"
+    replace: "did a bit of research"
+    word: true
+    propagate_case: true

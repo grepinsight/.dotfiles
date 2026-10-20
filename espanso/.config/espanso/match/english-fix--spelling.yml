@@ -113,6 +113,12 @@ matches:
     word: true
     propagate_case: true
 
+  # Compound modifier before a noun; the three-word form is never correct.
+  - trigger: "high level overview"
+    replace: "high-level overview"
+    word: true
+    propagate_case: true
+
   - trigger: "shoudl"
     replace: "should"
     word: true
@@ -363,5 +369,150 @@ matches:
   # Doubled initial letter; not a word.
   - trigger: "oorg"
     replace: "org"
+    word: true
+    propagate_case: true
+  # Reflexive plurals take `-ves`, so `-selfs` is never a word.
+  - trigger: "ourselfs"
+    replace: "ourselves"
+    word: true
+    propagate_case: true
+  # `consultation` is `consult` + `-ation`, so the `t` belongs to the root verb.
+  - trigger: "consulation"
+    replace: "consultation"
+    word: true
+    propagate_case: true
+  # Root is `theory` -> `theoretic` -> `theoretical`: `-ore-` then `-tical`.
+  - trigger: "theoritcal"
+    replace: "theoretical"
+    word: true
+    propagate_case: true
+  - trigger: "theoritcally"
+    replace: "theoretically"
+    word: true
+    propagate_case: true
+  - trigger: "unncessary"
+    replace: "unnecessary"
+    word: true
+    propagate_case: true
+  - trigger: "sensitivyt"
+    replace: "sensitivity"
+    word: true
+    propagate_case: true
+  - trigger: "intrested"
+    replace: "interested"
+    word: true
+    propagate_case: true
+  - trigger: "thisi"
+    replace: "this"
+    word: true
+    propagate_case: true
+  - trigger: "probabiliyt"
+    replace: "probability"
+    word: true
+    propagate_case: true
+  - trigger: "adny"
+    replace: "any"
+    word: true
+    propagate_case: true
+  - trigger: "defualt"
+    replace: "default"
+    word: true
+    propagate_case: true
+  - trigger: "suppor"
+    replace: "support"
+    word: true
+    propagate_case: true
+  - trigger: "curius"
+    replace: "curious"
+    word: true
+    propagate_case: true
+  - trigger: "stry"
+    replace: "try"
+    word: true
+    propagate_case: true
+  - trigger: "biotechn"
+    replace: "biotech"
+    word: true
+    propagate_case: true
+  - trigger: "perfromance"
+    replace: "performance"
+    word: true
+    propagate_case: true
+  - trigger: "announcemnet"
+    replace: "announcement"
+    word: true
+    propagate_case: true
+
+  - trigger: "CODEOWERS"
+    replace: "CODEOWNERS"
+    word: true
+    propagate_case: true
+
+  - trigger: "linkt"
+    replace: "link"
+    word: true
+    propagate_case: true
+
+  - trigger: "giveme"
+    replace: "give me"
+    word: true
+    propagate_case: true
+  - trigger: "perofmrance"
+    replace: "performance"
+    word: true
+    propagate_case: true
+  - trigger: "interms"
+    replace: "in terms"
+    word: true
+    propagate_case: true
+
+  - trigger: "trasformation"
+    replace: "transformation"
+    word: true
+    propagate_case: true
+
+  - trigger: "trasformations"
+    replace: "transformations"
+    word: true
+    propagate_case: true
+
+  - trigger: "tyanx"
+    replace: "syntax"
+    word: true
+    propagate_case: true
+
+  # Dropped doubled l; "stil" is not a word.
+  - trigger: "stil"
+    replace: "still"
+    word: true
+    propagate_case: true
+
+  # -able attaches to the verb: fold, not folder.
+  - trigger: "folderable"
+    replace: "foldable"
+    word: true
+    propagate_case: true
+
+  - trigger: "CICD"
+    replace: "CI/CD"
+    word: true
+    propagate_case: true
+
+  # Doubled determiner, a dictation artifact. `word: true` stops it firing inside
+  # "the theory" or "the theme", where the second token has no trailing boundary.
+  - trigger: "the the"
+    replace: "the"
+    word: true
+    propagate_case: true
+  - trigger: "formating"
+    replace: "formatting"
+    word: true
+    propagate_case: true
+  - trigger: "elimiated"
+    replace: "eliminated"
+    word: true
+    propagate_case: true
+  - trigger: "usng"
+    replace: "using"
     word: true
     propagate_case: true
