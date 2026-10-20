@@ -1,0 +1,471 @@
+#!/usr/bin/env python3
+"""claude-fleet: list every Claude Code session and jump to the one you pick.
+
+`claude agents` renders background agents only, so interactive terminal sessions
+waiting on input do not appear there. `claude agents --json` reports both, and
+this wraps that feed with a jump target per row.
+
+  claude-fleet list                  every session, most urgent first
+  claude-fleet list --needs-input    only the ones waiting on you
+  claude-fleet list --json           machine-readable, for a HUD or a status bar
+  claude-fleet jump kitty:141        focus that terminal window
+  claude-fleet jump bg:794273af      attach that background agent in a new window
+  claude-fleet kill bg:794273af --yes    stop it, keeping the conversation
+  claude-fleet kill pid:65253 --dry-run  say what would happen, do nothing
+  claude-fleet remove bg:8d866dfc --yes  DELETE a finished session and its worktree
+
+Stdlib only, so it runs under /usr/bin/python3 with no environment set up.
+"""
+
+from __future__ import annotations
+
+import argparse
+import glob
+import json
+import os
+import shutil
+import signal
+import subprocess
+import sys
+import time
+
+HOME = os.path.expanduser("~")
+
+# Resolution order matters: a login shell's PATH is not available to a GUI app
+# such as Hammerspoon, so fall back to the documented install locations.
+CLAUDE_CANDIDATES = (
+    os.environ.get("CLAUDE_BIN"),
+    os.path.join(HOME, ".local/bin/claude"),
+    "/opt/homebrew/bin/claude",
+    "/usr/local/bin/claude",
+)
+KITTY_CANDIDATES = (
+    os.environ.get("KITTY_BIN"),
+    "/Applications/kitty.app/Contents/MacOS/kitty",
+    os.path.join(HOME, "Applications/kitty.app/Contents/MacOS/kitty"),
+    "/opt/homebrew/bin/kitty",
+)
+
+# Sort key and display glyph per session state. Lower sorts first, so anything
+# that wants a human is above anything that does not.
+# state -> (sort rank, glyph, group heading). The group is what the panel
+# renders as a section title, so two states can share one group.
+STATES = {
+    "blocked": (0, "!", "Needs input"),
+    "waiting": (1, "?", "Needs input"),
+    "working": (2, ">", "Working"),
+    "busy": (2, ">", "Working"),
+    "idle": (3, ".", "Idle"),
+    "done": (4, "v", "Completed"),
+    "stopped": (5, "-", "Stopped"),
+}
+NEEDS_INPUT = ("blocked", "waiting")
+UNKNOWN = (9, "-", "Unknown")
+
+ANSI = {"!": "\033[31m", "?": "\033[33m", ">": "\033[36m", ".": "\033[90m", "v": "\033[32m"}
+RESET = "\033[0m"
+
+
+class FleetError(RuntimeError):
+    """Something the caller can act on, reported without a traceback."""
+
+
+def _resolve(candidates, name, install_hint):
+    for path in candidates:
+        if path and os.path.isfile(path) and os.access(path, os.X_OK):
+            return path
+    found = shutil.which(name)
+    if found:
+        return found
+    raise FleetError(f"cannot find the {name} binary. {install_hint}")
+
+
+def _run(argv, timeout=10):
+    try:
+        proc = subprocess.run(argv, capture_output=True, text=True, timeout=timeout)
+    except subprocess.TimeoutExpired:
+        raise FleetError(f"{os.path.basename(argv[0])} did not answer within {timeout}s")
+    if proc.returncode != 0:
+        detail = (proc.stderr or proc.stdout or "no output").strip().splitlines()
+        raise FleetError(f"{os.path.basename(argv[0])} exited {proc.returncode}: {detail[0] if detail else ''}")
+    return proc.stdout
+
+
+def _kitty_ls(socket):
+    """`kitty @ ls` against one socket, or None when it does not answer."""
+    try:
+        kitty = _resolve(KITTY_CANDIDATES, "kitty", "")
+        raw = _run([kitty, "@", "--to", f"unix:{socket}", "ls"], timeout=5)
+        return json.loads(raw)
+    except (FleetError, json.JSONDecodeError):
+        return None
+
+
+def kitty_instances():
+    """Every reachable kitty instance, the one with the most windows first.
+
+    kitty listens on unix:$TMPDIR/kitty-<pid>, and more than one instance can be
+    running, so the socket set is not a single value. Picking the newest socket
+    picks whichever instance started last, which is exactly wrong: a window
+    opened by a tool is the newest and has one window, while the instance
+    holding every real session is the oldest. Rank by window count instead.
+    """
+    tmp = os.environ.get("TMPDIR") or "/tmp"
+    instances = []
+    for socket in glob.glob(os.path.join(tmp, "kitty-*")):
+        tree = _kitty_ls(socket)
+        if tree is None:
+            continue
+        windows = sum(len(tab.get("windows", [])) for osw in tree for tab in osw.get("tabs", []))
+        instances.append((windows, socket, tree))
+    instances.sort(key=lambda item: (-item[0], item[1]))
+    return instances
+
+
+def kitty_window_ids():
+    """Map each process id running inside any kitty window to that window's id."""
+    found = {}
+    for _, _, tree in kitty_instances():
+        for osw in tree:
+            for tab in osw.get("tabs", []):
+                for window in tab.get("windows", []):
+                    for proc in window.get("foreground_processes", []):
+                        found.setdefault(proc["pid"], window["id"])
+    return found
+
+
+def find_attached_window(instances, agent_id):
+    """(socket, window_id) of a window already running `claude attach <id>`."""
+    for _, socket, tree in instances:
+        for osw in tree:
+            for tab in osw.get("tabs", []):
+                for window in tab.get("windows", []):
+                    for proc in window.get("foreground_processes", []):
+                        cmdline = " ".join(proc.get("cmdline", []))
+                        if "attach" in cmdline and agent_id in cmdline:
+                            return socket, window["id"]
+    return None
+
+
+def sessions(needs_input_only=False):
+    """Every live Claude session, most urgent first, each with a jump target."""
+    claude = _resolve(
+        CLAUDE_CANDIDATES,
+        "claude",
+        "Set $CLAUDE_BIN to its path if it is installed somewhere unusual.",
+    )
+    raw = _run([claude, "agents", "--json", "--all"], timeout=15)
+    try:
+        found = json.loads(raw or "[]")
+    except json.JSONDecodeError as exc:
+        raise FleetError(f"claude agents --json returned something unparseable: {exc}")
+
+    windows = kitty_window_ids()
+    now = time.time() * 1000
+    rows = []
+    for session in found:
+        # Background agents carry `state`; interactive ones carry `status`.
+        state = session.get("state") or session.get("status") or "unknown"
+        if needs_input_only and state not in NEEDS_INPUT:
+            continue
+        rank, glyph, group = STATES.get(state, UNKNOWN)
+        pid = session.get("pid")
+        window = windows.get(pid) if pid else None
+        if window:
+            target = f"kitty:{window}"
+        elif session.get("id"):
+            target = f"bg:{session['id']}"
+        else:
+            target = ""
+        # The kill target is not the jump target: you jump to a *window* and you
+        # kill a *process* or a *job*, and a session can have one without the other.
+        if session.get("kind") == "background" and session.get("id"):
+            kill_target = f"bg:{session['id']}"
+        elif pid:
+            kill_target = f"pid:{pid}"
+        else:
+            kill_target = ""
+        # A finished session has nothing to stop, so the only useful action on
+        # its row is clearing it. Deciding that here keeps one rule in one place.
+        if state in ("done", "stopped") and kill_target.startswith("bg:"):
+            kill_verb = "remove"
+        else:
+            kill_verb = "stop"
+        rows.append(
+            {
+                "name": session.get("name") or "(unnamed)",
+                "state": state,
+                "group": group,
+                "glyph": glyph,
+                "rank": rank,
+                "kind": session.get("kind", "unknown"),
+                "cwd": session.get("cwd", ""),
+                "minutes": int((now - session.get("startedAt", now)) / 60000),
+                "target": target,
+                "killTarget": kill_target,
+                "killVerb": kill_verb,
+                "sessionId": session.get("sessionId", ""),
+            }
+        )
+    # Within a state, the longest wait is the most urgent.
+    rows.sort(key=lambda row: (row["rank"], -row["minutes"]))
+    return rows
+
+
+def jump(target):
+    """Focus the terminal window for `target`, or attach a background agent."""
+    if ":" not in target:
+        raise FleetError(f"target '{target}' is not <kind>:<id>, e.g. kitty:141 or bg:1a2b3c4d")
+    kind, _, ident = target.partition(":")
+    instances = kitty_instances()
+
+    if kind == "kitty":
+        if not instances:
+            raise FleetError("no kitty instance answered; is allow_remote_control on?")
+        # The window id came from whichever instance owns it, so find that one
+        # again rather than assuming. Two instances can both be reachable.
+        kitty = _resolve(KITTY_CANDIDATES, "kitty", "")
+        for _, socket, tree in instances:
+            ids = {
+                window["id"]
+                for osw in tree
+                for tab in osw.get("tabs", [])
+                for window in tab.get("windows", [])
+            }
+            if int(ident) in ids:
+                _run([kitty, "@", "--to", f"unix:{socket}", "focus-window", "--match", f"id:{ident}"])
+                # focus-window raises the window inside kitty; this raises kitty
+                # itself above other applications.
+                subprocess.run(["/usr/bin/open", "-a", "kitty"], capture_output=True)
+                return f"focused kitty window {ident}"
+        raise FleetError(f"no kitty window with id {ident}; the list is stale, refresh it")
+
+    if kind == "bg":
+        claude = _resolve(CLAUDE_CANDIDATES, "claude", "")
+        kitty = _resolve(KITTY_CANDIDATES, "kitty", "")
+        # An agent already attached somewhere has a window; reuse it. Without
+        # this, every click opens another one, and five clicks on one agent
+        # leaves five windows all driving the same conversation.
+        existing = find_attached_window(instances, ident)
+        if existing:
+            socket, window_id = existing
+            _run([kitty, "@", "--to", f"unix:{socket}", "focus-window", "--match", f"id:{window_id}"])
+            subprocess.run(["/usr/bin/open", "-a", "kitty"], capture_output=True)
+            return f"focused the window already attached to {ident}"
+        if instances:
+            # Open the window inside the running instance. Do NOT use
+            # `kitty --single-instance` for this: it only reuses an instance that
+            # was itself started in single-instance mode, so against a normally
+            # launched kitty it silently starts a SECOND app with its own socket,
+            # and every later lookup then races between the two.
+            socket = instances[0][1]
+            _run([
+                kitty, "@", "--to", f"unix:{socket}",
+                "launch", "--type=tab", "--title", f"agent {ident}",
+                "--", claude, "attach", ident,
+            ])
+            subprocess.run(["/usr/bin/open", "-a", "kitty"], capture_output=True)
+            return f"attached background agent {ident} in a new kitty tab"
+        # Nothing reachable, so there is no instance to reuse.
+        subprocess.Popen(
+            [kitty, "--", claude, "attach", ident],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+        return f"started kitty and attached background agent {ident}"
+
+    raise FleetError(f"unknown target kind '{kind}'; expected 'kitty' or 'bg'")
+
+
+def kill(target, dry_run=False):
+    """Stop a session. Reversible on purpose: nothing here deletes a conversation.
+
+    Background agents go through `claude stop`, which keeps the transcript and
+    is reopened with `claude attach`. Interactive sessions get SIGTERM, and the
+    conversation comes back with `claude --resume`. Deleting a session for good
+    is `claude rm`, deliberately not wired to a clickable button.
+    """
+    if ":" not in target:
+        raise FleetError(f"target '{target}' is not <kind>:<id>, e.g. bg:1a2b3c4d or pid:12345")
+    kind, _, ident = target.partition(":")
+
+    claude = _resolve(CLAUDE_CANDIDATES, "claude", "")
+    live = json.loads(_run([claude, "agents", "--json", "--all"], timeout=15) or "[]")
+
+    if kind == "bg":
+        match = next((s for s in live if s.get("id") == ident), None)
+        if match is None:
+            raise FleetError(f"no background agent '{ident}' in the current list; refresh and retry")
+        state = match.get("state")
+        if state in ("stopped", "done"):
+            # `claude stop` exits 0 and prints nothing here, so without this the
+            # tool would report a kill it did not perform.
+            return (
+                f"{match.get('name')} was already {state}; "
+                f"nothing to stop. Use `remove` to clear it"
+            )
+        if dry_run:
+            return f"would run: claude stop {ident}  ({match.get('name')})"
+        out = _run([claude, "stop", ident])
+        # `claude stop` exits 0 even when it matched nothing, so the exit code
+        # cannot be trusted and the message has to be read.
+        if "No job matching" in out:
+            raise FleetError(f"claude stop found no job '{ident}'; it may have already exited")
+        return f"stopped {match.get('name')}; `claude attach {ident}` reopens it"
+
+    if kind == "pid":
+        try:
+            pid = int(ident)
+        except ValueError:
+            raise FleetError(f"'{ident}' is not a process id")
+        # Guard against a stale list: a pid that has been recycled by the OS
+        # would otherwise let a click kill something unrelated.
+        match = next((s for s in live if s.get("pid") == pid), None)
+        if match is None:
+            raise FleetError(f"pid {pid} is not a Claude session in the current list; refresh and retry")
+        if dry_run:
+            return f"would send SIGTERM to pid {pid}  ({match.get('name')})"
+        try:
+            os.kill(pid, signal.SIGTERM)
+        except ProcessLookupError:
+            raise FleetError(f"pid {pid} is already gone")
+        except PermissionError:
+            raise FleetError(f"not allowed to signal pid {pid}")
+        return f"stopped {match.get('name')}; `claude --resume` reopens the conversation"
+
+    raise FleetError(f"unknown target kind '{kind}'; expected 'bg' or 'pid'")
+
+
+def remove(target, dry_run=False):
+    """Delete a background session and its worktree. This one is NOT reversible.
+
+    Only offered for sessions that have already finished, where `stop` has
+    nothing to do and clearing the row is the only useful action.
+    """
+    if not target.startswith("bg:"):
+        raise FleetError("only a background session can be removed; interactive ones just stop")
+    ident = target.partition(":")[2]
+
+    claude = _resolve(CLAUDE_CANDIDATES, "claude", "")
+    live = json.loads(_run([claude, "agents", "--json", "--all"], timeout=15) or "[]")
+    match = next((s for s in live if s.get("id") == ident), None)
+    if match is None:
+        raise FleetError(f"no background agent '{ident}' in the current list; refresh and retry")
+
+    state = match.get("state")
+    if state not in ("done", "stopped"):
+        raise FleetError(
+            f"{match.get('name')} is still {state}; stop it first, then remove it"
+        )
+    if dry_run:
+        return f"would run: claude rm {ident}  ({match.get('name')}) -- NOT reversible"
+
+    out = _run([claude, "rm", ident])
+    # `claude rm` refuses when the worktree holds unpushed commits and reports a
+    # token for --discard-unpushed. Never pass that automatically: it throws away
+    # work. Surface the message and let a human decide.
+    if "discard-unpushed" in out:
+        raise FleetError(
+            f"{match.get('name')} has unpushed work; claude rm said: {out.strip().splitlines()[0]}"
+        )
+    return f"removed {match.get('name')}"
+
+
+def _short_cwd(path):
+    return path.replace(HOME, "~", 1) if path.startswith(HOME) else path
+
+
+def _duration(minutes):
+    if minutes < 60:
+        return f"{minutes}m"
+    if minutes < 60 * 24:
+        return f"{minutes // 60}h{minutes % 60:02d}m"
+    return f"{minutes // 1440}d{(minutes % 1440) // 60}h"
+
+
+def render_table(rows, color=True):
+    if not rows:
+        return "no sessions"
+    width = max(len(row["name"]) for row in rows)
+    lines = []
+    for row in rows:
+        glyph = row["glyph"]
+        if color:
+            glyph = f"{ANSI.get(glyph, '')}{glyph}{RESET}"
+        lines.append(
+            f"{glyph} {row['state']:<8} {_duration(row['minutes']):>7}  "
+            f"{row['name']:<{width}}  {row['target']:<14} {_short_cwd(row['cwd'])}"
+        )
+    counts = {}
+    for row in rows:
+        counts[row["group"]] = counts.get(row["group"], 0) + 1
+    summary = " . ".join(f"{count} {group.lower()}" for group, count in counts.items())
+    lines.append("")
+    lines.append(summary)
+    return "\n".join(lines)
+
+
+def main(argv=None):
+    parser = argparse.ArgumentParser(prog="claude-fleet", description=__doc__.splitlines()[0])
+    sub = parser.add_subparsers(dest="command")
+
+    listing = sub.add_parser("list", help="show sessions")
+    listing.add_argument("--needs-input", action="store_true", help="only sessions waiting on you")
+    listing.add_argument("--json", action="store_true", help="emit JSON instead of a table")
+    listing.add_argument("--no-color", action="store_true", help="plain text, for piping")
+
+    jumping = sub.add_parser("jump", help="focus a session")
+    jumping.add_argument("target", help="a target from the list output, e.g. kitty:141")
+
+    killing = sub.add_parser("kill", help="stop a session, keeping its conversation")
+    killing.add_argument("target", help="a killTarget from the list output, e.g. bg:1a2b3c4d or pid:12345")
+    killing.add_argument("--yes", action="store_true", help="skip the confirmation prompt")
+    killing.add_argument("--dry-run", action="store_true", help="say what would happen, change nothing")
+
+    removing = sub.add_parser("remove", help="delete a finished session and its worktree")
+    removing.add_argument("target", help="a background killTarget, e.g. bg:1a2b3c4d")
+    removing.add_argument("--yes", action="store_true", help="skip the confirmation prompt")
+    removing.add_argument("--dry-run", action="store_true", help="say what would happen, change nothing")
+
+    args = parser.parse_args(argv)
+    if args.command is None:
+        args.command = "list"
+        args.needs_input = args.json = args.no_color = False
+
+    try:
+        if args.command == "list":
+            rows = sessions(needs_input_only=args.needs_input)
+            if args.json:
+                print(json.dumps(rows))
+            else:
+                print(render_table(rows, color=not args.no_color and sys.stdout.isatty()))
+        elif args.command == "jump":
+            print(jump(args.target))
+        elif args.command in ("kill", "remove"):
+            act = kill if args.command == "kill" else remove
+            if args.dry_run:
+                print(act(args.target, dry_run=True))
+            elif args.yes:
+                print(act(args.target))
+            elif sys.stdin.isatty():
+                print(act(args.target, dry_run=True))
+                answer = input("proceed? [y/N] ").strip().lower()
+                if answer not in ("y", "yes"):
+                    print("cancelled")
+                    return 1
+                print(act(args.target))
+            else:
+                # No TTY and no --yes: refuse rather than guess. The panel passes
+                # --yes only after its own two-step confirmation.
+                raise FleetError(
+                    f"{args.command} needs --yes when there is no terminal to confirm at"
+                )
+    except FleetError as exc:
+        # The HUD reads stderr, so keep the message on one actionable line.
+        print(f"claude-fleet: {exc}", file=sys.stderr)
+        return 1
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
