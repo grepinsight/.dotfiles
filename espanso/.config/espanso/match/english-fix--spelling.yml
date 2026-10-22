@@ -588,4 +588,7 @@ matches:
     propagate_case: true
 
   # Dropped c; funtion is not a word or identifier in any language.
-  - {trigger: "funtion", replace: "function", word: true}
+  - trigger: "funtion"
+    replace: "function"
+    word: true
+    propagate_case: true
