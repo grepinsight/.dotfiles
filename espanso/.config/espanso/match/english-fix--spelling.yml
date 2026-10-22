@@ -520,3 +520,72 @@ matches:
     replace: "note"
     word: true
     propagate_case: true
+  - trigger: "subages"
+    replace: "subpages"
+    word: true
+    propagate_case: true
+  - trigger: "tiems"
+    replace: "items"
+    word: true
+    propagate_case: true
+  - trigger: "constly"
+    replace: "costly"
+    word: true
+    propagate_case: true
+  - trigger: "fotter"
+    replace: "footer"
+    word: true
+    propagate_case: true
+  - trigger: "infact"
+    replace: "in fact"
+    word: true
+    propagate_case: true
+  - trigger: "uuse"
+    replace: "use"
+    word: true
+    propagate_case: true
+  - trigger: "higlight"
+    replace: "highlight"
+    word: true
+    propagate_case: true
+
+  - trigger: "perceiptble"
+    replace: "perceptible"
+    word: true
+    propagate_case: true
+  - trigger: "ettiquete"
+    replace: "etiquette"
+    word: true
+    propagate_case: true
+  - trigger: "owernship"
+    replace: "ownership"
+    word: true
+    propagate_case: true
+  - trigger: "skim in the game"
+    replace: "skin in the game"
+    word: true
+    propagate_case: true
+  - trigger: "fformatting"
+    replace: "formatting"
+    word: true
+    propagate_case: true
+  # false positive: the power-tool brand "Skil"
+  - trigger: "skil"
+    replace: "skill"
+    word: true
+    propagate_case: true
+  - trigger: "waht"
+    replace: "what"
+    word: true
+    propagate_case: true
+  - trigger: "somethign"
+    replace: "something"
+    word: true
+    propagate_case: true
+  - trigger: "integriy"
+    replace: "integrity"
+    word: true
+    propagate_case: true
+
+  # Dropped c; funtion is not a word or identifier in any language.
+  - {trigger: "funtion", replace: "function", word: true}
