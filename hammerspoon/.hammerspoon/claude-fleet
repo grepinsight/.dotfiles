@@ -23,6 +23,7 @@ import argparse
 import glob
 import json
 import os
+import re
 import shutil
 import signal
 import subprocess
@@ -53,14 +54,28 @@ KITTY_CANDIDATES = (
 STATES = {
     "blocked": (0, "!", "Needs input"),
     "waiting": (1, "?", "Needs input"),
+    "unread": (1, "?", "Needs input"),
     "working": (2, ">", "Working"),
     "busy": (2, ">", "Working"),
     "idle": (3, ".", "Idle"),
     "done": (4, "v", "Completed"),
     "stopped": (5, "-", "Stopped"),
 }
-NEEDS_INPUT = ("blocked", "waiting")
+NEEDS_INPUT = ("blocked", "waiting", "unread")
 UNKNOWN = (9, "-", "Unknown")
+
+# Which finished turn was on screen the last time each window had focus.
+SEEN_PATH = os.path.join(HOME, ".cache/claude-fleet/seen.json")
+
+# Claude Code ends every turn with a line like `✻ Cooked for 26s · done 6:36 AM`.
+# The whole line, not just the clock time, identifies the turn: two turns
+# finishing in the same minute still differ in their duration.
+TURN_DONE = re.compile(r"^\S+ .+ · done \d{1,2}:\d{2}\s?[AP]M$")
+RECAP_PREFIX = "※ recap:"
+
+# Claude Code prefixes the terminal title with a status glyph (✳ idle, a
+# spinner while busy). Everything before the first word character is that glyph.
+TITLE_GLYPH = re.compile(r"^[^\w]+")
 
 ANSI = {"!": "\033[31m", "?": "\033[33m", ">": "\033[36m", ".": "\033[90m", "v": "\033[32m"}
 RESET = "\033[0m"
@@ -122,16 +137,105 @@ def kitty_instances():
     return instances
 
 
-def kitty_window_ids():
-    """Map each process id running inside any kitty window to that window's id."""
+def kitty_windows():
+    """Map each process id running inside any kitty window to that window.
+
+    Each value carries what a row needs from kitty: the window id to jump to,
+    the socket to read its screen through, its title, and whether you are
+    looking at it right now.
+
+    "Looking at it" needs all three levels. kitty sets a window's `is_focused`
+    for the active window of EVERY tab while kitty is frontmost, so the window
+    flag alone marks every background tab as read; only the tab flag tells
+    the tab on screen apart from the others.
+    """
     found = {}
-    for _, _, tree in kitty_instances():
+    for _, socket, tree in kitty_instances():
         for osw in tree:
             for tab in osw.get("tabs", []):
+                tab_on_screen = bool(osw.get("is_focused") and tab.get("is_focused"))
                 for window in tab.get("windows", []):
+                    info = {
+                        "id": window["id"],
+                        "socket": socket,
+                        "title": window.get("title", ""),
+                        "focused": tab_on_screen and bool(window.get("is_focused")),
+                    }
                     for proc in window.get("foreground_processes", []):
-                        found.setdefault(proc["pid"], window["id"])
+                        found.setdefault(proc["pid"], info)
     return found
+
+
+def kitty_screen(socket, window_id):
+    """The visible text of one kitty window, or "" when it cannot be read."""
+    try:
+        kitty = _resolve(KITTY_CANDIDATES, "kitty", "")
+        return _run([kitty, "@", "--to", f"unix:{socket}", "get-text", "--match", f"id:{window_id}"], timeout=5)
+    except FleetError:
+        return ""
+
+
+def last_turn_marker(screen):
+    """A line identifying the newest finished turn on screen, or None.
+
+    The `· done HH:MM` line is preferred. A turn whose done line has scrolled
+    away, or predates it, still leaves the `※ recap:` line Claude Code writes
+    once a session has sat idle, so that is the fallback.
+    """
+    done = recap = None
+    for line in screen.splitlines():
+        line = line.strip()
+        if TURN_DONE.match(line):
+            done = line
+        elif line.startswith(RECAP_PREFIX):
+            recap = line
+    return done or recap
+
+
+def display_title(window_title, fallback):
+    """The session's topic from its terminal title, without the status glyph.
+
+    `claude agents --json` names interactive sessions `<folder>-<id>`, which says
+    nothing about what each one is doing. The terminal title carries the topic.
+    """
+    title = TITLE_GLYPH.sub("", window_title or "").strip()
+    return title or fallback
+
+
+def read_state(state, marker, seen_marker, focused):
+    """(state to show, marker to remember) for one session.
+
+    An interactive session reports `idle` once its turn ends, whether or not you
+    have read the reply, and the panel does not draw Idle at all. So a finished
+    turn you have not looked at becomes `unread` and lands in Needs input.
+    "Looked at" means the window had focus while that turn's marker was on screen.
+    """
+    if state != "idle" or marker is None:
+        return state, seen_marker
+    if focused:
+        return "idle", marker
+    if marker == seen_marker:
+        return "idle", seen_marker
+    return "unread", seen_marker
+
+
+def _load_seen():
+    try:
+        with open(SEEN_PATH, encoding="utf-8") as handle:
+            seen = json.load(handle)
+        return seen if isinstance(seen, dict) else {}
+    except (OSError, json.JSONDecodeError):
+        return {}
+
+
+def _save_seen(seen):
+    # Write-then-rename, because the panel polls every few seconds and a reader
+    # must never see a half-written file.
+    os.makedirs(os.path.dirname(SEEN_PATH), exist_ok=True)
+    tmp = f"{SEEN_PATH}.{os.getpid()}.tmp"
+    with open(tmp, "w", encoding="utf-8") as handle:
+        json.dump(seen, handle)
+    os.replace(tmp, SEEN_PATH)
 
 
 def find_attached_window(instances, agent_id):
@@ -160,19 +264,32 @@ def sessions(needs_input_only=False):
     except json.JSONDecodeError as exc:
         raise FleetError(f"claude agents --json returned something unparseable: {exc}")
 
-    windows = kitty_window_ids()
+    windows = kitty_windows()
+    seen = _load_seen()
+    still_seen = {}
     now = time.time() * 1000
     rows = []
     for session in found:
         # Background agents carry `state`; interactive ones carry `status`.
         state = session.get("state") or session.get("status") or "unknown"
+        pid = session.get("pid")
+        window = windows.get(pid) if pid else None
+        name = session.get("name") or "(unnamed)"
+        if window:
+            name = display_title(window["title"], name)
+            # Only an idle session can be unread, so only its screen is read:
+            # one `kitty @ get-text` per idle window per poll.
+            if state == "idle":
+                key = session.get("sessionId") or f"pid:{pid}"
+                marker = last_turn_marker(kitty_screen(window["socket"], window["id"]))
+                state, remembered = read_state(state, marker, seen.get(key), window["focused"])
+                if remembered:
+                    still_seen[key] = remembered
         if needs_input_only and state not in NEEDS_INPUT:
             continue
         rank, glyph, group = STATES.get(state, UNKNOWN)
-        pid = session.get("pid")
-        window = windows.get(pid) if pid else None
         if window:
-            target = f"kitty:{window}"
+            target = f"kitty:{window['id']}"
         elif session.get("id"):
             target = f"bg:{session['id']}"
         else:
@@ -193,7 +310,7 @@ def sessions(needs_input_only=False):
             kill_verb = "stop"
         rows.append(
             {
-                "name": session.get("name") or "(unnamed)",
+                "name": name,
                 "state": state,
                 "group": group,
                 "glyph": glyph,
@@ -207,6 +324,10 @@ def sessions(needs_input_only=False):
                 "sessionId": session.get("sessionId", ""),
             }
         )
+    # Rebuilt from live idle sessions each poll, so ended sessions drop out and
+    # a busy one forgets its old turn, which a new turn would replace anyway.
+    if still_seen != seen:
+        _save_seen(still_seen)
     # Within a state, the longest wait is the most urgent.
     rows.sort(key=lambda row: (row["rank"], -row["minutes"]))
     return rows
