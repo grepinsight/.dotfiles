@@ -25,6 +25,7 @@ reload:  ## Reload configs
 	cd ripgrep && make
 	cd claude && make
 	cd capture && make
+	cd kitty && make
 
 
 update_brew:
