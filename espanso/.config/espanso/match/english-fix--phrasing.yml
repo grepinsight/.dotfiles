@@ -41,3 +41,15 @@ matches:
     replace: "did a bit of research"
     word: true
     propagate_case: true
+  - trigger: "go into details"
+    replace: "go into detail"
+    word: true
+    propagate_case: true
+  - trigger: "& etc."
+    replace: "etc."
+    word: true
+    propagate_case: true
+  - trigger: "showing its ugly head"
+    replace: "rearing its ugly head"
+    word: true
+    propagate_case: true

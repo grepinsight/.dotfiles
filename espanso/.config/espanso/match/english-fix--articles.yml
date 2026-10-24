@@ -60,3 +60,25 @@ matches:
     replace: "all the"
     word: true
     propagate_case: true
+
+  # Fixed idiom "to the human eye"; the bare form is never correct.
+  - trigger: "invisible to human eye"
+    replace: "invisible to the human eye"
+    word: true
+    propagate_case: true
+
+  # Singular count noun with a vowel sound; "create evergreen note" is never correct.
+  - trigger: "create evergreen note"
+    replace: "create an evergreen note"
+    word: true
+    propagate_case: true
+
+  # Ethernet starts with a vowel sound; "a ethernet" is never correct.
+  - trigger: "a ethernet"
+    replace: "an ethernet"
+    word: true
+    propagate_case: true
+  - trigger: "am bit confused"
+    replace: "am a bit confused"
+    word: true
+    propagate_case: true

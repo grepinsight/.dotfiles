@@ -592,3 +592,296 @@ matches:
     replace: "function"
     word: true
     propagate_case: true
+
+  # Four Es; the standards body has three (said aloud as "I triple E").
+  - trigger: "IEEEE"
+    replace: "IEEE"
+    word: true
+    propagate_case: true
+
+  - trigger: "nrehcing"
+    replace: "enriching"
+    word: true
+    propagate_case: true
+
+  - trigger: "enrchment"
+    replace: "enrichment"
+    word: true
+    propagate_case: true
+
+  # Transposed t and u.
+  - trigger: "comptuers"
+    replace: "computers"
+    word: true
+    propagate_case: true
+
+  # Doubled first keystroke.
+  - trigger: "pprotocol"
+    replace: "protocol"
+    word: true
+    propagate_case: true
+
+  - trigger: "hybrizied"
+    replace: "hybridized"
+    word: true
+    propagate_case: true
+
+  - trigger: "sampels"
+    replace: "samples"
+    word: true
+    propagate_case: true
+
+  - trigger: "eenrichment"
+    replace: "enrichment"
+    word: true
+    propagate_case: true
+
+  - trigger: "ransfer"
+    replace: "transfer"
+    word: true
+    propagate_case: true
+
+  - trigger: "samle"
+    replace: "sample"
+    word: true
+    propagate_case: true
+
+  - trigger: "saviging"
+    replace: "saving"
+    word: true
+    propagate_case: true
+
+  - trigger: "wahts"
+    replace: "what's"
+    word: true
+    propagate_case: true
+
+  - trigger: "strepatvidin"
+    replace: "streptavidin"
+    word: true
+    propagate_case: true
+
+  - trigger: "biotinalated"
+    replace: "biotinylated"
+    word: true
+    propagate_case: true
+
+  - trigger: "stuf"
+    replace: "stuff"
+    word: true
+    propagate_case: true
+
+  # Transposed s and i.
+  - trigger: "isgnal"
+    replace: "signal"
+    word: true
+    propagate_case: true
+  - trigger: "talkinga bout"
+    replace: "talking about"
+    word: true
+    propagate_case: true
+
+  # -er noun; "delimitor" is not a word.
+  - trigger: "delimitors"
+    replace: "delimiters"
+    word: true
+    propagate_case: true
+
+  - trigger: "delimitor"
+    replace: "delimiter"
+    word: true
+    propagate_case: true
+
+  - trigger: "wwhat"
+    replace: "what"
+    word: true
+    propagate_case: true
+
+  - trigger: "ssamples"
+    replace: "samples"
+    word: true
+    propagate_case: true
+
+  - trigger: "ouptut"
+    replace: "output"
+    word: true
+    propagate_case: true
+
+
+  - trigger: "proces"
+    replace: "process"
+    word: true
+    propagate_case: true
+
+
+  - trigger: "mecahnism"
+    replace: "mechanism"
+    word: true
+    propagate_case: true
+
+  - trigger: "signaturs"
+    replace: "signatures"
+    word: true
+    propagate_case: true
+
+  # Transposed a and i.
+  - trigger: "agian"
+    replace: "again"
+    word: true
+    propagate_case: true
+
+  - trigger: "quesiton"
+    replace: "question"
+    word: true
+    propagate_case: true
+  - trigger: "extenral"
+    replace: "external"
+    word: true
+    propagate_case: true
+  - trigger: "assinged"
+    replace: "assigned"
+    word: true
+    propagate_case: true
+  - trigger: "metphor"
+    replace: "metaphor"
+    word: true
+    propagate_case: true
+  - trigger: "ahve"
+    replace: "have"
+    word: true
+    propagate_case: true
+  - trigger: "structrually"
+    replace: "structurally"
+    word: true
+    propagate_case: true
+  - trigger: "hlighlight"
+    replace: "highlight"
+    word: true
+    propagate_case: true
+  - trigger: "suggession"
+    replace: "suggestion"
+    word: true
+    propagate_case: true
+  - trigger: "jus tasking"
+    replace: "just asking"
+    word: true
+    propagate_case: true
+  - trigger: "raison detre"
+    replace: "raison d'être"
+    word: true
+    propagate_case: true
+  - trigger: "heterozygousity"
+    replace: "heterozygosity"
+    word: true
+    propagate_case: true
+  - trigger: "heterosexy"
+    replace: "heterozygosity"
+    word: true
+    propagate_case: true
+  - trigger: "establlished"
+    replace: "established"
+    word: true
+    propagate_case: true
+  - trigger: "eseence"
+    replace: "essence"
+    word: true
+    propagate_case: true
+  - trigger: "enlgihs"
+    replace: "English"
+    word: true
+    propagate_case: true
+  # Space shifted one letter right; never correct.
+  - trigger: "ia sked"
+    replace: "i asked"
+    word: true
+    propagate_case: true
+  - trigger: "abstrat"
+    replace: "abstract"
+    word: true
+    propagate_case: true
+  # Dropped the a after v; never a word.
+  - trigger: "avilable"
+    replace: "available"
+    word: true
+    propagate_case: true
+  # Dropped the c; never a word.
+  - trigger: "plae"
+    replace: "place"
+    word: true
+    propagate_case: true
+  - trigger: "ssays"
+    replace: "says"
+    word: true
+    propagate_case: true
+  - trigger: "tumro"
+    replace: "tumor"
+    word: true
+    propagate_case: true
+  - trigger: "an dvice versa"
+    replace: "and vice versa"
+    word: true
+    propagate_case: true
+  - trigger: "iwth"
+    replace: "with"
+    word: true
+    propagate_case: true
+  - trigger: "theh"
+    replace: "the"
+    word: true
+    propagate_case: true
+  - trigger: "prsent"
+    replace: "present"
+    word: true
+    propagate_case: true
+  - trigger: "esne"
+    replace: "sense"
+    word: true
+    propagate_case: true
+  - trigger: "bewcause"
+    replace: "because"
+    word: true
+    propagate_case: true
+  - trigger: "sencond"
+    replace: "second"
+    word: true
+    propagate_case: true
+  - trigger: "lmit"
+    replace: "limit"
+    word: true
+    propagate_case: true
+  - trigger: "thype"
+    replace: "type"
+    word: true
+    propagate_case: true
+  - trigger: "mathced"
+    replace: "matched"
+    word: true
+    propagate_case: true
+  - trigger: "wso"
+    replace: "so"
+    word: true
+    propagate_case: true
+  - trigger: "reame"
+    replace: "readme"
+    word: true
+    propagate_case: true
+  - trigger: "isntall"
+    replace: "install"
+    word: true
+    propagate_case: true
+  - trigger: "positoon"
+    replace: "position"
+    word: true
+    propagate_case: true
+  - trigger: "mcuh"
+    replace: "much"
+    word: true
+    propagate_case: true
+  - trigger: "remoeve"
+    replace: "remove"
+    word: true
+    propagate_case: true
+  - trigger: "espansoo"
+    replace: "espanso"
+    word: true
+    propagate_case: true
