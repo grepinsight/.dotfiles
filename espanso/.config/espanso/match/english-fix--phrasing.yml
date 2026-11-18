@@ -53,3 +53,15 @@ matches:
     replace: "rearing its ugly head"
     word: true
     propagate_case: true
+  - trigger: "every one hour"
+    replace: "every hour"
+    word: true
+    propagate_case: true
+  - trigger: "caught my eyes"
+    replace: "caught my eye"
+    word: true
+    propagate_case: true
+  - trigger: "what each this is"
+    replace: "what each of these is"
+    word: true
+    propagate_case: true

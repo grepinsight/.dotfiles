@@ -16,3 +16,21 @@ matches:
     replace: "thoughts or recommendations"
     word: true
     propagate_case: true
+
+  # `another` takes one singular noun; a plural takes `other`.
+  - trigger: "another channels"
+    replace: "other channels"
+    word: true
+    propagate_case: true
+  - trigger: "sounds goods"
+    replace: "sounds good"
+    word: true
+    propagate_case: true
+  - trigger: "children pages"
+    replace: "child pages"
+    word: true
+    propagate_case: true
+  - trigger: "their healths"
+    replace: "their health"
+    word: true
+    propagate_case: true

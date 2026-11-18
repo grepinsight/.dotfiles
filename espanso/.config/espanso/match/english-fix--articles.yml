@@ -82,3 +82,35 @@ matches:
     replace: "am a bit confused"
     word: true
     propagate_case: true
+  - trigger: "what's shortcut"
+    replace: "what's the shortcut"
+    word: true
+    propagate_case: true
+  - trigger: "a explainer"
+    replace: "an explainer"
+    word: true
+    propagate_case: true
+  - trigger: "add ability to"
+    replace: "add the ability to"
+    word: true
+    propagate_case: true
+  - trigger: "a official"
+    replace: "an official"
+    word: true
+    propagate_case: true
+  - trigger: "for long time"
+    replace: "for a long time"
+    word: true
+    propagate_case: true
+  - trigger: "a evil"
+    replace: "an evil"
+    word: true
+    propagate_case: true
+  - trigger: "a executable"
+    replace: "an executable"
+    word: true
+    propagate_case: true
+  - trigger: "a installed"
+    replace: "an installed"
+    word: true
+    propagate_case: true

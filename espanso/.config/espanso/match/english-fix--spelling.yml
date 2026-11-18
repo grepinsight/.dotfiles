@@ -885,3 +885,1764 @@ matches:
     replace: "espanso"
     word: true
     propagate_case: true
+  - trigger: "Mystey"
+    replace: "Msty"
+    word: true
+    propagate_case: true
+  - trigger: "pbcoipy"
+    replace: "pbcopy"
+    word: true
+    propagate_case: true
+  - trigger: "C0ntining"
+    replace: "Continuing"
+    word: true
+    propagate_case: true
+  - trigger: "trnascription"
+    replace: "transcription"
+    word: true
+    propagate_case: true
+  - trigger: "i..e"
+    replace: "i.e."
+    word: true
+    propagate_case: true
+  - trigger: "tthe"
+    replace: "the"
+    word: true
+    propagate_case: true
+  - trigger: "hte"
+    replace: "the"
+    word: true
+    propagate_case: true
+  - trigger: "reosuces"
+    replace: "resources"
+    word: true
+    propagate_case: true
+  - trigger: "intead"
+    replace: "instead"
+    word: true
+    propagate_case: true
+  - trigger: "conflunce"
+    replace: "confluence"
+    word: true
+    propagate_case: true
+  - trigger: "analready"
+    replace: "already"
+    word: true
+    propagate_case: true
+  - trigger: "jsut"
+    replace: "just"
+    word: true
+    propagate_case: true
+  - trigger: "reosurce"
+    replace: "resource"
+    word: true
+    propagate_case: true
+  - trigger: "nesterd"
+    replace: "nested"
+    word: true
+    propagate_case: true
+  - trigger: "udner"
+    replace: "under"
+    word: true
+    propagate_case: true
+  - trigger: "tarnascript"
+    replace: "transcript"
+    word: true
+    propagate_case: true
+  - trigger: "contirubte"
+    replace: "contributor"
+    word: true
+    propagate_case: true
+  - trigger: "htat"
+    replace: "that"
+    word: true
+    propagate_case: true
+  - trigger: "instructins"
+    replace: "instructions"
+    word: true
+    propagate_case: true
+  - trigger: "sumamrizing"
+    replace: "summarizing"
+    word: true
+    propagate_case: true
+  - trigger: "acutally"
+    replace: "actually"
+    word: true
+    propagate_case: true
+  - trigger: "eneds"
+    replace: "needs"
+    word: true
+    propagate_case: true
+  - trigger: "upto"
+    replace: "up to"
+    word: true
+    propagate_case: true
+  - trigger: "htis"
+    replace: "this"
+    word: true
+    propagate_case: true
+  - trigger: "adn"
+    replace: "and"
+    word: true
+    propagate_case: true
+  - trigger: "enity"
+    replace: "entity"
+    word: true
+    propagate_case: true
+  - trigger: "cliam"
+    replace: "claim"
+    word: true
+    propagate_case: true
+  - trigger: "mergea ready"
+    replace: "ready to merge"
+    word: true
+    propagate_case: true
+  - trigger: "yoruself"
+    replace: "yourself"
+    word: true
+    propagate_case: true
+  - trigger: "intersting"
+    replace: "interesting"
+    word: true
+    propagate_case: true
+  - trigger: "availbale"
+    replace: "available"
+    word: true
+    propagate_case: true
+  - trigger: "dicovery"
+    replace: "discovery"
+    word: true
+    propagate_case: true
+  - trigger: "pallete"
+    replace: "palette"
+    word: true
+    propagate_case: true
+  - trigger: "seach"
+    replace: "search"
+    word: true
+    propagate_case: true
+  - trigger: "furhter"
+    replace: "further"
+    word: true
+    propagate_case: true
+  - trigger: "panename"
+    replace: "pane name"
+    word: true
+    propagate_case: true
+  - trigger: "ontolkgy"
+    replace: "ontology"
+    word: true
+    propagate_case: true
+  - trigger: "ompaction"
+    replace: "compaction"
+    word: true
+    propagate_case: true
+  - trigger: "differen"
+    replace: "different"
+    word: true
+    propagate_case: true
+  - trigger: "respetively"
+    replace: "respectively"
+    word: true
+    propagate_case: true
+  - trigger: "yourslef"
+    replace: "yourself"
+    word: true
+    propagate_case: true
+  - trigger: "that ne"
+    replace: "that one"
+    word: true
+    propagate_case: true
+  - trigger: "whatother"
+    replace: "what other"
+    word: true
+    propagate_case: true
+  - trigger: "shorcuts"
+    replace: "shortcuts"
+    word: true
+    propagate_case: true
+  - trigger: "nexdt"
+    replace: "next"
+    word: true
+    propagate_case: true
+  - trigger: "grokkng"
+    replace: "grokking"
+    word: true
+    propagate_case: true
+  - trigger: "htere"
+    replace: "there"
+    word: true
+    propagate_case: true
+  - trigger: "worksapce"
+    replace: "workspace"
+    word: true
+    propagate_case: true
+  - trigger: "superceded"
+    replace: "superseded"
+    word: true
+    propagate_case: true
+  - trigger: "supercede"
+    replace: "supersede"
+    word: true
+    propagate_case: true
+  - trigger: "sometihng"
+    replace: "something"
+    word: true
+    propagate_case: true
+  - trigger: "agin"
+    replace: "again"
+    word: true
+    propagate_case: true
+  - trigger: "doet"
+    replace: "does"
+    word: true
+    propagate_case: true
+  - trigger: "expemlars"
+    replace: "exemplars"
+    word: true
+    propagate_case: true
+  - trigger: "repitition"
+    replace: "repetition"
+    word: true
+    propagate_case: true
+  - trigger: "latst"
+    replace: "latest"
+    word: true
+    propagate_case: true
+  - trigger: "likeabove"
+    replace: "like the one above"
+    word: true
+    propagate_case: true
+  - trigger: "i wan to"
+    replace: "i want to"
+    word: true
+    propagate_case: true
+  - trigger: "laready"
+    replace: "already"
+    word: true
+    propagate_case: true
+  - trigger: "quering"
+    replace: "querying"
+    word: true
+    propagate_case: true
+  - trigger: "acual"
+    replace: "actual"
+    word: true
+    propagate_case: true
+  - trigger: "repeition"
+    replace: "repetition"
+    word: true
+    propagate_case: true
+  - trigger: "mgiht"
+    replace: "might"
+    word: true
+    propagate_case: true
+  - trigger: "acvtually"
+    replace: "actually"
+    word: true
+    propagate_case: true
+  - trigger: "dfault"
+    replace: "default"
+    word: true
+    propagate_case: true
+  - trigger: "kjnow"
+    replace: "know"
+    word: true
+    propagate_case: true
+  - trigger: "worke don"
+    replace: "worked on"
+    word: true
+    propagate_case: true
+  - trigger: "gest updated"
+    replace: "gets updated"
+    word: true
+    propagate_case: true
+  - trigger: "epxlain"
+    replace: "explain"
+    word: true
+    propagate_case: true
+  - trigger: "radisus"
+    replace: "radius"
+    word: true
+    propagate_case: true
+  - trigger: "direclty"
+    replace: "directly"
+    word: true
+    propagate_case: true
+  - trigger: "adddress"
+    replace: "address"
+    word: true
+    propagate_case: true
+  - trigger: "precomuted"
+    replace: "precomputed"
+    word: true
+    propagate_case: true
+  - trigger: "wherease"
+    replace: "whereas"
+    word: true
+    propagate_case: true
+  - trigger: "quesstion"
+    replace: "question"
+    word: true
+    propagate_case: true
+  - trigger: "soudns"
+    replace: "sounds"
+    word: true
+    propagate_case: true
+  - trigger: "amoutn"
+    replace: "amount"
+    word: true
+    propagate_case: true
+  - trigger: "insetad"
+    replace: "instead"
+    word: true
+    propagate_case: true
+  - trigger: "reegrssion"
+    replace: "regression"
+    word: true
+    propagate_case: true
+  - trigger: "happenned"
+    replace: "happened"
+    word: true
+    propagate_case: true
+  - trigger: "whatwhat's"
+    replace: "what's"
+    word: true
+    propagate_case: true
+  - trigger: "adresss"
+    replace: "address"
+    word: true
+    propagate_case: true
+  - trigger: "tehre"
+    replace: "there"
+    word: true
+    propagate_case: true
+  - trigger: "solveable"
+    replace: "solvable"
+    word: true
+    propagate_case: true
+  - trigger: "wtiht"
+    replace: "with"
+    word: true
+    propagate_case: true
+  - trigger: "anwer"
+    replace: "answer"
+    word: true
+    propagate_case: true
+  - trigger: "atively"
+    replace: "actively"
+    word: true
+    propagate_case: true
+  - trigger: "identifer"
+    replace: "identifier"
+    word: true
+    propagate_case: true
+  - trigger: "uunnecessary"
+    replace: "unnecessary"
+    word: true
+    propagate_case: true
+  - trigger: "mdoe"
+    replace: "mode"
+    word: true
+    propagate_case: true
+  - trigger: "addd"
+    replace: "add"
+    word: true
+    propagate_case: true
+  - trigger: "appropraite"
+    replace: "appropriate"
+    word: true
+    propagate_case: true
+  - trigger: "monitorning"
+    replace: "monitoring"
+    word: true
+    propagate_case: true
+  - trigger: "unavalble"
+    replace: "unavailable"
+    word: true
+    propagate_case: true
+  - trigger: "represenative"
+    replace: "representative"
+    word: true
+    propagate_case: true
+  - trigger: "reppresentative"
+    replace: "representative"
+    word: true
+    propagate_case: true
+  - trigger: "ocotree"
+    replace: "oncotree"
+    word: true
+    propagate_case: true
+  - trigger: "gruop"
+    replace: "group"
+    word: true
+    propagate_case: true
+  - trigger: "taht"
+    replace: "that"
+    word: true
+    propagate_case: true
+  - trigger: "volumne"
+    replace: "volume"
+    word: true
+    propagate_case: true
+  - trigger: "interactiive"
+    replace: "interactive"
+    word: true
+    propagate_case: true
+  - trigger: "vidsualization"
+    replace: "visualization"
+    word: true
+    propagate_case: true
+  - trigger: "comptuer"
+    replace: "computer"
+    word: true
+    propagate_case: true
+  - trigger: "suboage"
+    replace: "subpage"
+    word: true
+    propagate_case: true
+  - trigger: "shiuld"
+    replace: "should"
+    word: true
+    propagate_case: true
+  - trigger: "coudl"
+    replace: "could"
+    word: true
+    propagate_case: true
+  - trigger: "necesarily"
+    replace: "necessarily"
+    word: true
+    propagate_case: true
+  - trigger: "frist"
+    replace: "first"
+    word: true
+    propagate_case: true
+  - trigger: "substatntive"
+    replace: "substantive"
+    word: true
+    propagate_case: true
+  - trigger: "vizsualation"
+    replace: "visualization"
+    word: true
+    propagate_case: true
+  - trigger: "antoehr"
+    replace: "another"
+    word: true
+    propagate_case: true
+  - trigger: "columm"
+    replace: "column"
+    word: true
+    propagate_case: true
+  - trigger: "divie"
+    replace: "divide"
+    word: true
+    propagate_case: true
+  - trigger: "createa"
+    replace: "create"
+    word: true
+    propagate_case: true
+  - trigger: "immeidate"
+    replace: "immediate"
+    word: true
+    propagate_case: true
+  - trigger: "eample"
+    replace: "example"
+    word: true
+    propagate_case: true
+  - trigger: "iew"
+    replace: "view"
+    word: true
+    propagate_case: true
+  - trigger: "ewhether"
+    replace: "whether"
+    word: true
+    propagate_case: true
+  - trigger: "cerating"
+    replace: "creating"
+    word: true
+    propagate_case: true
+  - trigger: "soution"
+    replace: "solution"
+    word: true
+    propagate_case: true
+  - trigger: "subagen"
+    replace: "subagent"
+    word: true
+    propagate_case: true
+  - trigger: "tehy"
+    replace: "they"
+    word: true
+    propagate_case: true
+  - trigger: "amek make"
+    replace: ""
+    word: true
+    propagate_case: true
+  - trigger: "nubmers numbers"
+    replace: ""
+    word: true
+    propagate_case: true
+  - trigger: "dislay display"
+    replace: ""
+    word: true
+    propagate_case: true
+  - trigger: "buiding"
+    replace: "building"
+    word: true
+    propagate_case: true
+  - trigger: "creaet"
+    replace: "create"
+    word: true
+    propagate_case: true
+  - trigger: "accidently"
+    replace: "accidentally"
+    word: true
+    propagate_case: true
+  - trigger: "clibpoard"
+    replace: "clipboard"
+    word: true
+    propagate_case: true
+  - trigger: "thinkj"
+    replace: "think"
+    word: true
+    propagate_case: true
+  - trigger: "addressiable"
+    replace: "addressable"
+    word: true
+    propagate_case: true
+  - trigger: "prjects"
+    replace: "projects"
+    word: true
+    propagate_case: true
+  - trigger: "mergable"
+    replace: "mergeable"
+    word: true
+    propagate_case: true
+
+  - trigger: "asccii"
+    replace: "ASCII"
+    word: true
+    propagate_case: true
+
+  - trigger: "catalouged"
+    replace: "catalogued"
+    word: true
+    propagate_case: true
+  - trigger: "conlfuence"
+    replace: "confluence"
+    word: true
+    propagate_case: true
+
+  - trigger: "dreaom"
+    replace: "dream"
+    word: true
+    propagate_case: true
+
+  - trigger: "qustion"
+    replace: "question"
+    word: true
+    propagate_case: true
+
+  - trigger: "compeititor"
+    replace: "competitor"
+    word: true
+    propagate_case: true
+  - trigger: "suggstion"
+    replace: "suggestion"
+    word: true
+    propagate_case: true
+
+  - trigger: "peroduct"
+    replace: "product"
+    word: true
+    propagate_case: true
+  - trigger: "allof"
+    replace: "all of"
+    word: true
+    propagate_case: true
+
+  - trigger: "yeterday"
+    replace: "yesterday"
+    word: true
+    propagate_case: true
+
+  - trigger: "addictioon"
+    replace: "addiction"
+    word: true
+    propagate_case: true
+  - trigger: "thsoe"
+    replace: "those"
+    word: true
+    propagate_case: true
+
+  - trigger: "pipelien"
+    replace: "pipeline"
+    word: true
+    propagate_case: true
+  - trigger: "mehmergeable"
+    replace: "mergeable"
+    word: true
+    propagate_case: true
+  - trigger: "knowt"
+    replace: "know"
+    word: true
+    propagate_case: true
+  - trigger: "worht"
+    replace: "worth"
+    word: true
+    propagate_case: true
+  - trigger: "Idid"
+    replace: "I did"
+    word: true
+    propagate_case: true
+  - trigger: "contorl"
+    replace: "control"
+    word: true
+    propagate_case: true
+  - trigger: "stagazer"
+    replace: "stargazer"
+    word: true
+    propagate_case: true
+  - trigger: "new commer"
+    replace: "newcomer"
+    word: true
+    propagate_case: true
+  - trigger: "audiecne"
+    replace: "audience"
+    word: true
+    propagate_case: true
+  - trigger: "pritary"
+    replace: "proprietary"
+    word: true
+    propagate_case: true
+  - trigger: "prtinciples"
+    replace: "principles"
+    word: true
+    propagate_case: true
+  - trigger: "correctin"
+    replace: "correction"
+    word: true
+    propagate_case: true
+  - trigger: "udpates"
+    replace: "updates"
+    word: true
+    propagate_case: true
+  - trigger: "udpate"
+    replace: "update"
+    word: true
+    propagate_case: true
+  - trigger: "rrors"
+    replace: "errors"
+    word: true
+    propagate_case: true
+  - trigger: "mmit"
+    replace: "commit"
+    word: true
+    propagate_case: true
+  - trigger: "rhough"
+    replace: "through"
+    word: true
+    propagate_case: true
+  - trigger: "sibligns"
+    replace: "siblings"
+    word: true
+    propagate_case: true
+  - trigger: "sinbllings"
+    replace: "siblings"
+    word: true
+    propagate_case: true
+  - trigger: "fidn"
+    replace: "find"
+    word: true
+    propagate_case: true
+  - trigger: "tha"
+    replace: "the"
+    word: true
+    propagate_case: true
+  - trigger: "occured"
+    replace: "occurred"
+    word: true
+    propagate_case: true
+  - trigger: "full fledge"
+    replace: "full-fledged"
+    word: true
+    propagate_case: true
+  - trigger: "quert"
+    replace: "query"
+    word: true
+    propagate_case: true
+  - trigger: "persited"
+    replace: "persisted"
+    word: true
+    propagate_case: true
+  - trigger: "tofigure"
+    replace: "to figure"
+    word: true
+    propagate_case: true
+  - trigger: "shuold"
+    replace: "should"
+    word: true
+    propagate_case: true
+  - trigger: "andd"
+    replace: "and"
+    word: true
+    propagate_case: true
+  - trigger: "oen"
+    replace: "one"
+    word: true
+    propagate_case: true
+  - trigger: "poiwerpoint"
+    replace: "PowerPoint"
+    word: true
+    propagate_case: true
+  - trigger: "habbit"
+    replace: "habit"
+    word: true
+    propagate_case: true
+  - trigger: "habbits"
+    replace: "habits"
+    word: true
+    propagate_case: true
+  - trigger: "occurences"
+    replace: "occurrences"
+    word: true
+    propagate_case: true
+  - trigger: "extractioin"
+    replace: "extraction"
+    word: true
+    propagate_case: true
+  - trigger: "abiout"
+    replace: "about"
+    word: true
+    propagate_case: true
+  - trigger: "abstration"
+    replace: "abstraction"
+    word: true
+    propagate_case: true
+  - trigger: "acchive"
+    replace: "archive"
+    word: true
+    propagate_case: true
+  - trigger: "accsssible"
+    replace: "accessible"
+    word: true
+    propagate_case: true
+  - trigger: "acorss"
+    replace: "across"
+    word: true
+    propagate_case: true
+  - trigger: "actial"
+    replace: "actual"
+    word: true
+    propagate_case: true
+  - trigger: "actuall"
+    replace: "actually"
+    word: true
+    propagate_case: true
+  - trigger: "actualy"
+    replace: "actually"
+    word: true
+    propagate_case: true
+  - trigger: "aethetics"
+    replace: "aesthetics"
+    word: true
+    propagate_case: true
+  - trigger: "afticle"
+    replace: "article"
+    word: true
+    propagate_case: true
+  - trigger: "alcolhol"
+    replace: "alcohol"
+    word: true
+    propagate_case: true
+  - trigger: "alligned"
+    replace: "aligned"
+    word: true
+    propagate_case: true
+  - trigger: "allrow"
+    replace: "allow"
+    word: true
+    propagate_case: true
+  - trigger: "alrwadu"
+    replace: "already"
+    word: true
+    propagate_case: true
+  - trigger: "amek"
+    replace: "make"
+    word: true
+    propagate_case: true
+  - trigger: "annecdote"
+    replace: "anecdote"
+    word: true
+    propagate_case: true
+  - trigger: "appied"
+    replace: "applied"
+    word: true
+    propagate_case: true
+  - trigger: "apppropriate"
+    replace: "appropriate"
+    word: true
+    propagate_case: true
+  - trigger: "approrilfe"
+    replace: "appropriate"
+    word: true
+    propagate_case: true
+  - trigger: "arithematic"
+    replace: "arithmetic"
+    word: true
+    propagate_case: true
+  - trigger: "ascci"
+    replace: "ascii"
+    word: true
+    propagate_case: true
+  - trigger: "aslo"
+    replace: "also"
+    word: true
+    propagate_case: true
+  - trigger: "athelete"
+    replace: "athlete"
+    word: true
+    propagate_case: true
+  - trigger: "atresses"
+    replace: "actresses"
+    word: true
+    propagate_case: true
+  - trigger: "attroney"
+    replace: "attorney"
+    word: true
+    propagate_case: true
+  - trigger: "authortative"
+    replace: "authoritative"
+    word: true
+    propagate_case: true
+  - trigger: "autodidatic"
+    replace: "autodidactic"
+    word: true
+    propagate_case: true
+  - trigger: "availble"
+    replace: "available"
+    word: true
+    propagate_case: true
+  - trigger: "availlilability"
+    replace: "availability"
+    word: true
+    propagate_case: true
+  - trigger: "beatiful"
+    replace: "beautiful"
+    word: true
+    propagate_case: true
+  - trigger: "beteeen"
+    replace: "between"
+    word: true
+    propagate_case: true
+  - trigger: "betweem"
+    replace: "between"
+    word: true
+    propagate_case: true
+  - trigger: "breaue"
+    replace: "bureau"
+    word: true
+    propagate_case: true
+  - trigger: "bridig"
+    replace: "bridging"
+    word: true
+    propagate_case: true
+  - trigger: "brnaches"
+    replace: "branches"
+    word: true
+    propagate_case: true
+  - trigger: "browswr"
+    replace: "browser"
+    word: true
+    propagate_case: true
+  - trigger: "buttom"
+    replace: "bottom"
+    word: true
+    propagate_case: true
+  - trigger: "calendary"
+    replace: "calendar"
+    word: true
+    propagate_case: true
+  - trigger: "calssfication"
+    replace: "classification"
+    word: true
+    propagate_case: true
+  - trigger: "candiates"
+    replace: "candidates"
+    word: true
+    propagate_case: true
+  - trigger: "ccontent"
+    replace: "content"
+    word: true
+    propagate_case: true
+  - trigger: "chacracter"
+    replace: "character"
+    word: true
+    propagate_case: true
+  - trigger: "chdck"
+    replace: "check"
+    word: true
+    propagate_case: true
+  - trigger: "chec"
+    replace: "check"
+    word: true
+    propagate_case: true
+  - trigger: "clamining"
+    replace: "claiming"
+    word: true
+    propagate_case: true
+  - trigger: "cocnsiely"
+    replace: "concisely"
+    word: true
+    propagate_case: true
+  - trigger: "cofee"
+    replace: "coffee"
+    word: true
+    propagate_case: true
+  - trigger: "combiing"
+    replace: "combining"
+    word: true
+    propagate_case: true
+  - trigger: "compleyef"
+    replace: "completed"
+    word: true
+    propagate_case: true
+  - trigger: "comprehrensive"
+    replace: "comprehensive"
+    word: true
+    propagate_case: true
+  - trigger: "comprhensive"
+    replace: "comprehensive"
+    word: true
+    propagate_case: true
+  - trigger: "considerd"
+    replace: "considered"
+    word: true
+    propagate_case: true
+  - trigger: "containg"
+    replace: "containing"
+    word: true
+    propagate_case: true
+  - trigger: "continuusly"
+    replace: "continuously"
+    word: true
+    propagate_case: true
+  - trigger: "contrasitive"
+    replace: "contrastive"
+    word: true
+    propagate_case: true
+  - trigger: "controlable"
+    replace: "controllable"
+    word: true
+    propagate_case: true
+  - trigger: "critcizsm"
+    replace: "criticism"
+    word: true
+    propagate_case: true
+  - trigger: "cumulatovr"
+    replace: "cumulative"
+    word: true
+    propagate_case: true
+  - trigger: "curremtly"
+    replace: "currently"
+    word: true
+    propagate_case: true
+  - trigger: "currenlty"
+    replace: "currently"
+    word: true
+    propagate_case: true
+  - trigger: "currentlu"
+    replace: "currently"
+    word: true
+    propagate_case: true
+  - trigger: "decsiion"
+    replace: "decision"
+    word: true
+    propagate_case: true
+  - trigger: "descrnding"
+    replace: "descending"
+    word: true
+    propagate_case: true
+  - trigger: "desiried"
+    replace: "desired"
+    word: true
+    propagate_case: true
+  - trigger: "desparate"
+    replace: "desperate"
+    word: true
+    propagate_case: true
+  - trigger: "devlops"
+    replace: "develops"
+    word: true
+    propagate_case: true
+  - trigger: "directoroies"
+    replace: "directories"
+    word: true
+    propagate_case: true
+  - trigger: "disire"
+    replace: "desire"
+    word: true
+    propagate_case: true
+  - trigger: "dislay"
+    replace: "display"
+    word: true
+    propagate_case: true
+  - trigger: "disppear"
+    replace: "disappear"
+    word: true
+    propagate_case: true
+  - trigger: "eacj"
+    replace: "each"
+    word: true
+    propagate_case: true
+  - trigger: "eassay"
+    replace: "essay"
+    word: true
+    propagate_case: true
+  - trigger: "editted"
+    replace: "edited"
+    word: true
+    propagate_case: true
+  - trigger: "ehre"
+    replace: "here"
+    word: true
+    propagate_case: true
+  - trigger: "eigut"
+    replace: "eight"
+    word: true
+    propagate_case: true
+  - trigger: "elementrary"
+    replace: "elementary"
+    word: true
+    propagate_case: true
+  - trigger: "elepant"
+    replace: "elephant"
+    word: true
+    propagate_case: true
+  - trigger: "embelish"
+    replace: "embellish"
+    word: true
+    propagate_case: true
+  - trigger: "euphemeral"
+    replace: "ephemeral"
+    word: true
+    propagate_case: true
+  - trigger: "evetything"
+    replace: "everything"
+    word: true
+    propagate_case: true
+  - trigger: "exacltly"
+    replace: "exactly"
+    word: true
+    propagate_case: true
+  - trigger: "excercise"
+    replace: "exercise"
+    word: true
+    propagate_case: true
+  - trigger: "existin"
+    replace: "existing"
+    word: true
+    propagate_case: true
+  - trigger: "exlcuable"
+    replace: "excludable"
+    word: true
+    propagate_case: true
+  - trigger: "explaimimg"
+    replace: "explaining"
+    word: true
+    propagate_case: true
+  - trigger: "explanatoon"
+    replace: "explanation"
+    word: true
+    propagate_case: true
+  - trigger: "exporing"
+    replace: "exploring"
+    word: true
+    propagate_case: true
+  - trigger: "feautring"
+    replace: "featuring"
+    word: true
+    propagate_case: true
+  - trigger: "flexibld"
+    replace: "flexible"
+    word: true
+    propagate_case: true
+  - trigger: "fluildly"
+    replace: "fluidly"
+    word: true
+    propagate_case: true
+  - trigger: "fraemework"
+    replace: "framework"
+    word: true
+    propagate_case: true
+  - trigger: "frineds"
+    replace: "friends"
+    word: true
+    propagate_case: true
+  - trigger: "genearte"
+    replace: "generate"
+    word: true
+    propagate_case: true
+  - trigger: "genotying"
+    replace: "genotyping"
+    word: true
+    propagate_case: true
+  - trigger: "granfathered"
+    replace: "grandfathered"
+    word: true
+    propagate_case: true
+  - trigger: "havd"
+    replace: "have"
+    word: true
+    propagate_case: true
+  - trigger: "highligher"
+    replace: "highlighter"
+    word: true
+    propagate_case: true
+  - trigger: "highlihged"
+    replace: "highlighted"
+    word: true
+    propagate_case: true
+  - trigger: "homgeneity"
+    replace: "homogeneity"
+    word: true
+    propagate_case: true
+  - trigger: "hwre"
+    replace: "here"
+    word: true
+    propagate_case: true
+  - trigger: "idetify"
+    replace: "identify"
+    word: true
+    propagate_case: true
+  - trigger: "igore"
+    replace: "ignore"
+    word: true
+    propagate_case: true
+  - trigger: "implment"
+    replace: "implement"
+    word: true
+    propagate_case: true
+  - trigger: "improvr"
+    replace: "improve"
+    word: true
+    propagate_case: true
+  - trigger: "inceessantly"
+    replace: "incessantly"
+    word: true
+    propagate_case: true
+  - trigger: "incldiong"
+    replace: "including"
+    word: true
+    propagate_case: true
+  - trigger: "inconsistenies"
+    replace: "inconsistencies"
+    word: true
+    propagate_case: true
+  - trigger: "inddicate"
+    replace: "indicate"
+    word: true
+    propagate_case: true
+  - trigger: "infinitestimals"
+    replace: "infinitesimals"
+    word: true
+    propagate_case: true
+  - trigger: "ingreidentes"
+    replace: "ingredients"
+    word: true
+    propagate_case: true
+  - trigger: "insrtead"
+    replace: "instead"
+    word: true
+    propagate_case: true
+  - trigger: "instaed"
+    replace: "instead"
+    word: true
+    propagate_case: true
+  - trigger: "instictively"
+    replace: "instinctively"
+    word: true
+    propagate_case: true
+  - trigger: "interpretted"
+    replace: "interpreted"
+    word: true
+    propagate_case: true
+  - trigger: "involvdd"
+    replace: "involved"
+    word: true
+    propagate_case: true
+  - trigger: "itnerested"
+    replace: "interested"
+    word: true
+    propagate_case: true
+  - trigger: "justofy"
+    replace: "justify"
+    word: true
+    propagate_case: true
+  - trigger: "juxstapostion"
+    replace: "juxtaposition"
+    word: true
+    propagate_case: true
+  - trigger: "keejp"
+    replace: "keep"
+    word: true
+    propagate_case: true
+  - trigger: "kindtic"
+    replace: "kinetic"
+    word: true
+    propagate_case: true
+  - trigger: "learend"
+    replace: "learned"
+    word: true
+    propagate_case: true
+  - trigger: "legimacy"
+    replace: "legitimacy"
+    word: true
+    propagate_case: true
+  - trigger: "limitted"
+    replace: "limited"
+    word: true
+    propagate_case: true
+  - trigger: "litterally"
+    replace: "literally"
+    word: true
+    propagate_case: true
+  - trigger: "lopp"
+    replace: "loop"
+    word: true
+    propagate_case: true
+  - trigger: "luanched"
+    replace: "launched"
+    word: true
+    propagate_case: true
+  - trigger: "magntitudes"
+    replace: "magnitudes"
+    word: true
+    propagate_case: true
+  - trigger: "managage"
+    replace: "manage"
+    word: true
+    propagate_case: true
+  - trigger: "memoralble"
+    replace: "memorable"
+    word: true
+    propagate_case: true
+  - trigger: "mesage"
+    replace: "message"
+    word: true
+    propagate_case: true
+  - trigger: "minutues"
+    replace: "minutes"
+    word: true
+    propagate_case: true
+  - trigger: "mndmonic"
+    replace: "mnemonic"
+    word: true
+    propagate_case: true
+  - trigger: "msucle"
+    replace: "muscle"
+    word: true
+    propagate_case: true
+  - trigger: "multipcation"
+    replace: "multiplication"
+    word: true
+    propagate_case: true
+  - trigger: "neary"
+    replace: "nearly"
+    word: true
+    propagate_case: true
+  - trigger: "needsary"
+    replace: "necessary"
+    word: true
+    propagate_case: true
+  - trigger: "neess"
+    replace: "needs"
+    word: true
+    propagate_case: true
+  - trigger: "notoroized"
+    replace: "notarized"
+    word: true
+    propagate_case: true
+  - trigger: "nthan"
+    replace: "than"
+    word: true
+    propagate_case: true
+  - trigger: "nubmers"
+    replace: "numbers"
+    word: true
+    propagate_case: true
+  - trigger: "omnitient"
+    replace: "omniscient"
+    word: true
+    propagate_case: true
+  - trigger: "openning"
+    replace: "opening"
+    word: true
+    propagate_case: true
+  - trigger: "optiomal"
+    replace: "optimal"
+    word: true
+    propagate_case: true
+  - trigger: "optionallyh"
+    replace: "optionally"
+    word: true
+    propagate_case: true
+  - trigger: "orking"
+    replace: "working"
+    word: true
+    propagate_case: true
+  - trigger: "outlinr"
+    replace: "outline"
+    word: true
+    propagate_case: true
+  - trigger: "painstainkingly"
+    replace: "painstakingly"
+    word: true
+    propagate_case: true
+  - trigger: "paragrah"
+    replace: "paragraph"
+    word: true
+    propagate_case: true
+  - trigger: "parallize"
+    replace: "parallelize"
+    word: true
+    propagate_case: true
+  - trigger: "partcular"
+    replace: "particular"
+    word: true
+    propagate_case: true
+  - trigger: "passort"
+    replace: "passport"
+    word: true
+    propagate_case: true
+  - trigger: "pboto"
+    replace: "photo"
+    word: true
+    propagate_case: true
+  - trigger: "permanant"
+    replace: "permanent"
+    word: true
+    propagate_case: true
+  - trigger: "permanentaly"
+    replace: "permanently"
+    word: true
+    propagate_case: true
+  - trigger: "perspectivr"
+    replace: "perspective"
+    word: true
+    propagate_case: true
+  - trigger: "philsophically"
+    replace: "philosophically"
+    word: true
+    propagate_case: true
+  - trigger: "phoneix"
+    replace: "phoenix"
+    word: true
+    propagate_case: true
+  - trigger: "pipeliine"
+    replace: "pipeline"
+    word: true
+    propagate_case: true
+  - trigger: "playh"
+    replace: "play"
+    word: true
+    propagate_case: true
+  - trigger: "plurarity"
+    replace: "plurality"
+    word: true
+    propagate_case: true
+  - trigger: "possibe"
+    replace: "possible"
+    word: true
+    propagate_case: true
+  - trigger: "praciting"
+    replace: "practicing"
+    word: true
+    propagate_case: true
+  - trigger: "prefligjt"
+    replace: "preflight"
+    word: true
+    propagate_case: true
+  - trigger: "pregancy"
+    replace: "pregnancy"
+    word: true
+    propagate_case: true
+  - trigger: "prereqeusite"
+    replace: "prerequisite"
+    word: true
+    propagate_case: true
+  - trigger: "previlages"
+    replace: "privileges"
+    word: true
+    propagate_case: true
+  - trigger: "probalby"
+    replace: "probably"
+    word: true
+    propagate_case: true
+  - trigger: "projecft"
+    replace: "project"
+    word: true
+    propagate_case: true
+  - trigger: "properites"
+    replace: "properties"
+    word: true
+    propagate_case: true
+  - trigger: "propertieis"
+    replace: "properties"
+    word: true
+    propagate_case: true
+  - trigger: "publushed"
+    replace: "published"
+    word: true
+    propagate_case: true
+  - trigger: "purplexed"
+    replace: "perplexed"
+    word: true
+    propagate_case: true
+  - trigger: "pyramidin"
+    replace: "pyrimidine"
+    word: true
+    propagate_case: true
+  - trigger: "quanitty"
+    replace: "quantity"
+    word: true
+    propagate_case: true
+  - trigger: "questin"
+    replace: "question"
+    word: true
+    propagate_case: true
+  - trigger: "queueie"
+    replace: "queue"
+    word: true
+    propagate_case: true
+  - trigger: "raether"
+    replace: "rather"
+    word: true
+    propagate_case: true
+  - trigger: "recomended"
+    replace: "recommended"
+    word: true
+    propagate_case: true
+  - trigger: "referenece"
+    replace: "reference"
+    word: true
+    propagate_case: true
+  - trigger: "refernce"
+    replace: "reference"
+    word: true
+    propagate_case: true
+  - trigger: "refridgerator"
+    replace: "refrigerator"
+    word: true
+    propagate_case: true
+  - trigger: "regading"
+    replace: "regarding"
+    word: true
+    propagate_case: true
+  - trigger: "relaable"
+    replace: "relatable"
+    word: true
+    propagate_case: true
+  - trigger: "relevaltions"
+    replace: "revelations"
+    word: true
+    propagate_case: true
+  - trigger: "remoce"
+    replace: "remove"
+    word: true
+    propagate_case: true
+  - trigger: "resf"
+    replace: "rest"
+    word: true
+    propagate_case: true
+  - trigger: "resillient"
+    replace: "resilient"
+    word: true
+    propagate_case: true
+  - trigger: "resoueces"
+    replace: "resources"
+    word: true
+    propagate_case: true
+  - trigger: "restuarant"
+    replace: "restaurant"
+    word: true
+    propagate_case: true
+  - trigger: "rhytmn"
+    replace: "rhythm"
+    word: true
+    propagate_case: true
+  - trigger: "rport"
+    replace: "report"
+    word: true
+    propagate_case: true
+  - trigger: "rubrick"
+    replace: "rubric"
+    word: true
+    propagate_case: true
+  - trigger: "rujnning"
+    replace: "running"
+    word: true
+    propagate_case: true
+  - trigger: "runnning"
+    replace: "running"
+    word: true
+    propagate_case: true
+  - trigger: "seaemless"
+    replace: "seamless"
+    word: true
+    propagate_case: true
+  - trigger: "seaparate"
+    replace: "separate"
+    word: true
+    propagate_case: true
+  - trigger: "seearch"
+    replace: "search"
+    word: true
+    propagate_case: true
+  - trigger: "sentrnce"
+    replace: "sentence"
+    word: true
+    propagate_case: true
+  - trigger: "seperarely"
+    replace: "separately"
+    word: true
+    propagate_case: true
+  - trigger: "shinagoams"
+    replace: "shenanigans"
+    word: true
+    propagate_case: true
+  - trigger: "shortend"
+    replace: "shortened"
+    word: true
+    propagate_case: true
+  - trigger: "shre"
+    replace: "share"
+    word: true
+    propagate_case: true
+  - trigger: "silouette"
+    replace: "silhouette"
+    word: true
+    propagate_case: true
+  - trigger: "simulataneously"
+    replace: "simultaneously"
+    word: true
+    propagate_case: true
+  - trigger: "snipppet"
+    replace: "snippet"
+    word: true
+    propagate_case: true
+  - trigger: "sociallly"
+    replace: "socially"
+    word: true
+    propagate_case: true
+  - trigger: "sometjing"
+    replace: "something"
+    word: true
+    propagate_case: true
+  - trigger: "sskill"
+    replace: "skill"
+    word: true
+    propagate_case: true
+  - trigger: "staements"
+    replace: "statements"
+    word: true
+    propagate_case: true
+  - trigger: "starategy"
+    replace: "strategy"
+    word: true
+    propagate_case: true
+  - trigger: "strengthn"
+    replace: "strengthen"
+    word: true
+    propagate_case: true
+  - trigger: "suggsdt"
+    replace: "suggest"
+    word: true
+    propagate_case: true
+  - trigger: "sutdy"
+    replace: "study"
+    word: true
+    propagate_case: true
+  - trigger: "swich"
+    replace: "switch"
+    word: true
+    propagate_case: true
+  - trigger: "symetric"
+    replace: "symmetric"
+    word: true
+    propagate_case: true
+  - trigger: "syntheze"
+    replace: "synthesize"
+    word: true
+    propagate_case: true
+  - trigger: "tackeld"
+    replace: "tackled"
+    word: true
+    propagate_case: true
+  - trigger: "temporailiy"
+    replace: "temporarily"
+    word: true
+    propagate_case: true
+  - trigger: "tenative"
+    replace: "tentative"
+    word: true
+    propagate_case: true
+  - trigger: "thete"
+    replace: "there"
+    word: true
+    propagate_case: true
+  - trigger: "theyu"
+    replace: "they"
+    word: true
+    propagate_case: true
+  - trigger: "thoughj"
+    replace: "though"
+    word: true
+    propagate_case: true
+  - trigger: "thrree"
+    replace: "three"
+    word: true
+    propagate_case: true
+  - trigger: "thst"
+    replace: "that"
+    word: true
+    propagate_case: true
+  - trigger: "timze"
+    replace: "time"
+    word: true
+    propagate_case: true
+  - trigger: "tirick"
+    replace: "trick"
+    word: true
+    propagate_case: true
+  - trigger: "transcendetals"
+    replace: "transcendentals"
+    word: true
+    propagate_case: true
+  - trigger: "transcripion"
+    replace: "transcription"
+    word: true
+    propagate_case: true
+  - trigger: "trhough"
+    replace: "through"
+    word: true
+    propagate_case: true
+  - trigger: "underenath"
+    replace: "underneath"
+    word: true
+    propagate_case: true
+  - trigger: "univsrsal"
+    replace: "universal"
+    word: true
+    propagate_case: true
+  - trigger: "updatedd"
+    replace: "updated"
+    word: true
+    propagate_case: true
+  - trigger: "usefull"
+    replace: "useful"
+    word: true
+    propagate_case: true
+  - trigger: "usuable"
+    replace: "usable"
+    word: true
+    propagate_case: true
+  - trigger: "vecyot"
+    replace: "vector"
+    word: true
+    propagate_case: true
+  - trigger: "verical"
+    replace: "vertical"
+    word: true
+    propagate_case: true
+  - trigger: "verifyf"
+    replace: "verify"
+    word: true
+    propagate_case: true
+  - trigger: "verison"
+    replace: "version"
+    word: true
+    propagate_case: true
+  - trigger: "verson"
+    replace: "version"
+    word: true
+    propagate_case: true
+  - trigger: "vetical"
+    replace: "vertical"
+    word: true
+    propagate_case: true
+  - trigger: "vetically"
+    replace: "vertically"
+    word: true
+    propagate_case: true
+  - trigger: "viewr"
+    replace: "viewer"
+    word: true
+    propagate_case: true
+  - trigger: "viewsd"
+    replace: "viewed"
+    word: true
+    propagate_case: true
+  - trigger: "virdict"
+    replace: "verdict"
+    word: true
+    propagate_case: true
+  - trigger: "waitimg"
+    replace: "waiting"
+    word: true
+    propagate_case: true
+  - trigger: "warrents"
+    replace: "warrants"
+    word: true
+    propagate_case: true
+  - trigger: "warrenty"
+    replace: "warranty"
+    word: true
+    propagate_case: true
+  - trigger: "wastrd"
+    replace: "wasted"
+    word: true
+    propagate_case: true
+  - trigger: "wheatever"
+    replace: "whatever"
+    word: true
+    propagate_case: true
+  - trigger: "whicu"
+    replace: "which"
+    word: true
+    propagate_case: true
+  - trigger: "whyat"
+    replace: "what"
+    word: true
+    propagate_case: true
+  - trigger: "wierd"
+    replace: "weird"
+    word: true
+    propagate_case: true
+  - trigger: "wiered"
+    replace: "weird"
+    word: true
+    propagate_case: true
+  - trigger: "wiht"
+    replace: "with"
+    word: true
+    propagate_case: true
+  - trigger: "wihtin"
+    replace: "within"
+    word: true
+    propagate_case: true
+  - trigger: "wihtout"
+    replace: "without"
+    word: true
+    propagate_case: true
+  - trigger: "writr"
+    replace: "write"
+    word: true
+    propagate_case: true
+  - trigger: "yaer"
+    replace: "year"
+    word: true
+    propagate_case: true
+  - trigger: "youe"
+    replace: "your"
+    word: true
+    propagate_case: true
