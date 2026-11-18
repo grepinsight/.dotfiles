@@ -40,6 +40,7 @@ becomes `~/.config/kitty/kitty.conf`.
 | `espanso` | `~/.config/espanso` |
 | `hammerspoon` | `~/.hammerspoon` |
 | `nvim` | `~/.config/nvim/*` |
+| `herdr` | `~/.config/herdr/config.toml` (file only: the directory also holds herdr's sockets and logs) |
 
 Link one package:
 

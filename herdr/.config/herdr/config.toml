@@ -1,0 +1,32 @@
+onboarding = false
+
+[keys]
+move_tab_previous = ["alt+shift+h", "alt+shift+left"]
+move_tab_next = ["alt+shift+l", "alt+shift+right"]
+
+[ui.sidebar.agents]
+rows = [
+  ["state_icon", "machine", { token = "workspace", fg = "#89b4fa", bold = true }, { token = "tab", fg = "#a6e3a1" }, { token = "pane", fg = "#fab387" }],
+  ["terminal_title_stripped"],
+  [{ token = "agent", fg = "#cba6f7", dim = true }],
+]
+
+[ui.sidebar.agents.rows_by_agent]
+claude = [
+  ["state_icon", { token = "workspace", fg = "#89b4fa", bold = true }, { token = "tab", fg = "#a6e3a1" }, { token = "pane", fg = "#fab387" }],
+  ["terminal_title_stripped"],
+]
+
+[theme]
+name = "catppuccin"
+auto_switch = false
+
+[ui]
+status_indicators = "symbols"
+
+# $id is reported by the local.workspace-id plugin (plugins/workspace-id).
+[ui.sidebar.spaces]
+rows = [
+  ["state_icon", { token = "$id", fg = "#6c7086" }, "workspace"],
+  ["branch", "git_status"],
+]

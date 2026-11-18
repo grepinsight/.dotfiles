@@ -26,6 +26,7 @@ reload:  ## Reload configs
 	cd claude && make
 	cd capture && make
 	cd kitty && make
+	cd herdr && make
 
 
 update_brew:
