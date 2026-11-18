@@ -2646,3 +2646,7 @@ matches:
     replace: "your"
     word: true
     propagate_case: true
+  - trigger: "commitnng"
+    replace: "committing"
+    word: true
+    propagate_case: true

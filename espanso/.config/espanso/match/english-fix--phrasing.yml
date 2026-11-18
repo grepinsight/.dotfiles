@@ -65,3 +65,7 @@ matches:
     replace: "what each of these is"
     word: true
     propagate_case: true
+  - trigger: "start off of"
+    replace: "start from"
+    word: true
+    propagate_case: true
