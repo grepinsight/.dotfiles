@@ -46,6 +46,10 @@ local UI_STATE = CACHE_DIR .. "/ui.json"
 local HEARTBEAT = CACHE_DIR .. "/heartbeat.json"
 
 local POLL_SECONDS = 3
+-- Consecutive failed polls before alerting, so one slow boot-time poll stays silent.
+local ALERT_AFTER_FAILURES = 3
+-- hs.alert's default is a 27pt banner that clipped this message mid-word.
+local ALERT_STYLE = { textSize = 14, radius = 8, padding = 10 }
 -- Font size drives every dimension. Hardcoding both a size and a row height is
 -- how text ends up clipped the first time the size changes, so heights, widths
 -- and column positions are all computed from FONT below.
@@ -99,7 +103,8 @@ local grouped = {}
 local counts = {}
 local clickables = {} -- canvas element id -> { action = ..., ... }
 local hidden = false
-local lastError = nil
+local refreshTask = nil
+local failureStreak = 0
 -- Armed kills are keyed by their kill target, never by the canvas element id.
 -- A poll every three seconds can reorder rows between the arming click and the
 -- confirming one, and `row3` would then point at a different session.
@@ -773,43 +778,50 @@ local function writeHeartbeat(rowCount)
 end
 
 function M.refresh()
-  hs.task
-    .new(PYTHON, function(exitCode, stdOut, stdErr)
-      if exitCode ~= 0 then
-        -- Report once per distinct failure rather than every poll, so a missing
-        -- binary does not produce an alert every three seconds.
+  -- One poll at a time. `claude agents` can take longer than POLL_SECONDS
+  -- (cold start after boot, VPN not up yet), and without this guard every
+  -- tick stacked another one on top: 76 concurrent on 2026-11-18, each
+  -- slowing the rest until all of them hit the timeout together.
+  if refreshTask and refreshTask:isRunning() then
+    return
+  end
+  refreshTask = hs.task.new(PYTHON, function(exitCode, stdOut, stdErr)
+    refreshTask = nil
+    if exitCode ~= 0 then
+      -- A slow poll right after boot is normal, so stay quiet until the
+      -- failure has lasted a while, then alert once for the whole episode.
+      failureStreak = failureStreak + 1
+      if failureStreak == ALERT_AFTER_FAILURES then
         local message = (stdErr or "claude-fleet failed"):gsub("%s+$", "")
-        if message ~= lastError then
-          lastError = message
-          hs.alert.show(message, 4)
-        end
-        return
+        hs.alert.show("fleet: " .. message:gsub("^claude%-fleet: ", ""), ALERT_STYLE, 6)
       end
-      lastError = nil
-      local ok, parsed = pcall(hs.json.decode, stdOut)
-      if not ok or type(parsed) ~= "table" then
-        return
-      end
+      return
+    end
+    failureStreak = 0
+    local ok, parsed = pcall(hs.json.decode, stdOut)
+    if not ok or type(parsed) ~= "table" then
+      return
+    end
 
-      grouped, counts = {}, {}
-      for _, row in ipairs(parsed) do
-        local group = row.group or "Unknown"
-        grouped[group] = grouped[group] or {}
-        table.insert(grouped[group], {
-          name = row.name,
-          glyph = row.glyph,
-          minutes = row.minutes,
-          target = row.target,
-          killTarget = row.killTarget or "",
-          killVerb = row.killVerb or "stop",
-        })
-        counts[group] = (counts[group] or 0) + 1
-      end
+    grouped, counts = {}, {}
+    for _, row in ipairs(parsed) do
+      local group = row.group or "Unknown"
+      grouped[group] = grouped[group] or {}
+      table.insert(grouped[group], {
+        name = row.name,
+        glyph = row.glyph,
+        minutes = row.minutes,
+        target = row.target,
+        killTarget = row.killTarget or "",
+        killVerb = row.killVerb or "stop",
+      })
+      counts[group] = (counts[group] or 0) + 1
+    end
 
-      writeHeartbeat(#parsed)
-      M.draw()
-    end, { SCRIPT, "list", "--json" })
-    :start()
+    writeHeartbeat(#parsed)
+    M.draw()
+  end, { SCRIPT, "list", "--json" })
+  refreshTask:start()
 end
 
 -- ---------------------------------------------------------------- lifecycle
