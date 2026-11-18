@@ -2650,3 +2650,7 @@ matches:
     replace: "committing"
     word: true
     propagate_case: true
+  - trigger: "barebon"
+    replace: "bare-bones"
+    word: true
+    propagate_case: true
