@@ -37,6 +37,7 @@ vim.opt.undolevels = 10000  -- How many undos
 vim.opt.undoreload = 10000  --number of lines to save for undo
 vim.opt.mouse = "a"
 vim.opt.termguicolors = true
+vim.opt.spelllang = { "en", "cjk" } -- cjk: never flag Korean, Japanese or Chinese words as misspelled
 vim.cmd([[
 "set list
 set showbreak=↪\

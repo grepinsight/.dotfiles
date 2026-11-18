@@ -26,6 +26,8 @@ local parsers = {
   "svelte",
   "tsx",
   "typescript",
+  -- Only for ```turtle fences in markdown. .ttl buffers stay on vim-rdf.
+  "turtle",
   "yaml",
 }
 
