@@ -2,6 +2,8 @@
 
 Conventions and traps for this repo. Written 2026-09-01 while handing off mid-project.
 
+Command and shortcut tables in `README.md` stay in sync with the source by the rule in the repo-root [`AGENTS.md`](../../../AGENTS.md) (section "Neovim keymap and command docs"). Follow that file. Do not copy the rule here.
+
 ## Traps that cost real time
 
 **`~/.config/nvim` is not a symlink to this repo.** It is a real directory whose entries are
