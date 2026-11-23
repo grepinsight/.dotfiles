@@ -221,7 +221,7 @@
                             },
                             "to": [
                                 {
-                                    "shell_command": "open /Users/allee/Downloads"
+                                    "shell_command": "open $HOME/Downloads"
                                 }
                             ]
                         },
@@ -473,7 +473,7 @@
                             },
                             "to": [
                                 {
-                                    "shell_command": "open /Users/allee/Downloads"
+                                    "shell_command": "open $HOME/Downloads"
                                 }
                             ]
                         },
@@ -733,7 +733,7 @@
                             },
                             "to": [
                                 {
-                                    "shell_command": "open /Users/allee/Downloads"
+                                    "shell_command": "open $HOME/Downloads"
                                 }
                             ]
                         },
@@ -1007,7 +1007,7 @@
                             },
                             "to": [
                                 {
-                                    "shell_command": "open /Users/allee/Downloads"
+                                    "shell_command": "open $HOME/Downloads"
                                 }
                             ]
                         },

@@ -1,3 +1,6 @@
+" INERT: these are `github/copilot.vim` settings and that plugin is not installed.
+" The live gate is lua/plugins/lsp/copilot_gate.lua. Change it there.
+
 let g:copilot_filetypes = {
       \ '*': v:false,
       \ 'python': v:true,

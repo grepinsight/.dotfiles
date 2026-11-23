@@ -2,8 +2,11 @@ set -g mouse on
 set -g set-clipboard on
 set -g allow-passthrough on
 
+set-option -g default-command "reattach-to-user-namespace -l ${SHELL}"
+
 run '/opt/homebrew/opt/tpm/share/tpm/tpm'
 
+set-option -g default-command "reattach-to-user-namespace -l ${SHELL}"
 
 
 set -g @plugin 'tmux-plugins/tpm'

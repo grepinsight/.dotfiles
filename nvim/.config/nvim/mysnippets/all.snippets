@@ -5,7 +5,7 @@ ${0}
 endsnippet
 
 snippet JOB
-. ~/titan_setup.sh scratch
+[ -n "$JOB_SETUP" ] && . "$JOB_SETUP" scratch
 echo [Name] ${1:$0}
 echo [Directory] \`pwd\`
 echo [Machine] \`uname -n\`

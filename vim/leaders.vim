@@ -242,7 +242,8 @@ nnoremap <LocalLeader>fm <cmd>Telescope marks<cr>
 nnoremap <LocalLeader>fr <cmd>Telescope lsp_references<cr>
 
 nnoremap <LocalLeader>K :Lspsaga hover_doc<CR>
-nnoremap <LocalLeader>a :AvanteToggle<CR>
+" <LocalLeader>a freed 2026-08-07: avante.nvim removed. Agentic work happens in
+" Claude Code in a terminal split; Copilot ghost text is <M-l> (native LSP).
 nnoremap <LocalLeader>g :GV<CR>
 nnoremap <LocalLeader>gf :<c-u>vie <c-r>=findfile(expand('<cfile>'))<cr><cr>
 nnoremap <LocalLeader>gd :Lspsaga preview_definition<CR>

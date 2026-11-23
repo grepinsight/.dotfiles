@@ -11,3 +11,23 @@ dotfiles.sublime-project
 vim/spell/
 doom/doom.d/custom.el
 espanso/.config/espanso/match/base-local.yml
+
+# Secrets must never be committable here; this repo is public.
+.env
+.env.*
+!.env.example
+.env.secret
+.envrc
+
+# Per-machine Claude Code provider selection, not config worth sharing
+.claude-provider
+
+# Lua bytecode dropped by a failed :luafile / luac run
+luac.out
+
+# herdr runtime state, in case ~/.config/herdr is ever folded into the repo
+herdr/.config/herdr/*
+!herdr/.config/herdr/config.toml
+!herdr/.config/herdr/plugins/
+herdr/.config/herdr/plugins/*
+!herdr/.config/herdr/plugins/workspace-id/

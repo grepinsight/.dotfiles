@@ -1,0 +1,101 @@
+{
+  "$schema": "https://www.raycast.com/schemas/extension.json",
+  "name": "cheatsheet",
+  "title": "Cheatsheet",
+  "description": "Search, copy, add and edit line-level entries from a folder of markdown notes",
+  "icon": "icon.png",
+  "author": "grepinsight",
+  "license": "MIT",
+  "commands": [
+    {
+      "name": "search-cheatsheet",
+      "title": "Search Cheatsheet",
+      "subtitle": "Cheatsheet",
+      "description": "Fuzzy-search every line of your tagged notes and copy one",
+      "mode": "view"
+    },
+    {
+      "name": "add-cheatsheet-entry",
+      "title": "Add Cheatsheet Entry",
+      "subtitle": "Cheatsheet",
+      "description": "Append a new entry to a cheatsheet note",
+      "mode": "view"
+    }
+  ],
+  "preferences": [
+    {
+      "name": "notesPath",
+      "title": "Notes Folder",
+      "description": "Folder searched recursively for markdown notes carrying the cheatsheet tag",
+      "type": "directory",
+      "required": true
+    },
+    {
+      "name": "extraNotesPaths",
+      "title": "More Notes Folders",
+      "description": "Additional folders to scan, comma-separated. Raycast has no multi-folder picker, so the first folder uses the picker above and the rest go here. A folder nested inside another is ignored rather than indexed twice.",
+      "type": "textfield",
+      "required": false
+    },
+    {
+      "name": "newNotePath",
+      "title": "New Note Folder",
+      "description": "Where a brand-new topic's note is created. Defaults to the Notes Folder, which for a whole vault means its root.",
+      "type": "directory",
+      "required": false
+    },
+    {
+      "name": "tag",
+      "title": "Tag",
+      "description": "Only notes whose frontmatter tags include this value are indexed",
+      "type": "textfield",
+      "default": "quick-ref",
+      "required": false
+    },
+    {
+      "name": "primaryAction",
+      "title": "Return Key",
+      "description": "What Return does on a result. The other action stays on Cmd+Return.",
+      "type": "dropdown",
+      "required": false,
+      "default": "copy",
+      "data": [
+        {
+          "title": "Copy to clipboard",
+          "value": "copy"
+        },
+        {
+          "title": "Paste into the frontmost app",
+          "value": "paste"
+        }
+      ]
+    },
+    {
+      "name": "codeLanguage",
+      "title": "Default Code Language",
+      "description": "Highlighting for code entries whose note declares none. Any highlight.js language: bash, sql, python, json, yaml, plaintext. A note's own `language:` frontmatter key and a fenced block's info string both win over this.",
+      "type": "textfield",
+      "default": "bash",
+      "required": false
+    }
+  ],
+  "dependencies": {
+    "@raycast/api": "^2.4.1",
+    "@raycast/utils": "^2.3.1"
+  },
+  "devDependencies": {
+    "@raycast/eslint-config": "^2.0.4",
+    "@types/node": "^22.13.10",
+    "@types/react": "^19.0.10",
+    "eslint": "^9.22.0",
+    "prettier": "^3.5.3",
+    "typescript": "^5.8.2"
+  },
+  "scripts": {
+    "build": "ray build",
+    "dev": "ray develop",
+    "lint": "ray lint",
+    "fix-lint": "ray lint --fix",
+    "test": "node --test \"src/lib/*.test.ts\""
+  }
+}

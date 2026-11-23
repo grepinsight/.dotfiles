@@ -148,6 +148,19 @@ alias v="$EDITOR"
 [ -f $HOME/.cargo/env ] && source $HOME/.cargo/env
 [ -f $HOME/.dotfiles/zsh/zshrc_init ] && source $HOME/.dotfiles/zsh/zshrc_init
 
+# --- Per-host conditional config ---
+# Load extras only when both (a) we're on the named host and (b) the file exists.
+# Naming convention: $HOME/.dotfiles/zsh/zshrc.<short-hostname>
+# Plus an always-checked machine-local override at zshrc.local (gitignore this one).
+_host="${HOST:-$(hostname -s)}"
+for _extra in \
+  "$HOME/.dotfiles/zsh/zshrc.${_host}" \
+  "$HOME/.dotfiles/zsh/zshrc.local"
+do
+  [ -r "$_extra" ] && source "$_extra"
+done
+unset _host _extra
+
 # never freezes the terminal
 stty -ixon
 
@@ -193,9 +206,6 @@ export PNPM_HOME="$HOME/Library/pnpm"
 export PATH="$PNPM_HOME:$PATH"
 # pnpm end
 #
-#
-
-
 . "$HOME/.cargo/env"
 
 export PATH=/Applications/SnowSQL.app/Contents/MacOS:$PATH
@@ -336,26 +346,37 @@ ghce() {
 
 . "$HOME/.local/bin/env"
 
-end=$(/opt/homebrew/bin/gdate +%s%3N)
-duration=$(( end - start ))
+# added by Snowflake SnowSQL installer v1.2
+export PATH=/Applications/SnowSQL.app/Contents/MacOS:$PATH
+
+# Task Master aliases added on 10/13/2025
+alias tm='task-master'
+alias taskmaster='task-master'
+
+# opencode
+export PATH=$HOME/.opencode/bin:$PATH
+
+# VoiceMode MCP - text-only mode (skip TTS, voice input only)
+export VOICEMODE_SKIP_TTS=true
+
 #echo "[BENCH] rest took ${duration}ms"
 
 # Added by dbt installer
-export PATH="$PATH:/Users/allee/.local/bin"
+# [doctor 2026-09-02] redundant: ~/.local/bin is already added idempotently by
+# `. "$HOME/.local/bin/env"` above. Uncomment if PATH resolution ever breaks.
+# export PATH="$PATH:$HOME/.local/bin"
 
 # dbt aliases
-alias dbtf=/Users/allee/.local/bin/dbt
+alias dbtf=$HOME/.local/bin/dbt
 
-
-# Task Master aliases added on 8/20/2025
-alias tm='task-master'
-alias taskmaster='task-master'
 
 fpath+=~/.zfunc; autoload -Uz compinit; compinit
 
 zstyle ':completion:*' menu select
 
-export PATH="$HOME/.local/bin:$PATH"
+# [doctor 2026-09-02] redundant: ~/.local/bin is already added idempotently by
+# `. "$HOME/.local/bin/env"` above. Uncomment if PATH resolution ever breaks.
+# export PATH="$HOME/.local/bin:$PATH"
 
 export KITTY_LIGHT="Solarized Light"
 export KITTY_DARK="Catppuccin-Mocha"
@@ -369,4 +390,14 @@ td() {
 }
 
 # opencode
-export PATH=/Users/allee/.opencode/bin:$PATH
+export PATH=$HOME/.opencode/bin:$PATH
+
+
+# Cortex CLI completion (disable via /settings in cortex)
+[[ -s ~/.zsh/completions/cortex.zsh ]] && source ~/.zsh/completions/cortex.zsh
+
+
+# Added by Antigravity CLI installer
+# [doctor 2026-09-02] redundant: ~/.local/bin is already added idempotently by
+# `. "$HOME/.local/bin/env"` above. Uncomment if PATH resolution ever breaks.
+# export PATH="$HOME/.local/bin:$PATH"

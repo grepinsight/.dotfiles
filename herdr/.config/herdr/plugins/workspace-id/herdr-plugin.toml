@@ -1,0 +1,13 @@
+id = "local.workspace-id"
+name = "Workspace ID"
+version = "0.1.0"
+min_herdr_version = "0.9.5"
+description = "Show each workspace's id in the Space sidebar as the $id token"
+platforms = ["linux", "macos"]
+
+[[startup]]
+command = ["sh", "report-ids.sh"]
+
+[[events]]
+on = "workspace.created"
+command = ["sh", "report-ids.sh"]

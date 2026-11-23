@@ -20,19 +20,16 @@ return {
 					},
 				},
 			},
-			on_new_config = function(new_config, root_dir)
-				local pipfile_exists = require("lspconfig").util.search_ancestors(root_dir, function(path)
-					local pipfile = require("lspconfig").util.path.join(path, "Pipfile")
-					if require("lspconfig").util.path.is_file(pipfile) then
-						return true
-					else
-						return false
-					end
-				end)
-
-				if pipfile_exists then
-					new_config.cmd = { "pipenv", "run", "pyright-langserver", "--stdio" }
-				end
+			-- Run pyright through `pipenv run` when the project has a Pipfile so the
+			-- correct virtualenv is used. Native replacement for the old lspconfig
+			-- `on_new_config` hook (removed with the deprecated framework); nvim calls
+			-- this cmd function per client with the resolved config (incl. root_dir).
+			cmd = function(dispatchers, config)
+				local root = (config and config.root_dir) or vim.fn.getcwd()
+				local has_pipfile = vim.fs.find("Pipfile", { path = root, upward = true, type = "file" })[1] ~= nil
+				local exe = has_pipfile and { "pipenv", "run", "pyright-langserver", "--stdio" }
+					or { "pyright-langserver", "--stdio" }
+				return vim.lsp.rpc.start(exe, dispatchers)
 			end,
 		},
 	},
@@ -132,5 +129,14 @@ return {
 	},
 	bashls = {
 		name = "bash-language-server",
+	},
+	zls = {
+		-- Zig language server. `name` is the mason package mason-tool-installer
+		-- auto-installs; the lsp_config_setup loop then wires it through lspconfig
+		-- with cmp capabilities + the shared LspAttach keymaps. zls implements
+		-- textDocument/formatting (it shells out to `zig fmt`), so format-on-save
+		-- comes for free via the LspFormatting autocmd in plugins/formatting/init.lua.
+		name = "zls",
+		disabled = false,
 	},
 }

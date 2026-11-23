@@ -2,3 +2,13 @@
 matches:
   - trigger: ;tyc
     replace: Thank you for clarification
+  - trigger: ;hdi
+    replace: "How do I "
+  - trigger: ;hdy
+    replace: "How do you "
+  - trigger: "whats "
+    replace: "what's "
+    left_word: true
+  - trigger: "Whats "
+    replace: "What's "
+    left_word: true

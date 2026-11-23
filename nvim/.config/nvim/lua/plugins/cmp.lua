@@ -1,3 +1,7 @@
+-- Filetypes where LuaSnip stays out of the completion menu; see the "luasnip"
+-- source entry below for why this is a filter rather than a filetype config.
+local luasnip_disabled_filetypes = { markdown = true }
+
 local has_words_before = function()
   if vim.api.nvim_buf_get_option(0, "buftype") == "prompt" then
     return false
@@ -12,12 +16,8 @@ return {
     "hrsh7th/nvim-cmp",
     event = { "InsertEnter", "CmdlineEnter" },
     dependencies = {
-      {
-        "zbirenbaum/copilot-cmp",
-        config = function()
-          require("copilot_cmp").setup()
-        end,
-      },
+      -- copilot-cmp removed 2026-08-07 along with copilot.lua. Copilot is now
+      -- ghost text from vim.lsp.inline_completion, not an entry in this menu.
       "hrsh7th/cmp-buffer", -- nvim-cmp source for buffer words
       "hrsh7th/cmp-path", -- nvim-cmp source for path words
       "hrsh7th/cmp-nvim-lsp", -- nvim-cmp source for neovim's built-in LSP
@@ -73,6 +73,16 @@ return {
       vim.opt.completeopt = "menu,menuone,noselect"
       vim.opt.pumheight = 10 -- Maximum number of items to show in the popup menu
 
+      -- The "english" source used in `sources` below. Registered here rather than in
+      -- init.lua because `cmp` has to be loaded for register_source to exist, and this is
+      -- the one place that is already true. pcall so a broken or absent collocation module
+      -- degrades to "no prose completions" instead of taking the whole completion setup
+      -- down with it.
+      local ok, collocation = pcall(require, "albertlint.collocation")
+      if ok then
+        cmp.register_source("english", collocation.source)
+      end
+
       local formatForTailwindCSS = function(entry, vim_item)
         if vim_item.kind == "Color" and entry.completion_item.documentation then
           local _, _, r, g, b = string.find(entry.completion_item.documentation, "^rgb%((%d+), (%d+), (%d+)")
@@ -94,6 +104,19 @@ return {
       end
 
       cmp.setup({
+        -- Suppress the whole completion menu while ZenMode is active, so prose
+        -- writing stays distraction-free. vim.g.zenmode_active is toggled by
+        -- zen-mode's on_open/on_close. The rest mirrors nvim-cmp's default
+        -- `enabled` (off in prompt buffers and while recording/executing macros).
+        enabled = function()
+          if vim.g.zenmode_active then
+            return false
+          end
+          if vim.api.nvim_get_option_value("buftype", { buf = 0 }) == "prompt" then
+            return false
+          end
+          return vim.fn.reg_recording() == "" and vim.fn.reg_executing() == ""
+        end,
         matching = {
           -- disallow_fuzzy_matching = true,
           -- disallow_fullfuzzy_matching = true,
@@ -142,8 +165,36 @@ return {
         sources = cmp.config.sources({
           -- ordering is matter
           { name = "nvim_lsp" },
-          { name = "luasnip" },
-          { name = "copilot", group_index = 2 },
+          {
+            name = "luasnip",
+            -- Markdown is prose, and there LuaSnip serves friendly-snippets plus
+            -- mysnippets/{markdown,md,all}.snippets, which drop code scaffolding
+            -- into the menu mid-sentence. Filter the entries out per filetype.
+            --
+            -- Filtering rather than dropping the source with
+            -- cmp.setup.filetype("markdown", ...) is deliberate: obsidian.nvim
+            -- copies cmp.get_config().sources into a *buffer* config on BufEnter
+            -- of every vault *.md, and a buffer config outranks a filetype one,
+            -- so the filetype route would be undone inside the vault. This
+            -- predicate rides along in the copied source table.
+            entry_filter = function(_, ctx)
+              return not luasnip_disabled_filetypes[ctx.filetype]
+            end,
+          },
+          {
+            -- Collocations from this vault's own Phrases/ and Better English/ notes. Sits
+            -- above `buffer` on purpose: a phrase collected deliberately outranks a word
+            -- that happens to be open in another window.
+            --
+            -- It fills the hole the two entries above created. copilot_gate.lua keeps
+            -- Copilot out of markdown and the luasnip filter keeps snippets out, which left
+            -- prose with no source that knows any English.
+            --
+            -- keyword_length 2 matches the source's own min_chars: completing on one
+            -- character would put 400+ entries in the menu on every word's first keystroke.
+            name = "english",
+            keyword_length = 2,
+          },
           { name = "path" },
           { name = "buffer", keyword_length = 5 }, -- show buffer's completion only if type more then keyword_length
         }),
@@ -167,15 +218,12 @@ return {
           format = lspkind.cmp_format({
             mode = "symbol_text", -- options: 'text', 'text_symbol', 'symbol_text', 'symbol'
             maxwidth = 50, -- prevent the popup from showing more than provided characters (e.g 50 will not show more than 50 characters)
+            -- One label per registered source in `sources` above, nothing more.
             menu = { -- showing type in menu
               luasnip = "[LuaSnip]",
               nvim_lsp = "[LSP]",
-              copilot = "[copilot]",
               path = "[path]",
               buffer = "[buf]",
-              gh_issues = "[issues]",
-              orgmode = "[orgmode]",
-              rst_glossary = "[glossary]",
             },
             before = function(entry, vim_item)
               vim_item.menu = "(" .. vim_item.kind .. ")"
@@ -263,26 +311,30 @@ return {
               fallback()
             end,
           }),
+          -- Accept the highlighted entry, same as the `/` and `?` mapping above.
+          -- Previously this cycled with select_next_item, so on a single match
+          -- the second <Tab> wrapped back to the raw text you typed and the
+          -- completion looked like it had been undone.
           ["<Tab>"] = cmp.mapping({
             c = function()
               if cmp.visible() then
-                return cmp.select_next_item()
-              else
-                cmp.complete()
-                cmp.select_next_item()
-                return
+                return cmp.confirm({
+                  behavior = cmp.ConfirmBehavior.Replace,
+                  select = true, -- take the first entry when nothing is highlighted yet
+                })
               end
+              cmp.complete()
+              cmp.select_next_item()
             end,
           }),
+          -- Step backwards through the menu; <C-j> / <C-k> step either way.
           ["<S-Tab>"] = cmp.mapping({
             c = function()
               if cmp.visible() then
                 return cmp.select_prev_item()
-              else
-                cmp.complete()
-                cmp.select_next_item()
-                return
               end
+              cmp.complete()
+              cmp.select_prev_item()
             end,
           }),
         }),

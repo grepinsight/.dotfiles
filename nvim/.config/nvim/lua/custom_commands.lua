@@ -1,9 +1,55 @@
+-- Vault root comes from $OBSIDIAN_VAULT; see lua/util/vault.lua.
+local vault = require("util.vault")
+
+-- The hledger account mapper lives outside this repo, so its path is resolved at call time
+-- rather than hardcoded. Same reasoning as `util/vault.lua`, and for the same reason: this
+-- config is tracked and the repo is public, so a checkout under another username pointed at
+-- an absolute `/Users/<someone>/...` path that does not exist.
+--
+-- Resolution order:
+--   1. `$HLEDGER_MAPPER` -- full path to the script, for a non-standard location
+--   2. `$SCRATCH_DIR`    -- the scratch root, if one is exported
+--   3. `~/scratch`       -- last-resort default, which is where it actually lives
+local HLEDGER_MAPPER_REL = "2024-11-04--lua-hledger/mapper.lua"
+
+---@return string
+local function hledger_mapper_path()
+  local explicit = vim.env.HLEDGER_MAPPER
+  if explicit ~= nil and explicit ~= "" then
+    return vim.fs.normalize(explicit)
+  end
+  local root = vim.env.SCRATCH_DIR
+  if root == nil or root == "" then
+    root = "~/scratch"
+  end
+  return vim.fs.joinpath(vim.fs.normalize(root), HLEDGER_MAPPER_REL)
+end
+
 -- Define a function to call the Lua script
 function SuggestAccounts()
+  local script_path = hledger_mapper_path()
+  -- Checked before the prompt, not after: asking for a description and then failing wastes
+  -- the typing, and the old code failed with a raw `lua: cannot open ...` instead.
+  if vim.fn.filereadable(script_path) == 0 then
+    vim.notify(
+      ("SuggestAccounts: no mapper script at %s. Set $HLEDGER_MAPPER to its full path, or "
+        .. "$SCRATCH_DIR to the directory containing %s."):format(script_path, HLEDGER_MAPPER_REL),
+      vim.log.levels.ERROR
+    )
+    return
+  end
+
   local transaction_description = vim.fn.input("Enter transaction description: ")
-  local script_path = "/Users/allee/scratch/2024-11-04--lua-hledger/mapper.lua"
-  local command = string.format("lua %s %q", script_path, transaction_description)
-  os.execute(command)
+  if transaction_description == "" then
+    return
+  end
+
+  -- `shellescape` on both, because `%q` is Lua's string quoting and not the shell's, and
+  -- the path was previously unquoted entirely, so a space anywhere in it split the command.
+  os.execute(("lua %s %s"):format(
+    vim.fn.shellescape(script_path),
+    vim.fn.shellescape(transaction_description)
+  ))
 end
 
 -- Create a Neovim command to trigger the function
@@ -12,10 +58,31 @@ vim.api.nvim_create_user_command("SuggestAccounts", SuggestAccounts, {})
 -- Daily notes command
 function OpenDaily(opts)
   local date = os.date("%Y-%m-%d")
-  local filepath = vim.fn.expand("~/Thoughts/02-Calendar/Daily/" .. date .. ".md")
+  local filepath = vault.path("02-Calendar/Daily", date .. ".md")
 
   -- Create directory if it doesn't exist
-  vim.fn.mkdir(vim.fn.expand("~/Thoughts/02-Calendar/Daily"), "p")
+  vim.fn.mkdir(vault.path("02-Calendar/Daily"), "p")
+
+  -- Open file based on provided argument
+  if opts.args == "vertical" or opts.args == "v" then
+    vim.cmd("vsplit " .. filepath)
+  elseif opts.args == "horizontal" or opts.args == "h" then
+    vim.cmd("split " .. filepath)
+  else
+    vim.cmd("edit " .. filepath)
+  end
+end
+
+-- Yesterday's daily note command
+function OpenYesterday(opts)
+  local t = os.date("*t")
+  t.day = t.day - 1
+  t.hour = 12 -- midday so DST shifts can't roll the date over
+  local date = os.date("%Y-%m-%d", os.time(t))
+  local filepath = vault.path("02-Calendar/Daily", date .. ".md")
+
+  -- Create directory if it doesn't exist
+  vim.fn.mkdir(vault.path("02-Calendar/Daily"), "p")
 
   -- Open file based on provided argument
   if opts.args == "vertical" or opts.args == "v" then
@@ -32,10 +99,10 @@ function OpenWeekly(opts)
   -- Get ISO week number and year
   local year = os.date("%Y")
   local week = os.date("%V")
-  local filepath = vim.fn.expand("~/Thoughts/02-Calendar/Weekly/" .. year .. "-W" .. week .. ".md")
+  local filepath = vault.path("02-Calendar/Weekly", year .. "-W" .. week .. ".md")
 
   -- Create directory if it doesn't exist
-  vim.fn.mkdir(vim.fn.expand("~/Thoughts/02-Calendar/Weekly"), "p")
+  vim.fn.mkdir(vault.path("02-Calendar/Weekly"), "p")
 
   -- Open file based on provided argument
   if opts.args == "vertical" or opts.args == "v" then
@@ -52,10 +119,10 @@ function OpenQuarterly(opts)
   local year = os.date("%Y")
   local month = tonumber(os.date("%m"))
   local quarter = math.ceil(month / 3)
-  local filepath = vim.fn.expand("~/Thoughts/02-Calendar/Quarterly/" .. year .. "-Q" .. quarter .. ".md")
+  local filepath = vault.path("02-Calendar/Quarterly", year .. "-Q" .. quarter .. ".md")
 
   -- Create directory if it doesn't exist
-  vim.fn.mkdir(vim.fn.expand("~/Thoughts/02-Calendar/Quarterly"), "p")
+  vim.fn.mkdir(vault.path("02-Calendar/Quarterly"), "p")
 
   -- Open file based on provided argument
   if opts.args == "vertical" or opts.args == "v" then
@@ -70,10 +137,10 @@ end
 -- Yearly notes command
 function OpenYearly(opts)
   local year = os.date("%Y")
-  local filepath = vim.fn.expand("~/Thoughts/02-Calendar/Yearly/" .. year .. ".md")
+  local filepath = vault.path("02-Calendar/Yearly", year .. ".md")
 
   -- Create directory if it doesn't exist
-  vim.fn.mkdir(vim.fn.expand("~/Thoughts/02-Calendar/Yearly"), "p")
+  vim.fn.mkdir(vault.path("02-Calendar/Yearly"), "p")
 
   -- Open file based on provided argument
   if opts.args == "vertical" or opts.args == "v" then
@@ -94,10 +161,18 @@ vim.api.nvim_create_user_command("Daily", OpenDaily, {
   desc = "Open daily note for today",
 })
 
+vim.api.nvim_create_user_command("Yesterday", OpenYesterday, {
+  nargs = "?",
+  complete = function(ArgLead, CmdLine, CursorPos)
+    return { "vertical", "horizontal", "v", "h" }
+  end,
+  desc = "Open daily note for yesterday",
+})
+
 -- Open last N daily notes (skipping dates without files)
 function OpenRecentDailies(opts)
   local count = tonumber(opts.args) or 5
-  local dir = vim.fn.expand("~/Thoughts/02-Calendar/Daily/")
+  local dir = vault.path("02-Calendar/Daily")
   local day_seconds = 86400
   local now = os.time()
   local found = 0
@@ -108,7 +183,7 @@ function OpenRecentDailies(opts)
     days_checked = days_checked + 1
     local t = now - (days_checked * day_seconds)
     local date = os.date("%Y-%m-%d", t)
-    local filepath = dir .. date .. ".md"
+    local filepath = vim.fs.joinpath(dir, date .. ".md")
 
     if vim.fn.filereadable(filepath) == 1 then
       found = found + 1
@@ -154,7 +229,7 @@ vim.api.nvim_create_user_command("Yearly", OpenYearly, {
 
 -- Todo command to open TODO.md
 vim.api.nvim_create_user_command("Todo", function(opts)
-  local filepath = vim.fn.expand("~/Thoughts/TODO.md")
+  local filepath = vault.path("TODO.md")
 
   -- Open file based on provided argument
   if opts.args == "vertical" or opts.args == "v" then
@@ -943,5 +1018,563 @@ vim.keymap.set("n", "<leader>bm", ":BashMultiline<CR>", {
 
 vim.keymap.set("v", "<leader>bm", ":BashMultiline<CR>", {
   desc = "Convert bash to multiline",
+  silent = true,
+})
+
+-- Join wrapped URL / long string into a single line.
+-- Removes newlines and any leading whitespace on continuation lines.
+-- Range: visual selection, explicit :Nm,Nn, or the enclosing ``` code block /
+-- paragraph when invoked from normal mode without a range.
+function JoinURL(opts)
+  local bufnr = vim.api.nvim_get_current_buf()
+  local start_line, end_line
+
+  if opts.range == 2 then
+    start_line = opts.line1 - 1
+    end_line = opts.line2
+  else
+    local cur = vim.api.nvim_win_get_cursor(0)[1]
+    local total = vim.api.nvim_buf_line_count(bufnr)
+
+    -- Try to detect surrounding fenced code block ```...```
+    local fence_start, fence_end
+    for i = cur, 1, -1 do
+      local line = vim.api.nvim_buf_get_lines(bufnr, i - 1, i, false)[1] or ""
+      if line:match("^%s*```") then
+        fence_start = i
+        break
+      end
+    end
+    if fence_start then
+      for i = cur, total do
+        local line = vim.api.nvim_buf_get_lines(bufnr, i - 1, i, false)[1] or ""
+        if i > fence_start and line:match("^%s*```") then
+          fence_end = i
+          break
+        end
+      end
+    end
+
+    if fence_start and fence_end and cur > fence_start and cur < fence_end then
+      start_line = fence_start -- exclusive of the opening fence
+      end_line = fence_end - 1 -- exclusive of the closing fence
+    else
+      -- Fallback: current paragraph (run of non-blank lines).
+      local s = cur
+      while s > 1 do
+        local line = vim.api.nvim_buf_get_lines(bufnr, s - 2, s - 1, false)[1] or ""
+        if line:match("^%s*$") then break end
+        s = s - 1
+      end
+      local e = cur
+      while e < total do
+        local line = vim.api.nvim_buf_get_lines(bufnr, e, e + 1, false)[1] or ""
+        if line:match("^%s*$") then break end
+        e = e + 1
+      end
+      start_line = s - 1
+      end_line = e
+    end
+  end
+
+  local lines = vim.api.nvim_buf_get_lines(bufnr, start_line, end_line, false)
+  if #lines == 0 then
+    vim.notify("JoinURL: nothing to join", vim.log.levels.WARN)
+    return
+  end
+
+  local pieces = {}
+  for i, line in ipairs(lines) do
+    local piece
+    if i == 1 then
+      piece = line:gsub("%s+$", "")
+    else
+      piece = line:gsub("^%s+", ""):gsub("%s+$", "")
+    end
+    table.insert(pieces, piece)
+  end
+  local joined = table.concat(pieces, "")
+
+  vim.api.nvim_buf_set_lines(bufnr, start_line, end_line, false, { joined })
+  vim.notify(string.format("JoinURL: joined %d lines", #lines), vim.log.levels.INFO)
+end
+
+vim.api.nvim_create_user_command("JoinURL", JoinURL, {
+  range = true,
+  desc = "Join wrapped URL/string into one line (strips leading whitespace on continuations)",
+})
+
+vim.keymap.set("n", "<leader>uj", ":JoinURL<CR>", {
+  desc = "Join wrapped URL into one line",
+  silent = true,
+})
+
+vim.keymap.set("v", "<leader>uj", ":JoinURL<CR>", {
+  desc = "Join wrapped URL into one line",
+  silent = true,
+})
+
+-- Strip Claude Code console quote markers (▎) and join wrapped prose
+-- into a single line. Unlike JoinURL (which joins without spaces because URLs
+-- can't contain whitespace), this joins with single spaces because the input
+-- is prose: text copied from a Claude/CLI console where long lines have been
+-- soft-wrapped and continuation lines are prefixed with "  ▎ ".
+function JoinClaude(opts)
+  local bufnr = vim.api.nvim_get_current_buf()
+  local start_line, end_line
+
+  if opts.range == 2 then
+    start_line = opts.line1 - 1
+    end_line = opts.line2
+  else
+    local cur = vim.api.nvim_win_get_cursor(0)[1]
+    local total = vim.api.nvim_buf_line_count(bufnr)
+
+    -- Try to detect surrounding fenced code block ```...```
+    local fence_start, fence_end
+    for i = cur, 1, -1 do
+      local line = vim.api.nvim_buf_get_lines(bufnr, i - 1, i, false)[1] or ""
+      if line:match("^%s*```") then
+        fence_start = i
+        break
+      end
+    end
+    if fence_start then
+      for i = cur, total do
+        local line = vim.api.nvim_buf_get_lines(bufnr, i - 1, i, false)[1] or ""
+        if i > fence_start and line:match("^%s*```") then
+          fence_end = i
+          break
+        end
+      end
+    end
+
+    if fence_start and fence_end and cur > fence_start and cur < fence_end then
+      start_line = fence_start -- exclusive of the opening fence
+      end_line = fence_end - 1 -- exclusive of the closing fence
+    else
+      -- Fallback: current paragraph (run of non-blank lines).
+      local s = cur
+      while s > 1 do
+        local line = vim.api.nvim_buf_get_lines(bufnr, s - 2, s - 1, false)[1] or ""
+        if line:match("^%s*$") then break end
+        s = s - 1
+      end
+      local e = cur
+      while e < total do
+        local line = vim.api.nvim_buf_get_lines(bufnr, e, e + 1, false)[1] or ""
+        if line:match("^%s*$") then break end
+        e = e + 1
+      end
+      start_line = s - 1
+      end_line = e
+    end
+  end
+
+  local lines = vim.api.nvim_buf_get_lines(bufnr, start_line, end_line, false)
+  if #lines == 0 then
+    vim.notify("JoinClaude: nothing to join", vim.log.levels.WARN)
+    return
+  end
+
+  local pieces = {}
+  for _, line in ipairs(lines) do
+    -- Strip optional leading "  ▎ " quote marker, then trim ends.
+    local cleaned = line:gsub("^%s*▎%s*", ""):gsub("^%s+", ""):gsub("%s+$", "")
+    if cleaned ~= "" then
+      table.insert(pieces, cleaned)
+    end
+  end
+
+  if #pieces == 0 then
+    vim.notify("JoinClaude: all lines empty after stripping", vim.log.levels.WARN)
+    return
+  end
+
+  local joined = table.concat(pieces, " "):gsub("%s+", " ")
+
+  vim.api.nvim_buf_set_lines(bufnr, start_line, end_line, false, { joined })
+  vim.notify(string.format("JoinClaude: joined %d lines", #lines), vim.log.levels.INFO)
+end
+
+vim.api.nvim_create_user_command("JoinClaude", JoinClaude, {
+  range = true,
+  desc = "Strip Claude console quote markers (▎) and join wrapped prose into one line",
+})
+
+vim.keymap.set("n", "<leader>cj", ":JoinClaude<CR>", {
+  desc = "Join Claude console quoted text into one line",
+  silent = true,
+})
+
+vim.keymap.set("v", "<leader>cj", ":JoinClaude<CR>", {
+  desc = "Join Claude console quoted text into one line",
+  silent = true,
+})
+
+-- ============================================================================
+-- Nucleobase ASCII diagrams
+-- :Adenine :Guanine :Cytosine :Thymine :Uracil insert an annotated ASCII
+-- structure of the base at the cursor.
+--
+--   Pyrimidines (C / T / U)  -> one 6-membered ring, drawn linearly N1..C6.
+--   Purines     (A / G)      -> fused 6+5 ring (pyrimidine + imidazole).
+--
+-- Annotations flag the substituent that DISTINGUISHES each base: amino (-NH2)
+-- vs carbonyl (=O) vs methyl (-CH3). Structures (standard 9H/keto tautomers):
+--   Cytosine : 2-oxo,            4-amino                  (pyrimidine)
+--   Thymine  : 2-oxo, 4-oxo,     5-methyl                 (pyrimidine)
+--   Uracil   : 2-oxo, 4-oxo,     5-H  (thymine minus CH3) (pyrimidine)
+--   Adenine  : 6-amino                                    (purine)
+--   Guanine  : 6-oxo,            2-amino, N1-H            (purine)
+-- ============================================================================
+
+local NUCLEOBASES = {
+  DNA = {
+    "DNA  (double-stranded, antiparallel)",
+    "",
+    "  5' ─S─P─S─P─S─P─S─P─S─ 3'   ← strand 1 backbone",
+    "          │   │   │   │",
+    "          A   G   C   T       bases point inward",
+    "          ‖   ‖   ‖   ‖       H-bonds hold the strands",
+    "          T   C   G   A",
+    "          │   │   │   │",
+    "  3' ─S─P─S─P─S─P─S─P─S─ 5'   ← strand 2 (complementary)",
+    "",
+    "  pairing:  A = T (2 H-bonds)   G ≡ C (3 H-bonds)",
+    "  sugar:    deoxyribose (2'-H)",
+    "  4th base: thymine (T)",
+  },
+  RNA = {
+    "RNA  (single-stranded)",
+    "",
+    "  5' ─S─P─S─P─S─P─S─P─S─ 3'   ← one strand only",
+    "          │   │   │   │",
+    "          A   G   C   U       U replaces T",
+    "",
+    "  sugar:    ribose (2'-OH)    ← the 'O' DNA lacks",
+    "  4th base: uracil (U)        ← no methyl (T has CH₃)",
+    "  usually single-stranded (folds and self-pairs)",
+  },
+  PyrimidineBackbone = {
+    "N1",
+    "|",
+    "C2",
+    "|",
+    "N3",
+    "|",
+    "C4",
+    "|",
+    "C5",
+    "|",
+    "C6",
+  },
+  Cytosine = {
+    "CYTOSINE  (pyrimidine ring; amino-keto tautomer)",
+    "",
+    "   N1 - H     ← H here (sugar attaches here in DNA/RNA)",
+    "   │",
+    "   C2 = O     ← carbonyl",
+    "   │",
+    "   N3",
+    "   ║          ← N3 = C4 double bond (why C4 has no H)",
+    "   C4 - NH₂   ← amino",
+    "   │",
+    "   C5 - H",
+    "   ║          ← C5 = C6 double bond",
+    "   C6 - H",
+    "   └──► back to N1 (the ring closes)",
+  },
+  MethylCytosine = {
+    "5-METHYLCYTOSINE  (5mC; amino-keto tautomer)",
+    "",
+    "   N1 - H",
+    "   │",
+    "   C2 = O     ← carbonyl",
+    "   │",
+    "   N3",
+    "   ║          ← N3 = C4 double bond",
+    "   C4 - NH₂   ← amino (same as cytosine)",
+    "   │",
+    "   C5 - CH₃   ← methyl! (the epigenetic mark)",
+    "   ║          ← C5 = C6 double bond",
+    "   C6 - H",
+    "   └──► back to N1 (the ring closes)",
+  },
+  Thymine = {
+    "THYMINE  (pyrimidine ring; 2,4-dioxo)",
+    "",
+    "   N1 - H",
+    "   │",
+    "   C2 = O     ← carbonyl",
+    "   │",
+    "   N3 - H     ← N3 also bears H (both ring N's)",
+    "   │",
+    "   C4 = O     ← carbonyl, not amino",
+    "   │",
+    "   C5 - CH₃   ← methyl, not amino",
+    "   ║          ← C5 = C6 (the only ring C=C)",
+    "   C6 - H",
+    "   └──► back to N1 (the ring closes)",
+  },
+  Uracil = {
+    "URACIL  (pyrimidine ring; 2,4-dioxo)",
+    "",
+    "   N1 - H",
+    "   │",
+    "   C2 = O     ← carbonyl",
+    "   │",
+    "   N3 - H     ← N3 also bears H",
+    "   │",
+    "   C4 = O     ← carbonyl, not amino",
+    "   │",
+    "   C5 - H     ← H here (Thymine carries CH₃)",
+    "   ║          ← C5 = C6 double bond",
+    "   C6 - H",
+    "   └──► back to N1 (the ring closes)",
+  },
+  Adenine = {
+    "ADENINE  (purine, fused double ring)",
+    "",
+    "               NH₂         ← 6-amino  (adenine's signature)",
+    "               |",
+    "         N1 == C6",
+    "        /          \\",
+    "    H - C2          C5 ===== N7",
+    "        ||          |          \\",
+    "        N3          |           C8",
+    "         \\          |          /",
+    "          +======= C4 ====== N9",
+    "                               |",
+    "                               H",
+  },
+  Guanine = {
+    "GUANINE  (purine, fused double ring)",
+    "",
+    "               O           ← 6-carbonyl, not amino",
+    "               ||",
+    "        H-N1 == C6",
+    "        /          \\",
+    "  H₂N - C2          C5 ===== N7",
+    "        ||          |          \\",
+    "        N3          |           C8",
+    "         \\          |          /",
+    "          +======= C4 ====== N9",
+    "                               |",
+    "                               H",
+  },
+}
+
+-- Insert a block of lines immediately below the cursor line.
+local function insert_block_below_cursor(lines)
+  local bufnr = vim.api.nvim_get_current_buf()
+  local row = vim.api.nvim_win_get_cursor(0)[1]
+  vim.api.nvim_buf_set_lines(bufnr, row, row, false, lines)
+end
+
+for name, lines in pairs(NUCLEOBASES) do
+  vim.api.nvim_create_user_command(name, function()
+    insert_block_below_cursor(lines)
+  end, {
+    desc = "Insert ASCII structure of " .. name .. " at the cursor",
+  })
+end
+
+-- ============================================================================
+-- Periodic-table position diagrams
+-- :Nitrogen (and future elements) insert a periods 1-3 excerpt with the
+-- element highlighted (▓X▓) so its group/period is read off at a glance.
+-- Transition metals (groups 3-12) are omitted to keep the s/p blocks aligned.
+-- ============================================================================
+
+local ELEMENTS = {
+  Nitrogen = {
+    "  Group  1   2                                   13  14  15  16  17  18",
+    "       ┌───┐                                                        ┌───┐",
+    "  P1   │ H │                                                        │He │",
+    "       ├───┼───┐                                ┌───┬───┬───┬───┬───┼───┤",
+    "  P2   │Li │Be │                                │ B │ C │▓N▓│ O │ F │Ne │  ← here",
+    "       ├───┼───┤                                ├───┼───┼───┼───┼───┼───┤",
+    "  P3   │Na │Mg │  (transition metals omitted)   │Al │Si │ P │ S │Cl │Ar │",
+    "       └───┴───┘                                └───┴───┴───┴───┴───┴───┘",
+  },
+}
+
+for name, lines in pairs(ELEMENTS) do
+  vim.api.nvim_create_user_command(name, function()
+    insert_block_below_cursor(lines)
+  end, {
+    desc = "Insert periodic-table position of " .. name .. " at the cursor",
+  })
+end
+
+-- ============================================================================
+-- Typewriter mode  (arnamak/stay-centered.nvim)
+-- Keeps the current line vertically centered while writing via `zz` recentering
+-- (not the scrolloff trick), so the active last line stays centered as you type.
+-- The plugin loads disabled (see lua/plugins.lua); this only toggles it.
+-- Caveat: the top ~half-screen of a file can't center (no virtual space above
+-- line 1 in Neovim); centering engages once you're past a half screen.
+-- ============================================================================
+local typewriter_on = false
+
+vim.api.nvim_create_user_command("Typewriter", function()
+  require("stay-centered").toggle()
+  typewriter_on = not typewriter_on
+  vim.notify("Typewriter mode " .. (typewriter_on and "ON" or "OFF"), vim.log.levels.INFO)
+end, {
+  desc = "Toggle typewriter mode (keep the current line vertically centered)",
+})
+
+vim.keymap.set("n", "<leader>tw", "<cmd>Typewriter<CR>", {
+  desc = "Toggle typewriter mode",
+  silent = true,
+})
+
+-- ============================================================================
+-- ClaudeAsk: send a selection to Claude Code as a background job
+-- Logic lives in lua/util/claude.lua; read that file's header for the flow and
+-- for why this uses jobstart instead of a terminal split.
+-- ============================================================================
+local claude = require("util.claude")
+
+vim.api.nvim_create_user_command("ClaudeAsk", claude.ask, {
+  range = true,
+  nargs = "*",
+  desc = "Send the range to `claude -p` as a background job (prompts when given no args)",
+})
+
+vim.api.nvim_create_user_command("ClaudeLast", claude.last, {
+  desc = "Open the most recently finished Claude reply in a split",
+})
+
+vim.api.nvim_create_user_command("ClaudeJobs", claude.list, {
+  desc = "List this session's Claude background jobs",
+})
+
+vim.keymap.set("v", "<leader>cc", ":ClaudeAsk<CR>", {
+  desc = "Send selection to Claude Code (background)",
+  silent = true,
+})
+
+-- Same command, forcing whole-buffer context. The prompt still comes from
+-- vim.ui.input, because an empty prompt after the +full token falls through.
+vim.keymap.set("v", "<leader>cf", ":ClaudeAsk +full<CR>", {
+  desc = "Send selection to Claude Code with whole-buffer context",
+  silent = true,
+})
+
+-- Same command with every customisation off: no skills, plugins, hooks,
+-- CLAUDE.md or MCP servers. For when the surrounding config is the problem.
+vim.api.nvim_create_user_command("ClaudeRaw", function(o)
+  claude.ask(o, { raw = true })
+end, {
+  range = true,
+  nargs = "*",
+  desc = "Like :ClaudeAsk with skills, plugins, hooks, CLAUDE.md and MCP disabled",
+})
+
+vim.api.nvim_create_user_command("ClaudeSave", claude.save, {
+  count = true,
+  nargs = 1,
+  bang = true,
+  complete = "file",
+  desc = "Write a Claude reply to a path (:[count]ClaudeSave[!] {path})",
+})
+
+vim.api.nvim_create_user_command("ClaudeExport", claude.export, {
+  count = true,
+  desc = "Export a Claude reply to a vault note (:[count]ClaudeExport)",
+})
+
+vim.keymap.set("v", "<leader>cr", ":ClaudeRaw<CR>", {
+  desc = "Send selection to Claude Code, raw (no skills/plugins/CLAUDE.md)",
+  silent = true,
+})
+
+vim.keymap.set("n", "<leader>ce", "<cmd>ClaudeExport<CR>", {
+  desc = "Export the last Claude reply to a vault note",
+  silent = true,
+})
+
+-- ============================================================================
+-- ClaudeAnalyze: break down the English of a selection
+-- Prompt lives in lua/util/english.lua; the job plumbing is the same
+-- util.claude one, so :ClaudeLast / :ClaudeSave / :ClaudeExport all apply.
+-- ============================================================================
+local english = require("util.english")
+
+vim.api.nvim_create_user_command("ClaudeAnalyze", english.analyze, {
+  range = true,
+  nargs = "*",
+  desc = "Break the range's English into verbs, nouns, adjectives, idioms and sentence structures",
+})
+
+-- Visual-mode slot only. Normal-mode <leader>ca is the LSP code action
+-- (lua/plugins/lsp/init.lua), and this command has no normal-mode meaning.
+vim.keymap.set("v", "<leader>ca", ":ClaudeAnalyze<CR>", {
+  desc = "Analyze selection's English (verbs, nouns, adjectives, idioms, structures)",
+  silent = true,
+})
+
+-- ============================================================================
+-- Capture: a thought into the vault's 00-Capture folder, one file per thought
+-- The writer is ~/bin/capture (~/.dotfiles/capture); this is the Neovim door of
+-- four (shell, Hammerspoon cmd+shift+alt+N, Raycast, here). Nothing on this
+-- path calls a model, so it cannot be slow and cannot fail on a network.
+-- ============================================================================
+local capture = require("util.capture")
+
+vim.api.nvim_create_user_command("Capture", function(opts)
+  local run_opts = { source = "nvim", open = opts.bang }
+
+  -- A range wins over args: `:'<,'>Capture` is the visual-mode path and comes
+  -- with no args of its own.
+  if opts.range > 0 then
+    local lines = vim.api.nvim_buf_get_lines(0, opts.line1 - 1, opts.line2, false)
+    capture.run(capture.selection_text(lines), run_opts)
+    return
+  end
+
+  if opts.args ~= "" then
+    capture.run(opts.args, run_opts)
+    return
+  end
+
+  vim.ui.input({ prompt = "Capture: " }, function(text)
+    -- nil means the prompt was cancelled, which is not a failure worth a message.
+    if text then
+      capture.run(text, run_opts)
+    end
+  end)
+end, {
+  nargs = "*",
+  range = true,
+  bang = true,
+  desc = "Capture a thought into the vault's 00-Capture folder (! also opens it)",
+})
+
+vim.keymap.set("n", "<leader>nc", ":Capture<CR>", {
+  desc = "Capture a thought (prompts)",
+  silent = true,
+})
+
+vim.keymap.set("v", "<leader>nc", ":Capture<CR>", {
+  desc = "Capture the selection as a thought",
+  silent = true,
+})
+
+-- :Captures -- the read side of :Capture. A one-line capture's filename is
+-- already the thought, so reviewing them is a list problem, not an open-a-file
+-- problem; `~/bin/captures --json` supplies the list and telescope renders it.
+vim.api.nvim_create_user_command("Captures", function(opts)
+  capture.pick({ limit = tonumber(opts.args) })
+end, {
+  nargs = "?",
+  desc = "Pick from recent captures, newest first (optional count, default 200)",
+})
+
+vim.keymap.set("n", "<leader>nC", ":Captures<CR>", {
+  desc = "Browse recent captures",
   silent = true,
 })

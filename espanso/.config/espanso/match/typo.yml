@@ -2,3 +2,7 @@
 matches:
   - trigger: retruns
     replace: returns
+  - trigger: workikng
+    replace: working
+  - trigger: eeryday
+    replace: everyday

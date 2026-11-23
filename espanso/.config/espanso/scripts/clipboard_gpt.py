@@ -1,4 +1,9 @@
-#!/Users/allee/scratch/2024-10-25--clipboard-gpt/.venv/bin/python
+#!/usr/bin/env python3
+# A shebang cannot expand `~` or `$HOME`, so the old absolute venv path could not be made
+# portable and was replaced. Note this needs `openai` and `pyperclip`, which are not in the
+# standard library: run it from a venv that has them, or reinstate a venv shebang locally.
+# Unfinished as it stands -- it exits at the print below before calling anything -- and
+# nothing in espanso/ references it.
 import os
 import sys
 

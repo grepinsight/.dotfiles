@@ -1,0 +1,529 @@
+---albertlint: a prose linter for one writer's catalogued mistakes.
+---
+---Rules are derived from a personal log of logged corrections and the
+---an earlier corpus review, so every rule traces to a slip that actually happened rather
+---than to a style guide. See `rules.lua` for the catalogue and the `drill_ref` on each.
+---
+---Two tiers, because they answer different questions:
+---  live  cheap single-token rules, debounced while typing, cursor word exempt
+---  exit  sentence-level rules, on InsertLeave and write, when the sentence is finished
+---
+---Usage:
+---  require("albertlint").setup({})
+local config = require("albertlint.config")
+local engine = require("albertlint.engine")
+
+local M = {}
+
+local NS = vim.api.nvim_create_namespace("albertlint")
+local AUGROUP = "AlbertLint"
+
+---@type table<integer, uv_timer_t>
+local timers = {}
+---@type table<integer, boolean>
+local paused = {}
+
+---@param bufnr integer
+---@return boolean
+local function attached(bufnr)
+  if paused[bufnr] then
+    return false
+  end
+  local ft = vim.bo[bufnr].filetype
+  return vim.tbl_contains(config.get().filetypes, ft)
+end
+
+---Drop diagnostics that touch the word the cursor is sitting in.
+---
+---Without this, every live rule fires on a word in progress: `Slac` reads as a lowercase
+---brand until the `k` arrives, and the diagnostic flickers on and off as you type.
+---@param diagnostics vim.Diagnostic[]
+---@return vim.Diagnostic[]
+local function exempt_cursor_word(diagnostics)
+  local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+  local lnum = row - 1
+  local line = vim.api.nvim_get_current_line()
+  -- Word boundaries around the cursor. `col` is 0-indexed and may sit one past the last
+  -- character in insert mode, which is why the scan starts at col rather than col + 1.
+  local ws, we = col, col
+  while ws > 0 and line:sub(ws, ws):match("[%w'%-]") do
+    ws = ws - 1
+  end
+  while we < #line and line:sub(we + 1, we + 1):match("[%w'%-]") do
+    we = we + 1
+  end
+  return vim.tbl_filter(function(d)
+    if d.lnum ~= lnum then
+      return true
+    end
+    -- Keep only diagnostics that end before the word starts or begin after it ends.
+    return d.end_col <= ws or d.col >= we
+  end, diagnostics)
+end
+
+---@param bufnr integer
+---@param tier string
+function M.lint(bufnr, tier)
+  bufnr = bufnr or vim.api.nvim_get_current_buf()
+  if not vim.api.nvim_buf_is_valid(bufnr) or not attached(bufnr) then
+    return
+  end
+  local opts = config.get()
+  local diagnostics = engine.scan(bufnr, tier, opts)
+
+  if tier == "live" then
+    -- A live pass must not clear the exit-tier diagnostics it did not compute, so the
+    -- previous exit results are carried through untouched.
+    local existing = vim.diagnostic.get(bufnr, { namespace = NS })
+    local kept = vim.tbl_filter(function(d)
+      return d.user_data and d.user_data.tier == "exit"
+    end, existing)
+    for _, d in ipairs(diagnostics) do
+      d.user_data = { tier = "live" }
+    end
+    vim.list_extend(diagnostics, kept)
+    if opts.skip_cursor_word and vim.api.nvim_get_current_buf() == bufnr then
+      diagnostics = exempt_cursor_word(diagnostics)
+    end
+  else
+    for _, d in ipairs(diagnostics) do
+      d.user_data = { tier = d.user_data and d.user_data.tier or "exit" }
+    end
+  end
+
+  vim.diagnostic.set(NS, bufnr, diagnostics)
+end
+
+---@param bufnr integer
+local function schedule_live(bufnr)
+  local ms = config.get().live_debounce_ms
+  if timers[bufnr] then
+    timers[bufnr]:stop()
+    timers[bufnr]:close()
+    timers[bufnr] = nil
+  end
+  local timer = (vim.uv or vim.loop).new_timer()
+  timers[bufnr] = timer
+  timer:start(ms, 0, vim.schedule_wrap(function()
+    if timers[bufnr] then
+      timers[bufnr]:stop()
+      timers[bufnr]:close()
+      timers[bufnr] = nil
+    end
+    M.lint(bufnr, "live")
+  end))
+end
+
+---Full pass: both tiers, no cursor exemption.
+---@param bufnr integer|nil
+function M.lint_all(bufnr)
+  bufnr = bufnr or vim.api.nvim_get_current_buf()
+  if not attached(bufnr) then
+    return
+  end
+  local diagnostics = engine.scan(bufnr, "all", config.get())
+  for _, d in ipairs(diagnostics) do
+    d.user_data = { tier = "exit" }
+  end
+  vim.diagnostic.set(NS, bufnr, diagnostics)
+end
+
+function M.clear(bufnr)
+  vim.diagnostic.reset(NS, bufnr or vim.api.nvim_get_current_buf())
+end
+
+---@param bufnr integer|nil
+function M.toggle(bufnr)
+  bufnr = bufnr or vim.api.nvim_get_current_buf()
+  paused[bufnr] = not paused[bufnr]
+  if paused[bufnr] then
+    M.clear(bufnr)
+    vim.notify("albertlint: automatic diagnostics paused and cleared for this buffer", vim.log.levels.INFO)
+  else
+    M.lint_all(bufnr)
+    vim.notify("albertlint: automatic diagnostics resumed for this buffer", vim.log.levels.INFO)
+  end
+end
+
+---Report which drilled patterns have a rule and which do not.
+---
+---The point is to make the gap visible. A pattern that reaches the drill list without a
+---linter rule is one the plugin silently cannot help with, and that should be a fact on
+---screen rather than a surprise months later.
+function M.coverage()
+  local rules = require("albertlint.rules")
+  local lines = { "# albertlint coverage", "" }
+  local by_tier = { live = {}, exit = {} }
+  for _, rule in ipairs(rules.rules) do
+    table.insert(by_tier[rule.tier], rule)
+  end
+  for _, tier in ipairs({ "live", "exit" }) do
+    table.insert(lines, ("## %s tier (%d rules)"):format(tier, #by_tier[tier]))
+    for _, rule in ipairs(by_tier[tier]) do
+      table.insert(lines, ("- `%s`  <-  %s"):format(rule.id, rule.drill_ref))
+    end
+    table.insert(lines, "")
+  end
+  table.insert(lines, ("## optional, off by default (%d)"):format(#rules.optional))
+  for _, rule in ipairs(rules.optional) do
+    table.insert(lines, ("- `%s`  <-  %s"):format(rule.id, rule.drill_ref))
+  end
+  table.insert(lines, "")
+  table.insert(lines, "## known NOT covered by any deterministic rule")
+  table.insert(lines, "These need the semantic tier (`:AlbertLintSemantic`); no regex sees them.")
+  for _, item in ipairs({
+    "Article: missing `the` before a specific, known referent (129 logged as of 2026-09-08, his largest)",
+    "Article: missing `a` before a singular count noun (25 logged)",
+    "Number: subject-verb agreement across an intervening phrase",
+    "Pronoun reference with two available antecedents",
+    "Coordination: `not only X but also Y` branch mismatch",
+    "Information structure: heavy new-information subject",
+  }) do
+    table.insert(lines, "- " .. item)
+  end
+
+  vim.cmd("new")
+  vim.api.nvim_buf_set_lines(0, 0, -1, false, lines)
+  vim.bo.filetype = "markdown"
+  vim.bo.modified = false
+end
+
+---@param opts table|nil
+function M.setup(opts)
+  -- Kept so `:AlbertLintReload` can re-apply them after clearing `albertlint.config`,
+  -- which otherwise resets `options` to the file's defaults and drops these silently.
+  M._opts = opts
+
+  config.setup(opts)
+
+  -- Namespace-scoped display so the plugin cannot fight his global diagnostic config.
+  -- Underline rather than virtual text by default: prose is read left to right, and a
+  -- floating message per line breaks that. The message is available on hover and on the
+  -- current line only.
+  local display = {
+    underline = true,
+    signs = false,
+    severity_sort = true,
+    virtual_text = false,
+  }
+  -- `current_line` landed in 0.11. On older versions virtual text stays off entirely,
+  -- which is the safer failure.
+  if vim.fn.has("nvim-0.11") == 1 then
+    display.virtual_text = { current_line = true, prefix = "󰓆" }
+  end
+  vim.diagnostic.config(display, NS)
+
+  local group = vim.api.nvim_create_augroup(AUGROUP, { clear = true })
+
+  vim.api.nvim_create_autocmd({ "TextChangedI", "TextChangedP" }, {
+    group = group,
+    callback = function(ev)
+      if attached(ev.buf) then
+        schedule_live(ev.buf)
+      end
+    end,
+  })
+
+  vim.api.nvim_create_autocmd({ "InsertLeave", "TextChanged", "BufWritePost", "FileType" }, {
+    group = group,
+    callback = function(ev)
+      if attached(ev.buf) then
+        M.lint_all(ev.buf)
+      end
+    end,
+  })
+
+  vim.api.nvim_create_autocmd("BufDelete", {
+    group = group,
+    callback = function(ev)
+      if timers[ev.buf] then
+        timers[ev.buf]:stop()
+        timers[ev.buf]:close()
+        timers[ev.buf] = nil
+      end
+      paused[ev.buf] = nil
+    end,
+  })
+
+  vim.api.nvim_create_user_command("AlbertLint", function()
+    M.lint_all()
+  end, { desc = "albertlint: run the free deterministic checks on this buffer (not the LLM one)" })
+
+  vim.api.nvim_create_user_command("AlbertLintToggle", function()
+    M.toggle()
+  end, { desc = "albertlint: pause or resume the automatic diagnostics in this buffer" })
+
+  vim.api.nvim_create_user_command("AlbertLintCoverage", function()
+    M.coverage()
+  end, { desc = "albertlint: which logged mistake patterns have a rule, and which cannot" })
+
+  vim.api.nvim_create_user_command("AlbertLintReload", function()
+    -- `semantic` and `config` are in this list because they were not, and it cost a real
+    -- debugging session: a fix that taught `semantic.lua` to read `config.semantic.scope`
+    -- could not be picked up by any command, so setting the option at runtime wrote to a
+    -- field the loaded module never read, and the pass silently kept its old behaviour.
+    -- A command called Reload should mean "pick up my edits to this plugin".
+    for _, mod in ipairs({
+      "albertlint.rules",
+      "albertlint.engine",
+      "albertlint.semantic",
+      "albertlint.config",
+      "albertlint.collocation.index",
+      -- The level tier, on this list for exactly the reason `semantic` is: a fix that the
+      -- command called Reload cannot pick up costs a full restart to test.
+      "albertlint.level",
+      "albertlint.level.apply",
+      "albertlint.level.levels",
+      "albertlint.level.provider",
+      "albertlint.level.diffview",
+      -- The parse tier. `daemon` is deliberately *not* here: dropping it would orphan a
+      -- running spaCy process and the reload would silently start a second one.
+      "albertlint.parse",
+      "albertlint.parse.sentence",
+      "albertlint.parse.tree",
+      "albertlint.parse.palette",
+      -- The bullet command. Both halves, since `format` holds every placement decision and is
+      -- the file most likely to be edited while tuning what counts as a line to leave alone.
+      "albertlint.bullets",
+      "albertlint.bullets.format",
+    }) do
+      package.loaded[mod] = nil
+    end
+
+    -- Reloading `config` resets `options` to the file's defaults, which would silently
+    -- discard whatever was passed to `setup()`. Re-applying the stored opts is what keeps
+    -- reload a no-op for configuration while still picking up new default values.
+    config = require("albertlint.config")
+    config.setup(M._opts)
+
+    engine = require("albertlint.engine")
+    engine.reset()
+    M.lint_all()
+    vim.notify("albertlint: rules, engine, semantic, level, and config reloaded. Restart Neovim to pick up "
+      .. "changes to init.lua or to the commands themselves.", vim.log.levels.INFO)
+  end, { desc = "albertlint: reload rules, engine, semantic, level, and config" })
+
+  -- Catch buffers that were already open. Every autocmd above is an event that has
+  -- already fired for them, so without this sweep a lazy-loaded or re-sourced setup
+  -- leaves the current buffer unlinted until the next keystroke.
+  vim.schedule(function()
+    for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
+      if vim.api.nvim_buf_is_loaded(bufnr) and attached(bufnr) then
+        M.lint_all(bufnr)
+      end
+    end
+  end)
+
+  vim.api.nvim_create_user_command("AlbertLintSemantic", function(cmd)
+    require("albertlint.semantic").run(NS, cmd.range > 0)
+  end, { range = true, desc = "albertlint: LLM grammar check over the configured scope, or a given range" })
+
+  vim.api.nvim_create_user_command("AlbertLintSemanticCancel", function()
+    require("albertlint.semantic").cancel()
+  end, { desc = "albertlint: stop the LLM grammar check running in this buffer" })
+
+  -- The graded level tiers. Unlike every other tier here, these produce replacement prose
+  -- with an accept key, which is a scoped and deliberate exception to the doctrine in
+  -- CLAUDE.md rather than an oversight. Read that section before changing this.
+  -- Bang forces a fresh pass. Without it the command serves the cached findings, so the
+  -- diff can be closed and reopened without paying for the call twice.
+  -- One command per level, generated from the catalogue so adding level 3 stays a data
+  -- change rather than a code change.
+  for _, spec in ipairs({
+    { id = 1, name = "grammar/usage" },
+    { id = 2, name = "coherence/clarity" },
+  }) do
+    vim.api.nvim_create_user_command(("AlbertLintLevel%d"):format(spec.id), function(cmd)
+      require("albertlint.level").run(spec.id, cmd.range > 0, cmd.bang)
+    end, {
+      range = true,
+      bang = true,
+      desc = ("albertlint: level %d (%s). ! ignores the cache"):format(spec.id, spec.name),
+    })
+  end
+
+  -- Questions outlive the panel on purpose, so dropping them is its own command rather than
+  -- a side effect of closing the diff.
+  vim.api.nvim_create_user_command("AlbertLintLevelQuestionsClear", function()
+    require("albertlint.level").clear_questions()
+    vim.notify("albertlint: level questions cleared for this buffer", vim.log.levels.INFO)
+  end, { desc = "albertlint: drop the unanswered level questions on this buffer" })
+
+  -- Practice vs finishing decides whether a confident fix arrives as an acceptable hunk or
+  -- as a question you have to type an answer to. See config.lua for why it is a flag rather
+  -- than something the tool infers.
+  vim.api.nvim_create_user_command("AlbertLintLevelMode", function(cmd)
+    local cfg = require("albertlint.config")
+    local want = cmd.args ~= "" and cmd.args
+      or (cfg.get().level.mode == "practice" and "finishing" or "practice")
+    if want ~= "practice" and want ~= "finishing" then
+      vim.notify(
+        ("albertlint: unknown mode %q, expected practice or finishing"):format(want),
+        vim.log.levels.ERROR
+      )
+      return
+    end
+    cfg.get().level.mode = want
+    vim.notify(
+      want == "practice" and "albertlint: practice mode, every finding becomes a question"
+        or "albertlint: finishing mode, confident fixes are acceptable with do",
+      vim.log.levels.INFO
+    )
+  end, {
+    nargs = "?",
+    complete = function()
+      return { "practice", "finishing" }
+    end,
+    desc = "albertlint: switch practice/finishing mode, or toggle with no argument",
+  })
+
+  vim.api.nvim_create_user_command("AlbertLintLevelClearCache", function()
+    local level = require("albertlint.level")
+    vim.notify(
+      level.clear_cache() and "albertlint: cached level findings dropped for this buffer"
+        or "albertlint: nothing cached for this buffer",
+      vim.log.levels.INFO
+    )
+  end, { desc = "albertlint: forget the cached level findings for this buffer" })
+
+  -- Vim merges adjacent changed lines into one hunk, so `do` on two findings that landed
+  -- on consecutive lines takes both. These are line-scoped, for when that matters.
+  vim.api.nvim_create_user_command("AlbertLintLevelAccept", function()
+    require("albertlint.level").accept_line()
+  end, { desc = "albertlint: accept only the line under the cursor, not the whole hunk" })
+
+  vim.api.nvim_create_user_command("AlbertLintLevelReject", function()
+    require("albertlint.level").reject_line()
+  end, { desc = "albertlint: reject only the line under the cursor, not the whole hunk" })
+
+  vim.api.nvim_create_user_command("AlbertLintLevelClose", function()
+    require("albertlint.level").close()
+  end, { desc = "albertlint: close the level diff and leave diff mode" })
+
+  vim.api.nvim_create_user_command("AlbertLintLevelCancel", function()
+    require("albertlint.level").cancel()
+  end, { desc = "albertlint: stop the level pass running in this buffer" })
+
+  -- The structure sidebar: read-only analysis of what is already written, so it sits outside
+  -- the level tier's scoped exception in CLAUDE.md rather than widening it.
+  vim.api.nvim_create_user_command("AlbertLintTree", function()
+    require("albertlint.parse").toggle()
+  end, { desc = "albertlint: sentence structure of the sentence under the cursor, in a sidebar" })
+
+  vim.api.nvim_create_user_command("AlbertLintTreeClose", function()
+    require("albertlint.parse").close()
+  end, { desc = "albertlint: close the structure sidebar" })
+
+  vim.api.nvim_create_user_command("AlbertLintTreeFollow", function()
+    vim.notify(
+      require("albertlint.parse").toggle_follow()
+        and "albertlint: structure sidebar now follows the cursor"
+        or "albertlint: structure sidebar no longer follows the cursor",
+      vim.log.levels.INFO
+    )
+  end, { desc = "albertlint: toggle re-rendering the sidebar as the cursor crosses sentences" })
+
+  vim.api.nvim_create_user_command("AlbertLintTreeLegend", function()
+    require("albertlint.parse").legend()
+  end, { desc = "albertlint: the part-of-speech color legend for the structure sidebar" })
+
+  -- The bang installs from public PyPI instead of whatever index uv is configured to use,
+  -- because a text editor should not silently reroute a package install.
+  vim.api.nvim_create_user_command("AlbertLintTreeBootstrap", function(cmd)
+    require("albertlint.parse.daemon").bootstrap(cmd.bang)
+  end, {
+    bang = true,
+    desc = "albertlint: create the parser venv and download the model (about 60 MB); ! uses public PyPI",
+  })
+
+  vim.api.nvim_create_user_command("AlbertLintTreeStatus", function()
+    require("albertlint.parse").status()
+  end, { desc = "albertlint: parser state, cache size, and the measured hover latency" })
+
+  vim.api.nvim_create_user_command("AlbertLintTreeBenchmark", function()
+    require("albertlint.parse").benchmark()
+  end, { desc = "albertlint: time the hover path over every cached sentence in this buffer" })
+
+  vim.api.nvim_create_user_command("AlbertLintTreeClearCache", function()
+    require("albertlint.parse").clear_cache(vim.api.nvim_get_current_buf())
+    vim.notify("albertlint: parse cache dropped for this buffer", vim.log.levels.INFO)
+  end, { desc = "albertlint: drop the cached parses for this buffer" })
+
+  -- One bullet per sentence. Reformatting, not rewriting: no word changes, so this is in the
+  -- parse tier's category rather than the level tier's scoped exception in CLAUDE.md.
+  vim.api.nvim_create_user_command("AlbertLintBullets", function(cmd)
+    require("albertlint.bullets").range(cmd.line1, cmd.line2)
+  end, { range = true, desc = "albertlint: turn the range into a bullet list, one bullet per sentence" })
+
+  -- The only keymaps this plugin claims, and only because a text object is half the point: an
+  -- operator is the sole way `gbip` can exist. Everything else stays a command, per the note
+  -- in `level/init.lua`. `gb` was unmapped across `lua/` when this was added.
+  vim.keymap.set("n", "gb", function()
+    return require("albertlint.bullets").operator_expr()
+  end, { expr = true, desc = "albertlint: bullet the lines a motion covers (gbip, gb2j)" })
+
+  vim.keymap.set("x", "gb", function()
+    require("albertlint.bullets").visual()
+  end, { desc = "albertlint: bullet the visual selection" })
+
+  -- One place that answers "is this thing working". Added because the question came up
+  -- repeatedly and the honest answer needed four separate commands plus reading source.
+  vim.api.nvim_create_user_command("AlbertLintStatus", function()
+    local cfg = config.get()
+    local bufnr = vim.api.nvim_get_current_buf()
+    local lines = {
+      ("filetype %s: %s"):format(
+        vim.bo[bufnr].filetype,
+        vim.tbl_contains(cfg.filetypes, vim.bo[bufnr].filetype) and "attached" or "not a configured prose filetype"
+      ),
+      ("automatic diagnostics: %s"):format(attached(bufnr) and "on" or "paused"),
+      ("semantic: %s, scope %s, timeout %dms, `%s` %s"):format(
+        cfg.semantic.enabled and "enabled" or "disabled",
+        cfg.semantic.scope or "paragraph",
+        cfg.semantic.timeout_ms,
+        cfg.semantic.cmd[1],
+        vim.fn.executable(cfg.semantic.cmd[1]) == 1 and "found" or "NOT ON PATH"
+      ),
+      -- `%s`, not `%dms`: `level.timeout_ms` defaults to nil, meaning "scale to the line
+      -- count", and `%d` against nil made this whole command fail on a default config.
+      ("level: %s, %s mode, provider %s, scope %s, timeout %s%s"):format(
+        cfg.level.enabled and "enabled" or "disabled",
+        cfg.level.mode,
+        cfg.level.provider,
+        cfg.level.scope,
+        cfg.level.timeout_ms and (cfg.level.timeout_ms .. "ms") or "scaled to length",
+        -- Report only whether the credential is PRESENT, never any part of its value.
+        cfg.level.provider == "openai"
+            and ((vim.env.OPENAI_API_KEY or "") ~= "" and ", OPENAI_API_KEY set" or ", OPENAI_API_KEY NOT SET")
+          or ""
+      ),
+    }
+
+    -- Reported rather than assumed: the collocation module is optional, and a missing one
+    -- should show up here as "not loaded" instead of erroring this command.
+    local ok, collocation = pcall(require, "albertlint.collocation")
+    if ok then
+      local entries = collocation.entries()
+      table.insert(lines, ("collocation: %d entries from %s"):format(#entries, collocation.root()))
+    else
+      table.insert(lines, "collocation: not loaded")
+    end
+
+    table.insert(lines, ("parse: %s, follow %s, labels %s"):format(
+      require("albertlint.parse.daemon").installed() and "installed" or "not bootstrapped",
+      cfg.parse.follow and "on" or "off",
+      cfg.parse.dep_labels
+    ))
+
+    vim.notify("albertlint status\n  " .. table.concat(lines, "\n  "), vim.log.levels.INFO)
+  end, { desc = "albertlint: report what is on, what scope, and whether the CLI is reachable" })
+
+  -- Autocmds and highlight groups only. The daemon starts on the first `:AlbertLintTree`, so
+  -- a session that never opens the sidebar pays nothing.
+  require("albertlint.parse").setup()
+
+  return M
+end
+
+M.namespace = NS
+return M

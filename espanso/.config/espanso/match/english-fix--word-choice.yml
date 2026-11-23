@@ -1,0 +1,31 @@
+# English fix autocorrect: word choice.
+#
+# PUBLIC REPO. Generic English only, in the entries AND in these comments.
+# Only strings that are never correct in any context. `word: true` keeps a trigger from
+# firing inside a longer word.
+
+matches:
+  - trigger: "well legible"
+    replace: "legible"
+    word: true
+    propagate_case: true
+  - trigger: "bolden"
+    replace: "bold"
+    word: true
+    propagate_case: true
+  - trigger: "principle scientist"
+    replace: "principal scientist"
+    word: true
+    propagate_case: true
+  - trigger: "Sr. Principle"
+    replace: "Sr. Principal"
+    word: true
+    propagate_case: true
+  - trigger: "Senior Principle"
+    replace: "Senior Principal"
+    word: true
+    propagate_case: true
+  - trigger: "whiterooming"
+    replace: "clean-rooming"
+    word: true
+    propagate_case: true

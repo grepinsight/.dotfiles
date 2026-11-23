@@ -13,9 +13,9 @@ reload:  ## Reload configs
 	cd rstudio && make
 	cd bash && make
 	cd tmux && make
-	cd nvim && make
 	cd starship && make
-	cd nvim && make  # nvim has to come before vim
+	# nvim is a stow package (no Makefile) and has to come before vim
+	stow --dir=$$HOME/.dotfiles --target=$$HOME --restow nvim
 	cd vim && make
 	cd ctags && make
 	cd doom && make
@@ -24,6 +24,9 @@ reload:  ## Reload configs
 	cd jupyter && make
 	cd ripgrep && make
 	cd claude && make
+	cd capture && make
+	cd kitty && make
+	cd herdr && make
 
 
 update_brew:

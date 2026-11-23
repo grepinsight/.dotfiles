@@ -1,0 +1,255 @@
+# Cheatsheet
+
+A Raycast extension that turns a folder of markdown notes into line-level,
+copyable entries. Type a few characters, press Return, and the command you were
+looking for is on the clipboard.
+
+Two commands:
+
+- **Search Cheatsheet** — fuzzy-search every indexed line, copy or paste it
+- **Add Cheatsheet Entry** — append an entry without searching first
+
+## What gets indexed
+
+Any `.md` file under your notes folder whose YAML frontmatter tags include the
+configured tag (`quick-ref` by default):
+
+```markdown
+---
+tags:
+  - quick-ref
+---
+
+# Git
+
+## Rewriting history
+
+- `git rebase -i HEAD~3` squash or reword the last three commits
+- never rebase a branch someone else has already pulled
+```
+
+| Shown as | Comes from |
+| --- | --- |
+| Topic | the note's `#` heading, else its filename |
+| Section | the nearest `##` or deeper above the entry |
+| Entry | a list item, or a whole fenced code block |
+
+Headings, prose paragraphs, blank lines and frontmatter are not indexed.
+
+### Tables
+
+A table's data rows are entries. The first cell is the payload, every cell after
+it becomes the description, and the header and separator rows are skipped:
+
+```markdown
+| Flag | What it does |
+| --- | --- |
+| `--depth N` | how many levels down to walk, -1 for all |
+```
+
+The first cell goes through the same rule as a bullet, so a cell whose code span
+does not lead stays prose:
+
+```markdown
+| Symptom | Cause |
+| --- | --- |
+| Columns truncated with `…` | terminal width; use `--json` |
+```
+
+copies the whole symptom rather than `…`.
+
+Outer pipes are optional and alignment colons are fine. A pipe inside a cell
+must be escaped as `\|`, which GFM requires anyway, since a backtick does not
+protect a table pipe: unescaped, `` `printf x | cat` `` is two cells and the
+payload silently becomes `printf x`.
+
+Three or more columns are joined into the description rather than skipped.
+A table row cannot be edited in place, since writing a bullet into a table
+breaks it; `Cmd+O` opens the note at that row instead.
+
+### Navigation headings
+
+Content under `Related`, `See also`, `Links`, `References` or `Further reading`
+is skipped. A bare wiki-link or a bare path there points elsewhere rather than
+being usable itself, and indexing it puts an uncopyable row in the results.
+Elsewhere in a note, a link is a perfectly good payload.
+
+## What Return copies
+
+**A code span only counts when it opens the line.** Then it is the payload, and
+the rest of the line becomes the description:
+
+```markdown
+- `git rebase -i HEAD~3` squash the last three commits
+```
+
+copies `git rebase -i HEAD~3` and shows "squash the last three commits" beneath it.
+
+Anywhere else, a code span is prose, so the whole line is copied:
+
+```markdown
+- never use `--force` on a shared branch
+```
+
+copies the entire sentence. Taking the first span found anywhere would put
+`--force` on the clipboard, inverting the sentence that warned against it, so
+the rule is deliberately narrow.
+
+A fenced code block is one entry, never one entry per line, because half of a
+line-continued command is worse than none. Blocks are copy-only; edit them in
+the note.
+
+The list row's title is the exact string Return copies. Nothing is stripped or
+inferred at copy time.
+
+## Keys
+
+| Key | Action |
+| --- | --- |
+| `Return` | copy the entry (configurable: copy or paste) |
+| `Cmd+Return` | the other one |
+| `Cmd+Shift+C` | copy without closing the window |
+| `Cmd+Shift+P` | show or hide the preview |
+| `Cmd+E` | edit the entry |
+| `Cmd+N` | new entry, seeded with whatever you typed |
+| `Cmd+O` | open the note at the entry's own line |
+| `Cmd+R` | rescan |
+
+## Search
+
+Search by the command or by what it does. `delete branch` finds
+`git branch -d <branch>` through its description, which is the case a cheatsheet
+exists for: you reach for it precisely when you cannot remember the command.
+
+Filtering is done by the extension, not by Raycast's built-in filter, which
+would not spread a multi-word query across a long keyword string.
+
+Every query term is looked for in the payload, the description, the section and
+the topic. Ranking, in order of what dominates:
+
+1. **How many of your terms matched.** An entry matching all of them always
+   outranks one matching fewer. Only entries matching nothing are dropped, so
+   one stray word does not empty the screen.
+2. **Where each term matched.** The command itself beats its description, which
+   beats the note's section and topic.
+3. **How the term sat in the text.** A whole word beats a word's prefix, which
+   beats a fragment inside a word. This is what puts "who last touched" above
+   "whose upstream" when you search `who`.
+4. **Payload length**, as a tie-break, since the shorter command is the more
+   specific answer.
+
+Searching `delete branch` therefore ranks the safe `git branch -d` above the
+destructive `git branch -D`, whose description says "deletes" rather than
+"delete".
+
+## Preview
+
+The preview pane shows the exact string `Return` will copy, then the entry in
+its note with a gutter marking its line, so you can tell a near-miss from the
+line you wanted before pressing anything.
+
+~~~
+  Copies
+  ```bash
+  git reflog
+  ```
+
+  In the note · lines 12-16, yours is 14
+  ```markdown
+  - `git rebase -i HEAD~3` squash or reword the last three
+  - `git commit --amend --no-edit` fold staged changes in
+  - `git reflog` find a commit a reset left unreachable
+  - never rebase a branch someone else has already pulled
+  ```
+~~~
+
+Only the selected row's note is read, so the cost is one file read per
+selection. `Cmd+Shift+P` turns the pane off, which restores the topic and
+section accessory on each row.
+
+### Syntax highlighting
+
+Raycast renders detail markdown with highlight.js, so a fenced block gets real
+highlighting. The language is resolved in this order:
+
+1. **A fenced block's own info string.** ```` ```bash ```` wins for that entry.
+2. **The note's `language:` frontmatter key.** One cheatsheet can be SQL and
+   another shell, with no global setting that is wrong for one of them.
+3. **The Default Code Language preference**, `bash` unless you change it.
+
+```markdown
+---
+tags:
+  - quick-ref
+language: sql
+---
+
+- `select count(*) from t` row count
+```
+
+Prose entries are never tagged. A line with no leading code span is English, and
+colouring an English sentence as SQL renders it as a broken query.
+
+The surrounding-lines block is the note's markdown verbatim in a `markdown`
+fence, so its headings, list markers and inline code spans all colour. It
+carries no line-number gutter on purpose: a prefix like `> 14 | ` stops each
+line parsing as a heading or a list item, and a markdown fence only highlights
+if its contents are markdown. The line numbers live in the block's label and in
+the metadata instead, where they cost no highlighting.
+
+Blank lines are trimmed from the window's edges but never from inside it, so a
+window that starts at a section boundary opens on the heading rather than on
+two empty lines.
+
+## Opening the note at the line
+
+`Cmd+O` jumps to the entry's own line rather than the top of the note. It needs
+Obsidian's [Advanced URI](https://github.com/Vinzent03/obsidian-advanced-uri)
+plugin, since plain `obsidian://open` reaches a file but not a position in it.
+
+The vault is detected, not configured: the extension walks up from the note
+looking for a `.obsidian` folder, and the vault's name is that folder's parent.
+So pointing the scan at a subfolder of a vault still produces a correct link.
+With no vault above the note, `Cmd+O` opens the file with whatever owns `.md`.
+
+`Cmd+K` lists every action with its shortcut.
+
+## Editing safely
+
+An edit re-reads the note and confirms the line still matches what was indexed.
+If the note changed in your editor meanwhile, the edit is refused and names the
+file and line rather than overwriting the newer text.
+
+## Preferences
+
+| Preference | Default | Meaning |
+| --- | --- | --- |
+| Notes Folder | — | searched recursively for tagged notes |
+| More Notes Folders | — | additional folders, comma-separated |
+| New Note Folder | the Notes Folder | where a brand-new topic's note is created |
+| Tag | `quick-ref` | only notes carrying this tag are indexed |
+| Return Key | copy | whether Return copies or pastes |
+
+Point Notes Folder at the whole collection, since the tag is what filters. Set
+New Note Folder to one tidy subfolder, or a new topic lands at the root of
+everything you just pointed at.
+
+Raycast has no multi-folder picker, so the first folder uses the picker and any
+others go in More Notes Folders, comma-separated. A folder nested inside another
+listed folder is ignored rather than indexed twice.
+
+Scanning only ever reads, and only notes carrying the tag produce entries.
+Writes happen on three explicit actions: appending an entry, creating a note for
+a new topic, and replacing one line on edit. There are no network calls.
+
+## Development
+
+```bash
+npm install
+npm test     # the parse, compose and filesystem layers
+npm run dev  # load into Raycast
+npm run lint
+```
+
+`src/lib` holds the whole contract as pure functions plus a thin filesystem
+wrapper, and it is where the tests live. The `.tsx` files are the Raycast shell.

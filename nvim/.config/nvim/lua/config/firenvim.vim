@@ -25,7 +25,8 @@ if exists('g:started_by_firenvim')
       autocmd!
       autocmd BufEnter dbc*. nnoremap ZZ :wq!
       autocmd BufEnter dbc*. set lines=10
-      autocmd BufEnter dbc*. ALEDisable
+      " ALEDisable dropped here: ALE is no longer in the config, so the command
+      " raised E492 on every dbc* buffer.
       autocmd BufEnter *cloud.databricks.com* set ft=python
       autocmd BufEnter *firenvim*ana* set ft=python
       autocmd BufEnter *cloud.databricks.com* nnoremap <C-c><C-c> :wq!<CR>

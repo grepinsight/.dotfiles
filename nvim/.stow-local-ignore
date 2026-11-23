@@ -1,0 +1,5 @@
+^/docs$
+^/\.claude-provider$
+^/\.stow-local-ignore$
+\.DS_Store
+luac\.out

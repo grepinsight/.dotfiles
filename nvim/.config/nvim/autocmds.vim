@@ -15,6 +15,7 @@ augroup syntax_setup
     autocmd BufNewFile,BufRead Jenkinsfile setfiletype groovy
     autocmd BufNewFile,BufRead .envrc setfiletype envrc
     autocmd BufNewFile,BufRead .rules setfiletype rules
+    autocmd BufNewFile,BufRead *.taskpaper setfiletype taskpaper
 
     " set foldmethod to marker if ft is rules
     autocmd BufNewFile,BufRead *.rules set foldmethod=marker
@@ -102,3 +103,21 @@ augroup END
 "   autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
 " augroup END
 "
+
+" Highlight the short label that opens a markdown list item ('- **Concise:**', '- 간결하게:').
+" matchadd is window-local, so the match is re-applied, or removed, whenever a buffer enters a window.
+highlight default link MarkdownListLabel Keyword
+function! s:MarkListLabels() abort
+    if exists('w:list_label_match')
+        silent! call matchdelete(w:list_label_match)
+        unlet w:list_label_match
+    endif
+    if &filetype ==# 'markdown'
+        let w:list_label_match = matchadd('MarkdownListLabel', '^\s*[-*+]\s\+\zs\%(\*\*[^*:[`]\{1,24}:\*\*\ze\s\|[^*:[`]\{1,24}\ze:\s\)')
+    endif
+endfunction
+augroup markdown_list_label
+    autocmd!
+    autocmd BufWinEnter,FileType * call s:MarkListLabels()
+augroup END
+

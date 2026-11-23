@@ -37,6 +37,7 @@ vim.opt.undolevels = 10000  -- How many undos
 vim.opt.undoreload = 10000  --number of lines to save for undo
 vim.opt.mouse = "a"
 vim.opt.termguicolors = true
+vim.opt.spelllang = { "en", "cjk" } -- cjk: never flag Korean, Japanese or Chinese words as misspelled
 vim.cmd([[
 "set list
 set showbreak=↪\
@@ -104,4 +105,19 @@ vim.cmd("let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6 } }")
 require("config.globals")
 require("config.keymaps")
 require("custom_commands")
+require("annotate").setup({})
 
+-- `scope = "buffer"` rather than the default `paragraph`. Notes here are written as one-line
+-- paragraphs separated by blanks, so a paragraph-scoped pass sends ONE line, and the two
+-- semantic classes that need prior context have nothing to work with. That is what produced
+-- "0 semantic findings" on visibly flawed prose. Set back to "paragraph" if whole-file uploads
+-- on a long note become a concern; a visual range overrides this either way.
+require("albertlint").setup({ semantic = { scope = "buffer" } })
+
+-- Registers :AlbertLintCollocationStatus and :AlbertLintCollocationRebuild, and builds the
+-- index from Phrases/ and Better English/ in the vault. The cmp source itself is registered
+-- in lua/plugins/cmp.lua, where the source list lives.
+require("albertlint.collocation").setup({})
+
+require("pilsa")
+require("pilsa.read")
